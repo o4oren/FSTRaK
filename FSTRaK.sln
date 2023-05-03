@@ -1,0 +1,31 @@
+﻿
+Microsoft Visual Studio Solution File, Format Version 12.00
+# Visual Studio Version 17
+VisualStudioVersion = 17.5.33530.505
+MinimumVisualStudioVersion = 10.0.40219.1
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "FSTRaK", "FSTRaK\FSTRaK.csproj", "{B23FF8BA-B0CF-4388-9B13-5AB81059D6AB}"
+EndProject
+Global
+	GlobalSection(SolutionConfigurationPlatforms) = preSolution
+		Debug|Any CPU = Debug|Any CPU
+		Debug|x64 = Debug|x64
+		Release|Any CPU = Release|Any CPU
+		Release|x64 = Release|x64
+	EndGlobalSection
+	GlobalSection(ProjectConfigurationPlatforms) = postSolution
+		{B23FF8BA-B0CF-4388-9B13-5AB81059D6AB}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{B23FF8BA-B0CF-4388-9B13-5AB81059D6AB}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{B23FF8BA-B0CF-4388-9B13-5AB81059D6AB}.Debug|x64.ActiveCfg = Debug|x64
+		{B23FF8BA-B0CF-4388-9B13-5AB81059D6AB}.Debug|x64.Build.0 = Debug|x64
+		{B23FF8BA-B0CF-4388-9B13-5AB81059D6AB}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{B23FF8BA-B0CF-4388-9B13-5AB81059D6AB}.Release|Any CPU.Build.0 = Release|Any CPU
+		{B23FF8BA-B0CF-4388-9B13-5AB81059D6AB}.Release|x64.ActiveCfg = Release|x64
+		{B23FF8BA-B0CF-4388-9B13-5AB81059D6AB}.Release|x64.Build.0 = Release|x64
+	EndGlobalSection
+	GlobalSection(SolutionProperties) = preSolution
+		HideSolutionNode = FALSE
+	EndGlobalSection
+	GlobalSection(ExtensibilityGlobals) = postSolution
+		SolutionGuid = {E8C73875-1E63-49FC-A43F-7329FA32ADB3}
+	EndGlobalSection
+EndGlobal
