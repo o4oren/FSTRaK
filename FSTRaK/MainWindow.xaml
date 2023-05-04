@@ -8,6 +8,8 @@
         Loaded="OnLoad"
         Title="FSTRaK" Height="600" Width="800">
     <Grid>
-        
+        <local:FlightData >
+            
+        </local:FlightData>
     </Grid>
 </Window>
