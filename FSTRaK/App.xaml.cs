@@ -1,9 +1,5 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Configuration;
-using System.Data;
-using System.Linq;
-using System.Threading.Tasks;
+﻿using Serilog;
+using System;
 using System.Windows;
 
 namespace FSTRaK
@@ -13,5 +9,14 @@ namespace FSTRaK
     /// </summary>
     public partial class App : Application
     {
+
+        void OnApplicationStart(object sender, StartupEventArgs args)
+        {
+            Log.Logger = new LoggerConfiguration()
+            .MinimumLevel.Debug()
+            .WriteTo.Trace()
+            .WriteTo.File("log.txt")
+            .CreateLogger();
+        }
     }
 }

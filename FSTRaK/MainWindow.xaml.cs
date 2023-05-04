@@ -32,7 +32,7 @@ namespace FSTRaK
         void OnLoad(object sender, RoutedEventArgs e)
         {
             Trace.WriteLine("ccccccccccccccccccccccccccccccc");
-            smc.start();
+            smc.Initialize();
         }
     }
 }
