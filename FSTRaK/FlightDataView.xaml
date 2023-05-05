@@ -19,9 +19,9 @@
                Grid.Column="0" Grid.Row="0" Padding="5" 
                ZoomLevel="10.000" AnimationLevel="None"  Margin="12,173,10,10">
             <!-- m:Pushpin Location="{Binding Position}" /-->
-            <Canvas Width="30" Height="30" 
+            <Canvas Width="32" Height="32" 
               m:MapLayer.Position="{Binding Position}" 
-              m:MapLayer.PositionOrigin="BottomCenter" Opacity="0.7">
+              m:MapLayer.PositionOrigin="Center" Opacity="0.9">
                 <Path Fill="Red" Stroke="DarkRed" StrokeThickness="2">
                     <Path.Data>
                         <PathGeometry Figures="M555.768 422.125v-48.992l-212.29-156.604c.648-41.274.595-83.026-.708-125.594C340.395 40.641 320.915 0 299.913 0c-20.995 0-40.475 40.641-42.849 90.935-1.302 42.568-1.356 84.321-.708 125.594L44.059 373.134v48.992l215.76-88.871c2.709 66.227 6.021 131.851 8.404 197.849l-65.685 36.371v32.351l97.375-16.986 97.369 16.986v-32.351l-65.67-36.371c2.374-65.998 5.678-131.622 8.404-197.849l215.752 88.87z" />
@@ -31,9 +31,12 @@
                     </Path.RenderTransform>
                 </Path>
                 <Canvas.RenderTransform>
-                    <RotateTransform CenterX="15" CenterY="25" Angle="{Binding Heading}" />
+                    <RotateTransform CenterX="16" CenterY="16" Angle="{Binding Heading}" />
                 </Canvas.RenderTransform>
             </Canvas>
+            <m:MapPolyline StrokeThickness="3" Stroke="Darkred"
+                          Locations="{Binding Path}" 
+                          Opacity="0.7"/>
         </m:Map>
     </Grid>
 </UserControl>
