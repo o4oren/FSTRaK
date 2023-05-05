@@ -17,7 +17,7 @@
         <TextBox HorizontalAlignment="Left" Margin="20,64,0,0" TextWrapping="Wrap" Text="{Binding Details}" VerticalAlignment="Top" Width="350" Height="80" />
         <m:Map x:Name="myMap" CredentialsProvider="tA9ckycf17b2AvkcCkGx~QFhxDoRj6fSQE2iVPdKAyA~AjHfAPGjEwrXfQmlmiqi5aCsXnRyBXPXUxm01K0y6wBWejxkHELcftncx824O6Kg" 
                Grid.Column="0" Grid.Row="0" Padding="5" 
-               ZoomLevel="14.000" AnimationLevel="None"  Margin="12,173,10,10">
+               ZoomLevel="10.000" AnimationLevel="None"  Margin="12,173,10,10">
             <!-- m:Pushpin Location="{Binding Position}" /-->
             <Canvas Width="30" Height="50" 
               m:MapLayer.Position="{Binding Position}" 

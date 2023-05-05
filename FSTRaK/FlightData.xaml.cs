@@ -33,7 +33,7 @@ namespace FSTRaK
 
         private void ViewModel_PropertyChanged(object sender, System.ComponentModel.PropertyChangedEventArgs e)
         {
-            myMap.SetView(new Location(((FlightDataViewModel)this.DataContext).Position[0], ((FlightDataViewModel)this.DataContext).Position[1]), 15);
+            myMap.SetView(new Location(((FlightDataViewModel)this.DataContext).Position[0], ((FlightDataViewModel)this.DataContext).Position[1]), myMap.ZoomLevel);
         }
     }
 }
