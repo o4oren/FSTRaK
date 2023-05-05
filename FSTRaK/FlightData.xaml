@@ -3,16 +3,31 @@
              xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
              xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006" 
              xmlns:d="http://schemas.microsoft.com/expression/blend/2008" 
-             xmlns:local="clr-namespace:FSTRaK" 
+             xmlns:m="clr-namespace:Microsoft.Maps.MapControl.WPF;assembly=Microsoft.Maps.MapControl.WPF" 
+             xmlns:fstrak="clr-namespace:FSTRaK" 
+             d:DataContext="{d:DesignInstance Type=fstrak:FlightDataViewModel}"
              mc:Ignorable="d" 
              d:DesignHeight="450" d:DesignWidth="800">
     <UserControl.DataContext>
-        <local:FlightDataViewModel/>
+        <fstrak:FlightDataViewModel/>
     </UserControl.DataContext>
     <Grid>
         <Label Content="Aircraft:" HorizontalAlignment="Left" Margin="10,10,0,0" VerticalAlignment="Top"/>
         <Label x:Name="AircraftTitleLabel" Content="{Binding Title}" HorizontalAlignment="Left" Margin="66,10,0,0" VerticalAlignment="Top" Width="257" />
-        <TextBox HorizontalAlignment="Left" Margin="20,64,0,0" TextWrapping="Wrap" Text="{Binding Position}" VerticalAlignment="Top" Width="350" Height="161" />
+        <TextBox HorizontalAlignment="Left" Margin="20,64,0,0" TextWrapping="Wrap" Text="{Binding Details}" VerticalAlignment="Top" Width="350" Height="80" />
+        <m:Map x:Name="myMap" CredentialsProvider="tA9ckycf17b2AvkcCkGx~QFhxDoRj6fSQE2iVPdKAyA~AjHfAPGjEwrXfQmlmiqi5aCsXnRyBXPXUxm01K0y6wBWejxkHELcftncx824O6Kg" 
+               Grid.Column="0" Grid.Row="0" Padding="5"
+               ZoomLevel="14.000" AnimationLevel="None"  Margin="20,173,10,10">
+            <!-- m:Pushpin Location="{Binding Position}" /-->
+            <Canvas Width="30" Height="80" 
+              m:MapLayer.Position="{Binding Position}" 
+              m:MapLayer.PositionOrigin="BottomCenter" Opacity="0.7">
+                <Path Data="M 0,80 L 30,80 30,30 15,0 0,30 0,80" Fill="Red" Stroke="DarkRed" StrokeThickness="2" />
 
+                <Canvas.RenderTransform>
+                    <RotateTransform CenterX="25" CenterY="40" Angle="{Binding Heading}" />
+                </Canvas.RenderTransform>
+            </Canvas>
+        </m:Map>
     </Grid>
 </UserControl>

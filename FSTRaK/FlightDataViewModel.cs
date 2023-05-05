@@ -15,10 +15,20 @@ namespace FSTRaK
         public event PropertyChangedEventHandler PropertyChanged;
 
         public string Title { get; set; }
-        public string Position { get; set; }
+        public double[] Position { get; set; }
+        public string Details { get; set; }
+        public double Heading { get; set; }
+
+        public SimConnectManager.AircraftFlightData FlightData
+        {
+            get
+            {
+                return smc.FlightData;
+            }
+        }
+
         public FlightDataViewModel() { 
             smc.PropertyChanged += updateFlightDataView;
-
         }
 
 
@@ -26,9 +36,16 @@ namespace FSTRaK
         {
             SimConnectManager.AircraftFlightData a = smc.FlightData;
             Title = smc.FlightData.title;
-            Position = $"Lat: {a.latitude:F4} Lon:{a.longitude:F4} \nHeading: {a.trueHeading:F0} Alt: {a.altitude:F0} ft\nSpeed: {a.airspeed:F0} Knots";
+            Details = $"Lat: {a.latitude:F4} Lon:{a.longitude:F4} \nHeading: {a.trueHeading:F0} Alt: {a.altitude:F0} ft\nSpeed: {a.airspeed:F0} Knots";
+            Position = new double[] { a.latitude, a.longitude, a.trueHeading };
+            Heading = a.trueHeading;
+
             OnPropertyChanged("Title");
+            OnPropertyChanged("Details");
             OnPropertyChanged("Position");
+            OnPropertyChanged("Heading");
+            OnPropertyChanged("FlightData");
+
 
             Log.Information(Title);
         }
