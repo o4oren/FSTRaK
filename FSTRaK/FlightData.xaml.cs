@@ -23,8 +23,10 @@ namespace FSTRaK
     /// </summary>
     public partial class FlightData : UserControl
     {
+        internal string SessionKey { get; set; }
         public FlightData()
         {
+            SessionKey = string.Empty;
             InitializeComponent();
             ((FlightDataViewModel)this.DataContext).PropertyChanged += ViewModel_PropertyChanged;
         }

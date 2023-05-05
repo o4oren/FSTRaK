@@ -16,16 +16,16 @@
         <Label x:Name="AircraftTitleLabel" Content="{Binding Title}" HorizontalAlignment="Left" Margin="66,10,0,0" VerticalAlignment="Top" Width="257" />
         <TextBox HorizontalAlignment="Left" Margin="20,64,0,0" TextWrapping="Wrap" Text="{Binding Details}" VerticalAlignment="Top" Width="350" Height="80" />
         <m:Map x:Name="myMap" CredentialsProvider="tA9ckycf17b2AvkcCkGx~QFhxDoRj6fSQE2iVPdKAyA~AjHfAPGjEwrXfQmlmiqi5aCsXnRyBXPXUxm01K0y6wBWejxkHELcftncx824O6Kg" 
-               Grid.Column="0" Grid.Row="0" Padding="5"
-               ZoomLevel="14.000" AnimationLevel="None"  Margin="20,173,10,10">
+               Grid.Column="0" Grid.Row="0" Padding="5" 
+               ZoomLevel="14.000" AnimationLevel="None"  Margin="12,173,10,10">
             <!-- m:Pushpin Location="{Binding Position}" /-->
-            <Canvas Width="30" Height="80" 
+            <Canvas Width="30" Height="50" 
               m:MapLayer.Position="{Binding Position}" 
               m:MapLayer.PositionOrigin="BottomCenter" Opacity="0.7">
-                <Path Data="M 0,80 L 30,80 30,30 15,0 0,30 0,80" Fill="Red" Stroke="DarkRed" StrokeThickness="2" />
+                <Path Data="M 10,50 L 20,50 20,20 30,20 15,0 0,20 10,20 10,50" Fill="Red" Stroke="DarkRed" StrokeThickness="2" />
 
                 <Canvas.RenderTransform>
-                    <RotateTransform CenterX="25" CenterY="40" Angle="{Binding Heading}" />
+                    <RotateTransform CenterX="15" CenterY="25" Angle="{Binding Heading}" />
                 </Canvas.RenderTransform>
             </Canvas>
         </m:Map>
