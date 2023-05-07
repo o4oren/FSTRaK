@@ -1,6 +1,8 @@
-﻿using Serilog;
+﻿using MapControl;
+using Serilog;
 using System;
 using System.Collections.Generic;
+using System.Collections.ObjectModel;
 using System.ComponentModel;
 using System.Device.Location;
 using System.Drawing.Text;
@@ -19,22 +21,7 @@ namespace FSTRaK
 
         public string Title { get; set; }
         public double[] Position { get; set; } = new double[0];
-        public string Location
-        {
-            get
-            {
-                if (Position.Length > 1)
-                {
-                    return $"{Position[0]},{Position[1]}";
-                }
-                return "0,0";
-            }
-            set
-            {
-
-            }
-        }
-        public double[] Height { get; set; }
+        public LocationCollection FlightPath { get; set; } = new LocationCollection();
         public string Details { get; set; }
         public double Heading { get; set; }
 
@@ -66,15 +53,14 @@ namespace FSTRaK
             OnPropertyChanged("Title");
             OnPropertyChanged("Details");
             OnPropertyChanged("Position");
-            OnPropertyChanged("Location");
 
             OnPropertyChanged("Heading");
             OnPropertyChanged("FlightData");
 
             if (_lastUpdated.AddSeconds(2) < DateTime.Now) {
+                FlightPath.Add(a.latitude, a.longitude);
                 _lastUpdated = DateTime.Now;
-                Path += $"{Position[0]},{Position[1]} ";
-                OnPropertyChanged("Path");
+                OnPropertyChanged("FlightPath");
             }
 
 

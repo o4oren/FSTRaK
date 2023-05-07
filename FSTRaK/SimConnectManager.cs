@@ -122,7 +122,7 @@ namespace FSTRaK
                     _simconnect.OnRecvEvent += new SimConnect.RecvEventEventHandler(simconnect_OnRecvEvent);
                     
                     // Start getting data
-                    _simconnect.RequestDataOnSimObject(DATA_REQUESTS.AIRCRAFT_FLIGHT_DATA_REQUEST, DEFINITIONS.AIRCRAFT_FLIGHT_DATA, SimConnect.SIMCONNECT_OBJECT_ID_USER, SIMCONNECT_PERIOD.SIM_FRAME, SIMCONNECT_DATA_REQUEST_FLAG.DEFAULT, 0u, 0u, 0u);
+                    _simconnect.RequestDataOnSimObject(DATA_REQUESTS.AIRCRAFT_FLIGHT_DATA_REQUEST, DEFINITIONS.AIRCRAFT_FLIGHT_DATA, SimConnect.SIMCONNECT_OBJECT_ID_USER, SIMCONNECT_PERIOD.VISUAL_FRAME, SIMCONNECT_DATA_REQUEST_FLAG.DEFAULT, 0u, 0u, 0u);
                     _simconnect.SubscribeToSystemEvent(EVENTS.SIM_START, "SimStart");
                     _simconnect.SubscribeToSystemEvent(EVENTS.SIM_STOP, "SimStop");
                     _simconnect.SubscribeToSystemEvent(EVENTS.CRASHED, "Crashed");

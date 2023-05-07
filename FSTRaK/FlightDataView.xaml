@@ -3,7 +3,6 @@
              xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
              xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006" 
              xmlns:d="http://schemas.microsoft.com/expression/blend/2008" 
-             xmlns:m="clr-namespace:Microsoft.Maps.MapControl.WPF;assembly=Microsoft.Maps.MapControl.WPF" 
              xmlns:map="clr-namespace:MapControl;assembly=MapControl.WPF"
              xmlns:fstrak="clr-namespace:FSTRaK" 
              d:DataContext="{d:DesignInstance Type=fstrak:FlightDataViewModel}"
@@ -24,30 +23,7 @@
         <Label Content="Aircraft:" HorizontalAlignment="Left" Margin="10,10,0,0" VerticalAlignment="Top"/>
         <Label x:Name="AircraftTitleLabel" Content="{Binding Title}" HorizontalAlignment="Left" Margin="66,10,0,0" VerticalAlignment="Top" Width="257" />
         <TextBox HorizontalAlignment="Left" Margin="20,64,0,0" TextWrapping="Wrap" Text="{Binding Details}" VerticalAlignment="Top" Width="350" Height="80" />
-        <m:Map x:Name="myMap" CredentialsProvider="tA9ckycf17b2AvkcCkGx~QFhxDoRj6fSQE2iVPdKAyA~AjHfAPGjEwrXfQmlmiqi5aCsXnRyBXPXUxm01K0y6wBWejxkHELcftncx824O6Kg" 
-               Grid.Column="0" Grid.Row="0" Padding="5" 
-               ZoomLevel="10.000" AnimationLevel="None"  Margin="12,173,10,10">
-            <!-- m:Pushpin Location="{Binding Position}" /-->
-            <Canvas Width="32" Height="32" 
-              m:MapLayer.Position="{Binding Position}" 
-              m:MapLayer.PositionOrigin="Center" Opacity="0.9">
-                <Path Fill="Red" Stroke="DarkRed" StrokeThickness="2">
-                    <Path.Data>
-                        <PathGeometry Figures="M555.768 422.125v-48.992l-212.29-156.604c.648-41.274.595-83.026-.708-125.594C340.395 40.641 320.915 0 299.913 0c-20.995 0-40.475 40.641-42.849 90.935-1.302 42.568-1.356 84.321-.708 125.594L44.059 373.134v48.992l215.76-88.871c2.709 66.227 6.021 131.851 8.404 197.849l-65.685 36.371v32.351l97.375-16.986 97.369 16.986v-32.351l-65.67-36.371c2.374-65.998 5.678-131.622 8.404-197.849l215.752 88.87z" />
-                    </Path.Data>
-                    <Path.RenderTransform>
-                        <ScaleTransform ScaleX="0.0625" ScaleY="0.0625"/>
-                    </Path.RenderTransform>
-                </Path>
-                <Canvas.RenderTransform>
-                    <RotateTransform CenterX="16" CenterY="16" Angle="{Binding Heading}" />
-                </Canvas.RenderTransform>
-            </Canvas>
-            <m:MapPolyline StrokeThickness="3" Stroke="Darkred"
-                          Locations="{Binding Path}" 
-                          Opacity="0.7"/>
-        </m:Map>
-        <map:Map x:Name="xMap" MapLayer="{StaticResource OpenStreetMap}" ZoomLevel="11" MapProjection="{StaticResource WebMercatorProjection}" Margin="12,173,10,10" Center="0,30">
+        <map:Map x:Name="xMap" MapLayer="{StaticResource OpenStreetMap}" ZoomLevel="11" MapProjection="{StaticResource WebMercatorProjection}" Margin="12,173,10,10" >
             <Canvas Width="32" Height="32" 
               map:MapPanel.Location="{Binding Location}" 
               Opacity="0.9">
@@ -56,10 +32,7 @@
                     <RotateTransform CenterX="16" CenterY="16" Angle="{Binding Heading}" />
                 </Canvas.RenderTransform>
             </Canvas>
-            <m:MapPolyline StrokeThickness="3" Stroke="Darkred"
-                          Locations="{Binding Path}" 
-                          Opacity="0.7"/>
-            <map:MapPolyline Locations="{Binding Locations}" Stroke="Red" StrokeThickness="3"/>
+            <map:MapPolyline Locations="{Binding FlightPath}" Stroke="Red" StrokeThickness="3"/>
 
         </map:Map>
     </Grid>
