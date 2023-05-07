@@ -1,4 +1,5 @@
-﻿using Microsoft.Maps.MapControl;
+﻿using MapControl;
+using Microsoft.Maps.MapControl;
 using Microsoft.Maps.MapControl.WPF;
 using Serilog;
 using System;
@@ -33,7 +34,7 @@ namespace FSTRaK
 
         private void ViewModel_PropertyChanged(object sender, System.ComponentModel.PropertyChangedEventArgs e)
         {
-            myMap.SetView(new Location(((FlightDataViewModel)this.DataContext).Position[0], ((FlightDataViewModel)this.DataContext).Position[1]), myMap.ZoomLevel);
+            //xMap.TranslateMap(new Point(((FlightDataViewModel)this.DataContext).Position[0], ((FlightDataViewModel)this.DataContext).Position[1]));
         }
     }
 }

@@ -5,6 +5,7 @@ using System.ComponentModel;
 using System.Device.Location;
 using System.Drawing.Text;
 using System.Linq;
+using System.Security.Permissions;
 using System.Text;
 using System.Threading.Tasks;
 
@@ -17,7 +18,23 @@ namespace FSTRaK
         public event PropertyChangedEventHandler PropertyChanged;
 
         public string Title { get; set; }
-        public double[] Position { get; set; }
+        public double[] Position { get; set; } = new double[0];
+        public string Location
+        {
+            get
+            {
+                if (Position.Length > 1)
+                {
+                    return $"{Position[0]},{Position[1]}";
+                }
+                return "0,0";
+            }
+            set
+            {
+
+            }
+        }
+        public double[] Height { get; set; }
         public string Details { get; set; }
         public double Heading { get; set; }
 
@@ -49,6 +66,8 @@ namespace FSTRaK
             OnPropertyChanged("Title");
             OnPropertyChanged("Details");
             OnPropertyChanged("Position");
+            OnPropertyChanged("Location");
+
             OnPropertyChanged("Heading");
             OnPropertyChanged("FlightData");
 
