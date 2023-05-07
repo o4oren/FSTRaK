@@ -34,14 +34,6 @@ namespace FSTRaK
         void OnLoad(object sender, RoutedEventArgs e)
         {
             smc.Initialize();
-
-            smc.PropertyChanged += print;
-        }
-
-        private void print(object sender, PropertyChangedEventArgs e)
-        {
-            SimConnectManager.AircraftFlightData a = smc.FlightData;  
-            Log.Information($"{a.title} is at {a.latitude:F2}:{a.longitude:F2} heading: {a.trueHeading} at alt: {a.altitude}");
         }
     }
 }

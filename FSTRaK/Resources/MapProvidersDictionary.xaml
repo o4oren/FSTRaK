@@ -9,13 +9,27 @@
         MaxZoomLevel="19" 
         UpdateWhileViewportChanging="true"/>
     <map:BingMapsTileLayer
+        x:Key="BingMapsRoad"
+        Mode="Road"
+        SourceName="Bing Maps Road"
+        Description="© [Microsoft](http://www.bing.com/maps/)"
+        UpdateWhileViewportChanging="true"/>
+    <map:BingMapsTileLayer
+        x:Key="BingMapsAerial"
+        Mode="Aerial"
+        SourceName="Bing Maps Aerial"
+        Description="© [Microsoft](http://www.bing.com/maps/)"
+        MapBackground="Black"
+        MapForeground="White"
+        UpdateWhileViewportChanging="true"/>
+    <map:BingMapsTileLayer
         x:Key="BingMapsHybrid"
         Mode="AerialWithLabels"
         SourceName="Bing Maps Hybrid"
         Description="© [Microsoft](http://www.bing.com/maps/)"
-        UpdateWhileViewportChanging="true"
         MapBackground="Black"
-        MapForeground="White"/>
+        MapForeground="White"
+        UpdateWhileViewportChanging="true"/>
     <map:MapTileLayer
         x:Key="OpenTopoMap"
         TileSource="https://tile.opentopomap.org/{z}/{x}/{y}.png"

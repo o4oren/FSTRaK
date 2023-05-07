@@ -14,8 +14,8 @@
     <UserControl.Resources>
         <ResourceDictionary>
             <ResourceDictionary.MergedDictionaries>
-                <ResourceDictionary Source="AircraftIconsDictionary.xaml"/>
-                <ResourceDictionary Source="MapProvidersDictionary.xaml"/>
+                <ResourceDictionary Source="Resources/AircraftIconsDictionary.xaml"/>
+                <ResourceDictionary Source="Resources/MapProvidersDictionary.xaml"/>
             </ResourceDictionary.MergedDictionaries>
         </ResourceDictionary>
     </UserControl.Resources>
@@ -33,7 +33,6 @@
                 </Canvas.RenderTransform>
             </Canvas>
             <map:MapPolyline Locations="{Binding FlightPath}" Stroke="Red" StrokeThickness="3"/>
-
         </map:Map>
     </Grid>
 </UserControl>

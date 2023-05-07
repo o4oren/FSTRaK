@@ -62,10 +62,6 @@ namespace FSTRaK
                 _lastUpdated = DateTime.Now;
                 OnPropertyChanged("FlightPath");
             }
-
-
-
-            Log.Information(Title);
         }
 
         private void OnPropertyChanged(string propertyName)

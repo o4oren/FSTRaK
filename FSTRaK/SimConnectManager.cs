@@ -21,36 +21,40 @@ namespace FSTRaK
         private SimConnect _simconnect = null;
         private GeoCoordinate myCoordinates = null;
         private HwndSource gHs;
+        private DateTime _lastUpdated = DateTime.Now;
+
 
         private AircraftFlightData flightData;
         public AircraftFlightData FlightData
         {
-            get {
+            get
+            {
                 return flightData;
             }
-            set {
+            set
+            {
                 flightData = value;
                 OnPropertyChanged();
-} 
+            }
         }
 
         public event PropertyChangedEventHandler PropertyChanged;
 
         private SimConnectManager() { }
-        private static readonly object _lock = new object ();  
+        private static readonly object _lock = new object();
         private static SimConnectManager instance = null;
         public static SimConnectManager Instance
         {
             get
             {
                 lock (_lock)
+                {
+                    if (instance == null)
                     {
-                        if (instance == null)
-                        {
-                            instance = new SimConnectManager();
-                        }
-                        return instance;
+                        instance = new SimConnectManager();
                     }
+                    return instance;
+                }
             }
         }
 
@@ -120,7 +124,7 @@ namespace FSTRaK
                     _simconnect.OnRecvSimobjectData += new SimConnect.RecvSimobjectDataEventHandler(simconnect_OnRecvSimobjectData);
                     _simconnect.OnRecvAirportList += new SimConnect.RecvAirportListEventHandler(simconnect_OnRecvAirportList);
                     _simconnect.OnRecvEvent += new SimConnect.RecvEventEventHandler(simconnect_OnRecvEvent);
-                    
+
                     // Start getting data
                     _simconnect.RequestDataOnSimObject(DATA_REQUESTS.AIRCRAFT_FLIGHT_DATA_REQUEST, DEFINITIONS.AIRCRAFT_FLIGHT_DATA, SimConnect.SIMCONNECT_OBJECT_ID_USER, SIMCONNECT_PERIOD.VISUAL_FRAME, SIMCONNECT_DATA_REQUEST_FLAG.DEFAULT, 0u, 0u, 0u);
                     _simconnect.SubscribeToSystemEvent(EVENTS.SIM_START, "SimStart");
@@ -178,23 +182,26 @@ namespace FSTRaK
 
         private void simconnect_OnRecvSimobjectData(SimConnect sender, SIMCONNECT_RECV_SIMOBJECT_DATA data)
         {
-            FlightData = (AircraftFlightData)data.dwData[0];
-
-            myCoordinates = new GeoCoordinate(FlightData.latitude, FlightData.longitude);
-            // Log.Information($"{a.title} is at {myCoordinates} heading: {a.trueHeading} at alt: {a.altitude}");
-
-            if (myCoordinates != null)
+            if (_lastUpdated.AddSeconds(0.1) < DateTime.Now)
             {
-                _simconnect.RequestFacilitiesList_EX1(SIMCONNECT_FACILITY_LIST_TYPE.AIRPORT, DATA_REQUESTS.NEARBY_AIRPORTS_REQUEST);
+                _lastUpdated = DateTime.Now;
+                FlightData = (AircraftFlightData)data.dwData[0];
+
+                myCoordinates = new GeoCoordinate(FlightData.latitude, FlightData.longitude);
+                // Log.Information($"{a.title} is at {myCoordinates} heading: {a.trueHeading} at alt: {a.altitude}");
+
+                if (myCoordinates != null && closest == null)
+                {
+                    _simconnect.RequestFacilitiesList_EX1(SIMCONNECT_FACILITY_LIST_TYPE.AIRPORT, DATA_REQUESTS.NEARBY_AIRPORTS_REQUEST);
+                }
             }
-            Log.Information($"Closest Airport: {closest} Distance: {dist} meters, there are {c} airports");
         }
 
         private int c = 0;
-        private String closest = "";
+        private String closest = null;
         private double dist = double.MaxValue;
 
-        
+
 
         private void simconnect_OnRecvAirportList(SimConnect sender, SIMCONNECT_RECV_AIRPORT_LIST data)
         {
@@ -209,6 +216,7 @@ namespace FSTRaK
                     {
                         closest = a.Icao;
                         dist = distance;
+                        Log.Information($"Closest found airport is {closest}");
                     }
                 }
             }
