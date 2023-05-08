@@ -87,11 +87,12 @@
       <Generator>MSBuild:Compile</Generator>
       <SubType>Designer</SubType>
     </ApplicationDefinition>
-    <Compile Include="FlightDataView.xaml.cs">
+    <Compile Include="Views\FlightDataView.xaml.cs">
       <DependentUpon>FlightDataView.xaml</DependentUpon>
     </Compile>
-    <Compile Include="FlightDataViewModel.cs" />
+    <Compile Include="ViewModels\FlightDataViewModel.cs" />
     <Compile Include="SimConnectManager.cs" />
+    <Compile Include="ViewModels\ViewModelBase.cs" />
     <Page Include="Resources\MapProvidersDictionary.xaml">
       <Generator>MSBuild:Compile</Generator>
       <SubType>Designer</SubType>
@@ -100,7 +101,7 @@
       <Generator>MSBuild:Compile</Generator>
       <SubType>Designer</SubType>
     </Page>
-    <Page Include="FlightDataView.xaml">
+    <Page Include="Views\FlightDataView.xaml">
       <SubType>Designer</SubType>
       <Generator>MSBuild:Compile</Generator>
     </Page>
@@ -168,6 +169,8 @@
       <Version>8.1.0</Version>
     </PackageReference>
   </ItemGroup>
-  <ItemGroup />
+  <ItemGroup>
+    <Folder Include="Models\" />
+  </ItemGroup>
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
 </Project>

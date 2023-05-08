@@ -1,23 +1,14 @@
-﻿using MapControl;
-using Serilog;
+﻿using FSTRaK.ViewModels;
+using MapControl;
 using System;
-using System.Collections.Generic;
-using System.Collections.ObjectModel;
 using System.ComponentModel;
-using System.Device.Location;
-using System.Drawing.Text;
-using System.Linq;
-using System.Security.Permissions;
-using System.Text;
-using System.Threading.Tasks;
 
-namespace FSTRaK
+
+namespace FSTRaK.ViewModels
 {
-    internal class FlightDataViewModel : INotifyPropertyChanged
+    internal class FlightDataViewModel : ViewModelBase
     {
         SimConnectManager smc = SimConnectManager.Instance;
-
-        public event PropertyChangedEventHandler PropertyChanged;
 
         public string Title { get; set; }
         public double[] Position { get; set; } = new double[0];
@@ -36,7 +27,8 @@ namespace FSTRaK
             }
         }
 
-        public FlightDataViewModel() { 
+        public FlightDataViewModel()
+        {
             smc.PropertyChanged += updateFlightDataView;
         }
 
@@ -48,7 +40,7 @@ namespace FSTRaK
             Details = $"Lat: {a.latitude:F4} Lon:{a.longitude:F4} \nHeading: {a.trueHeading:F0} Alt: {a.altitude:F0} ft\nSpeed: {a.airspeed:F0} Knots";
             Position = new double[] { a.latitude, a.longitude, a.trueHeading };
             Heading = a.trueHeading;
-            
+
 
             OnPropertyChanged("Title");
             OnPropertyChanged("Details");
@@ -57,18 +49,11 @@ namespace FSTRaK
             OnPropertyChanged("Heading");
             OnPropertyChanged("FlightData");
 
-            if (_lastUpdated.AddSeconds(2) < DateTime.Now) {
+            if (_lastUpdated.AddSeconds(2) < DateTime.Now)
+            {
                 FlightPath.Add(a.latitude, a.longitude);
                 _lastUpdated = DateTime.Now;
                 OnPropertyChanged("FlightPath");
-            }
-        }
-
-        private void OnPropertyChanged(string propertyName)
-        {
-            if (PropertyChanged != null)
-            {
-                PropertyChanged(this, new PropertyChangedEventArgs(propertyName));
             }
         }
     }

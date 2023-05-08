@@ -1,4 +1,5 @@
-﻿using MapControl;
+﻿using FSTRaK.ViewModels;
+using MapControl;
 using Serilog;
 using System;
 using System.Collections.Generic;
@@ -16,15 +17,15 @@ using System.Windows.Navigation;
 using System.Windows.Shapes;
 using Windows.UI.Xaml;
 
-namespace FSTRaK
+namespace FSTRaK.Views
 {
     /// <summary>
     /// Interaction logic for FlightData.xaml
     /// </summary>
-    public partial class FlightData : UserControl
+    public partial class FlightDataView : UserControl
     {
         internal string SessionKey { get; set; }
-        public FlightData()
+        public FlightDataView()
         {
             SessionKey = string.Empty;
             InitializeComponent();
