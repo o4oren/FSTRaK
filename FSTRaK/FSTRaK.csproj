@@ -87,6 +87,8 @@
       <Generator>MSBuild:Compile</Generator>
       <SubType>Designer</SubType>
     </ApplicationDefinition>
+    <Compile Include="Models\Aircraft.cs" />
+    <Compile Include="Models\Flight.cs" />
     <Compile Include="Views\FlightDataView.xaml.cs">
       <DependentUpon>FlightDataView.xaml</DependentUpon>
     </Compile>
@@ -169,8 +171,6 @@
       <Version>8.1.0</Version>
     </PackageReference>
   </ItemGroup>
-  <ItemGroup>
-    <Folder Include="Models\" />
-  </ItemGroup>
+  <ItemGroup />
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
 </Project>

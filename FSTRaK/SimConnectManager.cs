@@ -23,7 +23,6 @@ namespace FSTRaK
         private HwndSource gHs;
         private DateTime _lastUpdated = DateTime.Now;
 
-
         private AircraftFlightData flightData;
         public AircraftFlightData FlightData
         {
@@ -78,14 +77,25 @@ namespace FSTRaK
             CRASHED,
             SIM_START,
             SIM_STOP,
-            SIM
+            SIM,
+            FLIGHT_LOADED,
+            PAUSE
         }
 
         [StructLayout(LayoutKind.Sequential, CharSet = CharSet.Ansi, Pack = 1)]
         public struct AircraftFlightData
         {
-            [MarshalAs(UnmanagedType.ByValTStr, SizeConst = 0x100)]
+            [MarshalAs(UnmanagedType.ByValTStr, SizeConst = 256)]
             public string title;
+            [MarshalAs(UnmanagedType.ByValTStr, SizeConst = 256)]
+            public string airline;
+            [MarshalAs(UnmanagedType.ByValTStr, SizeConst = 32)]
+            public string model;
+
+            [MarshalAs(UnmanagedType.ByValTStr, SizeConst = 256)]
+            public string atcType;
+
+
             public double latitude;
             public double longitude;
             public double trueHeading;
@@ -114,12 +124,16 @@ namespace FSTRaK
 
                     // Register listeners and configure data definitions
                     _simconnect.AddToDataDefinition(DEFINITIONS.AIRCRAFT_FLIGHT_DATA, "Title", null, SIMCONNECT_DATATYPE.STRING256, 0.0f, SimConnect.SIMCONNECT_UNUSED);
+                    _simconnect.AddToDataDefinition(DEFINITIONS.AIRCRAFT_FLIGHT_DATA, "ATC Airline", null, SIMCONNECT_DATATYPE.STRING256, 0.0f, SimConnect.SIMCONNECT_UNUSED);
+                    _simconnect.AddToDataDefinition(DEFINITIONS.AIRCRAFT_FLIGHT_DATA, "ATC Model", null, SIMCONNECT_DATATYPE.STRING32, 0.0f, SimConnect.SIMCONNECT_UNUSED);
+                    _simconnect.AddToDataDefinition(DEFINITIONS.AIRCRAFT_FLIGHT_DATA, "ATC Type", null, SIMCONNECT_DATATYPE.STRING256, 0.0f, SimConnect.SIMCONNECT_UNUSED);
                     _simconnect.AddToDataDefinition(DEFINITIONS.AIRCRAFT_FLIGHT_DATA, "Plane Latitude", "degrees", SIMCONNECT_DATATYPE.FLOAT64, 0.0f, SimConnect.SIMCONNECT_UNUSED);
                     _simconnect.AddToDataDefinition(DEFINITIONS.AIRCRAFT_FLIGHT_DATA, "Plane Longitude", "degrees", SIMCONNECT_DATATYPE.FLOAT64, 0.0f, SimConnect.SIMCONNECT_UNUSED);
                     _simconnect.AddToDataDefinition(DEFINITIONS.AIRCRAFT_FLIGHT_DATA, "Plane Heading Degrees True", "degrees", SIMCONNECT_DATATYPE.FLOAT64, 0.0f, SimConnect.SIMCONNECT_UNUSED);
                     _simconnect.AddToDataDefinition(DEFINITIONS.AIRCRAFT_FLIGHT_DATA, "Plane Altitude", "feet", SIMCONNECT_DATATYPE.FLOAT64, 0.0f, SimConnect.SIMCONNECT_UNUSED);
                     _simconnect.AddToDataDefinition(DEFINITIONS.AIRCRAFT_FLIGHT_DATA, "Airspeed True", "knots", SIMCONNECT_DATATYPE.FLOAT64, 0.0f, SimConnect.SIMCONNECT_UNUSED);
 
+                    // registering stuff
                     _simconnect.RegisterDataDefineStruct<AircraftFlightData>(DEFINITIONS.AIRCRAFT_FLIGHT_DATA);
                     _simconnect.OnRecvSimobjectData += new SimConnect.RecvSimobjectDataEventHandler(simconnect_OnRecvSimobjectData);
                     _simconnect.OnRecvAirportList += new SimConnect.RecvAirportListEventHandler(simconnect_OnRecvAirportList);
@@ -131,7 +145,10 @@ namespace FSTRaK
                     _simconnect.SubscribeToSystemEvent(EVENTS.SIM_STOP, "SimStop");
                     _simconnect.SubscribeToSystemEvent(EVENTS.CRASHED, "Crashed");
                     _simconnect.SubscribeToSystemEvent(EVENTS.SIM, "Sim");
+                    _simconnect.SubscribeToSystemEvent(EVENTS.FLIGHT_LOADED, "FlightLoaded");
+                    _simconnect.SubscribeToSystemEvent(EVENTS.PAUSE, "Pause_EX1");
 
+                    
                 }
             }
             catch (COMException ex)
@@ -152,6 +169,7 @@ namespace FSTRaK
 
         private void simconnect_OnRecvEvent(SimConnect sender, SIMCONNECT_RECV_EVENT data)
         {
+            Log.Debug($"EventID {data.uEventID}");
             switch (data.uEventID)
             {
                 case (int)EVENTS.CRASHED:
@@ -165,6 +183,12 @@ namespace FSTRaK
                     break;
                 case (int)EVENTS.SIM:
                     Log.Debug($"=== Sim {data.dwData.ToString()}");
+                    break;
+                case (int)EVENTS.FLIGHT_LOADED:
+                    Log.Debug($"=== Loaded {data.dwData.ToString()}");
+                    break;
+                case (int)EVENTS.PAUSE:
+                    Log.Debug($"=== Pause type {data.dwData.ToString()}");
                     break;
             }
         }
