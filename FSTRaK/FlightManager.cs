@@ -1,16 +1,24 @@
-﻿using System;
+﻿using FSTRaK.Models;
+using FSTRaK.Views;
+using System;
 using System.Collections.Generic;
+using System.Collections.Specialized;
+using System.ComponentModel;
 using System.Linq;
+using System.Runtime.CompilerServices;
 using System.Text;
 using System.Threading.Tasks;
 
 namespace FSTRaK
 {
-    internal sealed class FlightManager
+    internal sealed class FlightManager : INotifyPropertyChanged
     {
         private static readonly object _lock = new object();
         private static FlightManager instance = null;
         private FlightManager() { }
+
+        public event PropertyChangedEventHandler PropertyChanged;
+
         private SimConnectService _simConnectService;
         public static FlightManager Instance
         {
@@ -27,15 +35,57 @@ namespace FSTRaK
             }
         }
 
+        internal void Initialize()
+        {
+            _simConnectService = SimConnectService.Instance;
+            _simConnectService.Initialize();
+            _simConnectService.PropertyChanged += SimconnectService_OnPropertyChange;
+        }
+
+
+
+        // Properties
+        private Aircraft _aircraft;
+        public Aircraft Aircraft
+        {
+            get { return _aircraft; }
+            set
+            {
+                if (value != _aircraft)
+                {
+                    _aircraft = value;
+                    OnPropertyChanged();
+                }
+            }
+        }
+
+        private void SimconnectService_OnPropertyChange(object sender, PropertyChangedEventArgs e)
+        {
+            //TODO make this once per flight
+            var data = _simConnectService.FlightData;
+            Aircraft aircraft = new Aircraft();
+            aircraft.Title = data.title;
+            aircraft.Manufacturer = data.atcType;
+            aircraft.Model = data.model;
+            aircraft.Airline = data.airline;
+            aircraft.Heading = data.trueHeading;
+            aircraft.Position = new double[] { data.latitude, data.longitude };
+            aircraft.Altitude = data.altitude;
+            aircraft.Airspeed = data.airspeed;
+            Aircraft = aircraft;
+        }
+
+
+
         public void Close()
         {
             _simConnectService?.Close();
         }
 
-        internal void Initialize()
+
+        private void OnPropertyChanged([CallerMemberName] string name = null)
         {
-            _simConnectService = SimConnectService.Instance;
-            _simConnectService.Initialize();
+            PropertyChanged?.Invoke(this, new PropertyChangedEventArgs(name));
         }
     }
 }

@@ -1,5 +1,4 @@
-﻿using FSTRaK.Models;
-using Microsoft.FlightSimulator.SimConnect;
+﻿using Microsoft.FlightSimulator.SimConnect;
 using Serilog;
 using System;
 using System.ComponentModel;
@@ -12,11 +11,12 @@ using System.Windows.Interop;
 
 namespace FSTRaK
 {
-    ///
-    /// This class is a facade over simconnect and simplifies communication with the simulator for the consumer's 
-    ///.interaction with the sim.
-    ///
-    ///
+    /// <summary>
+    ///    This class is a facade over simconnect and simplifies communication with the simulator for the consumer's 
+    ///    interaction with the sim.
+    ///    It hides the simconnect details, handles connection to the sim and exposes data.
+    /// </summary>
+
     internal sealed class SimConnectService : INotifyPropertyChanged
     {
         const int CONNECTION_INTERVAL = 10000;
@@ -30,20 +30,6 @@ namespace FSTRaK
         Timer _connectionTimer;
         private IntPtr lHwnd;
 
-
-        private Aircraft _aircraft;
-        public Aircraft Aircraft
-        {
-            get { return _aircraft; }
-            set
-            {
-                if (value != _aircraft)
-                {
-                    _aircraft = value;
-                    OnPropertyChanged();
-                }
-            }
-        }
 
         private AircraftFlightData flightData;
         public AircraftFlightData FlightData
@@ -171,7 +157,7 @@ namespace FSTRaK
                 _simconnect = new SimConnect("FSTrAk", lHwnd, WM_USER_SIMCONNECT, null, 0);
                 if (_simconnect != null)
                 {
-                    configureSimconnect();
+                    ConfigureSimconnect();
                 }
             }
             catch (COMException ex)
@@ -180,7 +166,7 @@ namespace FSTRaK
             }
         }
 
-        private void configureSimconnect()
+        private void ConfigureSimconnect()
         {
             // Management events
             _simconnect.OnRecvOpen += new SimConnect.RecvOpenEventHandler(simconnect_OnRecvOpen);
@@ -271,14 +257,8 @@ namespace FSTRaK
             {
                 _lastUpdated = DateTime.Now;
                 FlightData = (AircraftFlightData)data.dwData[0];
+                OnPropertyChanged(nameof(FlightData));
 
-                //TODO - remove this to once per flight
-                Aircraft aircraft = new Aircraft();
-                aircraft.Title = FlightData.title;
-                aircraft.Manufacturer = FlightData.atcType;
-                aircraft.Model = FlightData.model;
-                aircraft.Airline = FlightData.airline;
-                Aircraft = aircraft;
 
                 myCoordinates = new GeoCoordinate(FlightData.latitude, FlightData.longitude);
                 // Log.Information($"{a.title} is at {myCoordinates} heading: {a.trueHeading} at alt: {a.altitude}");
@@ -313,7 +293,7 @@ namespace FSTRaK
             }
         }
 
-        protected void OnPropertyChanged([CallerMemberName] string name = null)
+        private void OnPropertyChanged([CallerMemberName] string name = null)
         {
             PropertyChanged?.Invoke(this, new PropertyChangedEventArgs(name));
         }
@@ -339,10 +319,6 @@ namespace FSTRaK
                 _simconnect.Dispose();
                 _simconnect = null;
             }
-        }
-        internal void Exit()
-        {
-            Close();
         }
     }
 }

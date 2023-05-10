@@ -9,10 +9,8 @@ namespace FSTRaK.Views
     /// </summary>
     public partial class FlightDataView : UserControl
     {
-        internal string SessionKey { get; set; }
         public FlightDataView()
         {
-            SessionKey = string.Empty;
             InitializeComponent();
             ((FlightDataViewModel)this.DataContext).PropertyChanged += ViewModel_PropertyChanged;
         }
@@ -22,7 +20,6 @@ namespace FSTRaK.Views
             if(e.PropertyName == "Position")
             {
                 xMap.Center = new Location(((FlightDataViewModel)this.DataContext).Position[0], ((FlightDataViewModel)this.DataContext).Position[1]);
-
             }
         }
     }

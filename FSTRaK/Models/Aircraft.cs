@@ -11,6 +11,15 @@ namespace FSTRaK.Models
         public String Model { get; set; }
         public String TailNumber { get; set; }
 
+        public string Details { get; set; }
+
+        public double Heading { get; set; }
+        public double Altitude { get; set; }
+        public double Airspeed { get; set; }
+
+
+        public double[] Position { get; set; } = { 0, 0 };
+
 
 
         public override bool Equals(Object obj)

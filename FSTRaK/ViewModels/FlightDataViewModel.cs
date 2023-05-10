@@ -8,13 +8,12 @@ namespace FSTRaK.ViewModels
 {
     internal class FlightDataViewModel : BaseViewModel
     {
-        SimConnectService smc = SimConnectService.Instance;
-
+        FlightManager flightManager = FlightManager.Instance;
         public string Title {
             get
             {
-                if(smc.Aircraft != null)
-                    return smc.Aircraft.Title;
+                if(flightManager.Aircraft != null)
+                    return flightManager.Aircraft.Title;
                 return "";
             }
         }
@@ -23,8 +22,8 @@ namespace FSTRaK.ViewModels
         {
             get
             {
-                if (smc.Aircraft != null)
-                    return smc.Aircraft.Model;
+                if (flightManager.Aircraft != null)
+                    return flightManager.Aircraft.Model;
                 return "";
             }
         }
@@ -33,8 +32,8 @@ namespace FSTRaK.ViewModels
         {
             get
             {
-                if (smc.Aircraft != null)
-                    return smc.Aircraft.Manufacturer;
+                if (flightManager.Aircraft != null)
+                    return flightManager.Aircraft.Manufacturer;
                 return "";
             }
         }
@@ -43,30 +42,31 @@ namespace FSTRaK.ViewModels
         {
             get
             {
-                if (smc.Aircraft != null)
-                    return smc.Aircraft.Airline;
+                if (flightManager.Aircraft != null)
+                    return flightManager.Aircraft.Airline;
                 return "";
             }
         }
 
         public double[] Position { get; set; } = new double[0];
+        public string Location { 
+            get
+            {
+                if (Position.Length > 0)
+                    return $"({Position[0]},{Position[1]})";
+                return "0,0";
+
+            } 
+        }
         public LocationCollection FlightPath { get; set; } = new LocationCollection();
         public string Details { get; set; }
         public double Heading { get; set; }
 
         private DateTime _lastUpdated = DateTime.Now;
 
-        public SimConnectService.AircraftFlightData FlightData
-        {
-            get
-            {
-                return smc.FlightData;
-            }
-        }
-
         public FlightDataViewModel()
         {
-            smc.PropertyChanged += SimconnectManagerUpdate;
+            flightManager.PropertyChanged += SimconnectManagerUpdate;
         }
 
 
@@ -80,12 +80,10 @@ namespace FSTRaK.ViewModels
                     OnPropertyChanged("Manufacturer");
                     OnPropertyChanged("Airline");
 
-                    break;
-                case ("FlightData"):
-                    SimConnectService.AircraftFlightData a = smc.FlightData;
-                    Details = $"Lat: {a.latitude:F4} Lon:{a.longitude:F4} \nHeading: {a.trueHeading:F0} Alt: {a.altitude:F0} ft\nSpeed: {a.airspeed:F0} Knots";
-                    Position = new double[] { a.latitude, a.longitude, a.trueHeading };
-                    Heading = a.trueHeading;
+                    // TODO should be replaced
+                    Details = $"Lat: {flightManager.Aircraft.Position[0]:F4} Lon:{flightManager.Aircraft.Position[1]:F4} \nHeading: {flightManager.Aircraft.Heading:F0} Alt: {flightManager.Aircraft.Altitude:F0} ft\nSpeed: {flightManager.Aircraft.Airspeed:F0} Knots";
+                    Position = flightManager.Aircraft.Position;
+                    Heading = flightManager.Aircraft.Heading;
 
 
                     OnPropertyChanged("Details");
@@ -96,7 +94,7 @@ namespace FSTRaK.ViewModels
 
                     if (_lastUpdated.AddSeconds(2) < DateTime.Now)
                     {
-                        FlightPath.Add(a.latitude, a.longitude);
+                        FlightPath.Add(flightManager.Aircraft.Position[0], flightManager.Aircraft.Position[1]);
                         _lastUpdated = DateTime.Now;
                         OnPropertyChanged("FlightPath");
                     }
@@ -104,9 +102,6 @@ namespace FSTRaK.ViewModels
                 default:
                     break;
             }
-
-
-
         }
     }
 }
