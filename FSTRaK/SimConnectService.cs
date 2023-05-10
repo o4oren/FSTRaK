@@ -17,7 +17,7 @@ namespace FSTRaK
     ///.interaction with the sim.
     ///
     ///
-    internal class SimConnectService : INotifyPropertyChanged
+    internal sealed class SimConnectService : INotifyPropertyChanged
     {
         const int CONNECTION_INTERVAL = 10000;
         const int WM_USER_SIMCONNECT = 0x0402;
@@ -169,7 +169,6 @@ namespace FSTRaK
             {
                 Log.Debug("Trying to connect");
                 _simconnect = new SimConnect("FSTrAk", lHwnd, WM_USER_SIMCONNECT, null, 0);
-                // _simconnect = new SimConnect("FSTrAk", lHwnd, WM_USER_SIMCONNECT, null, 0);
                 if (_simconnect != null)
                 {
                     configureSimconnect();

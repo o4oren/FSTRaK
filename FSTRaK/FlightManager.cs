@@ -6,7 +6,7 @@ using System.Threading.Tasks;
 
 namespace FSTRaK
 {
-    internal class FlightManager
+    internal sealed class FlightManager
     {
         private static readonly object _lock = new object();
         private static FlightManager instance = null;
