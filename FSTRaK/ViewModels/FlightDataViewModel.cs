@@ -1,4 +1,4 @@
-﻿using FSTRaK.ViewModels;
+﻿using FSTRaK.Models;
 using MapControl;
 using System;
 using System.ComponentModel;
@@ -6,20 +6,57 @@ using System.ComponentModel;
 
 namespace FSTRaK.ViewModels
 {
-    internal class FlightDataViewModel : ViewModelBase
+    internal class FlightDataViewModel : BaseViewModel
     {
-        SimConnectManager smc = SimConnectManager.Instance;
+        SimConnectService smc = SimConnectService.Instance;
 
-        public string Title { get; set; }
+        public string Title {
+            get
+            {
+                if(smc.Aircraft != null)
+                    return smc.Aircraft.Title;
+                return "";
+            }
+        }
+
+        public string Model
+        {
+            get
+            {
+                if (smc.Aircraft != null)
+                    return smc.Aircraft.Model;
+                return "";
+            }
+        }
+
+        public string Manufacturer
+        {
+            get
+            {
+                if (smc.Aircraft != null)
+                    return smc.Aircraft.Manufacturer;
+                return "";
+            }
+        }
+
+        public string Airline
+        {
+            get
+            {
+                if (smc.Aircraft != null)
+                    return smc.Aircraft.Airline;
+                return "";
+            }
+        }
+
         public double[] Position { get; set; } = new double[0];
         public LocationCollection FlightPath { get; set; } = new LocationCollection();
         public string Details { get; set; }
         public double Heading { get; set; }
 
         private DateTime _lastUpdated = DateTime.Now;
-        public string Path { get; set; } = "";
 
-        public SimConnectManager.AircraftFlightData FlightData
+        public SimConnectService.AircraftFlightData FlightData
         {
             get
             {
@@ -29,32 +66,47 @@ namespace FSTRaK.ViewModels
 
         public FlightDataViewModel()
         {
-            smc.PropertyChanged += updateFlightDataView;
+            smc.PropertyChanged += SimconnectManagerUpdate;
         }
 
 
-        private void updateFlightDataView(object sender, PropertyChangedEventArgs e)
+        private void SimconnectManagerUpdate(object sender, PropertyChangedEventArgs e)
         {
-            SimConnectManager.AircraftFlightData a = smc.FlightData;
-            Title = smc.FlightData.title;
-            Details = $"Lat: {a.latitude:F4} Lon:{a.longitude:F4} \nHeading: {a.trueHeading:F0} Alt: {a.altitude:F0} ft\nSpeed: {a.airspeed:F0} Knots";
-            Position = new double[] { a.latitude, a.longitude, a.trueHeading };
-            Heading = a.trueHeading;
-
-
-            OnPropertyChanged("Title");
-            OnPropertyChanged("Details");
-            OnPropertyChanged("Position");
-
-            OnPropertyChanged("Heading");
-            OnPropertyChanged("FlightData");
-
-            if (_lastUpdated.AddSeconds(2) < DateTime.Now)
+            switch (e.PropertyName)
             {
-                FlightPath.Add(a.latitude, a.longitude);
-                _lastUpdated = DateTime.Now;
-                OnPropertyChanged("FlightPath");
+                case ("Aircraft"):
+                    OnPropertyChanged("Title");
+                    OnPropertyChanged("Model");
+                    OnPropertyChanged("Manufacturer");
+                    OnPropertyChanged("Airline");
+
+                    break;
+                case ("FlightData"):
+                    SimConnectService.AircraftFlightData a = smc.FlightData;
+                    Details = $"Lat: {a.latitude:F4} Lon:{a.longitude:F4} \nHeading: {a.trueHeading:F0} Alt: {a.altitude:F0} ft\nSpeed: {a.airspeed:F0} Knots";
+                    Position = new double[] { a.latitude, a.longitude, a.trueHeading };
+                    Heading = a.trueHeading;
+
+
+                    OnPropertyChanged("Details");
+                    OnPropertyChanged("Position");
+
+                    OnPropertyChanged("Heading");
+                    OnPropertyChanged("FlightData");
+
+                    if (_lastUpdated.AddSeconds(2) < DateTime.Now)
+                    {
+                        FlightPath.Add(a.latitude, a.longitude);
+                        _lastUpdated = DateTime.Now;
+                        OnPropertyChanged("FlightPath");
+                    }
+                    break;
+                default:
+                    break;
             }
+
+
+
         }
     }
 }

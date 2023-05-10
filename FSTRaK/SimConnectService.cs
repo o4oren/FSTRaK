@@ -1,34 +1,49 @@
-﻿using System;
+﻿using FSTRaK.Models;
+using Microsoft.FlightSimulator.SimConnect;
+using Serilog;
+using System;
 using System.ComponentModel;
 using System.Device.Location;
-using System.Diagnostics;
 using System.Linq;
 using System.Runtime.CompilerServices;
 using System.Runtime.InteropServices;
 using System.Timers;
 using System.Windows.Interop;
-using Microsoft.FlightSimulator.SimConnect;
-using Serilog;
 
 namespace FSTRaK
 {
-    /**
-     * This class represents the connection of FSTRaK with the simulator.
-     * 
-     */
-    internal class SimConnectManager : INotifyPropertyChanged
+    ///
+    /// This class is a facade over simconnect and simplifies communication with the simulator for the consumer's 
+    ///.interaction with the sim.
+    ///
+    ///
+    internal class SimConnectService : INotifyPropertyChanged
     {
         const int CONNECTION_INTERVAL = 10000;
         const int WM_USER_SIMCONNECT = 0x0402;
         private SimConnect _simconnect = null;
         private GeoCoordinate myCoordinates = null;
-        
-        
+
         private HwndSource gHs;
         private DateTime _lastUpdated = DateTime.Now;
-        private string _loadedFlight = "";
+        private string _loadedFlight = string.Empty;
         Timer _connectionTimer;
         private IntPtr lHwnd;
+
+
+        private Aircraft _aircraft;
+        public Aircraft Aircraft
+        {
+            get { return _aircraft; }
+            set
+            {
+                if (value != _aircraft)
+                {
+                    _aircraft = value;
+                    OnPropertyChanged();
+                }
+            }
+        }
 
         private AircraftFlightData flightData;
         public AircraftFlightData FlightData
@@ -46,13 +61,10 @@ namespace FSTRaK
 
         public event PropertyChangedEventHandler PropertyChanged;
 
-        private SimConnectManager() 
-        {
-
-        }
+        private SimConnectService(){ }
         private static readonly object _lock = new object();
-        private static SimConnectManager instance = null;
-        public static SimConnectManager Instance
+        private static SimConnectService instance = null;
+        public static SimConnectService Instance
         {
             get
             {
@@ -60,7 +72,7 @@ namespace FSTRaK
                 {
                     if (instance == null)
                     {
-                        instance = new SimConnectManager();
+                        instance = new SimConnectService();
                     }
                     return instance;
                 }
@@ -119,6 +131,9 @@ namespace FSTRaK
         }
 
 
+        /// <summary>
+        /// Initialize should only be called after a main window is loaded, as it relies on it's existance for recieving system events in a wpf application.
+        /// </summary>
         internal void Initialize()
         {
             //  Create a handle and hook to recieve windows messages
@@ -126,16 +141,16 @@ namespace FSTRaK
             lHwnd = lWih.Handle;
             gHs = HwndSource.FromHwnd(lHwnd);
             gHs.AddHook(new HwndSourceHook(WndProc));
-           
+
             setConnectionTimer();
             waitForSimConnection();
         }
 
         private void waitForSimConnection()
         {
-            
-            connectToSimulator();
-            if(_simconnect == null)
+
+            ConnectToSimulator();
+            if (_simconnect == null)
             {
                 _connectionTimer.Start();
             }
@@ -144,11 +159,11 @@ namespace FSTRaK
         private void setConnectionTimer()
         {
             _connectionTimer = new Timer(CONNECTION_INTERVAL);
-            _connectionTimer.Elapsed += (sender, e) => connectToSimulator();
+            _connectionTimer.Elapsed += (sender, e) => ConnectToSimulator();
             _connectionTimer.AutoReset = true;
         }
 
-        private void connectToSimulator()
+        private void ConnectToSimulator()
         {
             try
             {
@@ -162,7 +177,7 @@ namespace FSTRaK
             }
             catch (COMException ex)
             {
-                Log.Error("Failed to connect to MS Flight Simulator!");
+                Log.Error(ex.InnerException.ToString());
             }
         }
 
@@ -235,14 +250,14 @@ namespace FSTRaK
 
         private void simconnect_OnRecvQuit(SimConnect sender, SIMCONNECT_RECV data)
         {
-            Log.Debug("Openned!");
-            disposeSimconnect();
+            Log.Information("Sim connection closed!");
+            Close();
             _connectionTimer.Start();
         }
 
         void simconnect_OnRecvOpen(SimConnect sender, SIMCONNECT_RECV_OPEN data)
         {
-            Log.Debug("Openned!");
+            Log.Information("Sim connection Openned!");
             _connectionTimer.Stop();
         }
 
@@ -257,6 +272,14 @@ namespace FSTRaK
             {
                 _lastUpdated = DateTime.Now;
                 FlightData = (AircraftFlightData)data.dwData[0];
+
+                //TODO - remove this to once per flight
+                Aircraft aircraft = new Aircraft();
+                aircraft.Title = FlightData.title;
+                aircraft.Manufacturer = FlightData.atcType;
+                aircraft.Model = FlightData.model;
+                aircraft.Airline = FlightData.airline;
+                Aircraft = aircraft;
 
                 myCoordinates = new GeoCoordinate(FlightData.latitude, FlightData.longitude);
                 // Log.Information($"{a.title} is at {myCoordinates} heading: {a.trueHeading} at alt: {a.altitude}");
@@ -309,7 +332,7 @@ namespace FSTRaK
             return (IntPtr)0;
         }
 
-        public void disposeSimconnect()
+        public void Close()
         {
             Log.Debug("Dispose simconnect!");
             if (_simconnect != null)
@@ -320,7 +343,7 @@ namespace FSTRaK
         }
         internal void Exit()
         {
-            disposeSimconnect();
+            Close();
         }
     }
 }

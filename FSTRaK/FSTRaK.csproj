@@ -87,14 +87,16 @@
       <Generator>MSBuild:Compile</Generator>
       <SubType>Designer</SubType>
     </ApplicationDefinition>
+    <Compile Include="FlightManager.cs" />
     <Compile Include="Models\Aircraft.cs" />
+    <Compile Include="Models\BaseModel.cs" />
     <Compile Include="Models\Flight.cs" />
     <Compile Include="Views\FlightDataView.xaml.cs">
       <DependentUpon>FlightDataView.xaml</DependentUpon>
     </Compile>
     <Compile Include="ViewModels\FlightDataViewModel.cs" />
-    <Compile Include="SimConnectManager.cs" />
-    <Compile Include="ViewModels\ViewModelBase.cs" />
+    <Compile Include="SimConnectService.cs" />
+    <Compile Include="ViewModels\BaseViewModel.cs" />
     <Page Include="Resources\MapProvidersDictionary.xaml">
       <Generator>MSBuild:Compile</Generator>
       <SubType>Designer</SubType>

@@ -22,7 +22,11 @@
     </UserControl.Resources>
     <Grid>
         <Label Content="Aircraft:" HorizontalAlignment="Left" Margin="10,10,0,0" VerticalAlignment="Top"/>
-        <Label x:Name="AircraftTitleLabel" Content="{Binding Title}" HorizontalAlignment="Left" Margin="66,10,0,0" VerticalAlignment="Top" Width="257" />
+        <TextBlock TextWrapping="WrapWithOverflow" x:Name="AircraftTitleLabel" Text="{Binding Title}" HorizontalAlignment="Left" Margin="66,10,0,0" VerticalAlignment="Top" Width="304" />
+        <Label Content="Model:" HorizontalAlignment="Left" Margin="380,10,0,0" VerticalAlignment="Top" RenderTransformOrigin="1.114,0.693"/>
+        <Label x:Name="ModelLabel" Content="{Binding Model}" HorizontalAlignment="Left" Margin="428,10,0,0" VerticalAlignment="Top" Width="66"/>
+        <Label Content="Manufacturer:" HorizontalAlignment="Left" Margin="494,10,0,0" VerticalAlignment="Top"/>
+        <Label x:Name="ManuLabel" Content="{Binding Manufacturer}" HorizontalAlignment="Left" Margin="583,10,0,0" VerticalAlignment="Top" Width="66"/>
         <TextBox HorizontalAlignment="Left" Margin="20,64,0,0" TextWrapping="Wrap" Text="{Binding Details}" VerticalAlignment="Top" Width="350" Height="80" />
         <map:Map x:Name="xMap" MapLayer="{StaticResource OpenStreetMap}" ZoomLevel="11" MapProjection="{StaticResource WebMercatorProjection}" Margin="12,173,10,10" >
             <Canvas Width="32" Height="32" 
@@ -34,5 +38,7 @@
             </Canvas>
             <map:MapPolyline Locations="{Binding FlightPath}" Stroke="Red" StrokeThickness="3"/>
         </map:Map>
+        <Label x:Name="Airline" Content="Airline:" HorizontalAlignment="Left" Margin="380,36,0,0" VerticalAlignment="Top"/>
+        <Label x:Name="AirlineLabel" Content="{Binding Airline}" HorizontalAlignment="Left" Margin="428,36,0,0" VerticalAlignment="Top" Width="257" />
     </Grid>
 </UserControl>

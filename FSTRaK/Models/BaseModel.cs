@@ -1,15 +1,14 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.ComponentModel;
-using System.Diagnostics;
 using System.Linq;
 using System.Runtime.CompilerServices;
 using System.Text;
 using System.Threading.Tasks;
 
-namespace FSTRaK.ViewModels
+namespace FSTRaK.Models
 {
-    internal abstract class ViewModelBase : INotifyPropertyChanged
+    internal abstract class BaseModel : INotifyPropertyChanged
     {
         public event PropertyChangedEventHandler PropertyChanged;
 

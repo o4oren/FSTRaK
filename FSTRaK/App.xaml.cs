@@ -1,6 +1,5 @@
-﻿using MapControl;
-using Serilog;
-using System;
+﻿using Serilog;
+using Serilog.Events;
 using System.Windows;
 
 namespace FSTRaK
@@ -13,8 +12,15 @@ namespace FSTRaK
 
         void OnApplicationStart(object sender, StartupEventArgs args)
         {
+            LogEventLevel level = LogEventLevel.Information;
+#if DEBUG
+            level = LogEventLevel.Debug;
+#endif
+
             Log.Logger = new LoggerConfiguration()
+#if DEBUG
             .MinimumLevel.Debug()
+#endif
             .WriteTo.Trace()
             .WriteTo.File("log.txt")
             .CreateLogger();
@@ -22,10 +28,10 @@ namespace FSTRaK
 
         void OnApplicationExit(object sender, ExitEventArgs e)
         {
-            var smc = SimConnectManager.Instance;
-            if( smc != null )
+            var smc = SimConnectService.Instance;
+            if (smc != null)
             {
-                smc.disposeSimconnect();
+                smc.Close();
             }
         }
     }
