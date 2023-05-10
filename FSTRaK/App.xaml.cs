@@ -19,5 +19,14 @@ namespace FSTRaK
             .WriteTo.File("log.txt")
             .CreateLogger();
         }
+
+        void OnApplicationExit(object sender, ExitEventArgs e)
+        {
+            var smc = SimConnectManager.Instance;
+            if( smc != null )
+            {
+                smc.disposeSimconnect();
+            }
+        }
     }
 }
