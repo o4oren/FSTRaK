@@ -41,9 +41,9 @@ namespace FSTRaK
             _simConnectService = SimConnectService.Instance;
             _simConnectService.Initialize();
             _simConnectService.PropertyChanged += SimconnectService_OnPropertyChange;
+
+            _aircraft = new Aircraft();
         }
-
-
 
         // Properties
         private Aircraft _aircraft;
@@ -81,25 +81,22 @@ namespace FSTRaK
             {
                 case "FlightData":
                     var data = _simConnectService.FlightData;
-                    Aircraft aircraft = new Aircraft();
-                    aircraft.Title = data.title;
-                    aircraft.Manufacturer = data.atcType;
-                    aircraft.Model = data.model;
-                    aircraft.Airline = data.airline;
-                    aircraft.Heading = data.trueHeading;
-                    aircraft.Position = new double[] { data.latitude, data.longitude };
-                    aircraft.Altitude = data.altitude;
-                    aircraft.Airspeed = data.airspeed;
-                    Aircraft = aircraft;
+                    Aircraft.Title = data.title;
+                    Aircraft.Type = data.atcType;
+                    Aircraft.Model = data.model;
+                    Aircraft.Airline = data.airline;
+                    Aircraft.Heading = data.trueHeading;
+                    Aircraft.Position = new double[] { data.latitude, data.longitude };
+                    Aircraft.Altitude = data.altitude;
+                    Aircraft.Airspeed = data.airspeed;
+                    OnPropertyChanged(nameof(Aircraft));
                     break;
                 case "NearestAirport":
                     var airport = _simConnectService.NearestAirport;
-                    NearestAirport =airport;
+                    NearestAirport = airport;
                     break;
             }
-
         }
-
 
 
         public void Close()

@@ -114,7 +114,6 @@ namespace FSTRaK
             public string airline;
             [MarshalAs(UnmanagedType.ByValTStr, SizeConst = 32)]
             public string model;
-
             [MarshalAs(UnmanagedType.ByValTStr, SizeConst = 256)]
             public string atcType;
 

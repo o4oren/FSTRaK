@@ -39,11 +39,7 @@ namespace FSTRaK.ViewModels
             switch (e.PropertyName)
             {
                 case ("Aircraft"):
-                    // Details = $"Lat: {flightManager.Aircraft.Position[0]:F4} Lon:{flightManager.Aircraft.Position[1]:F4} \nHeading: {flightManager.Aircraft.Heading:F0} Alt: {flightManager.Aircraft.Altitude:F0} ft\nSpeed: {flightManager.Aircraft.Airspeed:F0} Knots";
-
                     OnPropertyChanged("Aircraft");
-
-
                     if (_lastUpdated.AddSeconds(2) < DateTime.Now)
                     {
                         FlightPath.Add(flightManager.Aircraft.Position[0], flightManager.Aircraft.Position[1]);
