@@ -1,5 +1,6 @@
 ﻿using FSTRaK.Models;
 using MapControl;
+using Serilog;
 using System;
 using System.ComponentModel;
 
@@ -62,6 +63,9 @@ namespace FSTRaK.ViewModels
         public string Details { get; set; }
         public double Heading { get; set; }
 
+        public string NearestAirport { get; set; }
+
+
         private DateTime _lastUpdated = DateTime.Now;
 
         public FlightDataViewModel()
@@ -98,6 +102,10 @@ namespace FSTRaK.ViewModels
                         _lastUpdated = DateTime.Now;
                         OnPropertyChanged("FlightPath");
                     }
+                    break;
+                case ("NearestAirport"):
+                    NearestAirport = flightManager.NearestAirport;
+                    OnPropertyChanged("NearestAirport");
                     break;
                 default:
                     break;

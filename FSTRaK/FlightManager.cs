@@ -1,5 +1,6 @@
 ﻿using FSTRaK.Models;
 using FSTRaK.Views;
+using Serilog;
 using System;
 using System.Collections.Generic;
 using System.Collections.Specialized;
@@ -59,20 +60,44 @@ namespace FSTRaK
             }
         }
 
+        string _nearestAirport = string.Empty;
+        public string NearestAirport
+        {
+            get { return _nearestAirport; }
+            set
+            {
+                if(value != _nearestAirport)
+                {
+                    _nearestAirport = value;
+                    OnPropertyChanged();
+                }
+            }
+        }
+
         private void SimconnectService_OnPropertyChange(object sender, PropertyChangedEventArgs e)
         {
-            //TODO make this once per flight
-            var data = _simConnectService.FlightData;
-            Aircraft aircraft = new Aircraft();
-            aircraft.Title = data.title;
-            aircraft.Manufacturer = data.atcType;
-            aircraft.Model = data.model;
-            aircraft.Airline = data.airline;
-            aircraft.Heading = data.trueHeading;
-            aircraft.Position = new double[] { data.latitude, data.longitude };
-            aircraft.Altitude = data.altitude;
-            aircraft.Airspeed = data.airspeed;
-            Aircraft = aircraft;
+            
+            switch(e.PropertyName)
+            {
+                case "FlightData":
+                    var data = _simConnectService.FlightData;
+                    Aircraft aircraft = new Aircraft();
+                    aircraft.Title = data.title;
+                    aircraft.Manufacturer = data.atcType;
+                    aircraft.Model = data.model;
+                    aircraft.Airline = data.airline;
+                    aircraft.Heading = data.trueHeading;
+                    aircraft.Position = new double[] { data.latitude, data.longitude };
+                    aircraft.Altitude = data.altitude;
+                    aircraft.Airspeed = data.airspeed;
+                    Aircraft = aircraft;
+                    break;
+                case "NearestAirport":
+                    var airport = _simConnectService.NearestAirport;
+                    NearestAirport =airport;
+                    break;
+            }
+
         }
 
 

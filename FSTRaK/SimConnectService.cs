@@ -19,8 +19,8 @@ namespace FSTRaK
 
     internal sealed class SimConnectService : INotifyPropertyChanged
     {
-        const int CONNECTION_INTERVAL = 10000;
-        const int WM_USER_SIMCONNECT = 0x0402;
+        private const int CONNECTION_INTERVAL = 10000;
+        private const int WM_USER_SIMCONNECT = 0x0402;
         private SimConnect _simconnect = null;
         private GeoCoordinate myCoordinates = null;
 
@@ -31,16 +31,31 @@ namespace FSTRaK
         private IntPtr lHwnd;
 
 
-        private AircraftFlightData flightData;
+        private AircraftFlightData _flightData;
         public AircraftFlightData FlightData
         {
             get
             {
-                return flightData;
+                return _flightData;
             }
             set
             {
-                flightData = value;
+                _flightData = value;
+                OnPropertyChanged();
+            }
+        }
+
+        private double _nearestAirportDistance = Double.MaxValue;
+        private string _nearestAirport = string.Empty;
+        public string NearestAirport
+        {
+            get
+            {
+                return _nearestAirport;
+            }
+            set
+            {
+                _nearestAirport = value;
                 OnPropertyChanged();
             }
         }
@@ -66,23 +81,17 @@ namespace FSTRaK
         }
 
 
-        private enum DATA_REQUESTS
+        private enum DataRequests
         {
-            FLIGHT_METADATA_REQUEST,
-            AIRCRAFT_FLIGHT_DATA_REQUEST,
-            NEARBY_AIRPORTS_REQUEST,
-            SYSTEM_STATE_SIM,
-            SYSTEM_STATE_AIRCRAFT_LOADED,
-            SYSTEM_STATE_FLIGHT_LOADED,
-            SYSTEM_STATE_DIALOG_MODE,
-            SYSTEM_STATE_FLIGHT_PLAN
+            FlightDataRequest,
+            NearbyAirportsRequest
         }
 
-        private enum DEFINITIONS
+        private enum DataDefinitions
         {
-            FLIGHT_METADATA,
-            AIRCRAFT_FLIGHT_DATA,
-            NEARBY_AIRPORTS
+            FlightMetaData,
+            FlightData,
+            NearbyAirports
         }
 
         private enum EVENTS
@@ -134,7 +143,6 @@ namespace FSTRaK
 
         private void waitForSimConnection()
         {
-
             ConnectToSimulator();
             if (_simconnect == null)
             {
@@ -173,19 +181,19 @@ namespace FSTRaK
             _simconnect.OnRecvQuit += new SimConnect.RecvQuitEventHandler(simconnect_OnRecvQuit);
             _simconnect.OnRecvException += new SimConnect.RecvExceptionEventHandler(simconnect_OnRecvException);
 
-            // Register listeners and configure data definitions
-            _simconnect.AddToDataDefinition(DEFINITIONS.AIRCRAFT_FLIGHT_DATA, "Title", null, SIMCONNECT_DATATYPE.STRING256, 0.0f, SimConnect.SIMCONNECT_UNUSED);
-            _simconnect.AddToDataDefinition(DEFINITIONS.AIRCRAFT_FLIGHT_DATA, "ATC Airline", null, SIMCONNECT_DATATYPE.STRING256, 0.0f, SimConnect.SIMCONNECT_UNUSED);
-            _simconnect.AddToDataDefinition(DEFINITIONS.AIRCRAFT_FLIGHT_DATA, "ATC Model", null, SIMCONNECT_DATATYPE.STRING32, 0.0f, SimConnect.SIMCONNECT_UNUSED);
-            _simconnect.AddToDataDefinition(DEFINITIONS.AIRCRAFT_FLIGHT_DATA, "ATC Type", null, SIMCONNECT_DATATYPE.STRING256, 0.0f, SimConnect.SIMCONNECT_UNUSED);
-            _simconnect.AddToDataDefinition(DEFINITIONS.AIRCRAFT_FLIGHT_DATA, "Plane Latitude", "degrees", SIMCONNECT_DATATYPE.FLOAT64, 0.0f, SimConnect.SIMCONNECT_UNUSED);
-            _simconnect.AddToDataDefinition(DEFINITIONS.AIRCRAFT_FLIGHT_DATA, "Plane Longitude", "degrees", SIMCONNECT_DATATYPE.FLOAT64, 0.0f, SimConnect.SIMCONNECT_UNUSED);
-            _simconnect.AddToDataDefinition(DEFINITIONS.AIRCRAFT_FLIGHT_DATA, "Plane Heading Degrees True", "degrees", SIMCONNECT_DATATYPE.FLOAT64, 0.0f, SimConnect.SIMCONNECT_UNUSED);
-            _simconnect.AddToDataDefinition(DEFINITIONS.AIRCRAFT_FLIGHT_DATA, "Plane Altitude", "feet", SIMCONNECT_DATATYPE.FLOAT64, 0.0f, SimConnect.SIMCONNECT_UNUSED);
-            _simconnect.AddToDataDefinition(DEFINITIONS.AIRCRAFT_FLIGHT_DATA, "Airspeed True", "knots", SIMCONNECT_DATATYPE.FLOAT64, 0.0f, SimConnect.SIMCONNECT_UNUSED);
+            // Register listeners and configure data DataDefinitions
+            _simconnect.AddToDataDefinition(DataDefinitions.FlightData, "Title", null, SIMCONNECT_DATATYPE.STRING256, 0.0f, SimConnect.SIMCONNECT_UNUSED);
+            _simconnect.AddToDataDefinition(DataDefinitions.FlightData, "ATC Airline", null, SIMCONNECT_DATATYPE.STRING256, 0.0f, SimConnect.SIMCONNECT_UNUSED);
+            _simconnect.AddToDataDefinition(DataDefinitions.FlightData, "ATC Model", null, SIMCONNECT_DATATYPE.STRING32, 0.0f, SimConnect.SIMCONNECT_UNUSED);
+            _simconnect.AddToDataDefinition(DataDefinitions.FlightData, "ATC Type", null, SIMCONNECT_DATATYPE.STRING256, 0.0f, SimConnect.SIMCONNECT_UNUSED);
+            _simconnect.AddToDataDefinition(DataDefinitions.FlightData, "Plane Latitude", "degrees", SIMCONNECT_DATATYPE.FLOAT64, 0.0f, SimConnect.SIMCONNECT_UNUSED);
+            _simconnect.AddToDataDefinition(DataDefinitions.FlightData, "Plane Longitude", "degrees", SIMCONNECT_DATATYPE.FLOAT64, 0.0f, SimConnect.SIMCONNECT_UNUSED);
+            _simconnect.AddToDataDefinition(DataDefinitions.FlightData, "Plane Heading Degrees True", "degrees", SIMCONNECT_DATATYPE.FLOAT64, 0.0f, SimConnect.SIMCONNECT_UNUSED);
+            _simconnect.AddToDataDefinition(DataDefinitions.FlightData, "Plane Altitude", "feet", SIMCONNECT_DATATYPE.FLOAT64, 0.0f, SimConnect.SIMCONNECT_UNUSED);
+            _simconnect.AddToDataDefinition(DataDefinitions.FlightData, "Airspeed True", "knots", SIMCONNECT_DATATYPE.FLOAT64, 0.0f, SimConnect.SIMCONNECT_UNUSED);
 
             // register methods and subscribe to events
-            _simconnect.RegisterDataDefineStruct<AircraftFlightData>(DEFINITIONS.AIRCRAFT_FLIGHT_DATA);
+            _simconnect.RegisterDataDefineStruct<AircraftFlightData>(DataDefinitions.FlightData);
             _simconnect.OnRecvSimobjectData += new SimConnect.RecvSimobjectDataEventHandler(simconnect_OnRecvSimobjectData);
             _simconnect.OnRecvAirportList += new SimConnect.RecvAirportListEventHandler(simconnect_OnRecvAirportList);
             _simconnect.OnRecvEvent += new SimConnect.RecvEventEventHandler(simconnect_OnRecvEvent);
@@ -198,7 +206,7 @@ namespace FSTRaK
             _simconnect.SubscribeToSystemEvent(EVENTS.PAUSE, "Pause_EX1");
 
             // Start getting data
-            _simconnect.RequestDataOnSimObject(DATA_REQUESTS.AIRCRAFT_FLIGHT_DATA_REQUEST, DEFINITIONS.AIRCRAFT_FLIGHT_DATA, SimConnect.SIMCONNECT_OBJECT_ID_USER, SIMCONNECT_PERIOD.VISUAL_FRAME, SIMCONNECT_DATA_REQUEST_FLAG.DEFAULT, 0u, 0u, 0u);
+            _simconnect.RequestDataOnSimObject(DataRequests.FlightDataRequest, DataDefinitions.FlightData, SimConnect.SIMCONNECT_OBJECT_ID_USER, SIMCONNECT_PERIOD.VISUAL_FRAME, SIMCONNECT_DATA_REQUEST_FLAG.DEFAULT, 0u, 0u, 0u);
 
         }
 
@@ -259,37 +267,45 @@ namespace FSTRaK
                 FlightData = (AircraftFlightData)data.dwData[0];
                 OnPropertyChanged(nameof(FlightData));
 
-
-                myCoordinates = new GeoCoordinate(FlightData.latitude, FlightData.longitude);
-                // Log.Information($"{a.title} is at {myCoordinates} heading: {a.trueHeading} at alt: {a.altitude}");
-
-                if (myCoordinates != null && closest == null)
-                {
-                    _simconnect.RequestFacilitiesList_EX1(SIMCONNECT_FACILITY_LIST_TYPE.AIRPORT, DATA_REQUESTS.NEARBY_AIRPORTS_REQUEST);
-                }
+                // Change to request this on flight start and end
+                if(NearestAirport == string.Empty) 
+                    RequestNearestAirport();
             }
         }
 
-        private int c = 0;
-        private String closest = null;
-        private double dist = double.MaxValue;
+        public void RequestNearestAirport()
+        {
+            _nearestAirportDistance = Double.MaxValue;
+            _simconnect.RequestFacilitiesList_EX1(SIMCONNECT_FACILITY_LIST_TYPE.AIRPORT, DataRequests.NearbyAirportsRequest);
+        }
 
         private void simconnect_OnRecvAirportList(SimConnect sender, SIMCONNECT_RECV_AIRPORT_LIST data)
         {
-            c += data.rgData.Length;
-            if (myCoordinates != null)
+            try
             {
-                foreach (SIMCONNECT_DATA_FACILITY_AIRPORT a in data.rgData.Cast<SIMCONNECT_DATA_FACILITY_AIRPORT>())
+                var myCoordinates = new GeoCoordinate(FlightData.latitude, FlightData.longitude);
+
+                if (myCoordinates != null)
                 {
-                    var airportCoord = new GeoCoordinate(a.Latitude, a.Longitude);
-                    var distance = airportCoord.GetDistanceTo(myCoordinates);
-                    if (distance < dist)
+                    foreach (SIMCONNECT_DATA_FACILITY_AIRPORT a in data.rgData.Cast<SIMCONNECT_DATA_FACILITY_AIRPORT>())
                     {
-                        closest = a.Icao;
-                        dist = distance;
-                        Log.Information($"Closest found airport is {closest}");
+                        var airportCoord = new GeoCoordinate(a.Latitude, a.Longitude);
+                        var distance = airportCoord.GetDistanceTo(myCoordinates);
+                        if (distance < _nearestAirportDistance)
+                        {
+                            if(a.Icao != NearestAirport)
+                            {
+                                NearestAirport = a.Icao;
+                                _nearestAirportDistance = distance;
+                                Log.Information($"Closest found airport is {NearestAirport}");
+                            }
+
+                        }
                     }
                 }
+            } catch (Exception ex)
+            {
+                Log.Error(ex.Message);
             }
         }
 
@@ -313,12 +329,12 @@ namespace FSTRaK
 
         public void Close()
         {
-            Log.Debug("Dispose simconnect!");
             if (_simconnect != null)
             {
                 _simconnect.Dispose();
                 _simconnect = null;
             }
+            Log.Debug("SimConnect Disposed!");
         }
     }
 }
