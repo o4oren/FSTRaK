@@ -17,9 +17,9 @@ namespace FSTRaK.Views
 
         private void ViewModel_PropertyChanged(object sender, System.ComponentModel.PropertyChangedEventArgs e)
         {
-            if(e.PropertyName == "Position")
+            if(e.PropertyName == "Aircraft")
             {
-                xMap.Center = new Location(((FlightDataViewModel)this.DataContext).Position[0], ((FlightDataViewModel)this.DataContext).Position[1]);
+                xMap.Center = new Location(((FlightDataViewModel)this.DataContext).Aircraft.Position[0], ((FlightDataViewModel)this.DataContext).Aircraft.Position[1]);
             }
         }
     }

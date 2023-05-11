@@ -11,7 +11,12 @@ namespace FSTRaK.Models
         public String Model { get; set; }
         public String TailNumber { get; set; }
 
-        public string Details { get; set; }
+        public string Details { get
+            {
+                return $"Lat: {Position[0]:F4} Lon:{Position[1]:F4} \nHeading: {Heading:F0} Alt: {Altitude:F0} ft\nSpeed: {Airspeed:F0} Knots";
+            }
+            set { }
+        }
 
         public double Heading { get; set; }
         public double Altitude { get; set; }
