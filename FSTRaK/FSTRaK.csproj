@@ -91,6 +91,7 @@
     <Compile Include="Models\Aircraft.cs" />
     <Compile Include="Models\BaseModel.cs" />
     <Compile Include="Models\Flight.cs" />
+    <Compile Include="Models\FlightEvent.cs" />
     <Compile Include="Views\FlightDataView.xaml.cs">
       <DependentUpon>FlightDataView.xaml</DependentUpon>
     </Compile>

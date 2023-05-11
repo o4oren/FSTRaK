@@ -1,5 +1,6 @@
 ﻿using FSTRaK.ViewModels;
 using MapControl;
+using System.Linq;
 using System.Windows.Controls;
 
 namespace FSTRaK.Views
@@ -17,9 +18,9 @@ namespace FSTRaK.Views
 
         private void ViewModel_PropertyChanged(object sender, System.ComponentModel.PropertyChangedEventArgs e)
         {
-            if(e.PropertyName == "Aircraft")
+            if(e.PropertyName == "ActiveFlight")
             {
-                xMap.Center = new Location(((FlightDataViewModel)this.DataContext).Aircraft.Position[0], ((FlightDataViewModel)this.DataContext).Aircraft.Position[1]);
+                xMap.Center = new Location(((FlightDataViewModel)this.DataContext).ActiveFlight.Latitude, ((FlightDataViewModel)this.DataContext).ActiveFlight.Longitude);
             }
         }
     }

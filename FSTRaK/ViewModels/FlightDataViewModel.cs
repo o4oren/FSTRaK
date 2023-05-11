@@ -3,7 +3,7 @@ using MapControl;
 using Serilog;
 using System;
 using System.ComponentModel;
-
+using System.Linq;
 
 namespace FSTRaK.ViewModels
 {
@@ -11,13 +11,23 @@ namespace FSTRaK.ViewModels
     {
         FlightManager flightManager = FlightManager.Instance;
 
-        public Aircraft Aircraft
+        public Flight ActiveFlight
         {
             get
             {
-                if (flightManager.Aircraft != null)
-                    return flightManager.Aircraft;
+                if (flightManager.ActiveFlight != null)
+                    return flightManager.ActiveFlight;
                 return null;
+            }
+        }
+
+        public string Details
+        {
+            get
+            {
+                if (flightManager.ActiveFlight != null)
+                    return $"Flying at speed: {ActiveFlight.FlightEvents.Last().Airspeed}  altitude:{ActiveFlight.FlightEvents.Last().Altitude}   heading: {ActiveFlight.Heading} ";
+                return string.Empty;
             }
         }
 
@@ -33,19 +43,23 @@ namespace FSTRaK.ViewModels
             flightManager.PropertyChanged += SimconnectManagerUpdate;
         }
 
-
         private void SimconnectManagerUpdate(object sender, PropertyChangedEventArgs e)
         {
+            
             switch (e.PropertyName)
             {
-                case ("Aircraft"):
-                    OnPropertyChanged("Aircraft");
+                case ("ActiveFlight"):
                     if (_lastUpdated.AddSeconds(2) < DateTime.Now)
                     {
-                        FlightPath.Add(flightManager.Aircraft.Position[0], flightManager.Aircraft.Position[1]);
+                        FlightPath.Add(flightManager.ActiveFlight.Latitude, flightManager.ActiveFlight.Longitude);
                         _lastUpdated = DateTime.Now;
                         OnPropertyChanged("FlightPath");
+                        OnPropertyChanged("Details");
                     }
+                    OnPropertyChanged("ActiveFlight");
+                    OnPropertyChanged("Heading");
+
+
                     break;
                 case ("NearestAirport"):
                     NearestAirport = flightManager.NearestAirport;

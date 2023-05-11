@@ -5,6 +5,7 @@ using System;
 using System.Collections.Generic;
 using System.Collections.Specialized;
 using System.ComponentModel;
+using System.Data;
 using System.Linq;
 using System.Runtime.CompilerServices;
 using System.Text;
@@ -42,19 +43,20 @@ namespace FSTRaK
             _simConnectService.Initialize();
             _simConnectService.PropertyChanged += SimconnectService_OnPropertyChange;
 
-            _aircraft = new Aircraft();
+            // TODO initialize for every new flight
+            _activeFlight = new Flight();
         }
 
         // Properties
-        private Aircraft _aircraft;
-        public Aircraft Aircraft
+        private Flight _activeFlight;
+        public Flight ActiveFlight
         {
-            get { return _aircraft; }
+            get { return _activeFlight; }
             set
             {
-                if (value != _aircraft)
+                if (value != _activeFlight)
                 {
-                    _aircraft = value;
+                    _activeFlight = value;
                     OnPropertyChanged();
                 }
             }
@@ -81,19 +83,43 @@ namespace FSTRaK
             {
                 case "FlightData":
                     var data = _simConnectService.FlightData;
-                    Aircraft.Title = data.title;
-                    Aircraft.Type = data.atcType;
-                    Aircraft.Model = data.model;
-                    Aircraft.Airline = data.airline;
-                    Aircraft.Heading = data.trueHeading;
-                    Aircraft.Position = new double[] { data.latitude, data.longitude };
-                    Aircraft.Altitude = data.altitude;
-                    Aircraft.Airspeed = data.airspeed;
-                    OnPropertyChanged(nameof(Aircraft));
+                    Aircraft aircraft;
+                    if (ActiveFlight.Aircraft == null)
+                    {
+                        aircraft = new Aircraft();
+                        aircraft.Title = data.title;
+                        aircraft.Type = data.atcType;
+                        aircraft.Model = data.model;
+                        aircraft.Airline = data.airline;
+                        ActiveFlight.Aircraft = aircraft;
+                    }
+                    // ActiveFlight.StartTime = new DateTime(Convert.ToInt64(data.absoluteTime * 1000));
+
+                    var day = new DateTime(data.zuluYear, data.zuluMonth, data.zuluDay, 0, 0, 0, 0, System.DateTimeKind.Utc);
+                    var time = day.AddSeconds(data.zuluTime);
+
+                    FlightEvent fe = new FlightEvent();
+                    fe.Altitude = data.altitude;
+                    fe.Latitude = data.latitude;
+                    fe.Longitude = data.longitude;
+                    fe.TrueHeading = data.trueHeading;
+                    fe.Airspeed = data.airspeed;
+                    fe.Time = time;
+                    ActiveFlight.FlightEvents.Add(fe);
+                    OnPropertyChanged("ActiveFlight");
+
+
+                    if(ActiveFlight.StartTime == null)
+                    {
+                        ActiveFlight.StartTime = time;
+                    }
                     break;
                 case "NearestAirport":
                     var airport = _simConnectService.NearestAirport;
-                    NearestAirport = airport;
+                    if(ActiveFlight != null && ActiveFlight.DepartureAirport == null)
+                    {
+                        ActiveFlight.DepartureAirport = airport;
+                    }
                     break;
             }
         }
