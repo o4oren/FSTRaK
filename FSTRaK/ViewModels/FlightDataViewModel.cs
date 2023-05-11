@@ -57,14 +57,9 @@ namespace FSTRaK.ViewModels
                         OnPropertyChanged("Details");
                     }
                     OnPropertyChanged("ActiveFlight");
-                    OnPropertyChanged("Heading");
-
 
                     break;
-                case ("NearestAirport"):
-                    NearestAirport = flightManager.NearestAirport;
-                    OnPropertyChanged("NearestAirport");
-                    break;
+
                 default:
                     break;
             }

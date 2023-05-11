@@ -1,15 +1,8 @@
 ﻿using FSTRaK.Models;
-using FSTRaK.Views;
-using Serilog;
 using System;
-using System.Collections.Generic;
-using System.Collections.Specialized;
 using System.ComponentModel;
-using System.Data;
-using System.Linq;
 using System.Runtime.CompilerServices;
-using System.Text;
-using System.Threading.Tasks;
+
 
 namespace FSTRaK
 {
@@ -93,10 +86,8 @@ namespace FSTRaK
                         aircraft.Airline = data.airline;
                         ActiveFlight.Aircraft = aircraft;
                     }
-                    // ActiveFlight.StartTime = new DateTime(Convert.ToInt64(data.absoluteTime * 1000));
 
-                    var day = new DateTime(data.zuluYear, data.zuluMonth, data.zuluDay, 0, 0, 0, 0, System.DateTimeKind.Utc);
-                    var time = day.AddSeconds(data.zuluTime);
+                    DateTime time = CalculateSimTime(data);
 
                     FlightEvent fe = new FlightEvent();
                     fe.Altitude = data.altitude;
@@ -109,7 +100,7 @@ namespace FSTRaK
                     OnPropertyChanged("ActiveFlight");
 
 
-                    if(ActiveFlight.StartTime == null)
+                    if (ActiveFlight.StartTime == null)
                     {
                         ActiveFlight.StartTime = time;
                     }
@@ -124,6 +115,12 @@ namespace FSTRaK
             }
         }
 
+        private static DateTime CalculateSimTime(SimConnectService.AircraftFlightData data)
+        {
+            var day = new DateTime(data.zuluYear, data.zuluMonth, data.zuluDay, 0, 0, 0, 0, System.DateTimeKind.Utc);
+            var time = day.AddSeconds(data.zuluTime);
+            return time;
+        }
 
         public void Close()
         {
