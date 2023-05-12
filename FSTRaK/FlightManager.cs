@@ -2,6 +2,7 @@
 using Serilog;
 using System;
 using System.ComponentModel;
+using System.Diagnostics;
 using System.Runtime.CompilerServices;
 
 
@@ -16,6 +17,8 @@ namespace FSTRaK
         public event PropertyChangedEventHandler PropertyChanged;
 
         private SimConnectService _simConnectService;
+        private Stopwatch _eventsStopwatch = new Stopwatch();
+        private int _eventsInterval = 5000;
         public static FlightManager Instance
         {
             get
@@ -88,24 +91,35 @@ namespace FSTRaK
                         ActiveFlight.Aircraft = aircraft;
                     }
 
+                    // Updating the map in realtime
+                    ActiveFlight.Heading = data.trueHeading;
+                    ActiveFlight.Latitude = data.latitude;
+                    ActiveFlight.Longitude = data.longitude;
+
                     DateTime time = CalculateSimTime(data);
-
-                    FlightEvent fe = new FlightEvent();
-                    fe.Altitude = data.altitude;
-                    fe.Latitude = data.latitude;
-                    fe.Longitude = data.longitude;
-                    fe.TrueHeading = data.trueHeading;
-                    fe.Airspeed = data.trueAirspeed;
-                    fe.Time = time;
-                    ActiveFlight.FlightEvents.Add(fe);
-                    OnPropertyChanged("ActiveFlight");
-
-
                     if (ActiveFlight.StartTime == null)
                     {
                         ActiveFlight.StartTime = time;
                     }
+
+                    // Saving flight events at intervals
+                    if (_eventsStopwatch.ElapsedMilliseconds > _eventsInterval)
+                    {
+                        FlightEvent fe = new FlightEvent();
+                        fe.Altitude = data.altitude;
+                        fe.GroundAltitude = data.groundAltitude;
+                        fe.Latitude = data.latitude;
+                        fe.Longitude = data.longitude;
+                        fe.TrueHeading = data.trueHeading;
+                        fe.Airspeed = data.trueAirspeed;
+                        fe.Time = time;
+                        ActiveFlight.FlightEvents.Add(fe);
+                        _eventsStopwatch.Restart();
+                    }
+                    
+                    OnPropertyChanged("ActiveFlight");
                     break;
+
                 case nameof(SimConnectService.NearestAirport):
                     var airport = _simConnectService.NearestAirport;
                     if(ActiveFlight != null && ActiveFlight.DepartureAirport == null)
@@ -113,12 +127,33 @@ namespace FSTRaK
                         ActiveFlight.DepartureAirport = airport;
                     }
                     break;
+
                 case nameof(_simConnectService.IsInFlight):
-                    Log.Information($"In flight: {_simConnectService.IsInFlight}");
+                    if(_simConnectService.IsInFlight)
+                    {
+                        StartFlight();
+                    } else
+                    {
+                        EndFlight();
+                    }
                     break;
             }
         }
 
+        private void StartFlight()
+        {
+            // TODO code to get initial data for flight, create the flight object and start writing events.
+            _eventsStopwatch.Start();
+            Log.Information($"Flight started at {DateTime.Now}");
+        }
+
+        private void EndFlight()
+        {
+            // TODO code to save flight in the db and recycle
+            _eventsStopwatch.Start();
+            _eventsStopwatch.Reset();
+            Log.Information($"Flight ended at {DateTime.Now}");
+        }
         private static DateTime CalculateSimTime(SimConnectService.AircraftFlightData data)
         {
             var day = new DateTime(data.zuluYear, data.zuluMonth, data.zuluDay, 0, 0, 0, 0, System.DateTimeKind.Utc);

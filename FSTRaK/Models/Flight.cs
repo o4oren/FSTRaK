@@ -12,40 +12,58 @@ namespace FSTRaK.Models
         public DateTime OffTime { get; set; }
         public DateTime OnTime { get; set; }
         public Aircraft Aircraft { get; set; }
-
         public String DepartureAirport { get; set; }
         public String ArrivalAirport { get; set; }
 
         public ObservableCollection<FlightEvent> FlightEvents = new ObservableCollection<FlightEvent>();
 
-        // Calculated properties
+        // Current location
+        private double _heading = 0;
         public double Heading
         {
             get
             {
-                if (FlightEvents.Count > 0)
-                    return FlightEvents.Last().TrueHeading;
-                return 0;
+                return _heading;
+            }
+            set 
+            { 
+                if(value != _heading)
+                {
+                    _heading = value;
+                }
             }
         }
 
+        private double _latitude = 0;
         public double Latitude
         {
             get
             {
-                if (FlightEvents.Count > 0)
-                    return FlightEvents.Last().Latitude;
-                return 0;
+                return _latitude;
+            }
+            set
+            {
+                if (value != _latitude)
+                {
+                    _latitude = value;
+                }
             }
         }
 
+
+        private double _longitude = 0;
         public double Longitude
         {
             get
             {
-                if (FlightEvents.Count > 0)
-                    return FlightEvents.Last().Longitude;
-                return 0;
+                return _longitude;
+            }
+            set
+            {
+                if (value != _longitude)
+                {
+                    _longitude = value;
+                }
             }
         }
 

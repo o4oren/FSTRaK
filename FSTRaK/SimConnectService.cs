@@ -158,13 +158,8 @@ namespace FSTRaK
 
         private enum EVENTS
         {
-            CRASHED,
-            SIM_START,
-            SIM_STOP,
-            SIM,
             FLIGHT_LOADED,
             PAUSE,
-            AIRCRAFT_LOADED,
         }
 
         [StructLayout(LayoutKind.Sequential, CharSet = CharSet.Ansi, Pack = 1)]
@@ -190,6 +185,7 @@ namespace FSTRaK
             public double altitude;
             public double trueAirspeed;
             public double groundVelocity;
+            public double groundAltitude;
             public double verticalSpeed;
         }
 
@@ -265,15 +261,12 @@ namespace FSTRaK
             _simconnect.AddToDataDefinition(DataDefinitions.FlightData, "Plane Altitude", "feet", SIMCONNECT_DATATYPE.FLOAT64, 0.0f, SimConnect.SIMCONNECT_UNUSED);
             _simconnect.AddToDataDefinition(DataDefinitions.FlightData, "Airspeed True", "knots", SIMCONNECT_DATATYPE.FLOAT64, 0.0f, SimConnect.SIMCONNECT_UNUSED);
             _simconnect.AddToDataDefinition(DataDefinitions.FlightData, "Ground Velocity", "knots", SIMCONNECT_DATATYPE.FLOAT64, 0.0f, SimConnect.SIMCONNECT_UNUSED);
+            _simconnect.AddToDataDefinition(DataDefinitions.FlightData, "Ground Altitude", "meters", SIMCONNECT_DATATYPE.FLOAT64, 0.0f, SimConnect.SIMCONNECT_UNUSED);
             _simconnect.AddToDataDefinition(DataDefinitions.FlightData, "Vertical Speed", "ft/min", SIMCONNECT_DATATYPE.FLOAT64, 0.0f, SimConnect.SIMCONNECT_UNUSED);
             
             _simconnect.RegisterDataDefineStruct<AircraftFlightData>(DataDefinitions.FlightData);
 
             // Subscribe to System events
-            _simconnect.SubscribeToSystemEvent(EVENTS.SIM_START, "SimStart");
-            _simconnect.SubscribeToSystemEvent(EVENTS.SIM_STOP, "SimStop");
-            _simconnect.SubscribeToSystemEvent(EVENTS.CRASHED, "Crashed");
-            _simconnect.SubscribeToSystemEvent(EVENTS.SIM, "Sim");
             _simconnect.SubscribeToSystemEvent(EVENTS.FLIGHT_LOADED, "FlightLoaded");
             _simconnect.SubscribeToSystemEvent(EVENTS.PAUSE, "Pause_EX1");
 
@@ -309,20 +302,9 @@ namespace FSTRaK
         {
             switch (data.uEventID)
             {
-                case (int)EVENTS.CRASHED:
-                    Log.Debug("=== crashed");
-                    break;
-                case (int)EVENTS.SIM_START:
-                    Log.Debug("=== Sim Start");
-                    break;
-                case (int)EVENTS.SIM_STOP:
-                    Log.Debug("=== Sim Stop");
-                    break;
-                case (int)EVENTS.SIM:
-                    Log.Debug($"=== Sim {data.dwData.ToString()}");
-                    break;
                 case (int)EVENTS.FLIGHT_LOADED:
                     Log.Debug($"=== Loaded {data.dwData.ToString()}");
+                    // Do nothing, this is cause in OnRecvFileName
                     break;
                 case (int)EVENTS.PAUSE:
                     PauseState = data.dwData;
@@ -364,16 +346,13 @@ namespace FSTRaK
 
         private void simconnect_OnRecvSimobjectData(SimConnect sender, SIMCONNECT_RECV_SIMOBJECT_DATA data)
         {
-            if (_lastUpdated.AddSeconds(0.1) < DateTime.Now)
-            {
-                _lastUpdated = DateTime.Now;
-                FlightData = (AircraftFlightData)data.dwData[0];
-                OnPropertyChanged(nameof(FlightData));
+            _lastUpdated = DateTime.Now;
+            FlightData = (AircraftFlightData)data.dwData[0];
+            OnPropertyChanged(nameof(FlightData));
 
-                // Change to request this on flight start and end
-                if (NearestAirport == string.Empty)
-                    RequestNearestAirport();
-            }
+            // Change to request this on flight start and end
+            if (NearestAirport == string.Empty)
+                RequestNearestAirport();
         }
 
         public void RequestNearestAirport()
