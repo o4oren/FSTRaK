@@ -1,4 +1,5 @@
 ﻿using FSTRaK.Models;
+using Serilog;
 using System;
 using System.ComponentModel;
 using System.Runtime.CompilerServices;
@@ -74,7 +75,7 @@ namespace FSTRaK
             
             switch(e.PropertyName)
             {
-                case "FlightData":
+                case nameof(SimConnectService.FlightData):
                     var data = _simConnectService.FlightData;
                     Aircraft aircraft;
                     if (ActiveFlight.Aircraft == null)
@@ -94,7 +95,7 @@ namespace FSTRaK
                     fe.Latitude = data.latitude;
                     fe.Longitude = data.longitude;
                     fe.TrueHeading = data.trueHeading;
-                    fe.Airspeed = data.airspeed;
+                    fe.Airspeed = data.trueAirspeed;
                     fe.Time = time;
                     ActiveFlight.FlightEvents.Add(fe);
                     OnPropertyChanged("ActiveFlight");
@@ -105,12 +106,15 @@ namespace FSTRaK
                         ActiveFlight.StartTime = time;
                     }
                     break;
-                case "NearestAirport":
+                case nameof(SimConnectService.NearestAirport):
                     var airport = _simConnectService.NearestAirport;
                     if(ActiveFlight != null && ActiveFlight.DepartureAirport == null)
                     {
                         ActiveFlight.DepartureAirport = airport;
                     }
+                    break;
+                case nameof(_simConnectService.IsInFlight):
+                    Log.Information($"In flight: {_simConnectService.IsInFlight}");
                     break;
             }
         }

@@ -21,14 +21,76 @@ namespace FSTRaK
     {
         private const int CONNECTION_INTERVAL = 10000;
         private const int WM_USER_SIMCONNECT = 0x0402;
+        private const string MAIN_MENU_FLT = "flights\\other\\MainMenu.FLT";
         private SimConnect _simconnect = null;
         private GeoCoordinate myCoordinates = null;
 
         private HwndSource gHs;
         private DateTime _lastUpdated = DateTime.Now;
-        private string _loadedFlight = string.Empty;
         Timer _connectionTimer;
         private IntPtr lHwnd;
+
+        private bool _isConnected = false;
+        public bool IsConnected
+        {
+            get => _isConnected; 
+            private set
+            {
+                if (value != _isInFlight)
+                {
+                    _isConnected = value;
+                    OnPropertyChanged(nameof(IsConnected));
+                }
+            }
+        }
+
+        private bool _isInFlight = false;
+        public bool IsInFlight
+        {
+            get => _isInFlight; 
+            private set
+            {
+                if(value != _isInFlight)
+                {
+                    _isInFlight = value;
+                    OnPropertyChanged(nameof(IsInFlight));
+                }
+            }
+        }
+        
+        // PAUSE_STATE_FLAG_OFF 0 
+        // PAUSE_STATE_FLAG_PAUSE 1 // "full" Pause (sim + traffic + etc...) 
+        // PAUSE_STATE_FLAG_PAUSE_WITH_SOUND 2 // FSX Legacy Pause (not used anymore) 
+        // PAUSE_STATE_FLAG_ACTIVE_PAUSE 4 // Pause was activated using the "Active Pause" Button 
+        // PAUSE_STATE_FLAG_SIM_PAUSE 8 // Pause the player sim but traffic, multi, etc... will still run
+        private uint _pauseState = 1;
+        public uint PauseState
+        {
+            get => _pauseState;
+            private set
+            {
+                if (value != _pauseState)
+                {
+                    _pauseState = value;
+                    OnPropertyChanged(nameof(PauseState));
+                }
+            }
+        }
+
+        private string _loadedFlight = string.Empty;
+        public string LoadedFlight
+        {
+            get => _loadedFlight;
+            private set
+            {
+                if (value != _loadedFlight)
+                {
+                    _loadedFlight = value;
+                    OnPropertyChanged(nameof(LoadedFlight));
+                }
+            }
+        }
+
 
 
         private AircraftFlightData _flightData;
@@ -38,7 +100,7 @@ namespace FSTRaK
             {
                 return _flightData;
             }
-            set
+            private set
             {
                 _flightData = value;
                 OnPropertyChanged();
@@ -53,7 +115,7 @@ namespace FSTRaK
             {
                 return _nearestAirport;
             }
-            set
+            private set
             {
                 _nearestAirport = value;
                 OnPropertyChanged();
@@ -80,11 +142,11 @@ namespace FSTRaK
             }
         }
 
-
-        private enum DataRequests
+        private enum Requests
         {
             FlightDataRequest,
-            NearbyAirportsRequest
+            NearbyAirportsRequest,
+            FlightLoaded
         }
 
         private enum DataDefinitions
@@ -121,11 +183,14 @@ namespace FSTRaK
             [MarshalAs(UnmanagedType.ByValTStr, SizeConst = 256)]
             public string atcType;
 
+            public bool simOnGround;
             public double latitude;
             public double longitude;
             public double trueHeading;
             public double altitude;
-            public double airspeed;
+            public double trueAirspeed;
+            public double groundVelocity;
+            public double verticalSpeed;
         }
 
 
@@ -184,7 +249,7 @@ namespace FSTRaK
             _simconnect.OnRecvQuit += new SimConnect.RecvQuitEventHandler(simconnect_OnRecvQuit);
             _simconnect.OnRecvException += new SimConnect.RecvExceptionEventHandler(simconnect_OnRecvException);
 
-            // Register listeners and configure data DataDefinitions
+            // Configure and register data DataDefinitions for requests
             _simconnect.AddToDataDefinition(DataDefinitions.FlightData, "Zulu Year", "number", SIMCONNECT_DATATYPE.INT32, 0.0f, SimConnect.SIMCONNECT_UNUSED);
             _simconnect.AddToDataDefinition(DataDefinitions.FlightData, "Zulu Month of Year", "number", SIMCONNECT_DATATYPE.INT32, 0.0f, SimConnect.SIMCONNECT_UNUSED);
             _simconnect.AddToDataDefinition(DataDefinitions.FlightData, "Zulu Day of Month", "number", SIMCONNECT_DATATYPE.INT32, 0.0f, SimConnect.SIMCONNECT_UNUSED);
@@ -193,18 +258,18 @@ namespace FSTRaK
             _simconnect.AddToDataDefinition(DataDefinitions.FlightData, "ATC Airline", null, SIMCONNECT_DATATYPE.STRING256, 0.0f, SimConnect.SIMCONNECT_UNUSED);
             _simconnect.AddToDataDefinition(DataDefinitions.FlightData, "ATC Model", null, SIMCONNECT_DATATYPE.STRING32, 0.0f, SimConnect.SIMCONNECT_UNUSED);
             _simconnect.AddToDataDefinition(DataDefinitions.FlightData, "ATC Type", null, SIMCONNECT_DATATYPE.STRING256, 0.0f, SimConnect.SIMCONNECT_UNUSED);
+            _simconnect.AddToDataDefinition(DataDefinitions.FlightData, "Sim On Ground", "Bool", SIMCONNECT_DATATYPE.INT32, 0.0f, SimConnect.SIMCONNECT_UNUSED);
             _simconnect.AddToDataDefinition(DataDefinitions.FlightData, "Plane Latitude", "degrees", SIMCONNECT_DATATYPE.FLOAT64, 0.0f, SimConnect.SIMCONNECT_UNUSED);
             _simconnect.AddToDataDefinition(DataDefinitions.FlightData, "Plane Longitude", "degrees", SIMCONNECT_DATATYPE.FLOAT64, 0.0f, SimConnect.SIMCONNECT_UNUSED);
             _simconnect.AddToDataDefinition(DataDefinitions.FlightData, "Plane Heading Degrees True", "degrees", SIMCONNECT_DATATYPE.FLOAT64, 0.0f, SimConnect.SIMCONNECT_UNUSED);
             _simconnect.AddToDataDefinition(DataDefinitions.FlightData, "Plane Altitude", "feet", SIMCONNECT_DATATYPE.FLOAT64, 0.0f, SimConnect.SIMCONNECT_UNUSED);
             _simconnect.AddToDataDefinition(DataDefinitions.FlightData, "Airspeed True", "knots", SIMCONNECT_DATATYPE.FLOAT64, 0.0f, SimConnect.SIMCONNECT_UNUSED);
-
-            // register methods and subscribe to events
+            _simconnect.AddToDataDefinition(DataDefinitions.FlightData, "Ground Velocity", "knots", SIMCONNECT_DATATYPE.FLOAT64, 0.0f, SimConnect.SIMCONNECT_UNUSED);
+            _simconnect.AddToDataDefinition(DataDefinitions.FlightData, "Vertical Speed", "ft/min", SIMCONNECT_DATATYPE.FLOAT64, 0.0f, SimConnect.SIMCONNECT_UNUSED);
+            
             _simconnect.RegisterDataDefineStruct<AircraftFlightData>(DataDefinitions.FlightData);
-            _simconnect.OnRecvSimobjectData += new SimConnect.RecvSimobjectDataEventHandler(simconnect_OnRecvSimobjectData);
-            _simconnect.OnRecvAirportList += new SimConnect.RecvAirportListEventHandler(simconnect_OnRecvAirportList);
-            _simconnect.OnRecvEvent += new SimConnect.RecvEventEventHandler(simconnect_OnRecvEvent);
-            _simconnect.OnRecvEventFilename += new SimConnect.RecvEventFilenameEventHandler(simconnect_OnRecvFilename);
+
+            // Subscribe to System events
             _simconnect.SubscribeToSystemEvent(EVENTS.SIM_START, "SimStart");
             _simconnect.SubscribeToSystemEvent(EVENTS.SIM_STOP, "SimStop");
             _simconnect.SubscribeToSystemEvent(EVENTS.CRASHED, "Crashed");
@@ -212,15 +277,32 @@ namespace FSTRaK
             _simconnect.SubscribeToSystemEvent(EVENTS.FLIGHT_LOADED, "FlightLoaded");
             _simconnect.SubscribeToSystemEvent(EVENTS.PAUSE, "Pause_EX1");
 
-            // Start getting data
-            _simconnect.RequestDataOnSimObject(DataRequests.FlightDataRequest, DataDefinitions.FlightData, SimConnect.SIMCONNECT_OBJECT_ID_USER, SIMCONNECT_PERIOD.VISUAL_FRAME, SIMCONNECT_DATA_REQUEST_FLAG.DEFAULT, 0u, 0u, 0u);
+            // Register listeners on simconnect events
+            _simconnect.OnRecvSimobjectData += new SimConnect.RecvSimobjectDataEventHandler(simconnect_OnRecvSimobjectData);
+            _simconnect.OnRecvAirportList += new SimConnect.RecvAirportListEventHandler(simconnect_OnRecvAirportList);
+            _simconnect.OnRecvEvent += new SimConnect.RecvEventEventHandler(simconnect_OnRecvEvent);
+            _simconnect.OnRecvEventFilename += new SimConnect.RecvEventFilenameEventHandler(simconnect_OnRecvFilename);
+            _simconnect.OnRecvSystemState  += new SimConnect.RecvSystemStateEventHandler(simconnect_OnRecvSystemState);
 
+            // Start getting data
+            _simconnect.RequestSystemState(Requests.FlightLoaded, "FlightLoaded");
+            _simconnect.RequestDataOnSimObject(Requests.FlightDataRequest, DataDefinitions.FlightData, SimConnect.SIMCONNECT_OBJECT_ID_USER, SIMCONNECT_PERIOD.VISUAL_FRAME, SIMCONNECT_DATA_REQUEST_FLAG.DEFAULT, 0u, 0u, 0u);
+
+        }
+
+        private void simconnect_OnRecvSystemState(SimConnect sender, SIMCONNECT_RECV_SYSTEM_STATE data)
+        {
+            if (data.dwRequestID == (uint)Requests.FlightLoaded)
+            {
+                LoadedFlight = data.szString;
+                Log.Debug(LoadedFlight);
+            }
         }
 
         private void simconnect_OnRecvFilename(SimConnect sender, SIMCONNECT_RECV_EVENT_FILENAME data)
         {
-            _loadedFlight = data.szFileName;
-            Log.Debug(_loadedFlight);
+            LoadedFlight = data.szFileName;
+            Log.Debug(LoadedFlight);
         }
 
         private void simconnect_OnRecvEvent(SimConnect sender, SIMCONNECT_RECV_EVENT data)
@@ -243,8 +325,20 @@ namespace FSTRaK
                     Log.Debug($"=== Loaded {data.dwData.ToString()}");
                     break;
                 case (int)EVENTS.PAUSE:
-                    Log.Debug($"=== Pause type {data.dwData.ToString()}");
+                    PauseState = data.dwData;
                     break;
+            }
+        }
+
+        private void UpdateInFlightState()
+        {
+            if (!LoadedFlight.Equals(MAIN_MENU_FLT) && PauseState != 1)
+            {
+                IsInFlight = true;
+            }
+            else
+            {
+                IsInFlight = false;
             }
         }
 
@@ -252,6 +346,7 @@ namespace FSTRaK
         {
             Log.Information("Sim connection closed!");
             Close();
+            IsConnected = false;
             _connectionTimer.Start();
         }
 
@@ -259,6 +354,7 @@ namespace FSTRaK
         {
             Log.Information("Sim connection Openned!");
             _connectionTimer.Stop();
+            IsConnected = true;
         }
 
         void simconnect_OnRecvException(SimConnect sender, SIMCONNECT_RECV_EXCEPTION data)
@@ -277,14 +373,13 @@ namespace FSTRaK
                 // Change to request this on flight start and end
                 if (NearestAirport == string.Empty)
                     RequestNearestAirport();
-
             }
         }
 
         public void RequestNearestAirport()
         {
             _nearestAirportDistance = Double.MaxValue;
-            _simconnect.RequestFacilitiesList_EX1(SIMCONNECT_FACILITY_LIST_TYPE.AIRPORT, DataRequests.NearbyAirportsRequest);
+            _simconnect.RequestFacilitiesList_EX1(SIMCONNECT_FACILITY_LIST_TYPE.AIRPORT, Requests.NearbyAirportsRequest);
         }
 
         private void simconnect_OnRecvAirportList(SimConnect sender, SIMCONNECT_RECV_AIRPORT_LIST data)
@@ -307,7 +402,6 @@ namespace FSTRaK
                                 _nearestAirportDistance = distance;
                                 Log.Information($"Closest found airport is {NearestAirport}");
                             }
-
                         }
                     }
                 }
@@ -319,6 +413,10 @@ namespace FSTRaK
 
         private void OnPropertyChanged([CallerMemberName] string name = null)
         {
+            if(name.Equals(nameof(LoadedFlight)) || name.Equals(nameof(PauseState)))
+            {
+                UpdateInFlightState();
+            }
             PropertyChanged?.Invoke(this, new PropertyChangedEventArgs(name));
         }
 
