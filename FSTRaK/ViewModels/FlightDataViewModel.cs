@@ -31,6 +31,14 @@ namespace FSTRaK.ViewModels
             }
         }
 
+        public bool IsInFlight
+        {
+            get
+            {
+                return flightManager.IsInFlight;
+            }
+        }
+
         public LocationCollection FlightPath { get; set; } = new LocationCollection();
 
         public string NearestAirport { get; set; }
@@ -48,15 +56,20 @@ namespace FSTRaK.ViewModels
             
             switch (e.PropertyName)
             {
-                case ("ActiveFlight"):
-                    if (_lastUpdated.AddSeconds(2) < DateTime.Now)
+                case nameof(flightManager.ActiveFlight):
+                    if (flightManager.IsInFlight && _lastUpdated.AddSeconds(2) < DateTime.Now)
                     {
                         FlightPath.Add(flightManager.ActiveFlight.Latitude, flightManager.ActiveFlight.Longitude);
                         _lastUpdated = DateTime.Now;
-                        OnPropertyChanged("FlightPath");
-                        OnPropertyChanged("Details");
                     }
-                    OnPropertyChanged("ActiveFlight");
+                    OnPropertyChanged(nameof(flightManager.ActiveFlight));
+
+                    break;
+
+                case nameof(flightManager.IsInFlight):
+                    FlightPath.Clear();
+                    OnPropertyChanged(nameof(FlightPath));
+                    OnPropertyChanged(nameof(IsInFlight));
 
                     break;
 

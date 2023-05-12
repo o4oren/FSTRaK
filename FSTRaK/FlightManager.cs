@@ -38,10 +38,7 @@ namespace FSTRaK
         {
             _simConnectService = SimConnectService.Instance;
             _simConnectService.Initialize();
-            _simConnectService.PropertyChanged += SimconnectService_OnPropertyChange;
-
-            // TODO initialize for every new flight
-            _activeFlight = new Flight();
+            _simConnectService.PropertyChanged += SimconnectService_OnPropertyChange;            
         }
 
         // Properties
@@ -73,9 +70,14 @@ namespace FSTRaK
             }
         }
 
-        private void SimconnectService_OnPropertyChange(object sender, PropertyChangedEventArgs e)
+
+        public Boolean IsInFlight
         {
-            
+            get { return _simConnectService == null ? false : _simConnectService.IsInFlight; }
+        }
+
+        private void SimconnectService_OnPropertyChange(object sender, PropertyChangedEventArgs e)
+        {            
             switch(e.PropertyName)
             {
                 case nameof(SimConnectService.FlightData):
@@ -136,6 +138,7 @@ namespace FSTRaK
                     {
                         EndFlight();
                     }
+                    OnPropertyChanged(nameof(SimConnectService.IsInFlight));
                     break;
             }
         }
@@ -143,6 +146,7 @@ namespace FSTRaK
         private void StartFlight()
         {
             // TODO code to get initial data for flight, create the flight object and start writing events.
+            _activeFlight = new Flight();
             _eventsStopwatch.Start();
             Log.Information($"Flight started at {DateTime.Now}");
         }

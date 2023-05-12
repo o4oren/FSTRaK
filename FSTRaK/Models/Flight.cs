@@ -66,6 +66,5 @@ namespace FSTRaK.Models
                 }
             }
         }
-
     }
 }
