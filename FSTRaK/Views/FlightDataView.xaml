@@ -45,7 +45,7 @@
                     <RotateTransform CenterX="16" CenterY="16" Angle="{Binding ActiveFlight.Heading, Mode=OneWay}" />
                 </map:MapItem.RenderTransform>
             </map:MapItem>
-            <map:MapPolyline Locations="{Binding FlightPath}" Stroke="Red" StrokeThickness="2" />
+            <map:MapPolyline Locations="{Binding FlightPath}" Stroke="Red" StrokeThickness="2" StrokeLineJoin="round"/>
             <map:MapPolyline Locations="{Binding LastSegmentLine}" Stroke="Red" StrokeThickness="2" />
         </map:Map>
         <Label x:Name="Airline" Content="Airline:" HorizontalAlignment="Left" Margin="380,36,0,0" VerticalAlignment="Top"/>

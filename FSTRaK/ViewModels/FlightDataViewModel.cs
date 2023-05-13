@@ -79,7 +79,11 @@ namespace FSTRaK.ViewModels
                     OnPropertyChanged(nameof(flightManager.ActiveFlight));
                     OnPropertyChanged(nameof(Details));
                     OnPropertyChanged(nameof(Location));
-                    OnPropertyChanged(nameof(LastSegmentLine));
+
+                    if(FlightPath.Count>0)
+                    {
+                        OnPropertyChanged(nameof(LastSegmentLine));
+                    }
                     // TODO replace these with dependency propeties
 
                     break;
