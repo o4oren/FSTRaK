@@ -21,12 +21,20 @@ namespace FSTRaK.ViewModels
             }
         }
 
+        public string Location { get {
+                if (flightManager.ActiveFlight != null)
+                    return $"{ActiveFlight.Latitude},{ActiveFlight.Longitude}";
+                return ("0, 0");
+            }
+            set { }
+                }
+
         public string Details
         {
             get
             {
-                if (flightManager.ActiveFlight != null)
-                    return $"Flying at speed: {ActiveFlight.FlightEvents.Last().Airspeed}  altitude:{ActiveFlight.FlightEvents.Last().Altitude}   heading: {ActiveFlight.Heading} ";
+                if (flightManager.ActiveFlight != null && ActiveFlight.FlightEvents.Count > 0)
+                    return $"Flying at speed: {ActiveFlight.FlightEvents.Last().Airspeed:F0}  altitude: {ActiveFlight.FlightEvents.Last().Altitude:N0}   heading: {ActiveFlight.Heading:F0} ";
                 return string.Empty;
             }
         }
@@ -40,6 +48,12 @@ namespace FSTRaK.ViewModels
         }
 
         public LocationCollection FlightPath { get; set; } = new LocationCollection();
+
+        public LocationCollection LastSegmentLine { get 
+            {
+                return new LocationCollection(FlightPath.Last(),  new MapControl.Location(ActiveFlight.Latitude, ActiveFlight.Longitude));
+            }
+            set { } }
 
         public string NearestAirport { get; set; }
 
@@ -63,6 +77,10 @@ namespace FSTRaK.ViewModels
                         _lastUpdated = DateTime.Now;
                     }
                     OnPropertyChanged(nameof(flightManager.ActiveFlight));
+                    OnPropertyChanged(nameof(Details));
+                    OnPropertyChanged(nameof(Location));
+                    OnPropertyChanged(nameof(LastSegmentLine));
+                    // TODO replace these with dependency propeties
 
                     break;
 
