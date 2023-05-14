@@ -30,7 +30,6 @@ namespace FSTRaK
         {
             Serilog.Log.Debug("mouse!");
             DragMove();
-
         }
 
     }

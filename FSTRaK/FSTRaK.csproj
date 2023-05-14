@@ -92,12 +92,14 @@
     <Compile Include="Models\BaseModel.cs" />
     <Compile Include="Models\Flight.cs" />
     <Compile Include="Models\FlightEvent.cs" />
+    <Compile Include="RelayCommand.cs" />
     <Compile Include="Views\FlightDataView.xaml.cs">
       <DependentUpon>FlightDataView.xaml</DependentUpon>
     </Compile>
     <Compile Include="ViewModels\FlightDataViewModel.cs" />
     <Compile Include="SimConnectService.cs" />
     <Compile Include="ViewModels\BaseViewModel.cs" />
+    <Compile Include="ViewModels\MainWindowViewModel.cs" />
     <Page Include="Resources\MapProvidersDictionary.xaml">
       <Generator>MSBuild:Compile</Generator>
       <SubType>Designer</SubType>

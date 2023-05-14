@@ -4,6 +4,7 @@
         xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
         xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
         xmlns:views="clr-namespace:FSTRaK.Views"
+        xmlns:viewmodels="clr-namespace:FSTRaK.ViewModels"
         mc:Ignorable="d"
         Loaded="OnLoad"
         WindowState="Normal"
@@ -12,8 +13,19 @@
         AllowsTransparency="true"
         ResizeMode="CanResizeWithGrip"
         Title="FSTRaK" Height="600" Width="920">
+    <Window.DataContext>
+        <viewmodels:MainWindowViewModel/>
+    </Window.DataContext>
     <Window.Resources>
-        <ResourceDictionary Source="Resources/ButtonsTheme.xaml" />
+        <ResourceDictionary>
+            <ResourceDictionary.MergedDictionaries>
+                <ResourceDictionary Source="Resources/ButtonsTheme.xaml" />
+            </ResourceDictionary.MergedDictionaries>
+            <DataTemplate DataType="{x:Type viewmodels:FlightDataViewModel}" >
+                <views:FlightDataView/>
+            </DataTemplate>
+        </ResourceDictionary>
+
     </Window.Resources>
     <Border Background="AliceBlue"
             CornerRadius="20">
@@ -36,16 +48,16 @@
 
             <Grid Name="MenuBar" Grid.Column="1" >
                 <StackPanel  Orientation="Horizontal" MouseLeftButtonDown="DragWindow" HorizontalAlignment="Stretch">
-                    <Label HorizontalAlignment="Center" VerticalAlignment="Center" FontSize="20" Foreground="Blue" FontWeight="Bold">
+                    <RadioButton HorizontalAlignment="Center" VerticalAlignment="Center" FontSize="20" Foreground="Blue" FontWeight="Bold" IsChecked="False" Command="{Binding MapViewCommand}">
                         Live View
-                    </Label>
-                    <Label HorizontalAlignment="Center"  VerticalAlignment="Center" FontSize="20" Foreground="Blue" FontWeight="Bold">
-                        Flight Log
-                    </Label>
+                    </RadioButton>
+                    <RadioButton HorizontalAlignment="Center" VerticalAlignment="Center" FontSize="20" Foreground="Blue" FontWeight="Bold" IsChecked="True">
+                        Logbook
+                    </RadioButton>
                 </StackPanel>
                 <Button Margin="0, 15, 15, 0" VerticalAlignment="Top" Height="15" Width="15" Style="{StaticResource CloseButtonTheme}"  HorizontalAlignment="Right" Click="ButtonClick_CloseApplication" ClickMode="Release">X</Button>
             </Grid>
-            <views:FlightDataView Grid.Row="1" Grid.Column="1" />
+            <ContentControl Name="cont" Grid.Row="1" Grid.Column="1" Content="{Binding ActiveView}"></ContentControl>
         </Grid>
     </Border>
 
