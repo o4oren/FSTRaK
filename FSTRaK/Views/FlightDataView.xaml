@@ -8,10 +8,8 @@
              xmlns:viewmodels="clr-namespace:FSTRaK.ViewModels"
              d:DataContext="{d:DesignInstance Type=viewmodels:FlightDataViewModel}"
              mc:Ignorable="d" 
+             Loaded="OnLoaded"
              d:DesignHeight="450" d:DesignWidth="800">
-    <UserControl.DataContext>
-        <viewmodels:FlightDataViewModel/>
-    </UserControl.DataContext>
     <UserControl.Resources>
         <ResourceDictionary>
             <ResourceDictionary.MergedDictionaries>
