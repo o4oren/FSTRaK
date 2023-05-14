@@ -105,7 +105,7 @@ namespace FSTRaK
                     }
 
                     // Saving flight events at intervals
-                    if (_eventsStopwatch.ElapsedMilliseconds > _eventsInterval)
+                    if (_eventsStopwatch.ElapsedMilliseconds > _eventsInterval || IsInFlight && ActiveFlight.FlightEvents.Count == 0)
                     {
                         FlightEvent fe = new FlightEvent();
                         fe.Altitude = data.altitude;

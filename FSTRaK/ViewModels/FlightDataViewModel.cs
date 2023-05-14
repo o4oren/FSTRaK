@@ -51,7 +51,11 @@ namespace FSTRaK.ViewModels
 
         public LocationCollection LastSegmentLine { get 
             {
-                return new LocationCollection(FlightPath.Last(),  new MapControl.Location(ActiveFlight.Latitude, ActiveFlight.Longitude));
+                if(FlightPath.Count > 0)
+                {
+                    return new LocationCollection(FlightPath.Last(), new MapControl.Location(ActiveFlight.Latitude, ActiveFlight.Longitude));
+                }
+                return new LocationCollection();
             }
             set { } }
 

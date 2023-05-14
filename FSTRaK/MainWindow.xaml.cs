@@ -1,4 +1,6 @@
 ﻿using System.Windows;
+using System.Windows.Controls.Primitives;
+using System.Windows.Input;
 
 namespace FSTRaK
 {
@@ -14,9 +16,15 @@ namespace FSTRaK
             InitializeComponent();
         }
 
-        void OnLoad(object sender, RoutedEventArgs e)
+        private void OnLoad(object sender, RoutedEventArgs e)
         {
             _flightManager.Initialize();
         }
+
+        private void ButtonClick_CloseApplication (object sender, RoutedEventArgs e) 
+        { 
+            Close();
+        }
+
     }
 }

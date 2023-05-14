@@ -14,6 +14,7 @@ namespace FSTRaK.Views
         {
             InitializeComponent();
             ((FlightDataViewModel)this.DataContext).PropertyChanged += ViewModel_PropertyChanged;
+            BingMapsTileLayer.ApiKey = "tA9ckycf17b2AvkcCkGx~QFhxDoRj6fSQE2iVPdKAyA~AjHfAPGjEwrXfQmlmiqi5aCsXnRyBXPXUxm01K0y6wBWejxkHELcftncx824O6Kg";
         }
 
         private void ViewModel_PropertyChanged(object sender, System.ComponentModel.PropertyChangedEventArgs e)

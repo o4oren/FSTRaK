@@ -6,9 +6,48 @@
         xmlns:views="clr-namespace:FSTRaK.Views"
         mc:Ignorable="d"
         Loaded="OnLoad"
-        Title="FSTRaK" Height="600" Width="800">
-    <Grid>
-        <views:FlightDataView />
+        WindowState="Normal"
+        WindowStyle="None"
+        Background="Transparent"
+        AllowsTransparency="true"
+        Title="FSTRaK" Height="600" Width="920">
+    <Window.Resources>
+        <ResourceDictionary Source="Resources/ThemeBlue.xaml" />
+    </Window.Resources>
+    <Border Background="AliceBlue"
+            CornerRadius="20">
+        <Grid>
+            <Grid.ColumnDefinitions>
+                <ColumnDefinition Width="200" />
+                <ColumnDefinition/>
+            </Grid.ColumnDefinitions>
 
-    </Grid>
+            <Grid.RowDefinitions>
+                <RowDefinition Height="75"/>
+                <RowDefinition/>
+            </Grid.RowDefinitions>
+            
+            <Label FontSize="20" Foreground="DarkBlue" FontWeight="Bold" HorizontalAlignment="Center" VerticalAlignment="Center">FSTrAk</Label>
+
+            <StackPanel Grid.Row="1">
+                <Label HorizontalAlignment="Center" FontSize="20" Foreground="Blue" FontWeight="Bold">
+                    Live View
+                </Label>
+                <Label HorizontalAlignment="Center" FontSize="20" Foreground="Blue" FontWeight="Bold">
+                    Flight Log
+                </Label>
+            </StackPanel>
+
+            <Grid Name="MenuBar" Grid.Column="1">
+                <StackPanel  Orientation="Horizontal">
+                    
+                </StackPanel>
+                <Button Style="{StaticResource CloseButtonTheme}"  HorizontalAlignment="Right" Click="ButtonClick_CloseApplication">X</Button>
+            </Grid>
+
+
+            <views:FlightDataView Grid.Row="1" Grid.Column="1" />
+        </Grid>
+    </Border>
+
 </Window>
