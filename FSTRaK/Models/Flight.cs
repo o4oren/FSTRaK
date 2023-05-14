@@ -25,9 +25,9 @@ namespace FSTRaK.Models
             {
                 return _heading;
             }
-            set 
-            { 
-                if(value != _heading)
+            set
+            {
+                if (value != _heading)
                 {
                     _heading = value;
                 }
@@ -52,6 +52,7 @@ namespace FSTRaK.Models
 
 
         private double _longitude = 0;
+
         public double Longitude
         {
             get
@@ -64,6 +65,15 @@ namespace FSTRaK.Models
                 {
                     _longitude = value;
                 }
+            }
+        }
+
+        private bool _isOnGround;
+        public bool IsOnGround
+        {
+            get => _isOnGround; internal set
+            {
+                _isOnGround = value;
             }
         }
     }

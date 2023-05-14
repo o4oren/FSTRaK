@@ -10,9 +10,10 @@
         WindowStyle="None"
         Background="Transparent"
         AllowsTransparency="true"
+        ResizeMode="CanResizeWithGrip"
         Title="FSTRaK" Height="600" Width="920">
     <Window.Resources>
-        <ResourceDictionary Source="Resources/ThemeBlue.xaml" />
+        <ResourceDictionary Source="Resources/ButtonsTheme.xaml" />
     </Window.Resources>
     <Border Background="AliceBlue"
             CornerRadius="20">
@@ -42,7 +43,7 @@
                 <StackPanel  Orientation="Horizontal">
                     
                 </StackPanel>
-                <Button Style="{StaticResource CloseButtonTheme}"  HorizontalAlignment="Right" Click="ButtonClick_CloseApplication">X</Button>
+                <Button Margin="0, 15, 15, 0" VerticalAlignment="Top" Height="15" Width="15" Style="{StaticResource CloseButtonTheme}"  HorizontalAlignment="Right" Click="ButtonClick_CloseApplication" ClickMode="Release">X</Button>
             </Grid>
 
 

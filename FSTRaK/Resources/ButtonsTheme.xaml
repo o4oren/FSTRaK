@@ -8,13 +8,11 @@
                 <Setter.Value>
                     <ControlTemplate>
                         <Ellipse
-                                Margin="0, 15, 15, 0" 
-                                VerticalAlignment="Top"
-                                Width="15"
-                                Height="15"
-                                Fill="Red"
-                                Canvas.Left="0"
-                                Canvas.Top="0" />
+                            Width="15"
+                            Height="15"
+                            Fill="Red"
+                            Canvas.Left="0"
+                            Canvas.Top="0" />
                     </ControlTemplate>
                 </Setter.Value>
             </Setter>
@@ -25,11 +23,23 @@
                     <Setter.Value>
                         <ControlTemplate>
                             <Ellipse
-                                Margin="0, 15, 15, 0" 
-                                VerticalAlignment="Top"
                                 Width="15"
                                 Height="15"
-                                Fill="Pink"
+                                Fill="PaleVioletRed"
+                                Canvas.Left="0"
+                                Canvas.Top="0" />
+                        </ControlTemplate>
+                    </Setter.Value>
+                </Setter>
+            </Trigger>
+            <Trigger Property="IsPressed" Value="True">
+                <Setter Property="Template">
+                    <Setter.Value>
+                        <ControlTemplate>
+                            <Ellipse
+                                Width="15"
+                                Height="15"
+                                Fill="DarkRed"
                                 Canvas.Left="0"
                                 Canvas.Top="0" />
                         </ControlTemplate>
@@ -38,5 +48,4 @@
             </Trigger>
         </Style.Triggers>
     </Style>
-    
 </ResourceDictionary>

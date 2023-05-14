@@ -56,20 +56,6 @@ namespace FSTRaK
             }
         }
 
-        string _nearestAirport = string.Empty;
-        public string NearestAirport
-        {
-            get { return _nearestAirport; }
-            set
-            {
-                if(value != _nearestAirport)
-                {
-                    _nearestAirport = value;
-                    OnPropertyChanged();
-                }
-            }
-        }
-
 
         public Boolean IsInFlight
         {
@@ -97,6 +83,7 @@ namespace FSTRaK
                     ActiveFlight.Heading = data.trueHeading;
                     ActiveFlight.Latitude = data.latitude;
                     ActiveFlight.Longitude = data.longitude;
+                    ActiveFlight.IsOnGround = data.simOnGround;
 
                     DateTime time = CalculateSimTime(data);
                     if (ActiveFlight.StartTime == null)
@@ -124,8 +111,9 @@ namespace FSTRaK
 
                 case nameof(SimConnectService.NearestAirport):
                     var airport = _simConnectService.NearestAirport;
-                    if(ActiveFlight != null && ActiveFlight.DepartureAirport == null)
+                    if(ActiveFlight != null && ActiveFlight.IsOnGround)
                     {
+                        Log.Debug($"xxx {airport}");
                         ActiveFlight.DepartureAirport = airport;
                     }
                     break;
@@ -169,7 +157,6 @@ namespace FSTRaK
         {
             _simConnectService?.Close();
         }
-
 
         private void OnPropertyChanged([CallerMemberName] string name = null)
         {
