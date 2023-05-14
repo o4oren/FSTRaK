@@ -31,7 +31,7 @@
         <Label x:Name="TypeLabel" Content="{Binding ActiveFlight.Aircraft.Type}" HorizontalAlignment="Left" Margin="583,10,0,0" VerticalAlignment="Top" Width="66"/>
         <TextBox HorizontalAlignment="Left" Margin="20,64,0,0" TextWrapping="Wrap" Text="{Binding Details, Mode=OneWay}" VerticalAlignment="Top" Width="350" Height="80" />
 
-        <map:Map x:Name="xMap" MapLayer="{StaticResource BingMapsRoad}" ZoomLevel="13" MapProjection="{StaticResource WebMercatorProjection}" Margin="10,173,12,10" >
+        <map:Map x:Name="xMap" MapLayer="{StaticResource OpenStreetMap}" ZoomLevel="13" MapProjection="{StaticResource WebMercatorProjection}" Margin="10,173,12,10" >
             <map:MapItem Location="{Binding Location}"
                         Width="32" Height="32"
                         Margin="-16"

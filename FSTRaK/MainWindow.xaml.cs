@@ -26,5 +26,12 @@ namespace FSTRaK
             Close();
         }
 
+        private void DragWindow(object sender, MouseButtonEventArgs e)
+        {
+            Serilog.Log.Debug("mouse!");
+            DragMove();
+
+        }
+
     }
 }
