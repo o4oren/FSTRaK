@@ -11,6 +11,8 @@ namespace FSTRaK.ViewModels
     internal class MainWindowViewModel : BaseViewModel
     {
         public RelayCommand MapViewCommand { get; set; }
+        public RelayCommand LogBookCommand { get; set; }
+
 
         private FlightDataViewModel _flightDataViewModel;
 
@@ -30,10 +32,16 @@ namespace FSTRaK.ViewModels
         public MainWindowViewModel()
         {
             _flightDataViewModel = new FlightDataViewModel();
+            ActiveView = _flightDataViewModel;
 
             MapViewCommand = new RelayCommand(o =>
             {
                 ActiveView = _flightDataViewModel;
+            });
+
+            LogBookCommand = new RelayCommand(o =>
+            {
+                ActiveView = "Hahahaha!";
             });
         }
     }

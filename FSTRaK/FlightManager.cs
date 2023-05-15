@@ -56,6 +56,109 @@ namespace FSTRaK
             }
         }
 
+        // Realtime flight data
+
+        private double _heading = 0;
+        public double Heading
+        {
+            get
+            {
+                return _heading;
+            }
+            set
+            {
+                if (value != _heading)
+                {
+                    _heading = value;
+                    OnPropertyChanged();
+                }
+            }
+        }
+
+        private double _latitude = 0;
+        public double Latitude
+        {
+            get
+            {
+                return _latitude;
+            }
+            set
+            {
+                if (value != _latitude)
+                {
+                    _latitude = value;
+                    OnPropertyChanged();
+                }
+            }
+        }
+
+
+        private double _longitude = 0;
+
+        public double Longitude
+        {
+            get
+            {
+                return _longitude;
+            }
+            set
+            {
+                if (value != _longitude)
+                {
+                    _longitude = value;
+                    OnPropertyChanged();
+                }
+            }
+        }
+
+
+        private double _speed = 0;
+
+        public double Speed
+        {
+            get
+            {
+                return _speed;
+            }
+            set
+            {
+                if (value != _speed)
+                {
+                    _speed = value;
+                    OnPropertyChanged();
+                }
+            }
+        }
+
+
+        private double _altitude = 0;
+
+        public double Altitude
+        {
+            get
+            {
+                return _altitude;
+            }
+            set
+            {
+                if (value != _altitude)
+                {
+                    _altitude = value;
+                    OnPropertyChanged();
+                }
+            }
+        }
+
+        private bool _isOnGround;
+        public bool IsOnGround
+        {
+            get => _isOnGround; internal set
+            {
+                _isOnGround = value;
+                OnPropertyChanged();
+            }
+        }
+
 
         public Boolean IsInFlight
         {
@@ -80,10 +183,12 @@ namespace FSTRaK
                     }
 
                     // Updating the map in realtime
-                    ActiveFlight.Heading = data.trueHeading;
-                    ActiveFlight.Latitude = data.latitude;
-                    ActiveFlight.Longitude = data.longitude;
-                    ActiveFlight.IsOnGround = data.simOnGround;
+                    Heading = data.trueHeading;
+                    Latitude = data.latitude;
+                    Longitude = data.longitude;
+                    IsOnGround = data.simOnGround;
+                    Speed = data.trueAirspeed;
+                    Altitude = data.altitude;
 
                     DateTime time = CalculateSimTime(data);
                     if (ActiveFlight.StartTime == null)
@@ -111,7 +216,7 @@ namespace FSTRaK
 
                 case nameof(SimConnectService.NearestAirport):
                     var airport = _simConnectService.NearestAirport;
-                    if(ActiveFlight != null && ActiveFlight.IsOnGround)
+                    if(ActiveFlight != null && IsOnGround)
                     {
                         Log.Debug($"xxx {airport}");
                         ActiveFlight.DepartureAirport = airport;

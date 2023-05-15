@@ -4,6 +4,8 @@ using Serilog;
 using System;
 using System.ComponentModel;
 using System.Linq;
+using System.Windows.Media.Animation;
+using Windows.UI.Xaml.Automation.Peers;
 
 namespace FSTRaK.ViewModels
 {
@@ -21,22 +23,108 @@ namespace FSTRaK.ViewModels
             }
         }
 
-        public string Location { get {
-                if (flightManager.ActiveFlight != null)
-                    return $"{ActiveFlight.Latitude},{ActiveFlight.Longitude}";
-                return ("0, 0");
+        private string _title;
+        public string Title
+        {
+            get { return _title; }
+            set 
+            { 
+                _title = value;
+                OnPropertyChanged();
             }
-            set { }
-                }
+        }
 
-        public string Details
+        private string _model;
+        public string Model
+        {
+            get { return _model; }
+            set
+            {
+                _model = value;
+                OnPropertyChanged();
+            }
+        }
+
+        private string _airline;
+        public string Airline
+        {
+            get { return _airline; }
+            set
+            {
+                _airline = value;
+                OnPropertyChanged();
+            }
+        }
+
+        private string _type;
+        public string Type
+        {
+            get { return _type; }
+            set
+            {
+                _type = value;
+                OnPropertyChanged();
+            }
+        }
+
+        public Location Location
         {
             get
             {
-                if (flightManager.ActiveFlight != null && ActiveFlight.FlightEvents.Count > 0)
-                    return $"Flying at speed: {ActiveFlight.FlightEvents.Last().Airspeed:F0}  altitude: {ActiveFlight.FlightEvents.Last().Altitude:N0}   heading: {ActiveFlight.Heading:F0} ";
-                return string.Empty;
+                if (flightManager != null)
+                    return new Location(flightManager.Latitude, flightManager.Longitude);
+                return new Location(0,0);
             }
+            private set
+            { }
+        }
+
+        public string CurrentPosition
+        {
+            get
+            {
+                if (flightManager != null)
+                    return $"Location: {flightManager.Latitude:F4},{flightManager.Longitude:F4}";
+                return ("0, 0");
+            }
+            private set
+            { }
+        }
+
+        public string Speed
+        {
+            get
+            {
+                if (flightManager != null)
+                    return $"Airspeed: {flightManager.Speed:F0}";
+                return ("0, 0");
+            }
+            private set
+            { }
+        }
+
+        public string Altitude
+        {
+            get
+            {
+                if (flightManager != null)
+                    return $"Altitude: {flightManager.Altitude:F0}";
+                return ("0, 0");
+            }
+            private set
+            { }
+        }
+
+        public double Heading
+        {
+            get
+            {
+                if (flightManager != null)
+                    return flightManager.Heading;
+                return 0;
+            }
+            private set
+            { }
         }
 
         public bool IsInFlight
@@ -53,7 +141,7 @@ namespace FSTRaK.ViewModels
             {
                 if(FlightPath.Count > 0)
                 {
-                    return new LocationCollection(FlightPath.Last(), new MapControl.Location(ActiveFlight.Latitude, ActiveFlight.Longitude));
+                    return new LocationCollection(FlightPath.Last(), Location);
                 }
                 return new LocationCollection();
             }
@@ -77,19 +165,36 @@ namespace FSTRaK.ViewModels
                 case nameof(flightManager.ActiveFlight):
                     if (flightManager.IsInFlight && _lastUpdated.AddSeconds(2) < DateTime.Now)
                     {
-                        FlightPath.Add(flightManager.ActiveFlight.Latitude, flightManager.ActiveFlight.Longitude);
+                        FlightPath.Add(flightManager.Latitude, flightManager.Longitude);
                         _lastUpdated = DateTime.Now;
                     }
                     OnPropertyChanged(nameof(flightManager.ActiveFlight));
-                    OnPropertyChanged(nameof(Details));
                     OnPropertyChanged(nameof(Location));
 
+                    // Begining of flight
                     if(FlightPath.Count>0)
                     {
+                        Title = $"Aircraft: {ActiveFlight.Aircraft.Title}";
+                        Model = $"Model: {ActiveFlight.Aircraft.Model}";
+                        Type = $"Type: {ActiveFlight.Aircraft.Type}";
+                        Airline = $"Airline: {ActiveFlight.Aircraft.Airline}";
                         OnPropertyChanged(nameof(LastSegmentLine));
                     }
                     // TODO replace these with dependency propeties
 
+                    break;
+
+                case nameof(flightManager.Heading):
+                    OnPropertyChanged(nameof(Heading));
+                    break;
+                case nameof(flightManager.Altitude):
+                    OnPropertyChanged(nameof(flightManager.Altitude));
+                    break;
+                case nameof(flightManager.Speed):
+                    OnPropertyChanged(nameof(flightManager.Speed));
+                    break;
+                case nameof(flightManager.Latitude):
+                    OnPropertyChanged(nameof(CurrentPosition));
                     break;
 
                 case nameof(flightManager.IsInFlight):

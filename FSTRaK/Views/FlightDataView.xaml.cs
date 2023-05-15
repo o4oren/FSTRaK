@@ -21,7 +21,7 @@ namespace FSTRaK.Views
         {
             if(e.PropertyName == "ActiveFlight")
             {
-                xMap.Center = new Location(((FlightDataViewModel)this.DataContext).ActiveFlight.Latitude, ((FlightDataViewModel)this.DataContext).ActiveFlight.Longitude);
+                xMap.Center = ((FlightDataViewModel)this.DataContext).Location;
             }
         }
 
