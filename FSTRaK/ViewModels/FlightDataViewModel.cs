@@ -1,11 +1,8 @@
 ﻿using FSTRaK.Models;
 using MapControl;
-using Serilog;
 using System;
 using System.ComponentModel;
 using System.Linq;
-using System.Windows.Media.Animation;
-using Windows.UI.Xaml.Automation.Peers;
 
 namespace FSTRaK.ViewModels
 {
@@ -72,7 +69,7 @@ namespace FSTRaK.ViewModels
             get
             {
                 if (flightManager != null)
-                    return new Location(flightManager.Latitude, flightManager.Longitude);
+                    return new Location(flightManager.CurrentFlightParams.Latitude, flightManager.CurrentFlightParams.Longitude);
                 return new Location(0,0);
             }
             private set
@@ -84,7 +81,7 @@ namespace FSTRaK.ViewModels
             get
             {
                 if (flightManager != null)
-                    return $"Location: {flightManager.Latitude:F4},{flightManager.Longitude:F4}";
+                    return $"Location: {flightManager.CurrentFlightParams.Latitude:F4},{flightManager.CurrentFlightParams.Longitude:F4}";
                 return ("0, 0");
             }
             private set
@@ -96,7 +93,7 @@ namespace FSTRaK.ViewModels
             get
             {
                 if (flightManager != null)
-                    return $"Airspeed: {flightManager.Speed:F0} Kts";
+                    return $"Airspeed: {flightManager.CurrentFlightParams.TrueAirspeed:F0} Kts";
                 return ("0, 0");
             }
             private set
@@ -108,7 +105,7 @@ namespace FSTRaK.ViewModels
             get
             {
                 if (flightManager != null)
-                    return $"Altitude: {flightManager.Altitude:F0} Ft";
+                    return $"Altitude: {flightManager.CurrentFlightParams.Altitude:F0} Ft";
                 return ("0, 0");
             }
             private set
@@ -120,7 +117,7 @@ namespace FSTRaK.ViewModels
             get
             {
                 if (flightManager != null)
-                    return flightManager.Heading;
+                    return flightManager.CurrentFlightParams.Heading;
                 return 0;
             }
             private set
@@ -133,7 +130,7 @@ namespace FSTRaK.ViewModels
             get
             {
                 if (flightManager != null)
-                    return $"{flightManager.Heading} Deg";
+                    return $"{flightManager.CurrentFlightParams.Heading:F0} Deg";
                 return "";
             }
             private set
@@ -178,7 +175,7 @@ namespace FSTRaK.ViewModels
                 case nameof(flightManager.ActiveFlight):
                     if (flightManager.IsInFlight && _lastUpdated.AddSeconds(2) < DateTime.Now)
                     {
-                        FlightPath.Add(flightManager.Latitude, flightManager.Longitude);
+                        FlightPath.Add(flightManager.CurrentFlightParams.Latitude, flightManager.CurrentFlightParams.Longitude);
                         _lastUpdated = DateTime.Now;
                     }
                     OnPropertyChanged(nameof(flightManager.ActiveFlight));
@@ -193,21 +190,17 @@ namespace FSTRaK.ViewModels
                         Airline = $"Airline: {ActiveFlight.Aircraft.Airline}";
                         OnPropertyChanged(nameof(LastSegmentLine));
                     }
-                    // TODO replace these with dependency propeties
 
                     break;
 
-                case nameof(flightManager.Heading):
+                // Send property updates for calculated fields
+                case nameof(flightManager.CurrentFlightParams):
                     OnPropertyChanged(nameof(Heading));
-                    break;
-                case nameof(flightManager.Altitude):
-                    OnPropertyChanged(nameof(flightManager.Altitude));
-                    break;
-                case nameof(flightManager.Speed):
-                    OnPropertyChanged(nameof(flightManager.Speed));
-                    break;
-                case nameof(flightManager.Latitude):
+                    OnPropertyChanged(nameof(Altitude));
+                    OnPropertyChanged(nameof(Speed));
+                    OnPropertyChanged(nameof(Location));
                     OnPropertyChanged(nameof(CurrentPosition));
+                    OnPropertyChanged(nameof(HeadingText));
                     break;
 
                 case nameof(flightManager.IsInFlight):

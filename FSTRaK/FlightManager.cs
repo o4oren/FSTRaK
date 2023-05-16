@@ -34,6 +34,16 @@ namespace FSTRaK
             }
         }
 
+        public struct FlightParams
+        {
+            public double Heading;
+            public double Latitude;
+            public double Longitude;
+            public double TrueAirspeed;
+            public double Altitude;
+            public bool IsOnGround;
+        }
+
         internal void Initialize()
         {
             _simConnectService = SimConnectService.Instance;
@@ -56,106 +66,15 @@ namespace FSTRaK
             }
         }
 
-        // Realtime flight data
-
-        private double _heading = 0;
-        public double Heading
+        private FlightParams _currentFlightParams;
+        public FlightParams CurrentFlightParams
         {
-            get
-            {
-                return _heading;
-            }
+            get { return _currentFlightParams; }
             set
             {
-                if (value != _heading)
-                {
-                    _heading = value;
-                    OnPropertyChanged();
-                }
-            }
-        }
-
-        private double _latitude = 0;
-        public double Latitude
-        {
-            get
-            {
-                return _latitude;
-            }
-            set
-            {
-                if (value != _latitude)
-                {
-                    _latitude = value;
-                    OnPropertyChanged();
-                }
-            }
-        }
-
-
-        private double _longitude = 0;
-
-        public double Longitude
-        {
-            get
-            {
-                return _longitude;
-            }
-            set
-            {
-                if (value != _longitude)
-                {
-                    _longitude = value;
-                    OnPropertyChanged();
-                }
-            }
-        }
-
-
-        private double _speed = 0;
-
-        public double Speed
-        {
-            get
-            {
-                return _speed;
-            }
-            set
-            {
-                if (value != _speed)
-                {
-                    _speed = value;
-                    OnPropertyChanged();
-                }
-            }
-        }
-
-
-        private double _altitude = 0;
-
-        public double Altitude
-        {
-            get
-            {
-                return _altitude;
-            }
-            set
-            {
-                if (value != _altitude)
-                {
-                    _altitude = value;
-                    OnPropertyChanged();
-                }
-            }
-        }
-
-        private bool _isOnGround;
-        public bool IsOnGround
-        {
-            get => _isOnGround; internal set
-            {
-                _isOnGround = value;
+                _currentFlightParams = value;
                 OnPropertyChanged();
+
             }
         }
 
@@ -183,12 +102,15 @@ namespace FSTRaK
                     }
 
                     // Updating the map in realtime
-                    Heading = data.trueHeading;
-                    Latitude = data.latitude;
-                    Longitude = data.longitude;
-                    IsOnGround = data.simOnGround;
-                    Speed = data.trueAirspeed;
-                    Altitude = data.altitude;
+                    FlightParams fp = new FlightParams();
+                    fp.TrueAirspeed = data.trueAirspeed;
+                    fp.Heading = data.trueHeading;
+                    fp.IsOnGround = data.simOnGround;
+                    fp.Latitude = data.latitude;
+                    fp.Longitude = data.longitude;
+                    fp.Altitude = data.altitude;
+
+                    CurrentFlightParams = fp;
 
                     DateTime time = CalculateSimTime(data);
                     if (ActiveFlight.StartTime == null)
@@ -216,7 +138,7 @@ namespace FSTRaK
 
                 case nameof(SimConnectService.NearestAirport):
                     var airport = _simConnectService.NearestAirport;
-                    if(ActiveFlight != null && IsOnGround)
+                    if(ActiveFlight != null && CurrentFlightParams.IsOnGround)
                     {
                         Log.Debug($"xxx {airport}");
                         ActiveFlight.DepartureAirport = airport;
