@@ -96,7 +96,7 @@ namespace FSTRaK.ViewModels
             get
             {
                 if (flightManager != null)
-                    return $"Airspeed: {flightManager.Speed:F0}";
+                    return $"Airspeed: {flightManager.Speed:F0} Kts";
                 return ("0, 0");
             }
             private set
@@ -108,7 +108,7 @@ namespace FSTRaK.ViewModels
             get
             {
                 if (flightManager != null)
-                    return $"Altitude: {flightManager.Altitude:F0}";
+                    return $"Altitude: {flightManager.Altitude:F0} Ft";
                 return ("0, 0");
             }
             private set
@@ -122,6 +122,19 @@ namespace FSTRaK.ViewModels
                 if (flightManager != null)
                     return flightManager.Heading;
                 return 0;
+            }
+            private set
+            { }
+        }
+
+
+        public string HeadingText
+        {
+            get
+            {
+                if (flightManager != null)
+                    return $"{flightManager.Heading} Deg";
+                return "";
             }
             private set
             { }
