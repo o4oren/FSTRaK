@@ -8,6 +8,10 @@ using System.Runtime.CompilerServices;
 
 namespace FSTRaK
 {
+    /// <summary>
+    /// FlightManager is the domain model managing the flight. It's responsibilities are to subscribe to the Simconnect service events, 
+    /// manage the flight state, expose the model data to realtime map view and persist the flight when they end.
+    /// </summary>
     internal sealed class FlightManager : INotifyPropertyChanged
     {
         private static readonly object _lock = new object();

@@ -21,10 +21,12 @@
             <ResourceDictionary.MergedDictionaries>
                 <ResourceDictionary Source="Resources/ButtonsTheme.xaml" />
                 <ResourceDictionary Source="Resources/Theme.xaml" />
+                <ResourceDictionary Source="Resources/Images.xaml" />
             </ResourceDictionary.MergedDictionaries>
             <DataTemplate DataType="{x:Type viewmodels:FlightDataViewModel}" >
                 <views:FlightDataView/>
             </DataTemplate>
+
         </ResourceDictionary>
 
     </Window.Resources>
@@ -41,15 +43,24 @@
                 <RowDefinition/>
             </Grid.RowDefinitions>
 
+            <StackPanel>
+
+            </StackPanel>
             <Border Grid.Column="0" CornerRadius="20 0 0 0" Background="#D7E0EA">
-                <Label FontSize="22" FontWeight="Bold" Foreground="DarkBlue" HorizontalAlignment="Center" VerticalAlignment="Center">FSTrAk</Label>
+                <StackPanel>
+                    <Canvas Width="128" Height="47" >
+                        <StaticResource ResourceKey="logo"/>
+                    </Canvas>
+                    <Label FontSize="22" FontWeight="Bold" Foreground="DarkBlue" HorizontalAlignment="Left" VerticalAlignment="Top" Margin="119,10,0,0">FSTrAk</Label>
+
+                </StackPanel>
             </Border>
-            
+
             <Border Grid.Column="1" CornerRadius="0 20 0 0" Background="#D7E0EA">
                 <Grid Name="MenuBar" >
-                    <StackPanel  Orientation="Horizontal"  HorizontalAlignment="Stretch" MouseLeftButtonDown="DragWindow">
-                        <RadioButton Style="{StaticResource MenuButtonTheme}"  IsChecked="True" Command="{Binding MapViewCommand}" Content="Live View" />
-                        <RadioButton Style="{StaticResource MenuButtonTheme}"  Command="{Binding LogBookCommand}" Content="Logbook" />
+                    <StackPanel  Orientation="Horizontal" MouseLeftButtonDown="DragWindow" Margin="0,0,35,0" HorizontalAlignment="Right">
+                        <RadioButton Style="{StaticResource MenuButtonTheme}"  IsChecked="True" Command="{Binding MapViewCommand}" Content="Live View" HorizontalAlignment="Right"/>
+                        <RadioButton Style="{StaticResource MenuButtonTheme}"  Command="{Binding LogBookCommand}" Content="Logbook" HorizontalAlignment="Right"/>
                     </StackPanel>
                     <Button Margin="0, 15, 15, 0" VerticalAlignment="Top" Height="15" Width="15" Style="{StaticResource CloseButtonTheme}"  HorizontalAlignment="Right" Click="ButtonClick_CloseApplication" ClickMode="Release">X</Button>
                 </Grid>
