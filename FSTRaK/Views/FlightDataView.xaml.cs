@@ -19,7 +19,7 @@ namespace FSTRaK.Views
 
         private void ViewModel_PropertyChanged(object sender, System.ComponentModel.PropertyChangedEventArgs e)
         {
-            if(e.PropertyName == "ActiveFlight")
+            if(e.PropertyName == "ActiveFlight" && this.DataContext != null)
             {
                 xMap.Center = ((FlightDataViewModel)this.DataContext).Location;
             }

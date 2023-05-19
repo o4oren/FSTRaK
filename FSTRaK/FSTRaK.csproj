@@ -17,6 +17,7 @@
     <NuGetPackageImportStamp>
     </NuGetPackageImportStamp>
     <TargetFrameworkProfile />
+    <IsWebBootstrapper>false</IsWebBootstrapper>
     <PublishUrl>publish\</PublishUrl>
     <Install>true</Install>
     <InstallFrom>Disk</InstallFrom>
@@ -29,7 +30,6 @@
     <MapFileExtensions>true</MapFileExtensions>
     <ApplicationRevision>0</ApplicationRevision>
     <ApplicationVersion>1.0.0.%2a</ApplicationVersion>
-    <IsWebBootstrapper>false</IsWebBootstrapper>
     <UseApplicationTrust>false</UseApplicationTrust>
     <BootstrapperEnabled>true</BootstrapperEnabled>
   </PropertyGroup>
@@ -103,11 +103,16 @@
       <Generator>MSBuild:Compile</Generator>
       <SubType>Designer</SubType>
     </ApplicationDefinition>
-    <Compile Include="FlightManager.cs" />
+    <Compile Include="Models\FlightManager\FlightManager.cs" />
     <Compile Include="Models\Aircraft.cs" />
     <Compile Include="Models\BaseModel.cs" />
     <Compile Include="Models\Flight.cs" />
     <Compile Include="Models\FlightEvent.cs" />
+    <Compile Include="Models\FlightManager\FlightEnededState.cs" />
+    <Compile Include="Models\FlightManager\InTaxiState.cs" />
+    <Compile Include="Models\FlightManager\IFlightManagerState.cs" />
+    <Compile Include="Models\FlightManager\FlightStartedState.cs" />
+    <Compile Include="Models\FlightManager\SimNotInFlightState.cs" />
     <Compile Include="RelayCommand.cs" />
     <Compile Include="Views\FlightDataView.xaml.cs">
       <DependentUpon>FlightDataView.xaml</DependentUpon>

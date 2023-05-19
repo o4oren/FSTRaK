@@ -1,4 +1,5 @@
 ﻿using FSTRaK.Models;
+using FSTRaK.Models.FlightManager;
 using MapControl;
 using System;
 using System.ComponentModel;
@@ -165,7 +166,7 @@ namespace FSTRaK.ViewModels
             switch (e.PropertyName)
             {
                 case nameof(flightManager.ActiveFlight):
-                    if (flightManager.State != FlightManager.FlightState.SimNotInFlight && _lastUpdated.AddSeconds(2) < DateTime.Now)
+                    if (!(flightManager.State is SimNotInFlightState) && _lastUpdated.AddSeconds(2) < DateTime.Now)
                     {
                         FlightPath.Add(flightManager.CurrentFlightParams.Latitude, flightManager.CurrentFlightParams.Longitude);
                         _lastUpdated = DateTime.Now;
@@ -174,7 +175,7 @@ namespace FSTRaK.ViewModels
                     OnPropertyChanged(nameof(Location));
 
                     // Begining of flight
-                    if(FlightPath.Count>0)
+                    if(flightManager.State is FlightStartedState)
                     {
                         Title = $"Aircraft: {ActiveFlight.Aircraft.Title}";
                         Model = $"Model: {ActiveFlight.Aircraft.Model}";
