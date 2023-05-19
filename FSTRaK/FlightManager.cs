@@ -48,6 +48,17 @@ namespace FSTRaK
             public bool IsOnGround;
         }
 
+        public enum FlightState 
+        {
+            SimNotInFlight,
+            Started,
+            InTaxi,
+            InFlight,
+            Landed,
+            Parked,
+            Ended
+        }
+
         internal void Initialize()
         {
             _simConnectService = SimConnectService.Instance;
@@ -78,14 +89,20 @@ namespace FSTRaK
             {
                 _currentFlightParams = value;
                 OnPropertyChanged();
-
             }
         }
 
-
-        public Boolean IsInFlight
-        {
-            get { return _simConnectService == null ? false : _simConnectService.IsInFlight; }
+        private FlightState _state = FlightState.SimNotInFlight;
+        public FlightState State { 
+            get { return _state; }
+            private set
+            {
+                if (_state != value)
+                {
+                    _state = value;
+                    OnPropertyChanged();
+                }
+            }
         }
 
         private void SimconnectService_OnPropertyChange(object sender, PropertyChangedEventArgs e)
@@ -94,15 +111,40 @@ namespace FSTRaK
             {
                 case nameof(SimConnectService.FlightData):
                     var data = _simConnectService.FlightData;
-                    Aircraft aircraft;
-                    if (ActiveFlight.Aircraft == null)
+
+                    switch (State)
                     {
-                        aircraft = new Aircraft();
-                        aircraft.Title = data.title;
-                        aircraft.Type = data.atcType;
-                        aircraft.Model = data.model;
-                        aircraft.Airline = data.airline;
-                        ActiveFlight.Aircraft = aircraft;
+                        case (FlightState.Started):
+                            // Flight started - update the aircraft and departure airport, add first flight event only
+                            Aircraft aircraft;
+                            aircraft = new Aircraft();
+                            aircraft.Title = data.title;
+                            aircraft.Type = data.atcType;
+                            aircraft.Model = data.model;
+                            aircraft.Airline = data.airline;
+                            ActiveFlight.Aircraft = aircraft;
+                            if(ActiveFlight.FlightEvents.Count == 0)
+                            {
+                                AddFlightEvent(data);
+                            } else if(ActiveFlight.FlightEvents.Count == 1)
+                            {
+                                if(data.latitude != CurrentFlightParams.Latitude || data.longitude != CurrentFlightParams.Longitude)
+                                {
+                                    // Airplane in motion, change state
+                                    State = FlightState.InTaxi;
+                                }
+                            }
+                            else
+                            {
+                                throw new Exception("More than one flight event while in Started state!");
+                            }
+
+                            break;
+
+                        default:
+                            AddFlightEvent(data);
+                            break;
+
                     }
 
                     // Updating the map in realtime
@@ -113,31 +155,9 @@ namespace FSTRaK
                     fp.Latitude = data.latitude;
                     fp.Longitude = data.longitude;
                     fp.Altitude = data.altitude;
-
                     CurrentFlightParams = fp;
-
-                    DateTime time = CalculateSimTime(data);
-                    if (ActiveFlight.StartTime == null)
-                    {
-                        ActiveFlight.StartTime = time;
-                    }
-
-                    // Saving flight events at intervals
-                    if (_eventsStopwatch.ElapsedMilliseconds > _eventsInterval || IsInFlight && ActiveFlight.FlightEvents.Count == 0)
-                    {
-                        FlightEvent fe = new FlightEvent();
-                        fe.Altitude = data.altitude;
-                        fe.GroundAltitude = data.groundAltitude;
-                        fe.Latitude = data.latitude;
-                        fe.Longitude = data.longitude;
-                        fe.TrueHeading = data.trueHeading;
-                        fe.Airspeed = data.trueAirspeed;
-                        fe.Time = time;
-                        ActiveFlight.FlightEvents.Add(fe);
-                        _eventsStopwatch.Restart();
-                    }
-                    
                     OnPropertyChanged("ActiveFlight");
+
                     break;
 
                 case nameof(SimConnectService.NearestAirport):
@@ -162,9 +182,35 @@ namespace FSTRaK
             }
         }
 
+        private void AddFlightEvent(SimConnectService.AircraftFlightData data)
+        {
+            DateTime time = CalculateSimTime(data);
+            if (ActiveFlight.StartTime == null)
+            {
+                ActiveFlight.StartTime = time;
+            }
+
+            // Saving flight events at intervals
+            if (_eventsStopwatch.ElapsedMilliseconds > _eventsInterval || State != FlightState.SimNotInFlight && ActiveFlight.FlightEvents.Count == 0)
+            {
+                FlightEvent fe = new FlightEvent();
+                fe.Altitude = data.altitude;
+                fe.GroundAltitude = data.groundAltitude;
+                fe.Latitude = data.latitude;
+                fe.Longitude = data.longitude;
+                fe.TrueHeading = data.trueHeading;
+                fe.Airspeed = data.trueAirspeed;
+                fe.Time = time;
+                ActiveFlight.FlightEvents.Add(fe);
+                _eventsStopwatch.Restart();
+            }
+
+        }
+
         private void StartFlight()
         {
             // TODO code to get initial data for flight, create the flight object and start writing events.
+            State = FlightState.Started;
             _activeFlight = new Flight();
             _eventsStopwatch.Start();
             Log.Information($"Flight started at {DateTime.Now}");
@@ -173,6 +219,8 @@ namespace FSTRaK
         private void EndFlight()
         {
             // TODO code to save flight in the db and recycle
+            State = FlightState.Ended;
+
             _eventsStopwatch.Start();
             _eventsStopwatch.Reset();
             Log.Information($"Flight ended at {DateTime.Now}");

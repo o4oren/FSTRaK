@@ -52,7 +52,7 @@
             <Label Style="{StaticResource MapOverlayLabel}" Content="{Binding CurrentPosition}" HorizontalAlignment="Left" />
         </StackPanel>
         <StackPanel Orientation="Horizontal" Margin="93,10,0,0" HorizontalAlignment="Center" VerticalAlignment="Top">
-            <Label Style="{StaticResource MapOverlayLabel}" Content="{Binding HeadingText}" HorizontalAlignment="Left" />
+            <Label Style="{StaticResource MapOverlayLabel}" Content="{Binding HeadingText}" HorizontalAlignment="Left"/>
         </StackPanel>
     </Grid>
 

@@ -9,13 +9,14 @@
                     <ControlTemplate TargetType="RadioButton">
                        
                             <Grid VerticalAlignment="Stretch" HorizontalAlignment="Stretch" Background="{TemplateBinding Background}" Margin="5" >
-                            <Border x:Name="ToggleButtonBorder" BorderThickness="0" Background="Transparent">
+                            <Border x:Name="ToggleButtonBorder" BorderThickness="0" Background="Transparent" >
                                 <TextBlock x:Name="ButtonText" 
                                            Text="{TemplateBinding Property=Content}" 
                                            VerticalAlignment="Center" HorizontalAlignment="Center" 
-                                           Margin="5,5,10,10" 
-                                           FontSize="20"
+                                           Margin="5,5,10,5" 
+                                           FontSize="30"
                                            FontWeight="Bold"
+                                           FontFamily="{StaticResource Slopes}"
                                            Foreground="#7997B9"/>
                             </Border>
                         </Grid>
@@ -54,8 +55,9 @@
                                        Text="{TemplateBinding Property=Content}" 
                                        VerticalAlignment="Center" HorizontalAlignment="Center"
                                        Foreground="white"
-                                       FontSize="16"
+                                       FontSize="18"
                                        Margin="7"
+                                       FontFamily="{StaticResource Slopes}"
                                        TextWrapping="Wrap"/>
                         </Grid>
                     </ControlTemplate>

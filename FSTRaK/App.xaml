@@ -6,6 +6,6 @@
              Exit="OnApplicationExit"
              StartupUri="MainWindow.xaml">
     <Application.Resources>
-         
+        <FontFamily x:Key="Slopes">pack://application:,,,/Resources/Fonts/#Slopes</FontFamily>
     </Application.Resources>
 </Application>

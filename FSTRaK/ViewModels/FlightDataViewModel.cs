@@ -137,14 +137,6 @@ namespace FSTRaK.ViewModels
             { }
         }
 
-        public bool IsInFlight
-        {
-            get
-            {
-                return flightManager.IsInFlight;
-            }
-        }
-
         public LocationCollection FlightPath { get; set; } = new LocationCollection();
 
         public LocationCollection LastSegmentLine { get 
@@ -173,7 +165,7 @@ namespace FSTRaK.ViewModels
             switch (e.PropertyName)
             {
                 case nameof(flightManager.ActiveFlight):
-                    if (flightManager.IsInFlight && _lastUpdated.AddSeconds(2) < DateTime.Now)
+                    if (flightManager.State != FlightManager.FlightState.SimNotInFlight && _lastUpdated.AddSeconds(2) < DateTime.Now)
                     {
                         FlightPath.Add(flightManager.CurrentFlightParams.Latitude, flightManager.CurrentFlightParams.Longitude);
                         _lastUpdated = DateTime.Now;
@@ -203,10 +195,10 @@ namespace FSTRaK.ViewModels
                     OnPropertyChanged(nameof(HeadingText));
                     break;
 
-                case nameof(flightManager.IsInFlight):
+                case nameof(flightManager.State):
                     FlightPath.Clear();
                     OnPropertyChanged(nameof(FlightPath));
-                    OnPropertyChanged(nameof(IsInFlight));
+                    OnPropertyChanged(nameof(flightManager.State));
 
                     break;
 

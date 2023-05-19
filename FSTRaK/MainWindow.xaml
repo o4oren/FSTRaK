@@ -39,7 +39,7 @@
             </Grid.ColumnDefinitions>
 
             <Grid.RowDefinitions>
-                <RowDefinition Height="55"/>
+                <RowDefinition Height="90"/>
                 <RowDefinition/>
             </Grid.RowDefinitions>
 
@@ -47,11 +47,11 @@
 
             </StackPanel>
             <Border Grid.Column="0" CornerRadius="20 0 0 0" Background="#D7E0EA">
-                <StackPanel>
+                <StackPanel Margin="0 5 0 0">
                     <Canvas Width="128" Height="47" >
                         <StaticResource ResourceKey="logo"/>
                     </Canvas>
-                    <Label FontSize="22" FontWeight="Bold" Foreground="DarkBlue" HorizontalAlignment="Left" VerticalAlignment="Top" Margin="119,10,0,0">FSTrAk</Label>
+                    <Label FontSize="30" FontWeight="Bold" Foreground="DarkBlue" FontFamily="{StaticResource Slopes}" HorizontalAlignment="Center" VerticalAlignment="Center">FSTrAk</Label>
 
                 </StackPanel>
             </Border>
