@@ -12,7 +12,9 @@
         Background="Transparent"
         AllowsTransparency="true"
         ResizeMode="CanResizeWithGrip"
-        Title="FSTRaK" Height="600" Width="920">
+        Title="FSTRaK"  
+        Width="1024"
+        Height="768">
     <Window.DataContext>
         <viewmodels:MainWindowViewModel/>
     </Window.DataContext>
@@ -51,7 +53,7 @@
                     <Canvas Width="128" Height="47" >
                         <StaticResource ResourceKey="logo"/>
                     </Canvas>
-                    <Label FontSize="30" FontWeight="Bold" Foreground="DarkBlue" FontFamily="{StaticResource Slopes}" HorizontalAlignment="Center" VerticalAlignment="Center">FSTrAk</Label>
+                    <Label FontSize="30" FontWeight="Bold" Foreground="#003884" FontFamily="{StaticResource Slopes}" HorizontalAlignment="Center" VerticalAlignment="Center">FSTrAk</Label>
 
                 </StackPanel>
             </Border>

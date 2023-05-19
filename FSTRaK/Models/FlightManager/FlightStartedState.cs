@@ -25,10 +25,13 @@ namespace FSTRaK.Models.FlightManager
                 flight.Aircraft = aircraft;
                 Context.ActiveFlight = flight;
                 Context.SetEventTimer(5000);
-
                 Context.AddFlightEvent(Data);
                 Log.Information($"Flight started at {DateTime.Now}");
                 _isStarted = true;
+            }
+            if (Data.latitude != Context.CurrentFlightParams.Latitude || Data.longitude != Context.CurrentFlightParams.Longitude)
+            {
+                Context.State = new InTaxiState();
             }
         }
     }

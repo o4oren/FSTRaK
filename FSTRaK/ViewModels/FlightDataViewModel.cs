@@ -4,6 +4,7 @@ using MapControl;
 using System;
 using System.ComponentModel;
 using System.Linq;
+using static FSTRaK.Models.FlightManager.FlightManager;
 
 namespace FSTRaK.ViewModels
 {
@@ -77,41 +78,20 @@ namespace FSTRaK.ViewModels
             { }
         }
 
-        public string CurrentPosition
+
+        public string FlightParamsText
         {
             get
             {
                 if (flightManager != null)
-                    return $"Location: {flightManager.CurrentFlightParams.Latitude:F4},{flightManager.CurrentFlightParams.Longitude:F4}";
-                return ("0, 0");
+                {
+                    return $"Airspeed: {flightManager.CurrentFlightParams.TrueAirspeed:F0} Kts\nAltitude: {flightManager.CurrentFlightParams.Altitude:F0} Ft\nHeading: {flightManager.CurrentFlightParams.Heading:F0} Deg" +
+                        $"\nPosition: {flightManager.CurrentFlightParams.Latitude:F4},{flightManager.CurrentFlightParams.Longitude:F4}";
+                }
+                return "";
             }
-            private set
-            { }
         }
 
-        public string Speed
-        {
-            get
-            {
-                if (flightManager != null)
-                    return $"Airspeed: {flightManager.CurrentFlightParams.TrueAirspeed:F0} Kts";
-                return ("0, 0");
-            }
-            private set
-            { }
-        }
-
-        public string Altitude
-        {
-            get
-            {
-                if (flightManager != null)
-                    return $"Altitude: {flightManager.CurrentFlightParams.Altitude:F0} Ft";
-                return ("0, 0");
-            }
-            private set
-            { }
-        }
 
         public double Heading
         {
@@ -120,19 +100,6 @@ namespace FSTRaK.ViewModels
                 if (flightManager != null)
                     return flightManager.CurrentFlightParams.Heading;
                 return 0;
-            }
-            private set
-            { }
-        }
-
-
-        public string HeadingText
-        {
-            get
-            {
-                if (flightManager != null)
-                    return $"{flightManager.CurrentFlightParams.Heading:F0} Deg";
-                return "";
             }
             private set
             { }
@@ -181,19 +148,16 @@ namespace FSTRaK.ViewModels
                         Model = $"Model: {ActiveFlight.Aircraft.Model}";
                         Type = $"Type: {ActiveFlight.Aircraft.Type}";
                         Airline = $"Airline: {ActiveFlight.Aircraft.Airline}";
-                        OnPropertyChanged(nameof(LastSegmentLine));
                     }
-
+                    OnPropertyChanged(nameof(LastSegmentLine));
                     break;
 
                 // Send property updates for calculated fields
                 case nameof(flightManager.CurrentFlightParams):
                     OnPropertyChanged(nameof(Heading));
-                    OnPropertyChanged(nameof(Altitude));
-                    OnPropertyChanged(nameof(Speed));
                     OnPropertyChanged(nameof(Location));
-                    OnPropertyChanged(nameof(CurrentPosition));
-                    OnPropertyChanged(nameof(HeadingText));
+                    OnPropertyChanged(nameof(FlightParamsText));
+
                     break;
 
                 case nameof(flightManager.State):

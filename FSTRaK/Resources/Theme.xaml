@@ -1,5 +1,6 @@
 ﻿<ResourceDictionary xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
                     xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml">
+    <Color x:Key="TextColor">#003884</Color>
     <Style BasedOn="{StaticResource {x:Type ToggleButton}}"
            TargetType="{x:Type RadioButton}"
            x:Key="MenuButtonTheme">
@@ -14,7 +15,7 @@
                                            Text="{TemplateBinding Property=Content}" 
                                            VerticalAlignment="Center" HorizontalAlignment="Center" 
                                            Margin="5,5,10,5" 
-                                           FontSize="30"
+                                           FontSize="34"
                                            FontWeight="Bold"
                                            FontFamily="{StaticResource Slopes}"
                                            Foreground="#7997B9"/>
@@ -29,8 +30,8 @@
                             </Trigger>
                             <Trigger Property="IsChecked" Value="True">
                                 <Setter TargetName="ToggleButtonBorder" Property="BorderThickness" Value="0 0 0 2" />
-                                <Setter TargetName="ToggleButtonBorder" Property="BorderBrush" Value="DarkBlue" />
-                                <Setter TargetName="ButtonText" Property="Foreground" Value="DarkBlue" />
+                                <Setter TargetName="ToggleButtonBorder" Property="BorderBrush" Value="#003884" />
+                                <Setter TargetName="ButtonText" Property="Foreground" Value="#003884" />
 
                             </Trigger>
                         </ControlTemplate.Triggers>
@@ -58,7 +59,8 @@
                                        FontSize="18"
                                        Margin="7"
                                        FontFamily="{StaticResource Slopes}"
-                                       TextWrapping="Wrap"/>
+                                       TextWrapping="Wrap"
+                                       MinWidth="200"/>
                         </Grid>
                     </ControlTemplate>
                 </Setter.Value>

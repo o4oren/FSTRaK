@@ -81,9 +81,9 @@ namespace FSTRaK.Models.FlightManager
         }
 
         private IFlightManagerState _state = new SimNotInFlightState();
-        public IFlightManagerState State { 
+        internal IFlightManagerState State { 
             get { return _state; }
-            private set
+            set
             {
                 _state = value;
                 OnPropertyChanged();
@@ -109,7 +109,6 @@ namespace FSTRaK.Models.FlightManager
                     fp.Altitude = data.altitude;
                     CurrentFlightParams = fp;
                     OnPropertyChanged("ActiveFlight");
-                    CheckAndUpdateState(data);
                     break;
 
                 case nameof(SimConnectService.NearestAirport):
@@ -132,17 +131,6 @@ namespace FSTRaK.Models.FlightManager
                     OnPropertyChanged(nameof(SimConnectService.IsInFlight));
                     break;
             }
-        }
-
-        private void CheckAndUpdateState(SimConnectService.AircraftFlightData data)
-        {
-            if(State is FlightStartedState)
-            {
-                if(data.latitude != CurrentFlightParams.Latitude || data.longitude != CurrentFlightParams.Longitude) { 
-                    State = new InTaxiState(); 
-                }
-            }
-            
         }
 
 
