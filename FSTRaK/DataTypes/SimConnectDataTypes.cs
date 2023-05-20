@@ -1,6 +1,7 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Linq;
+using System.Runtime.InteropServices;
 using System.Security.Policy;
 using System.Text;
 using System.Threading.Tasks;
@@ -33,6 +34,60 @@ namespace FSTRaK.DataTypes
         Hangar = 21,
         Ground = 24,
         FollowTrafficAircraft = 25
+    }
+
+    public enum Requests
+    {
+        FlightDataRequest,
+        NearbyAirportsRequest,
+        FlightLoaded
+    }
+
+    public enum DataDefinitions
+    {
+        FlightMetaData,
+        FlightData,
+        NearbyAirports
+    }
+
+    public enum EVENTS
+    {
+        FLIGHT_LOADED,
+        PAUSE,
+    }
+
+    [StructLayout(LayoutKind.Sequential, CharSet = CharSet.Ansi, Pack = 1)]
+    public struct AircraftFlightData
+    {
+        public int zuluYear;
+        public int zuluMonth;
+        public int zuluDay;
+        public int zuluTime;
+        [MarshalAs(UnmanagedType.ByValTStr, SizeConst = 256)]
+        public string title;
+        [MarshalAs(UnmanagedType.ByValTStr, SizeConst = 256)]
+        public string airline;
+        [MarshalAs(UnmanagedType.ByValTStr, SizeConst = 32)]
+        public string model;
+        [MarshalAs(UnmanagedType.ByValTStr, SizeConst = 256)]
+        public string atcType;
+
+        public bool simOnGround;
+        public double latitude;
+        public double longitude;
+        public double trueHeading;
+        public double altitude;
+        public double trueAirspeed;
+        public double indicatedAirpeed;
+        public double groundVelocity;
+        public double groundAltitude;
+        public double planeAltAboveGround;
+        public double planeAltAboveGroundMinusCg;
+        public double verticalSpeed;
+        public int CameraState;
+        public bool FlapSpeedExceeded;
+        public bool GearSpeedExceeded;
+        public bool Overspeed;
     }
     internal class SimConnectDataTypes
     {

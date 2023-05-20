@@ -2,6 +2,7 @@
 using FSTRaK.Models.FlightManager;
 using MapControl;
 using System;
+using System.Collections.ObjectModel;
 using System.ComponentModel;
 using System.Linq;
 using static FSTRaK.Models.FlightManager.FlightManager;
@@ -66,6 +67,27 @@ namespace FSTRaK.ViewModels
             }
         }
 
+        private bool _isShowAirplane;
+
+        public bool IsShowAirplane
+        {
+            get { return _isShowAirplane; }
+            set { _isShowAirplane = value; OnPropertyChanged(); }
+        }
+
+        private bool _isCenterOnAirplane = true;
+
+        public bool IsCenterOnAirplane
+        {
+            get { return _isCenterOnAirplane; }
+            set 
+            { 
+                if(value != _isCenterOnAirplane) 
+                    _isCenterOnAirplane = value; OnPropertyChanged(); 
+            }
+        }
+
+
         public Location Location
         {
             get
@@ -123,17 +145,25 @@ namespace FSTRaK.ViewModels
             }
         }
 
-        public LocationCollection FlightPath { get; set; } = new LocationCollection();
+        public ObservableCollection<Location> FlightPath { get; set; } = new ObservableCollection<Location>();
 
-        public LocationCollection LastSegmentLine { get 
+        private ObservableCollection<Location> _lastSegmentLine;
+        public ObservableCollection<Location> LastSegmentLine { get 
             {
-                if(FlightPath.Count > 0)
+                if(_lastSegmentLine != null)
                 {
-                    return new LocationCollection(FlightPath.Last(), Location);
+                    return _lastSegmentLine;
                 }
-                return new LocationCollection();
+                return new ObservableCollection<Location>();
             }
-            set { } }
+            private set {
+                if(_lastSegmentLine != value)
+                {
+                    _lastSegmentLine = value;
+                }
+                OnPropertyChanged();
+            } 
+        }
 
         public string NearestAirport { get; set; }
 
@@ -151,23 +181,31 @@ namespace FSTRaK.ViewModels
             switch (e.PropertyName)
             {
                 case nameof(flightManager.ActiveFlight):
-                    if (!(flightManager.State is SimNotInFlightState) && _lastUpdated.AddSeconds(2) < DateTime.Now)
+                    // Update flightpath only when starting to move.
+                    if (flightManager.State.IsMovementState && _lastUpdated.AddSeconds(2) < DateTime.Now)
                     {
-                        FlightPath.Add(flightManager.CurrentFlightParams.Latitude, flightManager.CurrentFlightParams.Longitude);
+                        FlightPath.Add(new Location(flightManager.CurrentFlightParams.Latitude, flightManager.CurrentFlightParams.Longitude));
                         _lastUpdated = DateTime.Now;
                     }
                     OnPropertyChanged(nameof(flightManager.ActiveFlight));
                     OnPropertyChanged(nameof(Location));
+                    if (FlightPath.Count > 0)
+                    {
+                        var lastSegment = new ObservableCollection<Location>();
+                        lastSegment.Add(FlightPath.Last());
+                        lastSegment.Add(Location);
+                        LastSegmentLine = lastSegment;
+                    }
+
 
                     // Begining of flight
-                    if(flightManager.State is FlightStartedState && ActiveFlight != null)
+                    if (flightManager.State is FlightStartedState && ActiveFlight != null)
                     {
                         Title = $"Aircraft: {ActiveFlight.Aircraft.Title}";
                         Model = $"Model: {ActiveFlight.Aircraft.Model}";
                         Type = $"Type: {ActiveFlight.Aircraft.Type}";
                         Airline = $"Airline: {ActiveFlight.Aircraft.Airline}";
                     }
-                    OnPropertyChanged(nameof(LastSegmentLine));
                     break;
 
                 // Send property updates for calculated fields
@@ -179,13 +217,15 @@ namespace FSTRaK.ViewModels
                     break;
 
                 case nameof(flightManager.State):
-                    if(flightManager.State is FlightStartedState)
+                    IsShowAirplane = flightManager.State is SimNotInFlightState ? false : true;
+                    
+                    if(flightManager.State is FlightStartedState || flightManager.State is SimNotInFlightState)
                     {
                         FlightPath.Clear();
                         OnPropertyChanged(nameof(FlightPath));
-                        OnPropertyChanged(nameof(flightManager.State));
                     }
-                    State = flightManager.State.ToString();
+
+                    State = flightManager.State.Name;
 
                     break;
 

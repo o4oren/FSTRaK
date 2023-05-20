@@ -69,4 +69,36 @@
             <Setter Property="BorderThickness" Value="0"/>
         </Style.Setters>
     </Style>
+    <Style BasedOn="{StaticResource {x:Type ToggleButton}}"
+           TargetType="{x:Type ToggleButton}"
+           x:Key="MapToggleButton">
+        <Style.Setters>
+            <Setter Property="Template">
+                <Setter.Value>
+                    <ControlTemplate TargetType="ToggleButton">
+                        <Grid VerticalAlignment="Center" HorizontalAlignment="Center" Height="{TemplateBinding Background}" Width="{TemplateBinding Background}" Margin="5" >
+                            <Border x:Name="ToggleButtonBorder" BorderThickness="0" Background="Black" Opacity="0.5" CornerRadius="5">
+                            </Border>
+                            <ContentControl x:Name="ToggleContent" 
+                                       Content="{TemplateBinding Content}" 
+                                       VerticalAlignment="Center" HorizontalAlignment="Center"
+                                       Foreground="white"
+                                       MinWidth="50"
+                                            MinHeight="50"/>
+                        </Grid>
+
+                        <ControlTemplate.Triggers>
+                            <Trigger Property="IsChecked" Value="False">
+                                <Setter TargetName="ToggleButtonBorder" Property="Background" Value="gray"/>
+                            </Trigger>
+                        </ControlTemplate.Triggers>
+                    </ControlTemplate>
+                </Setter.Value>
+            </Setter>
+            <Setter Property="Background" Value="Transparent" />
+            <Setter Property="BorderThickness" Value="0"/>
+
+        </Style.Setters>
+
+    </Style>
 </ResourceDictionary>

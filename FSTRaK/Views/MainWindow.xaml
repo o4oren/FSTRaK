@@ -1,4 +1,4 @@
-﻿<Window x:Class="FSTRaK.MainWindow"
+﻿<Window x:Class="FSTRaK.Views.MainWindow"
         xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
         xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
         xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
@@ -20,17 +20,10 @@
     </Window.DataContext>
     <Window.Resources>
         <ResourceDictionary>
-            <ResourceDictionary.MergedDictionaries>
-                <ResourceDictionary Source="Resources/ButtonsTheme.xaml" />
-                <ResourceDictionary Source="Resources/Theme.xaml" />
-                <ResourceDictionary Source="Resources/Images.xaml" />
-            </ResourceDictionary.MergedDictionaries>
             <DataTemplate DataType="{x:Type viewmodels:FlightDataViewModel}" >
                 <views:FlightDataView/>
             </DataTemplate>
-
         </ResourceDictionary>
-
     </Window.Resources>
     <Border Background="#F2F5F8"
             CornerRadius="20">

@@ -1,12 +1,15 @@
 ﻿
 
+using FSTRaK.DataTypes;
+
 namespace FSTRaK.Models.FlightManager
 {
     internal abstract class AbstractState : IFlightManagerState
     {
-        public abstract void processFlightData(FlightManager Context, SimConnectService.AircraftFlightData Data);
+        public abstract void processFlightData(FlightManager Context, AircraftFlightData Data);
 
-        public string Name { get; set; }
+        public abstract string Name { get; set; }
+        public abstract bool IsMovementState { get; set; }
 
         public AbstractState()
         {
@@ -17,7 +20,7 @@ namespace FSTRaK.Models.FlightManager
         {
             if (!Context.SimConnectInFlight)
             {
-                Context.State = new SimNotInFlightState();
+                Context.State = new SimNotInFlightState(Context);
             }
         }
     }

@@ -1,4 +1,5 @@
-﻿using Microsoft.FlightSimulator.SimConnect;
+﻿using FSTRaK.DataTypes;
+using Microsoft.FlightSimulator.SimConnect;
 using Serilog;
 using System;
 using System.ComponentModel;
@@ -139,61 +140,6 @@ namespace FSTRaK
                 }
             }
         }
-
-        private enum Requests
-        {
-            FlightDataRequest,
-            NearbyAirportsRequest,
-            FlightLoaded
-        }
-
-        private enum DataDefinitions
-        {
-            FlightMetaData,
-            FlightData,
-            NearbyAirports
-        }
-
-        private enum EVENTS
-        {
-            FLIGHT_LOADED,
-            PAUSE,
-        }
-
-        [StructLayout(LayoutKind.Sequential, CharSet = CharSet.Ansi, Pack = 1)]
-        public struct AircraftFlightData
-        {
-            public int zuluYear;
-            public int zuluMonth;
-            public int zuluDay;
-            public int zuluTime;
-            [MarshalAs(UnmanagedType.ByValTStr, SizeConst = 256)]
-            public string title;
-            [MarshalAs(UnmanagedType.ByValTStr, SizeConst = 256)]
-            public string airline;
-            [MarshalAs(UnmanagedType.ByValTStr, SizeConst = 32)]
-            public string model;
-            [MarshalAs(UnmanagedType.ByValTStr, SizeConst = 256)]
-            public string atcType;
-
-            public bool simOnGround;
-            public double latitude;
-            public double longitude;
-            public double trueHeading;
-            public double altitude;
-            public double trueAirspeed;
-            public double indicatedAirpeed;
-            public double groundVelocity;
-            public double groundAltitude;
-            public double planeAltAboveGround;
-            public double planeAltAboveGroundMinusCg;
-            public double verticalSpeed;
-            public int CameraState;
-            public bool FlapSpeedExceeded;
-            public bool GearSpeedExceeded;
-            public bool Overspeed;
-        }
-
 
         /// <summary>
         /// Initialize should only be called after a main window is loaded, as it relies on it's existance for recieving system events in a wpf application.

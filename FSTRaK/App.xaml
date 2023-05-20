@@ -4,8 +4,17 @@
              xmlns:local="clr-namespace:FSTRaK"
              Startup="OnApplicationStart"
              Exit="OnApplicationExit"
-             StartupUri="MainWindow.xaml">
+             StartupUri="Views/MainWindow.xaml">
     <Application.Resources>
-        <FontFamily x:Key="Slopes">pack://application:,,,/Resources/Fonts/#Slopes</FontFamily>
+        <ResourceDictionary>
+            <ResourceDictionary.MergedDictionaries>
+                <ResourceDictionary>
+                    <FontFamily x:Key="Slopes">pack://application:,,,/Resources/Fonts/#Slopes</FontFamily>
+                </ResourceDictionary>
+                <ResourceDictionary Source="Resources/ButtonsTheme.xaml" />
+                <ResourceDictionary Source="Resources/Theme.xaml" />
+                <ResourceDictionary Source="Resources/Images.xaml" />
+            </ResourceDictionary.MergedDictionaries>
+        </ResourceDictionary>
     </Application.Resources>
 </Application>

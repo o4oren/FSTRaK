@@ -3,7 +3,7 @@ using System.Windows;
 using System.Windows.Controls.Primitives;
 using System.Windows.Input;
 
-namespace FSTRaK
+namespace FSTRaK.Views
 {
     /// <summary>
     /// Interaction logic for MainWindow.xaml

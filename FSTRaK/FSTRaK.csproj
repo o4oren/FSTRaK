@@ -106,25 +106,25 @@
     <Compile Include="DataTypes\FlightParams.cs" />
     <Compile Include="DataTypes\NearestAirportRequestType.cs" />
     <Compile Include="DataTypes\SimConnectDataTypes.cs" />
-    <Compile Include="Models\FlightManager\AbstractState.cs" />
+    <Compile Include="Models\FlightManager\State\AbstractState.cs" />
     <Compile Include="Models\FlightManager\FlightManager.cs" />
-    <Compile Include="Models\Aircraft.cs" />
+    <Compile Include="Models\Entity\Aircraft.cs" />
     <Compile Include="Models\BaseModel.cs" />
-    <Compile Include="Models\Flight.cs" />
-    <Compile Include="Models\FlightEvent.cs" />
-    <Compile Include="Models\FlightManager\FlightEnededState.cs" />
-    <Compile Include="Models\FlightManager\LandedState.cs" />
-    <Compile Include="Models\FlightManager\InFlightState.cs" />
-    <Compile Include="Models\FlightManager\InTaxiState.cs" />
-    <Compile Include="Models\FlightManager\IFlightManagerState.cs" />
-    <Compile Include="Models\FlightManager\FlightStartedState.cs" />
-    <Compile Include="Models\FlightManager\SimNotInFlightState.cs" />
+    <Compile Include="Models\Entity\Flight.cs" />
+    <Compile Include="Models\Entity\FlightEvent.cs" />
+    <Compile Include="Models\FlightManager\State\FlightEnededState.cs" />
+    <Compile Include="Models\FlightManager\State\LandedState.cs" />
+    <Compile Include="Models\FlightManager\State\InFlightState.cs" />
+    <Compile Include="Models\FlightManager\State\InTaxiState.cs" />
+    <Compile Include="Models\FlightManager\State\IFlightManagerState.cs" />
+    <Compile Include="Models\FlightManager\State\FlightStartedState.cs" />
+    <Compile Include="Models\FlightManager\State\SimNotInFlightState.cs" />
     <Compile Include="RelayCommand.cs" />
     <Compile Include="Views\FlightDataView.xaml.cs">
       <DependentUpon>FlightDataView.xaml</DependentUpon>
     </Compile>
     <Compile Include="ViewModels\FlightDataViewModel.cs" />
-    <Compile Include="SimConnectService.cs" />
+    <Compile Include="Models\SimConnectService\SimConnectService.cs" />
     <Compile Include="ViewModels\BaseViewModel.cs" />
     <Compile Include="ViewModels\MainWindowViewModel.cs" />
     <Page Include="Resources\Images.xaml">
@@ -151,7 +151,7 @@
       <SubType>Designer</SubType>
       <Generator>MSBuild:Compile</Generator>
     </Page>
-    <Page Include="MainWindow.xaml">
+    <Page Include="Views\MainWindow.xaml">
       <Generator>MSBuild:Compile</Generator>
       <SubType>Designer</SubType>
     </Page>
@@ -159,7 +159,7 @@
       <DependentUpon>App.xaml</DependentUpon>
       <SubType>Code</SubType>
     </Compile>
-    <Compile Include="MainWindow.xaml.cs">
+    <Compile Include="Views\MainWindow.xaml.cs">
       <DependentUpon>MainWindow.xaml</DependentUpon>
       <SubType>Code</SubType>
     </Compile>

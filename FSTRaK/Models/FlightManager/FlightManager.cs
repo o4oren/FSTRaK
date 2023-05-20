@@ -42,7 +42,7 @@ namespace FSTRaK.Models.FlightManager
             _simConnectService = SimConnectService.Instance;
             _simConnectService.Initialize();
             _simConnectService.PropertyChanged += SimconnectService_OnPropertyChange;
-            State = new SimNotInFlightState();
+            State = new SimNotInFlightState(this);
         }
 
         // Properties
@@ -140,7 +140,7 @@ namespace FSTRaK.Models.FlightManager
             _simConnectService.RequestNearestAirport();
         }
 
-        internal void AddFlightEvent(SimConnectService.AircraftFlightData data)
+        internal void AddFlightEvent(AircraftFlightData data)
         {
             DateTime time = CalculateSimTime(data);
             if (ActiveFlight.StartTime == null)
@@ -164,7 +164,7 @@ namespace FSTRaK.Models.FlightManager
                 _eventsStopwatch.Restart();
             }
         }
-        private static DateTime CalculateSimTime(SimConnectService.AircraftFlightData data)
+        private static DateTime CalculateSimTime(AircraftFlightData data)
         {
             var day = new DateTime(data.zuluYear, data.zuluMonth, data.zuluDay, 0, 0, 0, 0, System.DateTimeKind.Utc);
             var time = day.AddSeconds(data.zuluTime);

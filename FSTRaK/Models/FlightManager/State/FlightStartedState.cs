@@ -7,12 +7,16 @@ namespace FSTRaK.Models.FlightManager
     {
         private Boolean _isStarted = false;
 
+        public override string Name { get; set; }
+        public override bool IsMovementState { get; set; }
+
         public FlightStartedState() : base()
         {
             this.Name = "Flight Started";
+            this.IsMovementState = false;
         }
 
-        public override void processFlightData(FlightManager Context, SimConnectService.AircraftFlightData Data)
+        public override void processFlightData(FlightManager Context, AircraftFlightData Data)
         {
             // Only once in actual plane and not paused
             // This should only happen once per flight

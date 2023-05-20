@@ -22,15 +22,20 @@
     </UserControl.Resources>
 
     <Grid>
-        <map:Map x:Name="xMap" MapLayer="{StaticResource OpenStreetMap}" ZoomLevel="13" MapProjection="{StaticResource WebMercatorProjection}" Margin="10,10,10,10">
+        <map:Map x:Name="xMap" 
+                 MapLayer="{StaticResource OpenStreetMap}" 
+                 ZoomLevel="13" 
+                 MapProjection="{StaticResource WebMercatorProjection}"
+                 MouseLeftButtonDown="OnMapMoveEvent"
+                 Margin="10,10,10,10">
             <map:MapItem Location="{Binding Location}"
                         Width="32" Height="32"
                         Margin="-16"
-                        Visibility="{Binding Path=IsInFlight, Converter={StaticResource BoolToVis}}"
+                        Visibility="{Binding Path=IsShowAirplane, Converter={StaticResource BoolToVis}}"
                         >
                 <Canvas 
-                Width="32" Height="32"
-                Opacity="0.9"
+                    Width="32" Height="32"
+                    Opacity="0.9"
                 >
                     <Path Fill="Red" Stroke="DarkRed" StrokeThickness="1" Data="{StaticResource B737}" />
                 </Canvas>
@@ -49,6 +54,16 @@
             <!-- Label Style="{StaticResource MapOverlayLabel}" Content="{Binding Airline}" HorizontalAlignment="Left" / -->
             <Label Style="{StaticResource MapOverlayLabel}" Content="{Binding FlightParamsText}" HorizontalAlignment="Left" />
             <Label Style="{StaticResource MapOverlayLabel}" Content="{Binding State}" HorizontalAlignment="Left" />
+        </StackPanel>
+
+        <StackPanel Margin="10" HorizontalAlignment="Right">
+            <ToggleButton Style="{StaticResource MapToggleButton}" 
+                          IsChecked="{Binding IsCenterOnAirplane}" 
+                          Checked="OnCenterOnAirplaneChecked" Unchecked="OnCenterOnAirplaneUnChecked">
+
+                <ContentControl Content="{StaticResource CenterMap}" />
+            </ToggleButton>
+
         </StackPanel>
     </Grid>
 
