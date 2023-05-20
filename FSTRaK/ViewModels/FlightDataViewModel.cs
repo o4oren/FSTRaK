@@ -5,7 +5,6 @@ using System;
 using System.Collections.ObjectModel;
 using System.ComponentModel;
 using System.Linq;
-using static FSTRaK.Models.FlightManager.FlightManager;
 
 namespace FSTRaK.ViewModels
 {

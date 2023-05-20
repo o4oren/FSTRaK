@@ -33,7 +33,7 @@ namespace FSTRaK.Views
 
         private void OnMapMoveEvent(object sender, MouseButtonEventArgs e)
         {
-            // ((FlightDataViewModel)this.DataContext).IsCenterOnAirplane = false; // Disabled for now
+            ((FlightDataViewModel)this.DataContext).IsCenterOnAirplane = false; // Disabled for now
         }
 
         private void OnCenterOnAirplaneChecked(object sender, RoutedEventArgs e)
