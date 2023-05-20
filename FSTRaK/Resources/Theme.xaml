@@ -84,12 +84,13 @@
                                        VerticalAlignment="Center" HorizontalAlignment="Center"
                                        Foreground="white"
                                        MinWidth="50"
-                                            MinHeight="50"/>
+                                       MinHeight="50"/>
                         </Grid>
 
                         <ControlTemplate.Triggers>
                             <Trigger Property="IsChecked" Value="False">
                                 <Setter TargetName="ToggleButtonBorder" Property="Background" Value="gray"/>
+                                <Setter TargetName="ToggleContent" Property="Opacity" Value="0.5"/>
                             </Trigger>
                         </ControlTemplate.Triggers>
                     </ControlTemplate>
