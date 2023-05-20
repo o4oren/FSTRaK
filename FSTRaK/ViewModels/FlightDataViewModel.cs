@@ -142,7 +142,7 @@ namespace FSTRaK.ViewModels
                     OnPropertyChanged(nameof(Location));
 
                     // Begining of flight
-                    if(flightManager.State is FlightStartedState)
+                    if(flightManager.State is FlightStartedState && ActiveFlight != null)
                     {
                         Title = $"Aircraft: {ActiveFlight.Aircraft.Title}";
                         Model = $"Model: {ActiveFlight.Aircraft.Model}";

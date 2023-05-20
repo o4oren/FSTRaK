@@ -103,12 +103,18 @@
       <Generator>MSBuild:Compile</Generator>
       <SubType>Designer</SubType>
     </ApplicationDefinition>
+    <Compile Include="DataTypes\FlightParams.cs" />
+    <Compile Include="DataTypes\NearestAirportRequestType.cs" />
+    <Compile Include="DataTypes\SimConnectDataTypes.cs" />
+    <Compile Include="Models\FlightManager\AbstractState.cs" />
     <Compile Include="Models\FlightManager\FlightManager.cs" />
     <Compile Include="Models\Aircraft.cs" />
     <Compile Include="Models\BaseModel.cs" />
     <Compile Include="Models\Flight.cs" />
     <Compile Include="Models\FlightEvent.cs" />
     <Compile Include="Models\FlightManager\FlightEnededState.cs" />
+    <Compile Include="Models\FlightManager\LandedState.cs" />
+    <Compile Include="Models\FlightManager\InFlightState.cs" />
     <Compile Include="Models\FlightManager\InTaxiState.cs" />
     <Compile Include="Models\FlightManager\IFlightManagerState.cs" />
     <Compile Include="Models\FlightManager\FlightStartedState.cs" />

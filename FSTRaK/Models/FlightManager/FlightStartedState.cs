@@ -1,17 +1,17 @@
-﻿using Serilog;
+﻿using FSTRaK.DataTypes;
 using System;
-using System.Windows.Markup;
 
 namespace FSTRaK.Models.FlightManager
 {
-    internal class FlightStartedState : IFlightManagerState
+    internal class FlightStartedState : AbstractState
     {
         private Boolean _isStarted = false;
 
-        public void processFlightData(FlightManager Context, SimConnectService.AircraftFlightData Data)
+        public override void processFlightData(FlightManager Context, SimConnectService.AircraftFlightData Data)
         {
+            // Only once in actual plane and not paused
             // This should only happen once per flight
-            if(!_isStarted)
+            if (!_isStarted)
             {
                 Flight flight = new Flight();
                 Aircraft aircraft;
@@ -26,13 +26,18 @@ namespace FSTRaK.Models.FlightManager
                 Context.ActiveFlight = flight;
                 Context.SetEventTimer(5000);
                 Context.AddFlightEvent(Data);
-                Log.Information($"Flight started at {DateTime.Now}");
+                Context.RequestNearestAirports(NearestAirportRequestType.Departure);
                 _isStarted = true;
-            }
-            if (Data.latitude != Context.CurrentFlightParams.Latitude || Data.longitude != Context.CurrentFlightParams.Longitude)
+            } 
+
+            // Compare the location to determine movement ONLY after out of the "ready to fly" screen
+            if (Data.CameraState == (int)CameraState.Cockpit && (Data.latitude != Context.CurrentFlightParams.Latitude || Data.longitude != Context.CurrentFlightParams.Longitude))
             {
-                Context.State = new InTaxiState();
+                Context.State = new InTaxiState(Context);
             }
+
+            HandleFlightExit(Context);
         }
     }
 }
+

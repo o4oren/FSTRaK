@@ -23,10 +23,8 @@ namespace FSTRaK
         private const int WM_USER_SIMCONNECT = 0x0402;
         private const string MAIN_MENU_FLT = "flights\\other\\MainMenu.FLT";
         private SimConnect _simconnect = null;
-        private GeoCoordinate myCoordinates = null;
 
         private HwndSource gHs;
-        private DateTime _lastUpdated = DateTime.Now;
         Timer _connectionTimer;
         private IntPtr lHwnd;
 
@@ -36,7 +34,7 @@ namespace FSTRaK
             get => _isConnected; 
             private set
             {
-                if (value != _isInFlight)
+                if (value != _isConnected)
                 {
                     _isConnected = value;
                     OnPropertyChanged(nameof(IsConnected));
@@ -184,9 +182,13 @@ namespace FSTRaK
             public double trueHeading;
             public double altitude;
             public double trueAirspeed;
+            public double indicatedAirpeed;
             public double groundVelocity;
             public double groundAltitude;
+            public double planeAltAboveGround;
+            public double planeAltAboveGroundMinusCg;
             public double verticalSpeed;
+            public int CameraState;
         }
 
 
@@ -260,10 +262,15 @@ namespace FSTRaK
             _simconnect.AddToDataDefinition(DataDefinitions.FlightData, "Plane Heading Degrees True", "degrees", SIMCONNECT_DATATYPE.FLOAT64, 0.0f, SimConnect.SIMCONNECT_UNUSED);
             _simconnect.AddToDataDefinition(DataDefinitions.FlightData, "Plane Altitude", "feet", SIMCONNECT_DATATYPE.FLOAT64, 0.0f, SimConnect.SIMCONNECT_UNUSED);
             _simconnect.AddToDataDefinition(DataDefinitions.FlightData, "Airspeed True", "knots", SIMCONNECT_DATATYPE.FLOAT64, 0.0f, SimConnect.SIMCONNECT_UNUSED);
+            _simconnect.AddToDataDefinition(DataDefinitions.FlightData, "Airspeed Indicated", "knots", SIMCONNECT_DATATYPE.FLOAT64, 0.0f, SimConnect.SIMCONNECT_UNUSED);
             _simconnect.AddToDataDefinition(DataDefinitions.FlightData, "Ground Velocity", "knots", SIMCONNECT_DATATYPE.FLOAT64, 0.0f, SimConnect.SIMCONNECT_UNUSED);
             _simconnect.AddToDataDefinition(DataDefinitions.FlightData, "Ground Altitude", "meters", SIMCONNECT_DATATYPE.FLOAT64, 0.0f, SimConnect.SIMCONNECT_UNUSED);
+            _simconnect.AddToDataDefinition(DataDefinitions.FlightData, "Plane Alt Above Ground", "feet", SIMCONNECT_DATATYPE.FLOAT64, 0.0f, SimConnect.SIMCONNECT_UNUSED);
+            _simconnect.AddToDataDefinition(DataDefinitions.FlightData, "Plane Alt Above Ground Minus CG", "feet", SIMCONNECT_DATATYPE.FLOAT64, 0.0f, SimConnect.SIMCONNECT_UNUSED);
+
             _simconnect.AddToDataDefinition(DataDefinitions.FlightData, "Vertical Speed", "ft/min", SIMCONNECT_DATATYPE.FLOAT64, 0.0f, SimConnect.SIMCONNECT_UNUSED);
-            
+            _simconnect.AddToDataDefinition(DataDefinitions.FlightData, "Camera State", null, SIMCONNECT_DATATYPE.INT64, 0.0f, SimConnect.SIMCONNECT_UNUSED);
+
             _simconnect.RegisterDataDefineStruct<AircraftFlightData>(DataDefinitions.FlightData);
 
             // Subscribe to System events
@@ -346,13 +353,8 @@ namespace FSTRaK
 
         private void simconnect_OnRecvSimobjectData(SimConnect sender, SIMCONNECT_RECV_SIMOBJECT_DATA data)
         {
-            _lastUpdated = DateTime.Now;
             FlightData = (AircraftFlightData)data.dwData[0];
             OnPropertyChanged(nameof(FlightData));
-
-            // Change to request this on flight start and end
-            if (NearestAirport == string.Empty)
-                RequestNearestAirport();
         }
 
         public void RequestNearestAirport()

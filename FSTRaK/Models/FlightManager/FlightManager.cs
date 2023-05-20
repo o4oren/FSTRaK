@@ -1,9 +1,9 @@
-﻿using Serilog;
+﻿using FSTRaK.DataTypes;
+using Serilog;
 using System;
 using System.ComponentModel;
 using System.Diagnostics;
 using System.Runtime.CompilerServices;
-
 
 namespace FSTRaK.Models.FlightManager
 {
@@ -37,21 +37,12 @@ namespace FSTRaK.Models.FlightManager
             }
         }
 
-        public struct FlightParams
-        {
-            public double Heading;
-            public double Latitude;
-            public double Longitude;
-            public double TrueAirspeed;
-            public double Altitude;
-            public bool IsOnGround;
-        }
-
         internal void Initialize()
         {
             _simConnectService = SimConnectService.Instance;
             _simConnectService.Initialize();
-            _simConnectService.PropertyChanged += SimconnectService_OnPropertyChange;            
+            _simConnectService.PropertyChanged += SimconnectService_OnPropertyChange;
+            State = new SimNotInFlightState();
         }
 
         // Properties
@@ -80,15 +71,21 @@ namespace FSTRaK.Models.FlightManager
             }
         }
 
-        private IFlightManagerState _state = new SimNotInFlightState();
+        private IFlightManagerState _state;
         internal IFlightManagerState State { 
             get { return _state; }
             set
             {
                 _state = value;
+                Log.Information($"State changed - {DateTime.Now} - {value.GetType().Name}");
                 OnPropertyChanged();
             }
         }
+
+        private bool _simConnectInFlight = false;
+        public bool SimConnectInFlight { get { return _simConnectInFlight; } set { if( _simConnectInFlight == value ) return; _simConnectInFlight = value; OnPropertyChanged(); } }
+
+        private NearestAirportRequestType _nearestAirportRequestType = NearestAirportRequestType.Departure;
 
         private void SimconnectService_OnPropertyChange(object sender, PropertyChangedEventArgs e)
         {            
@@ -108,6 +105,7 @@ namespace FSTRaK.Models.FlightManager
                     fp.Longitude = data.longitude;
                     fp.Altitude = data.altitude;
                     CurrentFlightParams = fp;
+
                     OnPropertyChanged("ActiveFlight");
                     break;
 
@@ -116,23 +114,28 @@ namespace FSTRaK.Models.FlightManager
                     if(ActiveFlight != null && CurrentFlightParams.IsOnGround)
                     {
                         Log.Debug($"xxx {airport}");
-                        ActiveFlight.DepartureAirport = airport;
+                        if(_nearestAirportRequestType == NearestAirportRequestType.Departure)
+                        {
+                            ActiveFlight.DepartureAirport = airport;
+                        }
+                        else if(_nearestAirportRequestType == NearestAirportRequestType.Arrival)
+                        {
+                            ActiveFlight.ArrivalAirport = airport;
+                        }
                     }
                     break;
 
                 case nameof(_simConnectService.IsInFlight):
-                    if(_simConnectService.IsInFlight)
-                    {
-                        State = new FlightStartedState();
-                    } else
-                    {
-                        State = new FlightEndedState(this);
-                    }
-                    OnPropertyChanged(nameof(SimConnectService.IsInFlight));
+                    SimConnectInFlight = _simConnectService.IsInFlight;
                     break;
             }
         }
 
+        internal void RequestNearestAirports(NearestAirportRequestType nearestAirportRequestType)
+        {
+            _nearestAirportRequestType = nearestAirportRequestType;
+            _simConnectService.RequestNearestAirport();
+        }
 
         internal void AddFlightEvent(SimConnectService.AircraftFlightData data)
         {
@@ -151,22 +154,12 @@ namespace FSTRaK.Models.FlightManager
                 fe.Latitude = data.latitude;
                 fe.Longitude = data.longitude;
                 fe.TrueHeading = data.trueHeading;
-                fe.Airspeed = data.trueAirspeed;
+                fe.Airspeed = data.indicatedAirpeed;
+                fe.GroundSpeed = data.groundVelocity;
                 fe.Time = time;
                 ActiveFlight.FlightEvents.Add(fe);
                 _eventsStopwatch.Restart();
             }
-
-        }
-
-        private void EndFlight()
-        {
-            // TODO code to save flight in the db and recycle
-            // State = FlightState.Ended;
-
-            _eventsStopwatch.Stop();
-            _eventsStopwatch.Reset();
-            Log.Information($"Flight ended at {DateTime.Now}");
         }
         private static DateTime CalculateSimTime(SimConnectService.AircraftFlightData data)
         {
@@ -187,8 +180,11 @@ namespace FSTRaK.Models.FlightManager
 
         internal void SetEventTimer(int time)
         {
-            _eventsInterval = time;
-            _eventsStopwatch.Restart();
+            if(time != _eventsInterval)
+            {
+                _eventsInterval = time;
+                _eventsStopwatch.Restart();
+            }
         }
 
         internal void StopTimer()
@@ -196,6 +192,5 @@ namespace FSTRaK.Models.FlightManager
             _eventsStopwatch.Stop();
             _eventsStopwatch.Reset();
         }
-
     }
 }

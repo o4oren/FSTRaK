@@ -13,6 +13,7 @@ namespace FSTRaK.Models
         public double Longitude { get; set; }
         public double Altitude { get; set; }
         public double Airspeed { get; set; }
+        public double GroundSpeed { get; set; }
         public double TrueHeading { get; set; }
         public double GroundAltitude { get; set; }
 

@@ -1,19 +1,18 @@
 ﻿
+
 namespace FSTRaK.Models.FlightManager
 {
-    internal class InTaxiState : AbstractState
+    internal class LandedState : AbstractState
     {
 
-        public InTaxiState(FlightManager Context) 
+        public LandedState(FlightManager Context) 
         {
             Context.SetEventTimer(5000);
+            Context.RequestNearestAirports(DataTypes.NearestAirportRequestType.Arrival);
+
         }
         public override void processFlightData(FlightManager Context, SimConnectService.AircraftFlightData Data)
         {
-            if(!Data.simOnGround)
-            {
-                Context.State = new InFlightState(Context);
-            }
             Context.AddFlightEvent(Data);
             HandleFlightExit(Context);
         }
