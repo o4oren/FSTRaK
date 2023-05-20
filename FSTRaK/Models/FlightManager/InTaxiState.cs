@@ -4,8 +4,9 @@ namespace FSTRaK.Models.FlightManager
     internal class InTaxiState : AbstractState
     {
 
-        public InTaxiState(FlightManager Context) 
+        public InTaxiState(FlightManager Context) : base()
         {
+            this.Name = "Taxi";
             Context.SetEventTimer(5000);
         }
         public override void processFlightData(FlightManager Context, SimConnectService.AircraftFlightData Data)

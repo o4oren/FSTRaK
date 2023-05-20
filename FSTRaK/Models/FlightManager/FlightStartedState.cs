@@ -7,11 +7,16 @@ namespace FSTRaK.Models.FlightManager
     {
         private Boolean _isStarted = false;
 
+        public FlightStartedState() : base()
+        {
+            this.Name = "Flight Started";
+        }
+
         public override void processFlightData(FlightManager Context, SimConnectService.AircraftFlightData Data)
         {
             // Only once in actual plane and not paused
             // This should only happen once per flight
-            if (!_isStarted)
+            if (!_isStarted && Data.CameraState == (int)CameraState.Cockpit)
             {
                 Flight flight = new Flight();
                 Aircraft aircraft;

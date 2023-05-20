@@ -1,8 +1,11 @@
 ﻿namespace FSTRaK.Models.FlightManager
 {
-    internal class SimNotInFlightState : IFlightManagerState
+    internal class SimNotInFlightState : AbstractState
     {
-        public void processFlightData(FlightManager Context, SimConnectService.AircraftFlightData Data)
+        public SimNotInFlightState(): base() {
+            Name = "Not in flight";
+        }
+        public override void processFlightData(FlightManager Context, SimConnectService.AircraftFlightData Data)
         {
             Context.ActiveFlight = null;
             if(Context.SimConnectInFlight)

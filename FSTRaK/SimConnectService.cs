@@ -189,6 +189,9 @@ namespace FSTRaK
             public double planeAltAboveGroundMinusCg;
             public double verticalSpeed;
             public int CameraState;
+            public bool FlapSpeedExceeded;
+            public bool GearSpeedExceeded;
+            public bool Overspeed;
         }
 
 
@@ -267,9 +270,13 @@ namespace FSTRaK
             _simconnect.AddToDataDefinition(DataDefinitions.FlightData, "Ground Altitude", "meters", SIMCONNECT_DATATYPE.FLOAT64, 0.0f, SimConnect.SIMCONNECT_UNUSED);
             _simconnect.AddToDataDefinition(DataDefinitions.FlightData, "Plane Alt Above Ground", "feet", SIMCONNECT_DATATYPE.FLOAT64, 0.0f, SimConnect.SIMCONNECT_UNUSED);
             _simconnect.AddToDataDefinition(DataDefinitions.FlightData, "Plane Alt Above Ground Minus CG", "feet", SIMCONNECT_DATATYPE.FLOAT64, 0.0f, SimConnect.SIMCONNECT_UNUSED);
-
             _simconnect.AddToDataDefinition(DataDefinitions.FlightData, "Vertical Speed", "ft/min", SIMCONNECT_DATATYPE.FLOAT64, 0.0f, SimConnect.SIMCONNECT_UNUSED);
             _simconnect.AddToDataDefinition(DataDefinitions.FlightData, "Camera State", null, SIMCONNECT_DATATYPE.INT64, 0.0f, SimConnect.SIMCONNECT_UNUSED);
+
+            _simconnect.AddToDataDefinition(DataDefinitions.FlightData, "Flap Speed Exceeded", null, SIMCONNECT_DATATYPE.INT32, 0.0f, SimConnect.SIMCONNECT_UNUSED);
+            _simconnect.AddToDataDefinition(DataDefinitions.FlightData, "Gear Speed Exceeded", null, SIMCONNECT_DATATYPE.INT32, 0.0f, SimConnect.SIMCONNECT_UNUSED);
+            _simconnect.AddToDataDefinition(DataDefinitions.FlightData, "Overspeed Warning", null, SIMCONNECT_DATATYPE.INT32, 0.0f, SimConnect.SIMCONNECT_UNUSED);
+
 
             _simconnect.RegisterDataDefineStruct<AircraftFlightData>(DataDefinitions.FlightData);
 
@@ -311,7 +318,7 @@ namespace FSTRaK
             {
                 case (int)EVENTS.FLIGHT_LOADED:
                     Log.Debug($"=== Loaded {data.dwData.ToString()}");
-                    // Do nothing, this is cause in OnRecvFileName
+                    // Do nothing, this is handled in OnRecvFileName
                     break;
                 case (int)EVENTS.PAUSE:
                     PauseState = data.dwData;
@@ -404,8 +411,8 @@ namespace FSTRaK
         private IntPtr WndProc(IntPtr hwnd, int msg, IntPtr wParam, IntPtr lParam, ref bool handled)
         {
             handled = false;
-            // if message is coming from simconnect and the connection is not null;
-            // continue and receive message
+            // If message is coming from simconnect and the connection is not null;
+            // Continue and receive message.
             if (msg == WM_USER_SIMCONNECT && _simconnect != null)
             {
                 _simconnect.ReceiveMessage();

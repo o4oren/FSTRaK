@@ -48,6 +48,7 @@
             <Label Style="{StaticResource MapOverlayLabel}" Content="{Binding Type}" HorizontalAlignment="Left" />
             <!-- Label Style="{StaticResource MapOverlayLabel}" Content="{Binding Airline}" HorizontalAlignment="Left" / -->
             <Label Style="{StaticResource MapOverlayLabel}" Content="{Binding FlightParamsText}" HorizontalAlignment="Left" />
+            <Label Style="{StaticResource MapOverlayLabel}" Content="{Binding State}" HorizontalAlignment="Left" />
         </StackPanel>
     </Grid>
 

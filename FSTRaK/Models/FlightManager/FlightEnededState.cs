@@ -5,8 +5,9 @@ namespace FSTRaK.Models.FlightManager
 {
     internal class FlightEndedState : AbstractState
     {
-        public FlightEndedState(FlightManager Context) 
+        public FlightEndedState(FlightManager Context) : base()
         {
+            this.Name = "Flight Ended";
             Context.StopTimer();
             Log.Information($"Flight ended at {DateTime.Now}");
             // TODO persist data

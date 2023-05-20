@@ -71,13 +71,13 @@ namespace FSTRaK.Models.FlightManager
             }
         }
 
-        private IFlightManagerState _state;
-        internal IFlightManagerState State { 
+        private AbstractState _state;
+        internal AbstractState State { 
             get { return _state; }
             set
             {
                 _state = value;
-                Log.Information($"State changed - {DateTime.Now} - {value.GetType().Name}");
+                Log.Information($"State changed - {DateTime.Now} - {value.Name}");
                 OnPropertyChanged();
             }
         }
@@ -96,15 +96,18 @@ namespace FSTRaK.Models.FlightManager
 
                     _state.processFlightData(this, data);
 
-                    // Updating the map in realtime
-                    FlightParams fp = new FlightParams();
-                    fp.TrueAirspeed = data.trueAirspeed;
-                    fp.Heading = data.trueHeading;
-                    fp.IsOnGround = data.simOnGround;
-                    fp.Latitude = data.latitude;
-                    fp.Longitude = data.longitude;
-                    fp.Altitude = data.altitude;
-                    CurrentFlightParams = fp;
+                    // Updating the map in realtime if not in non-flight states
+                    if (!(State is SimNotInFlightState))
+                    {
+                        FlightParams fp = new FlightParams();
+                        fp.TrueAirspeed = data.trueAirspeed;
+                        fp.Heading = data.trueHeading;
+                        fp.IsOnGround = data.simOnGround;
+                        fp.Latitude = data.latitude;
+                        fp.Longitude = data.longitude;
+                        fp.Altitude = data.altitude;
+                        CurrentFlightParams = fp;
+                    }
 
                     OnPropertyChanged("ActiveFlight");
                     break;

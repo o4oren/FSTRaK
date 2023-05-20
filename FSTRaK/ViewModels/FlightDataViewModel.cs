@@ -105,6 +105,24 @@ namespace FSTRaK.ViewModels
             { }
         }
 
+        string _state = "";
+
+        public string State
+        {
+            get
+            {
+                return _state;
+            }
+            private set
+            { 
+                if(_state != value)
+                {
+                    _state = value;
+                    OnPropertyChanged();
+                }
+            }
+        }
+
         public LocationCollection FlightPath { get; set; } = new LocationCollection();
 
         public LocationCollection LastSegmentLine { get 
@@ -161,9 +179,13 @@ namespace FSTRaK.ViewModels
                     break;
 
                 case nameof(flightManager.State):
-                    FlightPath.Clear();
-                    OnPropertyChanged(nameof(FlightPath));
-                    OnPropertyChanged(nameof(flightManager.State));
+                    if(flightManager.State is FlightStartedState)
+                    {
+                        FlightPath.Clear();
+                        OnPropertyChanged(nameof(FlightPath));
+                        OnPropertyChanged(nameof(flightManager.State));
+                    }
+                    State = flightManager.State.ToString();
 
                     break;
 
