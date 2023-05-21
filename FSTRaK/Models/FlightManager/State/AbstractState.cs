@@ -1,8 +1,10 @@
 ﻿
 
 using FSTRaK.DataTypes;
+using Serilog;
 using System;
 using System.Diagnostics;
+using System.Linq;
 
 namespace FSTRaK.Models.FlightManager
 {
@@ -15,8 +17,6 @@ namespace FSTRaK.Models.FlightManager
         protected FlightManager Context;
         protected Stopwatch _stopwatch = new Stopwatch();
         protected int _eventInterval = 5000;
-        protected bool IsStopwatchRestart = true;
-
 
         public abstract bool IsMovementState { get; set; }
 
@@ -45,20 +45,16 @@ namespace FSTRaK.Models.FlightManager
             {
                 Context.ActiveFlight.StartTime = time;
             }
-            if (!_stopwatch.IsRunning || _stopwatch.ElapsedMilliseconds > _eventInterval)
-            {
-                fe.Altitude = data.altitude;
-                fe.GroundAltitude = data.groundAltitude;
-                fe.Latitude = data.latitude;
-                fe.Longitude = data.longitude;
-                fe.TrueHeading = data.trueHeading;
-                fe.Airspeed = data.indicatedAirpeed;
-                fe.GroundSpeed = data.groundVelocity;
-                fe.Time = time;
-                Context.ActiveFlight.FlightEvents.Add(fe);
-                if(IsStopwatchRestart)
-                    _stopwatch.Restart();
-            }
+            fe.Altitude = data.altitude;
+            fe.GroundAltitude = data.groundAltitude;
+            fe.Latitude = data.latitude;
+            fe.Longitude = data.longitude;
+            fe.TrueHeading = data.trueHeading;
+            fe.Airspeed = data.indicatedAirpeed;
+            fe.GroundSpeed = data.groundVelocity;
+            fe.Time = time;
+            Context.ActiveFlight.FlightEvents.Add(fe);
+            Log.Debug(Context.ActiveFlight.FlightEvents.Last().GetType().ToString());
         }
 
         protected static DateTime CalculateSimTime(AircraftFlightData data)

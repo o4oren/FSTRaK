@@ -13,7 +13,6 @@ namespace FSTRaK.Models.FlightManager
         {
             this.Name = "Flight Ended";
             this.IsMovementState = false;
-            this._stopwatch.Stop();
             Log.Information($"Flight ended at {DateTime.Now}");
             // TODO persist data
         }

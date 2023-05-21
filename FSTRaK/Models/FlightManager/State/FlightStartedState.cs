@@ -15,10 +15,6 @@ namespace FSTRaK.Models.FlightManager
         {
             this.Name = "Flight Started";
             this.IsMovementState = false;
-
-            // To prevent updates past the first one.
-            this.IsStopwatchRestart = false;
-            this._eventInterval = int.MaxValue; 
         }
 
         public override void processFlightData(AircraftFlightData Data)
@@ -38,7 +34,7 @@ namespace FSTRaK.Models.FlightManager
                 };
                 flight.Aircraft = aircraft;
                 Context.ActiveFlight = flight;
-                AddFlightEvent(Data, new FlightEvent()); // TODO - replace with a FLightSTarted Event.
+                AddFlightEvent(Data, new FlightEvent()); // TODO - replace with a FLightStarted Event.
                 Context.RequestNearestAirports(NearestAirportRequestType.Departure);
                 _isStarted = true;
             } 

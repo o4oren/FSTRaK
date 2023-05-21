@@ -1,6 +1,9 @@
 ﻿
 using FSTRaK.DataTypes;
+using Serilog;
 using System.Diagnostics;
+using System.Linq;
+using System.Runtime.Remoting.Contexts;
 
 namespace FSTRaK.Models.FlightManager
 {
@@ -20,11 +23,20 @@ namespace FSTRaK.Models.FlightManager
         {
             if(!Data.simOnGround)
             {
+                TakeoffEvent To = new TakeoffEvent() { FlapsPosition = Data.FlapPosition };
+                AddFlightEvent(Data, To);
                 Context.State = new InFlightState(Context);
+                return;
             }
 
-            AddFlightEvent(Data, new FlightEvent());
 
+            // Add event if stopwatch is not started, check if interval has elapsed otherwise
+            if(!_stopwatch.IsRunning || _stopwatch.ElapsedMilliseconds > _eventInterval)
+            {
+                AddFlightEvent(Data, new FlightEvent());
+                _stopwatch.Restart();
+            }
+            
             HandleFlightExit(Context);
         }
     }

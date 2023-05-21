@@ -18,13 +18,21 @@ namespace FSTRaK.Models.FlightManager
         {
             if (Data.simOnGround)
             {
+                LandingEvent To = new LandingEvent() { VerticalSpeed = Data.verticalSpeed };
+                AddFlightEvent(Data, To);
                 Context.State = new LandedState(Context);
+                return;
             }
 
             // TODO add code to handle specific flight events
-            FlightEvent fe = new FlightEvent();
 
-            AddFlightEvent(Data, fe);
+            // Add event if stopwatch is not started, check if interval has elapsed otherwise
+            if (!_stopwatch.IsRunning || _stopwatch.ElapsedMilliseconds > _eventInterval)
+            {
+                AddFlightEvent(Data, new FlightEvent());
+                _stopwatch.Restart();
+            }
+            
             HandleFlightExit(Context);
         }
     }

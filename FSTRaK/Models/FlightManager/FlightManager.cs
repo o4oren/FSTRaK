@@ -2,7 +2,6 @@
 using Serilog;
 using System;
 using System.ComponentModel;
-using System.Diagnostics;
 using System.Runtime.CompilerServices;
 
 namespace FSTRaK.Models.FlightManager

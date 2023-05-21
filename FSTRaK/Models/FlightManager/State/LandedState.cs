@@ -18,12 +18,19 @@ namespace FSTRaK.Models.FlightManager
         }
         public override void processFlightData(AircraftFlightData Data)
         {
-            AddFlightEvent(Data, new FlightEvent());
-
-            if(!Data.simOnGround)
+            if (!Data.simOnGround)
             {
                 Context.State = new InFlightState(Context);
+                return;
             }
+
+            // Add event if stopwatch is not started, check if interval has elapsed otherwise
+            if (!_stopwatch.IsRunning || _stopwatch.ElapsedMilliseconds > _eventInterval)
+            {
+                AddFlightEvent(Data, new FlightEvent());
+                _stopwatch.Restart();
+            }
+
             HandleFlightExit(Context);
         }
     }

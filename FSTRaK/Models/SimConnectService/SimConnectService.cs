@@ -222,6 +222,7 @@ namespace FSTRaK
             _simconnect.AddToDataDefinition(DataDefinitions.FlightData, "Flap Speed Exceeded", null, SIMCONNECT_DATATYPE.INT32, 0.0f, SimConnect.SIMCONNECT_UNUSED);
             _simconnect.AddToDataDefinition(DataDefinitions.FlightData, "Gear Speed Exceeded", null, SIMCONNECT_DATATYPE.INT32, 0.0f, SimConnect.SIMCONNECT_UNUSED);
             _simconnect.AddToDataDefinition(DataDefinitions.FlightData, "Overspeed Warning", null, SIMCONNECT_DATATYPE.INT32, 0.0f, SimConnect.SIMCONNECT_UNUSED);
+            _simconnect.AddToDataDefinition(DataDefinitions.FlightData, "TRAILING EDGE FLAPS LEFT Index", null, SIMCONNECT_DATATYPE.FLOAT64, 0.0f, SimConnect.SIMCONNECT_UNUSED);
 
 
             _simconnect.RegisterDataDefineStruct<AircraftFlightData>(DataDefinitions.FlightData);

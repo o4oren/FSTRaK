@@ -88,6 +88,8 @@ namespace FSTRaK.DataTypes
         public bool FlapSpeedExceeded;
         public bool GearSpeedExceeded;
         public bool Overspeed;
+        public double FlapPosition;
+
     }
     internal class SimConnectDataTypes
     {
