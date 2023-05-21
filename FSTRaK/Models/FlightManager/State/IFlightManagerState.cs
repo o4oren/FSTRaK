@@ -7,6 +7,6 @@ namespace FSTRaK.Models.FlightManager
     {
         string Name { get; set; }
         bool IsMovementState { get; set; }
-        void processFlightData(FlightManager Context, AircraftFlightData Data);
+        void processFlightData(AircraftFlightData Data);
     }
 }

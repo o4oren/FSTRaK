@@ -18,10 +18,7 @@ namespace FSTRaK.Models.FlightManager
         private FlightManager() { }
 
         public event PropertyChangedEventHandler PropertyChanged;
-
         private SimConnectService _simConnectService;
-        private Stopwatch _eventsStopwatch = new Stopwatch();
-        private int _eventsInterval = 5000;
         public static FlightManager Instance
         {
             get
@@ -94,7 +91,7 @@ namespace FSTRaK.Models.FlightManager
                 case nameof(SimConnectService.FlightData):
                     var data = _simConnectService.FlightData;
 
-                    _state.processFlightData(this, data);
+                    _state.processFlightData(data);
 
                     // Updating the map in realtime if not in non-flight states
                     if (!(State is SimNotInFlightState))
@@ -140,37 +137,6 @@ namespace FSTRaK.Models.FlightManager
             _simConnectService.RequestNearestAirport();
         }
 
-        internal void AddFlightEvent(AircraftFlightData data)
-        {
-            DateTime time = CalculateSimTime(data);
-            if (ActiveFlight.StartTime == null)
-            {
-                ActiveFlight.StartTime = time;
-            }
-
-            // Saving flight events at intervals
-            if (_eventsStopwatch.ElapsedMilliseconds > _eventsInterval || !(_state is SimNotInFlightState) && ActiveFlight.FlightEvents.Count == 0)
-            {
-                FlightEvent fe = new FlightEvent();
-                fe.Altitude = data.altitude;
-                fe.GroundAltitude = data.groundAltitude;
-                fe.Latitude = data.latitude;
-                fe.Longitude = data.longitude;
-                fe.TrueHeading = data.trueHeading;
-                fe.Airspeed = data.indicatedAirpeed;
-                fe.GroundSpeed = data.groundVelocity;
-                fe.Time = time;
-                ActiveFlight.FlightEvents.Add(fe);
-                _eventsStopwatch.Restart();
-            }
-        }
-        private static DateTime CalculateSimTime(AircraftFlightData data)
-        {
-            var day = new DateTime(data.zuluYear, data.zuluMonth, data.zuluDay, 0, 0, 0, 0, System.DateTimeKind.Utc);
-            var time = day.AddSeconds(data.zuluTime);
-            return time;
-        }
-
         public void Close()
         {
             _simConnectService?.Close();
@@ -179,21 +145,6 @@ namespace FSTRaK.Models.FlightManager
         private void OnPropertyChanged([CallerMemberName] string name = null)
         {
             PropertyChanged?.Invoke(this, new PropertyChangedEventArgs(name));
-        }
-
-        internal void SetEventTimer(int time)
-        {
-            if(time != _eventsInterval)
-            {
-                _eventsInterval = time;
-                _eventsStopwatch.Restart();
-            }
-        }
-
-        internal void StopTimer()
-        {
-            _eventsStopwatch.Stop();
-            _eventsStopwatch.Reset();
         }
     }
 }

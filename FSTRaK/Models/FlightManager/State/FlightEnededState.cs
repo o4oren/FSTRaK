@@ -9,17 +9,17 @@ namespace FSTRaK.Models.FlightManager
 
         public override string Name { get; set; }
         public override bool IsMovementState { get; set; }
-        public FlightEndedState(FlightManager Context) : base()
+        public FlightEndedState(FlightManager Context) : base(Context)
         {
             this.Name = "Flight Ended";
             this.IsMovementState = false;
-            Context.StopTimer();
+            this._stopwatch.Stop();
             Log.Information($"Flight ended at {DateTime.Now}");
             // TODO persist data
         }
 
 
-        public override void processFlightData(FlightManager Context, AircraftFlightData Data)
+        public override void processFlightData(AircraftFlightData Data)
         {
             HandleFlightExit(Context);
         }

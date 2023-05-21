@@ -1,5 +1,6 @@
 ﻿using FSTRaK.DataTypes;
 using System;
+using System.Runtime.Remoting.Metadata.W3cXsd2001;
 
 namespace FSTRaK.Models.FlightManager
 {
@@ -10,13 +11,17 @@ namespace FSTRaK.Models.FlightManager
         public override string Name { get; set; }
         public override bool IsMovementState { get; set; }
 
-        public FlightStartedState() : base()
+        public FlightStartedState(FlightManager Context) : base(Context)
         {
             this.Name = "Flight Started";
             this.IsMovementState = false;
+
+            // To prevent updates past the first one.
+            this.IsStopwatchRestart = false;
+            this._eventInterval = int.MaxValue; 
         }
 
-        public override void processFlightData(FlightManager Context, AircraftFlightData Data)
+        public override void processFlightData(AircraftFlightData Data)
         {
             // Only once in actual plane and not paused
             // This should only happen once per flight
@@ -33,8 +38,7 @@ namespace FSTRaK.Models.FlightManager
                 };
                 flight.Aircraft = aircraft;
                 Context.ActiveFlight = flight;
-                Context.SetEventTimer(5000);
-                Context.AddFlightEvent(Data);
+                AddFlightEvent(Data, new FlightEvent()); // TODO - replace with a FLightSTarted Event.
                 Context.RequestNearestAirports(NearestAirportRequestType.Departure);
                 _isStarted = true;
             } 

@@ -8,19 +8,23 @@ namespace FSTRaK.Models.FlightManager
     {
         public override string Name { get; set; }
         public override bool IsMovementState { get; set; }
-        public InFlightState(FlightManager Context) : base()
+        public InFlightState(FlightManager Context) : base(Context)
         {
+            this._eventInterval = 10000;
             this.Name = "In flight";
             this.IsMovementState = true;
-            Context.SetEventTimer(5000);
         }
-        public override void processFlightData(FlightManager Context, AircraftFlightData Data)
+        public override void processFlightData(AircraftFlightData Data)
         {
             if (Data.simOnGround)
             {
                 Context.State = new LandedState(Context);
             }
-            Context.AddFlightEvent(Data);
+
+            // TODO add code to handle specific flight events
+            FlightEvent fe = new FlightEvent();
+
+            AddFlightEvent(Data, fe);
             HandleFlightExit(Context);
         }
     }

@@ -7,7 +7,7 @@ namespace FSTRaK.Models.FlightManager
     {
         public override string Name { get; set; }
         public override bool IsMovementState { get; set; }
-        public SimNotInFlightState(FlightManager Context): base() 
+        public SimNotInFlightState(FlightManager Context): base(Context) 
         {
             Name = "Not in flight";
             IsMovementState = false;
@@ -15,12 +15,12 @@ namespace FSTRaK.Models.FlightManager
             Context.CurrentFlightParams = new FlightParams();
             Context.ActiveFlight = null;
         }
-        public override void processFlightData(FlightManager Context, AircraftFlightData Data)
+        public override void processFlightData(AircraftFlightData Data)
         {
             
             if(Context.SimConnectInFlight)
             {
-                Context.State = new FlightStartedState();
+                Context.State = new FlightStartedState(Context);
             }
         }
     }
