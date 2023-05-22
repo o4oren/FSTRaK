@@ -23,6 +23,7 @@ namespace FSTRaK.ViewModels
                 _selectedMapProvider = value;
                 Properties.Settings.Default.MapTileProvider = _selectedMapProvider;
                 Properties.Settings.Default.Save();
+                OnPropertyChanged();
             }
         }
 
@@ -41,6 +42,7 @@ namespace FSTRaK.ViewModels
                 BingMapsTileLayer.ApiKey = _bingApiKey;
                 BingMapsTileLayer l;
                 Log.Debug(BingMapsTileLayer.ApiKey);
+                OnPropertyChanged();
             }
         }
 
@@ -63,6 +65,7 @@ namespace FSTRaK.ViewModels
                 }
             }
             SelectedMapProvider = Properties.Settings.Default.MapTileProvider;
+            BingApiKey = Properties.Settings.Default.BingApiKey;
         }
     }
 }
