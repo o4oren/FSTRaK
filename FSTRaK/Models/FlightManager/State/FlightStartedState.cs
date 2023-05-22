@@ -40,7 +40,9 @@ namespace FSTRaK.Models.FlightManager
             } 
 
             // Compare the location to determine movement ONLY after out of the "ready to fly" screen
-            if (Data.CameraState == (int)CameraState.Cockpit && (Data.latitude != Context.CurrentFlightParams.Latitude || Data.longitude != Context.CurrentFlightParams.Longitude))
+            if (Data.CameraState == (int)CameraState.Cockpit && 
+                ((Data.latitude != Context.CurrentFlightParams.Latitude || Data.longitude != Context.CurrentFlightParams.Longitude) && Data.groundVelocity > 0)
+                )
             {
                 Context.State = new InTaxiState(Context);
             }

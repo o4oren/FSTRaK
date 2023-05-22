@@ -89,6 +89,7 @@ namespace FSTRaK.DataTypes
         public bool GearSpeedExceeded;
         public bool Overspeed;
         public double FlapPosition;
+        public double fuelWeightLbs;
 
     }
     internal class SimConnectDataTypes

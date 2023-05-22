@@ -263,6 +263,7 @@ namespace FSTRaK.ViewModels
                         ZoomLevel = 5;
                     } else if (flightManager.State is FlightStartedState)
                     {
+
                         ZoomLevel = 13.5;
                         IsCenterOnAirplane = true;
                     }

@@ -18,7 +18,7 @@ namespace FSTRaK.Models.FlightManager
         public override void processFlightData(AircraftFlightData Data)
         {
             
-            if(Context.SimConnectInFlight)
+            if(Context.SimConnectInFlight && Data.CameraState == (int)CameraState.Cockpit)
             {
                 Context.State = new FlightStartedState(Context);
             }

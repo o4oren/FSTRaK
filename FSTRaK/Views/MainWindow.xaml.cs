@@ -1,7 +1,6 @@
 ﻿using FSTRaK.Models.FlightManager;
 using MapControl;
 using System.Windows;
-using System.Windows.Controls.Primitives;
 using System.Windows.Input;
 
 namespace FSTRaK.Views

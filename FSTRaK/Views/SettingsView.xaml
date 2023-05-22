@@ -13,13 +13,14 @@
 
     <StackPanel Margin="10">
         <StackPanel Orientation="Horizontal" Margin="10">
-            <Label Style="{StaticResource FSTrAkLabel}" Width="200">Map tiles Provider</Label>
-            <ComboBox ItemsSource="{Binding MapProviders}" SelectedItem="{Binding SelectedMapProvider}"/>
+            <Label Style="{StaticResource FSTrAkLabel}" Width="180">Map tiles Provider</Label>
+            <ComboBox FontFamily="{StaticResource Slopes}" FontSize="24" Width="200"
+                      ItemsSource="{Binding MapProviders}" SelectedItem="{Binding SelectedMapProvider}"/>
         </StackPanel>
 
         <StackPanel Orientation="Horizontal" Margin="10" Visibility="{Binding IsShowBingApiKeyField, Converter={StaticResource BoolToVis}}">
-            <Label  Style="{StaticResource FSTrAkLabel}" Width="200">Bing API Key</Label>
-            <TextBox Text="{Binding BingApiKey}" TextWrapping="Wrap" Height="80" Width="200"/>
+            <Label  Style="{StaticResource FSTrAkLabel}" Width="180">Bing API Key</Label>
+            <TextBox FontFamily="{StaticResource Slopes}" FontSize="20" Text="{Binding BingApiKey}" TextWrapping="Wrap" Height="100" Width="200"/>
         </StackPanel>
     </StackPanel>
 </UserControl>
