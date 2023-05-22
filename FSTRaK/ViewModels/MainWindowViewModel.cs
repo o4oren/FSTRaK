@@ -12,9 +12,12 @@ namespace FSTRaK.ViewModels
     {
         public RelayCommand MapViewCommand { get; set; }
         public RelayCommand LogBookCommand { get; set; }
+        public RelayCommand SettingsCommand { get; set; }
+
 
 
         private FlightDataViewModel _flightDataViewModel;
+        private SettingsViewModel _settingsViewModel;
 
         private object _activeView;
 
@@ -32,6 +35,7 @@ namespace FSTRaK.ViewModels
         public MainWindowViewModel()
         {
             _flightDataViewModel = new FlightDataViewModel();
+            _settingsViewModel = new SettingsViewModel();
             ActiveView = _flightDataViewModel;
 
             MapViewCommand = new RelayCommand(o =>
@@ -42,6 +46,11 @@ namespace FSTRaK.ViewModels
             LogBookCommand = new RelayCommand(o =>
             {
                 ActiveView = "Hahahaha!";
+            });
+
+            SettingsCommand = new RelayCommand(o =>
+            {
+                ActiveView = _settingsViewModel;
             });
         }
     }

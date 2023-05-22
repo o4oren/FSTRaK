@@ -1,9 +1,6 @@
 ﻿using FSTRaK.ViewModels;
-using Serilog;
 using System.Windows;
-using System.Windows.Controls;
 using System.Windows.Input;
-using Windows.UI.Xaml.Controls;
 
 namespace FSTRaK.Views
 {
@@ -23,7 +20,7 @@ namespace FSTRaK.Views
         switch (e.PropertyName)
             {
                 case "ActiveFlight":
-                    if (((FlightDataViewModel)this.DataContext).IsCenterOnAirplane)
+                    if (DataContext != null && ((FlightDataViewModel)this.DataContext).IsCenterOnAirplane)
                     {
                         xMap.Center = ((FlightDataViewModel)this.DataContext).Location;
                     }
@@ -43,7 +40,11 @@ namespace FSTRaK.Views
 
         private void OnCenterOnAirplaneUnChecked(object sender, RoutedEventArgs e)
         {
-            ((FlightDataViewModel)this.DataContext).IsCenterOnAirplane = false;
+            if(DataContext != null)
+            {
+                ((FlightDataViewModel)this.DataContext).IsCenterOnAirplane = false;
+
+            }
         }
 
 

@@ -23,7 +23,7 @@
 
     <Grid>
         <map:Map x:Name="xMap" 
-                 MapLayer="{StaticResource OpenStreetMap}" 
+                 MapLayer="{Binding MapProvider}" 
                  ZoomLevel="13" 
                  MapProjection="{StaticResource WebMercatorProjection}"
                  MouseLeftButtonDown="OnMapMoveEvent"

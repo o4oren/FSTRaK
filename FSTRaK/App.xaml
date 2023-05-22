@@ -14,6 +14,7 @@
                 <ResourceDictionary Source="Resources/ButtonsTheme.xaml" />
                 <ResourceDictionary Source="Resources/Theme.xaml" />
                 <ResourceDictionary Source="Resources/Images.xaml" />
+                <ResourceDictionary Source="Resources/MapProvidersDictionary.xaml"/>
             </ResourceDictionary.MergedDictionaries>
         </ResourceDictionary>
     </Application.Resources>

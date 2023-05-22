@@ -22,5 +22,29 @@ namespace FSTRaK.Properties {
                 return defaultInstance;
             }
         }
+        
+        [global::System.Configuration.UserScopedSettingAttribute()]
+        [global::System.Diagnostics.DebuggerNonUserCodeAttribute()]
+        [global::System.Configuration.DefaultSettingValueAttribute("OpenStreetMap")]
+        public string MapTileProvider {
+            get {
+                return ((string)(this["MapTileProvider"]));
+            }
+            set {
+                this["MapTileProvider"] = value;
+            }
+        }
+        
+        [global::System.Configuration.UserScopedSettingAttribute()]
+        [global::System.Diagnostics.DebuggerNonUserCodeAttribute()]
+        [global::System.Configuration.DefaultSettingValueAttribute("")]
+        public string BingApiKey {
+            get {
+                return ((string)(this["BingApiKey"]));
+            }
+            set {
+                this["BingApiKey"] = value;
+            }
+        }
     }
 }

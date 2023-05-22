@@ -5,6 +5,8 @@ using System;
 using System.Collections.ObjectModel;
 using System.ComponentModel;
 using System.Linq;
+using System.Windows;
+using System.Windows.Navigation;
 
 namespace FSTRaK.ViewModels
 {
@@ -165,6 +167,23 @@ namespace FSTRaK.ViewModels
         }
 
         public string NearestAirport { get; set; }
+
+        public MapTileLayerBase MapProvider { 
+            get 
+            {
+                string resoueceKey = Properties.Settings.Default.MapTileProvider;
+                var resource = Application.Current.Resources[resoueceKey] as MapTileLayerBase;
+                if(resource != null)
+                {
+                    return resource;
+                }
+                return Application.Current.Resources["OpenStreetMap"] as MapTileLayerBase;
+            }
+            private set { 
+            
+            }
+        
+        }
 
 
         private DateTime _lastUpdated = DateTime.Now;

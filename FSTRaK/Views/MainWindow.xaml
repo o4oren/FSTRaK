@@ -23,6 +23,9 @@
             <DataTemplate DataType="{x:Type viewmodels:FlightDataViewModel}" >
                 <views:FlightDataView/>
             </DataTemplate>
+            <DataTemplate DataType="{x:Type viewmodels:SettingsViewModel}" >
+                <views:SettingsView/>
+            </DataTemplate>
         </ResourceDictionary>
     </Window.Resources>
     <Border Background="#F2F5F8"
@@ -56,6 +59,7 @@
                     <StackPanel  Orientation="Horizontal" MouseLeftButtonDown="DragWindow" Margin="0,0,35,0" HorizontalAlignment="Right">
                         <RadioButton Style="{StaticResource MenuButtonTheme}"  IsChecked="True" Command="{Binding MapViewCommand}" Content="Live View" HorizontalAlignment="Right"/>
                         <RadioButton Style="{StaticResource MenuButtonTheme}"  Command="{Binding LogBookCommand}" Content="Logbook" HorizontalAlignment="Right"/>
+                        <RadioButton Style="{StaticResource MenuButtonTheme}"  Command="{Binding SettingsCommand}" Content="Settings" HorizontalAlignment="Right"/>
                     </StackPanel>
                     <Button Margin="0, 15, 15, 0" VerticalAlignment="Top" Height="15" Width="15" Style="{StaticResource CloseButtonTheme}"  HorizontalAlignment="Right" Click="ButtonClick_CloseApplication" ClickMode="Release">X</Button>
                 </Grid>
