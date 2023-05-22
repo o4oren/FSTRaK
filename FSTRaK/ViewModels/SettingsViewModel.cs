@@ -4,6 +4,7 @@ using System.Collections;
 using System.Windows;
 using System.Collections.ObjectModel;
 using MapControl;
+using System.Linq;
 
 namespace FSTRaK.ViewModels
 {
@@ -69,14 +70,16 @@ namespace FSTRaK.ViewModels
         {
             ResourceDictionary mapProviders = new ResourceDictionary();
             mapProviders.Source = new System.Uri("pack://application:,,,/Resources/MapProvidersDictionary.xaml", uriKind: System.UriKind.Absolute);
-            MapProviders.Clear();
+            ObservableCollection<string> layers = new ObservableCollection<string>();
+
             foreach (DictionaryEntry provider in mapProviders)
             {
                 if ((typeof(MapTileLayerBase).IsAssignableFrom(provider.Value.GetType())))
                 {
-                    MapProviders.Add(provider.Key.ToString());
+                    layers.Add(provider.Key.ToString());
                 }
             }
+            MapProviders = new ObservableCollection<string>(layers.OrderBy(l => l));
         }
 
         public void OnLoaded()
