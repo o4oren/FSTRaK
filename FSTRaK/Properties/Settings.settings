@@ -3,10 +3,13 @@
   <Profiles />
   <Settings>
     <Setting Name="MapTileProvider" Type="System.String" Scope="User">
-      <Value Profile="(Default)" />
+      <Value Profile="(Default)">OpenStreetMap</Value>
     </Setting>
     <Setting Name="BingApiKey" Type="System.String" Scope="User">
       <Value Profile="(Default)" />
+    </Setting>
+    <Setting Name="AlwaysOnTop" Type="System.Boolean" Scope="User">
+      <Value Profile="(Default)">False</Value>
     </Setting>
   </Settings>
 </SettingsFile>

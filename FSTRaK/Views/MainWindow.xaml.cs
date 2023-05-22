@@ -1,5 +1,6 @@
 ﻿using FSTRaK.Models.FlightManager;
 using MapControl;
+using System;
 using System.Windows;
 using System.Windows.Input;
 
@@ -34,6 +35,15 @@ namespace FSTRaK.Views
         {
             Serilog.Log.Debug("mouse!");
             DragMove();
+        }
+
+        private void Window_Deactivated(object sender, EventArgs e)
+        {
+            if(Properties.Settings.Default.AlwaysOnTop)
+            {
+                Window window = (Window)sender;
+                window.Topmost = true;
+            }
         }
 
     }

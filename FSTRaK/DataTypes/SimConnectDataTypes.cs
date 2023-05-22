@@ -85,11 +85,12 @@ namespace FSTRaK.DataTypes
         public double planeAltAboveGroundMinusCg;
         public double verticalSpeed;
         public int CameraState;
-        public bool FlapSpeedExceeded;
-        public bool GearSpeedExceeded;
-        public bool Overspeed;
+        public int FlapSpeedExceeded;
+        public int GearSpeedExceeded;
+        public int Overspeed;
         public double FlapPosition;
-        public double fuelWeightLbs;
+        public double FuelWeightLbs;
+
 
     }
     internal class SimConnectDataTypes

@@ -12,6 +12,7 @@
         Background="Transparent"
         AllowsTransparency="true"
         ResizeMode="CanResizeWithGrip"
+        Deactivated="Window_Deactivated"
         Title="FSTRaK"  
         Width="1024"
         Height="768">
