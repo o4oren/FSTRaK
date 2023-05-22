@@ -17,14 +17,13 @@
                 <ResourceDictionary Source="../Resources/MapProvidersDictionary.xaml"/>
                 <ResourceDictionary Source="../Resources/Theme.xaml"/>
             </ResourceDictionary.MergedDictionaries>
-            <BooleanToVisibilityConverter x:Key="BoolToVis" />
         </ResourceDictionary>
     </UserControl.Resources>
 
     <Grid>
         <map:Map x:Name="xMap" 
                  MapLayer="{Binding MapProvider}" 
-                 ZoomLevel="13" 
+                 ZoomLevel="{Binding ZoomLevel}" 
                  MapProjection="{StaticResource WebMercatorProjection}"
                  MouseLeftButtonDown="OnMapMoveEvent"
                  Margin="10,10,10,10">
@@ -48,12 +47,16 @@
         </map:Map>
 
         <StackPanel Margin="10">
-            <Label Style="{StaticResource MapOverlayLabel}" Content="{Binding Title}" HorizontalAlignment="Left" />
-            <!-- Label Style="{StaticResource MapOverlayLabel}" Content="{Binding Model}" HorizontalAlignment="Left" / -->
-            <Label Style="{StaticResource MapOverlayLabel}" Content="{Binding Type}" HorizontalAlignment="Left" />
-            <!-- Label Style="{StaticResource MapOverlayLabel}" Content="{Binding Airline}" HorizontalAlignment="Left" / -->
-            <Label Style="{StaticResource MapOverlayLabel}" Content="{Binding FlightParamsText}" HorizontalAlignment="Left" />
             <Label Style="{StaticResource MapOverlayLabel}" Content="{Binding State}" HorizontalAlignment="Left" />
+
+            <StackPanel Visibility="{Binding IsShowAirplane, Converter={StaticResource BoolToVis}}">
+                <Label Style="{StaticResource MapOverlayLabel}" Content="{Binding Title}" HorizontalAlignment="Left" />
+                <!-- Label Style="{StaticResource MapOverlayLabel}" Content="{Binding Model}" HorizontalAlignment="Left" / -->
+                <Label Style="{StaticResource MapOverlayLabel}" Content="{Binding Type}" HorizontalAlignment="Left" />
+                <!-- Label Style="{StaticResource MapOverlayLabel}" Content="{Binding Airline}" HorizontalAlignment="Left" / -->
+                <Label Style="{StaticResource MapOverlayLabel}" Content="{Binding FlightParamsText}" HorizontalAlignment="Left" />
+                <Label Style="{StaticResource MapOverlayLabel}" Content="{Binding State}" HorizontalAlignment="Left" />
+            </StackPanel>
         </StackPanel>
 
         <StackPanel Margin="10" HorizontalAlignment="Right">

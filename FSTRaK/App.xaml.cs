@@ -33,6 +33,7 @@ namespace FSTRaK
             {
                 smc.Close();
             }
+            FSTRaK.Properties.Settings.Default.Save();
         }
     }
 }

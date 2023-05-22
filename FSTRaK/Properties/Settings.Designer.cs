@@ -25,7 +25,7 @@ namespace FSTRaK.Properties {
         
         [global::System.Configuration.UserScopedSettingAttribute()]
         [global::System.Diagnostics.DebuggerNonUserCodeAttribute()]
-        [global::System.Configuration.DefaultSettingValueAttribute("OpenStreetMap")]
+        [global::System.Configuration.DefaultSettingValueAttribute("")]
         public string MapTileProvider {
             get {
                 return ((string)(this["MapTileProvider"]));

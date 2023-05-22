@@ -84,7 +84,19 @@ namespace FSTRaK.ViewModels
             set 
             { 
                 if(value != _isCenterOnAirplane) 
-                    _isCenterOnAirplane = value; OnPropertyChanged(); 
+                    _isCenterOnAirplane = value; OnPropertyChanged();
+            }
+        }
+
+        private double _zoomLevel = 13;
+        public double ZoomLevel
+        {
+            get { return _zoomLevel; }
+            set
+            {
+                if (value != _zoomLevel)
+                    _zoomLevel = value; 
+                OnPropertyChanged();
             }
         }
 
@@ -93,9 +105,9 @@ namespace FSTRaK.ViewModels
         {
             get
             {
-                if (flightManager != null)
+                if (flightManager != null && flightManager.ActiveFlight != null)
                     return new Location(flightManager.CurrentFlightParams.Latitude, flightManager.CurrentFlightParams.Longitude);
-                return new Location(0,0);
+                return new Location(51,0);
             }
             private set
             { }
@@ -114,7 +126,6 @@ namespace FSTRaK.ViewModels
                 return "";
             }
         }
-
 
         public double Heading
         {
@@ -209,9 +220,11 @@ namespace FSTRaK.ViewModels
                     OnPropertyChanged(nameof(Location));
                     if (FlightPath.Count > 0)
                     {
-                        var lastSegment = new ObservableCollection<Location>();
-                        lastSegment.Add(FlightPath.Last());
-                        lastSegment.Add(Location);
+                        var lastSegment = new ObservableCollection<Location>
+                        {
+                            FlightPath.Last(),
+                            Location
+                        };
                         LastSegmentLine = lastSegment;
                     }
 
@@ -235,12 +248,23 @@ namespace FSTRaK.ViewModels
                     break;
 
                 case nameof(flightManager.State):
+                    // View related state change updates
                     IsShowAirplane = flightManager.State is SimNotInFlightState ? false : true;
                     
                     if(flightManager.State is FlightStartedState || flightManager.State is SimNotInFlightState)
                     {
                         FlightPath.Clear();
                         OnPropertyChanged(nameof(FlightPath));
+                    }
+
+                    // Set map viewport
+                    if (flightManager.State is SimNotInFlightState)
+                    {
+                        ZoomLevel = 5;
+                    } else if (flightManager.State is FlightStartedState)
+                    {
+                        ZoomLevel = 13.5;
+                        IsCenterOnAirplane = true;
                     }
 
                     State = flightManager.State.Name;
