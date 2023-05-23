@@ -10,7 +10,7 @@ namespace FSTRaK.Models.FlightManager
 {
     internal abstract class AbstractState : IFlightManagerState
     {
-        public abstract void processFlightData(AircraftFlightData Data);
+        public abstract void ProcessFlightData(AircraftFlightData Data);
 
         public abstract string Name { get; set; }
 

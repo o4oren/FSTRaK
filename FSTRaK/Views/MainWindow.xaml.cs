@@ -36,16 +36,15 @@ namespace FSTRaK.Views
         private void DragWindow(object sender, MouseButtonEventArgs e)
         {
             Serilog.Log.Debug("mouse!");
+            Log.Debug($"{sender.GetType()}");
             DragMove();
         }
 
         private void Window_Deactivated(object sender, EventArgs e)
         {
-            if(Properties.Settings.Default.AlwaysOnTop)
-            {
-                Window window = (Window)sender;
-                window.Topmost = true;
-            }
+            Window window = (Window)sender;
+            window.Topmost = Properties.Settings.Default.IsAlwaysOnTop;
+
         }
 
     }

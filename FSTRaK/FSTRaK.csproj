@@ -116,12 +116,14 @@
     <Compile Include="Models\Entity\Flight.cs" />
     <Compile Include="Models\Entity\FlightEvent\FlightEvent.cs" />
     <Compile Include="Models\FlightManager\State\FlightEnededState.cs" />
+    <Compile Include="Models\FlightManager\State\FlightState.cs" />
     <Compile Include="Models\FlightManager\State\LandedState.cs" />
-    <Compile Include="Models\FlightManager\State\InFlightState.cs" />
-    <Compile Include="Models\FlightManager\State\InTaxiState.cs" />
     <Compile Include="Models\FlightManager\State\IFlightManagerState.cs" />
     <Compile Include="Models\FlightManager\State\FlightStartedState.cs" />
     <Compile Include="Models\FlightManager\State\SimNotInFlightState.cs" />
+    <Compile Include="Models\FlightManager\State\TakeoffRollState.cs" />
+    <Compile Include="Models\FlightManager\State\TaxiInState.cs" />
+    <Compile Include="Models\FlightManager\State\TaxiOutState.cs" />
     <Compile Include="RelayCommand.cs" />
     <Compile Include="ViewModels\SettingsViewModel.cs" />
     <Compile Include="Views\FlightDataView.xaml.cs">

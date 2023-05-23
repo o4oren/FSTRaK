@@ -15,7 +15,7 @@ namespace FSTRaK.Models.FlightManager
             Context.CurrentFlightParams = new FlightParams();
             Context.ActiveFlight = null;
         }
-        public override void processFlightData(AircraftFlightData Data)
+        public override void ProcessFlightData(AircraftFlightData Data)
         {
             
             if(Context.SimConnectInFlight && Data.CameraState == (int)CameraState.Cockpit)

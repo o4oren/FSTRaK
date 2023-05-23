@@ -90,7 +90,7 @@ namespace FSTRaK.Models.FlightManager
                 case nameof(SimConnectService.FlightData):
                     var data = _simConnectService.FlightData;
 
-                    _state.processFlightData(data);
+                    _state.ProcessFlightData(data);
 
                     // Updating the map in realtime if not in non-flight states
                     if (!(State is SimNotInFlightState))

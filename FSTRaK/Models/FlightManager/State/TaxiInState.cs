@@ -15,7 +15,7 @@ namespace FSTRaK.Models.FlightManager
             this.Name = "Taxi In";
             this.IsMovementState = true;
         }
-        public override void processFlightData(AircraftFlightData Data)
+        public override void ProcessFlightData(AircraftFlightData Data)
         {
             if (Data.groundVelocity > 35)
             {

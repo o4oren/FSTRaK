@@ -8,7 +8,7 @@
     <Setting Name="BingApiKey" Type="System.String" Scope="User">
       <Value Profile="(Default)" />
     </Setting>
-    <Setting Name="AlwaysOnTop" Type="System.Boolean" Scope="User">
+    <Setting Name="IsAlwaysOnTop" Type="System.Boolean" Scope="User">
       <Value Profile="(Default)">False</Value>
     </Setting>
   </Settings>

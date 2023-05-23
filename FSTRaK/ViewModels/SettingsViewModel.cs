@@ -5,6 +5,7 @@ using System.Windows;
 using System.Collections.ObjectModel;
 using MapControl;
 using System.Linq;
+using Serilog;
 
 namespace FSTRaK.ViewModels
 {
@@ -51,6 +52,8 @@ namespace FSTRaK.ViewModels
             }
         }
 
+        
+
         private bool _isShowBingApiKeyField = false;
         public bool IsShowBingApiKeyField
         {
@@ -61,6 +64,21 @@ namespace FSTRaK.ViewModels
             private set
             {
                 _isShowBingApiKeyField = value;
+                OnPropertyChanged();
+            }
+        }
+
+        private bool _isAlwaysOnTop = false;
+        public bool IsAlwaysOnTop
+        {
+            get
+            {
+                return _isAlwaysOnTop;
+            }
+            set
+            {
+                _isAlwaysOnTop = value;
+                Properties.Settings.Default.IsAlwaysOnTop = _isAlwaysOnTop;
                 OnPropertyChanged();
             }
         }
@@ -85,6 +103,7 @@ namespace FSTRaK.ViewModels
         {
             SelectedMapProvider = Properties.Settings.Default.MapTileProvider;
             BingApiKey = Properties.Settings.Default.BingApiKey;
+            IsAlwaysOnTop = Properties.Settings.Default.IsAlwaysOnTop;
         }
     }
 }

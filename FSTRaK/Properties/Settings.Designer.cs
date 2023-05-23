@@ -50,12 +50,12 @@ namespace FSTRaK.Properties {
         [global::System.Configuration.UserScopedSettingAttribute()]
         [global::System.Diagnostics.DebuggerNonUserCodeAttribute()]
         [global::System.Configuration.DefaultSettingValueAttribute("False")]
-        public bool AlwaysOnTop {
+        public bool IsAlwaysOnTop {
             get {
-                return ((bool)(this["AlwaysOnTop"]));
+                return ((bool)(this["IsAlwaysOnTop"]));
             }
             set {
-                this["AlwaysOnTop"] = value;
+                this["IsAlwaysOnTop"] = value;
             }
         }
     }

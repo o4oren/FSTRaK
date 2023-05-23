@@ -17,7 +17,7 @@ namespace FSTRaK.Models.FlightManager
             this.IsMovementState = false;
         }
 
-        public override void processFlightData(AircraftFlightData Data)
+        public override void ProcessFlightData(AircraftFlightData Data)
         {
             // Only once in actual plane and not paused
             // This should only happen once per flight

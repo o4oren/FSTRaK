@@ -16,7 +16,7 @@ namespace FSTRaK.Models.FlightManager
             Context.RequestNearestAirports(DataTypes.NearestAirportRequestType.Arrival);
 
         }
-        public override void processFlightData(AircraftFlightData Data)
+        public override void ProcessFlightData(AircraftFlightData Data)
         {
             if (!Data.simOnGround)
             {

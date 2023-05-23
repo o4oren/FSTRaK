@@ -18,7 +18,7 @@ namespace FSTRaK.Models.FlightManager
         }
 
 
-        public override void processFlightData(AircraftFlightData Data)
+        public override void ProcessFlightData(AircraftFlightData Data)
         {
             HandleFlightExit(Context);
         }
