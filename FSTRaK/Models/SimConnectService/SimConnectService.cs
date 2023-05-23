@@ -185,7 +185,7 @@ namespace FSTRaK
             }
             catch (COMException ex)
             {
-                Log.Error(ex.ToString());
+                // Do nothing
             }
         }
 

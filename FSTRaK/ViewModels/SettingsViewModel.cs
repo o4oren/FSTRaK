@@ -47,7 +47,6 @@ namespace FSTRaK.ViewModels
                 _bingApiKey = value;
                 Properties.Settings.Default.BingApiKey = _bingApiKey;
                 BingMapsTileLayer.ApiKey = _bingApiKey;
-                BingMapsTileLayer l;
                 OnPropertyChanged();
             }
         }

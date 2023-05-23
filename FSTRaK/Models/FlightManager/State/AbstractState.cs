@@ -57,7 +57,13 @@ namespace FSTRaK.Models.FlightManager
             Log.Debug(Context.ActiveFlight.FlightEvents.Last().GetType().ToString());
         }
 
-        protected static DateTime CalculateSimTime(AircraftFlightData data)
+        protected void AddFlightEvent(AircraftFlightData data)
+        {
+            FlightEvent fe = new FlightEvent();
+            AddFlightEvent(data, fe);
+        }
+
+            protected static DateTime CalculateSimTime(AircraftFlightData data)
         {
             var day = new DateTime(data.zuluYear, data.zuluMonth, data.zuluDay, 0, 0, 0, 0, System.DateTimeKind.Utc);
             var time = day.AddSeconds(data.zuluTime);

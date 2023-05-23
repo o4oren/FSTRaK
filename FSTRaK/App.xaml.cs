@@ -12,12 +12,8 @@ namespace FSTRaK
 
         void OnApplicationStart(object sender, StartupEventArgs args)
         {
-            LogEventLevel level = LogEventLevel.Information;
-#if DEBUG
-            level = LogEventLevel.Debug;
-#endif
-
             Log.Logger = new LoggerConfiguration()
+            .MinimumLevel.Information()
 #if DEBUG
             .MinimumLevel.Debug()
 #endif

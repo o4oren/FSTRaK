@@ -44,7 +44,7 @@ namespace FSTRaK.Models.FlightManager
                 ((Data.latitude != Context.CurrentFlightParams.Latitude || Data.longitude != Context.CurrentFlightParams.Longitude) && Data.groundVelocity > 1)
                 )
             {
-                Context.State = new InTaxiState(Context);
+                Context.State = new TaxiOutState(Context);
             }
 
             HandleFlightExit(Context);

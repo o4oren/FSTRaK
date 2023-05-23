@@ -1,5 +1,7 @@
 ﻿using FSTRaK.Models.FlightManager;
 using MapControl;
+using MapControl.Caching;
+using Serilog;
 using System;
 using System.Windows;
 using System.Windows.Input;

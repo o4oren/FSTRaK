@@ -13,21 +13,7 @@ namespace FSTRaK.Views
         {
             InitializeComponent();
         }
-
-        private void ViewModel_PropertyChanged(object sender, System.ComponentModel.PropertyChangedEventArgs e)
-        {
-
-        switch (e.PropertyName)
-            {
-                case "ActiveFlight":
-                    if (DataContext != null && ((FlightDataViewModel)this.DataContext).IsCenterOnAirplane)
-                    {
-                        xMap.Center = ((FlightDataViewModel)this.DataContext).Location;
-                    }
-                    break;
-            }
-        }
-
+   
         private void OnMapMoveEvent(object sender, MouseButtonEventArgs e)
         {
             ((FlightDataViewModel)this.DataContext).IsCenterOnAirplane = false; // Disabled for now
@@ -47,10 +33,9 @@ namespace FSTRaK.Views
             }
         }
 
-
         private void OnLoaded(object sender, RoutedEventArgs e)
         {
-            ((FlightDataViewModel)this.DataContext).PropertyChanged += ViewModel_PropertyChanged;
+           // ((FlightDataViewModel)this.DataContext).PropertyChanged += ViewModel_PropertyChanged;
         }
 
     }

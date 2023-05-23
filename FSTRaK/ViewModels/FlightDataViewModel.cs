@@ -12,14 +12,14 @@ namespace FSTRaK.ViewModels
 {
     internal class FlightDataViewModel : BaseViewModel
     {
-        FlightManager flightManager = FlightManager.Instance;
+        private FlightManager _flightManager = FlightManager.Instance;
 
         public Flight ActiveFlight
         {
             get
             {
-                if (flightManager.ActiveFlight != null)
-                    return flightManager.ActiveFlight;
+                if (_flightManager.ActiveFlight != null)
+                    return _flightManager.ActiveFlight;
                 return null;
             }
         }
@@ -28,8 +28,8 @@ namespace FSTRaK.ViewModels
         public string Title
         {
             get { return _title; }
-            set 
-            { 
+            set
+            {
                 _title = value;
                 OnPropertyChanged();
             }
@@ -81,9 +81,9 @@ namespace FSTRaK.ViewModels
         public bool IsCenterOnAirplane
         {
             get { return _isCenterOnAirplane; }
-            set 
-            { 
-                if(value != _isCenterOnAirplane) 
+            set
+            {
+                if (value != _isCenterOnAirplane)
                     _isCenterOnAirplane = value; OnPropertyChanged();
             }
         }
@@ -95,7 +95,19 @@ namespace FSTRaK.ViewModels
             set
             {
                 if (value != _zoomLevel)
-                    _zoomLevel = value; 
+                    _zoomLevel = value;
+                OnPropertyChanged();
+            }
+        }
+
+        private Location _mapCenter = new Location(51, 0);
+        public Location MapCenter
+        {
+            get { return _mapCenter; }
+            set
+            {
+                if (_mapCenter != value)
+                    _mapCenter = value;
                 OnPropertyChanged();
             }
         }
@@ -105,9 +117,9 @@ namespace FSTRaK.ViewModels
         {
             get
             {
-                if (flightManager != null && flightManager.ActiveFlight != null)
-                    return new Location(flightManager.CurrentFlightParams.Latitude, flightManager.CurrentFlightParams.Longitude);
-                return new Location(51,0);
+                if (_flightManager != null && _flightManager.ActiveFlight != null)
+                    return new Location(_flightManager.CurrentFlightParams.Latitude, _flightManager.CurrentFlightParams.Longitude);
+                return new Location(51, 0);
             }
             private set
             { }
@@ -118,10 +130,10 @@ namespace FSTRaK.ViewModels
         {
             get
             {
-                if (flightManager != null)
+                if (_flightManager != null)
                 {
-                    return $"Airspeed: {flightManager.CurrentFlightParams.TrueAirspeed:F0} Kts\nAltitude: {flightManager.CurrentFlightParams.Altitude:F0} Ft\nHeading: {flightManager.CurrentFlightParams.Heading:F0} Deg" +
-                        $"\nPosition: {flightManager.CurrentFlightParams.Latitude:F4},{flightManager.CurrentFlightParams.Longitude:F4}";
+                    return $"Airspeed: {_flightManager.CurrentFlightParams.TrueAirspeed:F0} Kts\nAltitude: {_flightManager.CurrentFlightParams.Altitude:F0} Ft\nHeading: {_flightManager.CurrentFlightParams.Heading:F0} Deg" +
+                        $"\nPosition: {_flightManager.CurrentFlightParams.Latitude:F4},{_flightManager.CurrentFlightParams.Longitude:F4}";
                 }
                 return "";
             }
@@ -131,8 +143,8 @@ namespace FSTRaK.ViewModels
         {
             get
             {
-                if (flightManager != null)
-                    return flightManager.CurrentFlightParams.Heading;
+                if (_flightManager != null)
+                    return _flightManager.CurrentFlightParams.Heading;
                 return 0;
             }
             private set
@@ -148,8 +160,8 @@ namespace FSTRaK.ViewModels
                 return _state;
             }
             private set
-            { 
-                if(_state != value)
+            {
+                if (_state != value)
                 {
                     _state = value;
                     OnPropertyChanged();
@@ -160,40 +172,44 @@ namespace FSTRaK.ViewModels
         public ObservableCollection<Location> FlightPath { get; set; } = new ObservableCollection<Location>();
 
         private ObservableCollection<Location> _lastSegmentLine;
-        public ObservableCollection<Location> LastSegmentLine { get 
+        public ObservableCollection<Location> LastSegmentLine
+        {
+            get
             {
-                if(_lastSegmentLine != null)
+                if (_lastSegmentLine != null)
                 {
                     return _lastSegmentLine;
                 }
                 return new ObservableCollection<Location>();
             }
-            private set {
-                if(_lastSegmentLine != value)
+            private set
+            {
+                if (_lastSegmentLine != value)
                 {
                     _lastSegmentLine = value;
                 }
                 OnPropertyChanged();
-            } 
+            }
         }
 
         public string NearestAirport { get; set; }
 
-        public MapTileLayerBase MapProvider { 
-            get 
+        public MapTileLayerBase MapProvider
+        {
+            get
             {
                 string resoueceKey = Properties.Settings.Default.MapTileProvider;
                 var resource = Application.Current.Resources[resoueceKey] as MapTileLayerBase;
-                if(resource != null)
+                if (resource != null)
                 {
                     return resource;
                 }
                 return Application.Current.Resources["OpenStreetMap"] as MapTileLayerBase;
             }
-            private set { 
-            
+            private set
+            {
+
             }
-        
         }
 
 
@@ -201,22 +217,22 @@ namespace FSTRaK.ViewModels
 
         public FlightDataViewModel()
         {
-            flightManager.PropertyChanged += SimconnectManagerUpdate;
+            _flightManager.PropertyChanged += SimconnectManagerUpdate;
         }
 
         private void SimconnectManagerUpdate(object sender, PropertyChangedEventArgs e)
         {
-            
+
             switch (e.PropertyName)
             {
-                case nameof(flightManager.ActiveFlight):
+                case nameof(_flightManager.ActiveFlight):
                     // Update flightpath only when starting to move.
-                    if (flightManager.State.IsMovementState && _lastUpdated.AddSeconds(2) < DateTime.Now)
+                    if (_flightManager.State.IsMovementState && _lastUpdated.AddSeconds(2) < DateTime.Now)
                     {
-                        FlightPath.Add(new Location(flightManager.CurrentFlightParams.Latitude, flightManager.CurrentFlightParams.Longitude));
+                        FlightPath.Add(new Location(_flightManager.CurrentFlightParams.Latitude, _flightManager.CurrentFlightParams.Longitude));
                         _lastUpdated = DateTime.Now;
                     }
-                    OnPropertyChanged(nameof(flightManager.ActiveFlight));
+                    OnPropertyChanged(nameof(_flightManager.ActiveFlight));
                     OnPropertyChanged(nameof(Location));
                     if (FlightPath.Count > 0)
                     {
@@ -230,7 +246,7 @@ namespace FSTRaK.ViewModels
 
 
                     // Begining of flight
-                    if (flightManager.State is FlightStartedState && ActiveFlight != null)
+                    if (_flightManager.State is FlightStartedState && ActiveFlight != null)
                     {
                         Title = $"Aircraft: {ActiveFlight.Aircraft.Title}";
                         Model = $"Model: {ActiveFlight.Aircraft.Model}";
@@ -240,35 +256,43 @@ namespace FSTRaK.ViewModels
                     break;
 
                 // Send property updates for calculated fields
-                case nameof(flightManager.CurrentFlightParams):
+                case nameof(_flightManager.CurrentFlightParams):
                     OnPropertyChanged(nameof(Heading));
                     OnPropertyChanged(nameof(Location));
                     OnPropertyChanged(nameof(FlightParamsText));
 
                     break;
 
-                case nameof(flightManager.State):
+                case nameof(Location):
+                    if (IsCenterOnAirplane)
+                    {
+                        MapCenter = Location;
+                    }
+                    break;
+
+                case nameof(_flightManager.State):
                     // View related state change updates
-                    IsShowAirplane = flightManager.State is SimNotInFlightState ? false : true;
-                    
-                    if(flightManager.State is FlightStartedState || flightManager.State is SimNotInFlightState)
+                    IsShowAirplane = _flightManager.State is SimNotInFlightState ? false : true;
+
+                    if (_flightManager.State is FlightStartedState || _flightManager.State is SimNotInFlightState)
                     {
                         FlightPath.Clear();
                         OnPropertyChanged(nameof(FlightPath));
                     }
 
                     // Set map viewport
-                    if (flightManager.State is SimNotInFlightState)
+                    if (_flightManager.State is SimNotInFlightState)
                     {
                         ZoomLevel = 5;
-                    } else if (flightManager.State is FlightStartedState)
+                    }
+                    else if (_flightManager.State is FlightStartedState)
                     {
 
                         ZoomLevel = 13.5;
                         IsCenterOnAirplane = true;
                     }
 
-                    State = flightManager.State.Name;
+                    State = _flightManager.State.Name;
 
                     break;
 

@@ -4,31 +4,27 @@ using FSTRaK.DataTypes;
 
 namespace FSTRaK.Models.FlightManager
 {
-    internal class LandedState : AbstractState
+    internal class FlightState : AbstractState
     {
         public override string Name { get; set; }
         public override bool IsMovementState { get; set; }
-        public LandedState(FlightManager Context) : base(Context)
+        public FlightState(FlightManager Context) : base(Context)
         {
-            this._eventInterval = 5000;
-            this.Name = "Landed";
+            this._eventInterval = 10000;
+            this.Name = "In flight";
             this.IsMovementState = true;
-            Context.RequestNearestAirports(DataTypes.NearestAirportRequestType.Arrival);
-
         }
         public override void processFlightData(AircraftFlightData Data)
         {
-            if (!Data.simOnGround)
+            if (Data.simOnGround)
             {
-                Context.State = new FlightState(Context);
+                LandingEvent To = new LandingEvent() { VerticalSpeed = Data.verticalSpeed };
+                AddFlightEvent(Data, To);
+                Context.State = new LandedState(Context);
                 return;
             }
 
-            if (Data.groundVelocity < 35)
-            {
-                Context.State = new TaxiInState(Context);
-                return;
-            }
+            // TODO add code to handle specific flight events
 
             // Add event if stopwatch is not started, check if interval has elapsed otherwise
             if (!_stopwatch.IsRunning || _stopwatch.ElapsedMilliseconds > _eventInterval)
@@ -36,7 +32,7 @@ namespace FSTRaK.Models.FlightManager
                 AddFlightEvent(Data, new FlightEvent());
                 _stopwatch.Restart();
             }
-
+            
             HandleFlightExit(Context);
         }
     }
