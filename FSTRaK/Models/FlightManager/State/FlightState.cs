@@ -16,7 +16,7 @@ namespace FSTRaK.Models.FlightManager
         }
         public override void ProcessFlightData(AircraftFlightData Data)
         {
-            if (Data.simOnGround)
+            if (Data.simOnGround == 1)
             {
                 LandingEvent To = new LandingEvent() { VerticalSpeed = Data.verticalSpeed };
                 AddFlightEvent(Data, To);

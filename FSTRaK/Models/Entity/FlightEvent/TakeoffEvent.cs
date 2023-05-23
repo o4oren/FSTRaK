@@ -9,5 +9,7 @@ namespace FSTRaK.Models
     internal class TakeoffEvent : FlightEvent
     {
         public double FlapsPosition { get; set; }
+        public double FuelQuantityLbs { get; set; }
+
     }
 }

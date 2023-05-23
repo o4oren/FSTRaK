@@ -1,6 +1,7 @@
 ﻿using FSTRaK.Models;
 using FSTRaK.Models.FlightManager;
 using MapControl;
+using Serilog;
 using System;
 using System.Collections.ObjectModel;
 using System.ComponentModel;
@@ -107,8 +108,11 @@ namespace FSTRaK.ViewModels
             set
             {
                 if (_mapCenter != value)
+                {
                     _mapCenter = value;
-                OnPropertyChanged();
+                    OnPropertyChanged();
+                    Log.Debug(_mapCenter.ToString());
+                }
             }
         }
 
@@ -232,9 +236,13 @@ namespace FSTRaK.ViewModels
                         FlightPath.Add(new Location(_flightManager.CurrentFlightParams.Latitude, _flightManager.CurrentFlightParams.Longitude));
                         _lastUpdated = DateTime.Now;
                     }
-                    OnPropertyChanged(nameof(_flightManager.ActiveFlight));
-                    OnPropertyChanged(nameof(Location));
-                    if (FlightPath.Count > 0)
+
+                    if (IsCenterOnAirplane)
+                    {
+                        MapCenter = Location;
+                    }
+
+                    if (FlightPath.Count > 0 || _flightManager.State.IsMovementState)
                     {
                         var lastSegment = new ObservableCollection<Location>
                         {
@@ -253,6 +261,9 @@ namespace FSTRaK.ViewModels
                         Type = $"Type: {ActiveFlight.Aircraft.Type}";
                         Airline = $"Airline: {ActiveFlight.Aircraft.Airline}";
                     }
+
+                    OnPropertyChanged(nameof(_flightManager.ActiveFlight));
+                    OnPropertyChanged(nameof(Location));
                     break;
 
                 // Send property updates for calculated fields
@@ -261,13 +272,6 @@ namespace FSTRaK.ViewModels
                     OnPropertyChanged(nameof(Location));
                     OnPropertyChanged(nameof(FlightParamsText));
 
-                    break;
-
-                case nameof(Location):
-                    if (IsCenterOnAirplane)
-                    {
-                        MapCenter = Location;
-                    }
                     break;
 
                 case nameof(_flightManager.State):
@@ -288,8 +292,9 @@ namespace FSTRaK.ViewModels
                     else if (_flightManager.State is FlightStartedState)
                     {
 
-                        ZoomLevel = 13.5;
+                        ZoomLevel = 13;
                         IsCenterOnAirplane = true;
+                        
                     }
 
                     State = _flightManager.State.Name;

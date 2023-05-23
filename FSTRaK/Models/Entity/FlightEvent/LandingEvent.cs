@@ -8,6 +8,8 @@ namespace FSTRaK.Models
 {
     internal class LandingEvent : FlightEvent
     {
+        public double FlapsPosition { get; set; }
         public double VerticalSpeed { get; set; }
+        public double FuelQuantityLbs { get; set; }
     }
 }

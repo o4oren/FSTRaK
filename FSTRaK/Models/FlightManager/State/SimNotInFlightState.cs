@@ -1,5 +1,4 @@
 ﻿using FSTRaK.DataTypes;
-using System.Runtime.Remoting.Contexts;
 
 namespace FSTRaK.Models.FlightManager
 {
@@ -18,7 +17,7 @@ namespace FSTRaK.Models.FlightManager
         public override void ProcessFlightData(AircraftFlightData Data)
         {
             
-            if(Context.SimConnectInFlight && Data.CameraState == (int)CameraState.Cockpit)
+            if(Context.SimConnectInFlight)
             {
                 Context.State = new FlightStartedState(Context);
             }

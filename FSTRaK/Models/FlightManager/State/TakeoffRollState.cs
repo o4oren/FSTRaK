@@ -1,6 +1,7 @@
 ﻿
 
 using FSTRaK.DataTypes;
+using System;
 
 namespace FSTRaK.Models.FlightManager
 {
@@ -18,7 +19,7 @@ namespace FSTRaK.Models.FlightManager
         public override void ProcessFlightData(AircraftFlightData Data)
         {
 
-            if (!Data.simOnGround)
+            if (!Convert.ToBoolean(Data.simOnGround))
             {
                 TakeoffEvent To = new TakeoffEvent() { FlapsPosition = Data.FlapPosition };
                 AddFlightEvent(Data, To);

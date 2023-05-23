@@ -21,7 +21,7 @@ namespace FSTRaK.Models.FlightManager
         {
             // Only once in actual plane and not paused
             // This should only happen once per flight
-            if (!_isStarted && Data.CameraState == (int)CameraState.Cockpit)
+            if (!_isStarted)
             {
                 Flight flight = new Flight();
                 Aircraft aircraft;
@@ -34,10 +34,15 @@ namespace FSTRaK.Models.FlightManager
                 };
                 flight.Aircraft = aircraft;
                 Context.ActiveFlight = flight;
-                AddFlightEvent(Data, new FlightEvent()); // TODO - replace with a FLightStarted Event.
+                
                 Context.RequestNearestAirports(NearestAirportRequestType.Departure);
                 _isStarted = true;
-            } 
+            }
+            
+            if (Data.CameraState == (int)CameraState.Cockpit && Context.ActiveFlight.FlightEvents.Count == 0)
+            {
+                AddFlightEvent(Data, new FlightStartedEvent());
+            }
 
             // Compare the location to determine movement ONLY after out of the "ready to fly" screen
             if (Data.CameraState == (int)CameraState.Cockpit && 

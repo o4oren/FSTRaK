@@ -98,7 +98,7 @@ namespace FSTRaK.Models.FlightManager
                         FlightParams fp = new FlightParams();
                         fp.TrueAirspeed = data.trueAirspeed;
                         fp.Heading = data.trueHeading;
-                        fp.IsOnGround = data.simOnGround;
+                        fp.IsOnGround = Convert.ToBoolean(data.simOnGround);
                         fp.Latitude = data.latitude;
                         fp.Longitude = data.longitude;
                         fp.Altitude = data.altitude;
@@ -112,7 +112,7 @@ namespace FSTRaK.Models.FlightManager
                     var airport = _simConnectService.NearestAirport;
                     if(ActiveFlight != null && CurrentFlightParams.IsOnGround)
                     {
-                        Log.Debug($"xxx {airport}");
+                        Log.Debug($"xxx {airport} requested for {NearestAirportRequestType.Departure}");
                         if(_nearestAirportRequestType == NearestAirportRequestType.Departure)
                         {
                             ActiveFlight.DepartureAirport = airport;

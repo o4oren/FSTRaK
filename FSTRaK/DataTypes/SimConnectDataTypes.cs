@@ -36,6 +36,16 @@ namespace FSTRaK.DataTypes
         FollowTrafficAircraft = 25
     }
 
+    public enum EngineType
+    {
+        Piston, 
+        Jet, 
+        None, 
+        HeloTurbine,
+        Unsupported,
+        Turboprop
+    }
+
     public enum Requests
     {
         FlightDataRequest,
@@ -72,7 +82,7 @@ namespace FSTRaK.DataTypes
         [MarshalAs(UnmanagedType.ByValTStr, SizeConst = 256)]
         public string atcType;
 
-        public bool simOnGround;
+        public int simOnGround;
         public double latitude;
         public double longitude;
         public double trueHeading;
@@ -90,6 +100,7 @@ namespace FSTRaK.DataTypes
         public int Overspeed;
         public double FlapPosition;
         public double FuelWeightLbs;
+        public int ParkingBrakesSet;
 
 
     }

@@ -1,5 +1,6 @@
 ﻿
 using FSTRaK.DataTypes;
+using System;
 
 namespace FSTRaK.Models.FlightManager
 {
@@ -24,8 +25,15 @@ namespace FSTRaK.Models.FlightManager
             }
 
             //Parking brakes, engines off - end flight
-            if (Data.groundVelocity > 2)
+            if (Data.groundVelocity < 2 && Data.ParkingBrakesSet == 1)
             {
+                var pe = new ParkingEvent
+                {
+                    FlapsPosition = Data.FlapPosition,
+                    FuelWeightLbs = Data.FuelWeightLbs
+                };
+
+                AddFlightEvent(Data, pe);
                 Context.State = new FlightEndedState(Context);
                 return;
             }

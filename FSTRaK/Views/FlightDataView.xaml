@@ -26,7 +26,7 @@
                  ZoomLevel="{Binding ZoomLevel}" 
                  MapProjection="{StaticResource WebMercatorProjection}"
                  MouseLeftButtonDown="OnMapMoveEvent"
-                 Center="{Binding MapCenter}"
+                 Center="{Binding MapCenter, Mode=TwoWay}"
                  Margin="10,10,10,10">
             <map:MapItem Location="{Binding Location}"
                         Width="32" Height="32"
