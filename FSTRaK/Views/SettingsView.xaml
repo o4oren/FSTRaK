@@ -24,7 +24,7 @@
         </StackPanel>
         <StackPanel Orientation="Horizontal" Margin="10">
             <Label  Style="{StaticResource FSTrAkLabel}" Width="180">Always on Top</Label>
-            <CheckBox FontFamily="{StaticResource Slopes}" FontSize="20" VerticalAlignment="Center" IsChecked="{Binding IsAlwaysOnTop, Mode=TwoWay}"/>
+            <CheckBox Style="{StaticResource SettingsCheckbox}" FontFamily="{StaticResource Slopes}" FontSize="20" VerticalAlignment="Center" IsChecked="{Binding IsAlwaysOnTop, Mode=TwoWay}"/>
         </StackPanel>
 
     </StackPanel>

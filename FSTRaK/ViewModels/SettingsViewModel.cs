@@ -91,7 +91,8 @@ namespace FSTRaK.ViewModels
 
             foreach (DictionaryEntry provider in mapProviders)
             {
-                if ((typeof(MapTileLayerBase).IsAssignableFrom(provider.Value.GetType())))
+                if ((typeof(MapTileLayerBase).IsAssignableFrom(provider.Value.GetType())) 
+                    || (typeof(WmsImageLayer).IsAssignableFrom(provider.Value.GetType())))
                 {
                     layers.Add(provider.Key.ToString());
                 }
