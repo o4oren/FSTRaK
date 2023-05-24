@@ -19,7 +19,7 @@ namespace FSTRaK.Models.FlightManager
         public override void ProcessFlightData(AircraftFlightData Data)
         {
 
-            if (!Convert.ToBoolean(Data.simOnGround))
+            if (!Convert.ToBoolean(Data.SimOnGround))
             {
                 TakeoffEvent To = new TakeoffEvent() { FlapsPosition = Data.FlapPosition };
                 AddFlightEvent(Data, To);

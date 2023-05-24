@@ -1,6 +1,5 @@
 ﻿
 using FSTRaK.DataTypes;
-using System;
 
 namespace FSTRaK.Models.FlightManager
 {
@@ -18,14 +17,14 @@ namespace FSTRaK.Models.FlightManager
         }
         public override void ProcessFlightData(AircraftFlightData Data)
         {
-            if (Data.groundVelocity > 35)
+            if (Data.GroundVelocity > 35)
             {
                 Context.State = new TakeoffRollState(Context);
                 return;
             }
 
             //Parking brakes, engines off - end flight
-            if (Data.groundVelocity < 2 && Data.ParkingBrakesSet == 1)
+            if (Data.GroundVelocity < 2 && Data.ParkingBrakesSet == 1)
             {
                 var pe = new ParkingEvent
                 {

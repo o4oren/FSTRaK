@@ -111,7 +111,6 @@ namespace FSTRaK.ViewModels
                 {
                     _mapCenter = value;
                     OnPropertyChanged();
-                    Log.Debug(_mapCenter.ToString());
                 }
             }
         }

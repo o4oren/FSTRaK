@@ -1,11 +1,6 @@
-﻿using System;
-using System.Collections.Generic;
+﻿
 using System.Linq;
 using System.Runtime.InteropServices;
-using System.Security.Policy;
-using System.Text;
-using System.Threading.Tasks;
-using System.Windows.Controls;
 
 namespace FSTRaK.DataTypes
 {
@@ -36,6 +31,20 @@ namespace FSTRaK.DataTypes
         FollowTrafficAircraft = 25
     }
 
+    public enum CrashFlag
+    {
+        None = 0,
+        Mountain = 2,
+        General = 4,
+        Building = 6,
+        Splash = 8, 
+        GearUp = 10,
+        Overstress = 12, 
+        Building2 = 14,
+        Aircraft = 16,
+        FuelTruck = 18
+    }
+
     public enum EngineType
     {
         Piston, 
@@ -64,6 +73,7 @@ namespace FSTRaK.DataTypes
     {
         FLIGHT_LOADED,
         PAUSE,
+        CRASHED
     }
 
     [StructLayout(LayoutKind.Sequential, CharSet = CharSet.Ansi, Pack = 1)]
@@ -82,18 +92,18 @@ namespace FSTRaK.DataTypes
         [MarshalAs(UnmanagedType.ByValTStr, SizeConst = 256)]
         public string atcType;
 
-        public int simOnGround;
-        public double latitude;
-        public double longitude;
-        public double trueHeading;
-        public double altitude;
-        public double trueAirspeed;
-        public double indicatedAirpeed;
-        public double groundVelocity;
-        public double groundAltitude;
-        public double planeAltAboveGround;
-        public double planeAltAboveGroundMinusCg;
-        public double verticalSpeed;
+        public int SimOnGround;
+        public double Latitude;
+        public double Longitude;
+        public double TrueHeading;
+        public double Altitude;
+        public double TrueAirspeed;
+        public double IndicatedAirpeed;
+        public double GroundVelocity;
+        public double GroundAltitude;
+        public double PlaneAltAboveGround;
+        public double PlaneAltAboveGroundMinusCg;
+        public double VerticalSpeed;
         public int CameraState;
         public int FlapSpeedExceeded;
         public int GearSpeedExceeded;
@@ -102,6 +112,20 @@ namespace FSTRaK.DataTypes
         public double FuelWeightLbs;
         public int ParkingBrakesSet;
 
+        public double Engine1MaxRpmPct;
+        public double Engine2MaxRpmPct;
+        public double Engine3MaxRpmPct;
+        public double Engine4MaxRpmPct;
+
+
+        /// <summary>
+        /// Used to determine negine start up
+        /// </summary>
+        /// <returns>double - max number of started engines</returns>
+        public double MaxEngineRpmPct() 
+        {
+            return new double[] { Engine1MaxRpmPct, Engine2MaxRpmPct, Engine3MaxRpmPct, Engine4MaxRpmPct}.Max();
+        }
 
     }
     internal class SimConnectDataTypes

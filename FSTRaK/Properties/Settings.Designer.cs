@@ -58,5 +58,17 @@ namespace FSTRaK.Properties {
                 this["IsAlwaysOnTop"] = value;
             }
         }
+        
+        [global::System.Configuration.UserScopedSettingAttribute()]
+        [global::System.Diagnostics.DebuggerNonUserCodeAttribute()]
+        [global::System.Configuration.DefaultSettingValueAttribute("True")]
+        public bool IsSaveOnlyCompleteFlights {
+            get {
+                return ((bool)(this["IsSaveOnlyCompleteFlights"]));
+            }
+            set {
+                this["IsSaveOnlyCompleteFlights"] = value;
+            }
+        }
     }
 }

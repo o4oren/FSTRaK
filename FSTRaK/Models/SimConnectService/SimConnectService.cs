@@ -53,6 +53,7 @@ namespace FSTRaK
                 {
                     _isInFlight = value;
                     OnPropertyChanged(nameof(IsInFlight));
+                    IsCrashed = false; // Remove Crashed flag
                 }
             }
         }
@@ -72,6 +73,20 @@ namespace FSTRaK
                 {
                     _pauseState = value;
                     OnPropertyChanged(nameof(PauseState));
+                }
+            }
+        }
+
+        private bool _isCrashed = false;
+        public bool IsCrashed
+        {
+            get => _isCrashed;
+            private set
+            {
+                if(value != _isCrashed)
+                {
+                    _isCrashed = value;
+                    OnPropertyChanged(nameof(IsCrashed));
                 }
             }
         }
@@ -227,18 +242,25 @@ namespace FSTRaK
             _simconnect.AddToDataDefinition(DataDefinitions.FlightData, "FUEL TOTAL QUANTITY WEIGHT", "pounds", SIMCONNECT_DATATYPE.FLOAT64, 0.0f, SimConnect.SIMCONNECT_UNUSED);
             _simconnect.AddToDataDefinition(DataDefinitions.FlightData, "BRAKE PARKING POSITION", "Bool", SIMCONNECT_DATATYPE.INT32, 0.0f, SimConnect.SIMCONNECT_UNUSED);
 
+            _simconnect.AddToDataDefinition(DataDefinitions.FlightData, "GENERAL ENG PCT MAX RPM:1", "percent", SIMCONNECT_DATATYPE.FLOAT64, 0.0f, SimConnect.SIMCONNECT_UNUSED);
+            _simconnect.AddToDataDefinition(DataDefinitions.FlightData, "GENERAL ENG PCT MAX RPM:2", "percent", SIMCONNECT_DATATYPE.FLOAT64, 0.0f, SimConnect.SIMCONNECT_UNUSED);
+            _simconnect.AddToDataDefinition(DataDefinitions.FlightData, "GENERAL ENG PCT MAX RPM:3", "percent", SIMCONNECT_DATATYPE.FLOAT64, 0.0f, SimConnect.SIMCONNECT_UNUSED);
+            _simconnect.AddToDataDefinition(DataDefinitions.FlightData, "GENERAL ENG PCT MAX RPM:4", "percent", SIMCONNECT_DATATYPE.FLOAT64, 0.0f, SimConnect.SIMCONNECT_UNUSED);
+
             _simconnect.RegisterDataDefineStruct<AircraftFlightData>(DataDefinitions.FlightData);
 
             // Subscribe to System events
             _simconnect.SubscribeToSystemEvent(EVENTS.FLIGHT_LOADED, "FlightLoaded");
             _simconnect.SubscribeToSystemEvent(EVENTS.PAUSE, "Pause_EX1");
+            _simconnect.SubscribeToSystemEvent(EVENTS.CRASHED, "Crashed");
+
 
             // Register listeners on simconnect events
-            _simconnect.OnRecvSimobjectData += new SimConnect.RecvSimobjectDataEventHandler(simconnect_OnRecvSimobjectData);
-            _simconnect.OnRecvAirportList += new SimConnect.RecvAirportListEventHandler(simconnect_OnRecvAirportList);
-            _simconnect.OnRecvEvent += new SimConnect.RecvEventEventHandler(simconnect_OnRecvEvent);
-            _simconnect.OnRecvEventFilename += new SimConnect.RecvEventFilenameEventHandler(simconnect_OnRecvFilename);
-            _simconnect.OnRecvSystemState  += new SimConnect.RecvSystemStateEventHandler(simconnect_OnRecvSystemState);
+            _simconnect.OnRecvSimobjectData += new SimConnect.RecvSimobjectDataEventHandler(Simconnect_OnRecvSimobjectData);
+            _simconnect.OnRecvAirportList += new SimConnect.RecvAirportListEventHandler(Simconnect_OnRecvAirportList);
+            _simconnect.OnRecvEvent += new SimConnect.RecvEventEventHandler(Simconnect_OnRecvEvent);
+            _simconnect.OnRecvEventFilename += new SimConnect.RecvEventFilenameEventHandler(Simconnect_OnRecvFilename);
+            _simconnect.OnRecvSystemState  += new SimConnect.RecvSystemStateEventHandler(Simconnect_OnRecvSystemState);
 
             // Start getting data
             _simconnect.RequestSystemState(Requests.FlightLoaded, "FlightLoaded");
@@ -246,7 +268,7 @@ namespace FSTRaK
 
         }
 
-        private void simconnect_OnRecvSystemState(SimConnect sender, SIMCONNECT_RECV_SYSTEM_STATE data)
+        private void Simconnect_OnRecvSystemState(SimConnect sender, SIMCONNECT_RECV_SYSTEM_STATE data)
         {
             if (data.dwRequestID == (uint)Requests.FlightLoaded)
             {
@@ -255,22 +277,24 @@ namespace FSTRaK
             }
         }
 
-        private void simconnect_OnRecvFilename(SimConnect sender, SIMCONNECT_RECV_EVENT_FILENAME data)
+        private void Simconnect_OnRecvFilename(SimConnect sender, SIMCONNECT_RECV_EVENT_FILENAME data)
         {
             LoadedFlight = data.szFileName;
             Log.Debug(LoadedFlight);
         }
 
-        private void simconnect_OnRecvEvent(SimConnect sender, SIMCONNECT_RECV_EVENT data)
+        private void Simconnect_OnRecvEvent(SimConnect sender, SIMCONNECT_RECV_EVENT data)
         {
             switch (data.uEventID)
             {
                 case (int)EVENTS.FLIGHT_LOADED:
-                    Log.Debug($"=== Loaded {data.dwData.ToString()}");
                     // Do nothing, this is handled in OnRecvFileName
                     break;
                 case (int)EVENTS.PAUSE:
                     PauseState = data.dwData;
+                    break;
+                case (int)EVENTS.CRASHED:
+                    IsCrashed = true;
                     break;
             }
         }
@@ -307,7 +331,7 @@ namespace FSTRaK
             Log.Error(data.dwException.ToString());
         }
 
-        private void simconnect_OnRecvSimobjectData(SimConnect sender, SIMCONNECT_RECV_SIMOBJECT_DATA data)
+        private void Simconnect_OnRecvSimobjectData(SimConnect sender, SIMCONNECT_RECV_SIMOBJECT_DATA data)
         {
             FlightData = (AircraftFlightData)data.dwData[0];
             OnPropertyChanged(nameof(FlightData));
@@ -319,11 +343,11 @@ namespace FSTRaK
             _simconnect.RequestFacilitiesList_EX1(SIMCONNECT_FACILITY_LIST_TYPE.AIRPORT, Requests.NearbyAirportsRequest);
         }
 
-        private void simconnect_OnRecvAirportList(SimConnect sender, SIMCONNECT_RECV_AIRPORT_LIST data)
+        private void Simconnect_OnRecvAirportList(SimConnect sender, SIMCONNECT_RECV_AIRPORT_LIST data)
         {
             try
             {
-                var myCoordinates = new GeoCoordinate(FlightData.latitude, FlightData.longitude);
+                var myCoordinates = new GeoCoordinate(FlightData.Latitude, FlightData.Longitude);
 
                 if (myCoordinates != null)
                 {

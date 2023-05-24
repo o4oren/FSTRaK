@@ -18,7 +18,7 @@ namespace FSTRaK.Models.FlightManager
         }
         public override void ProcessFlightData(AircraftFlightData Data)
         {
-            if(Data.groundVelocity > 35)
+            if(Data.GroundVelocity > 35)
             {
                 Context.State = new TakeoffRollState(Context);
                 return;

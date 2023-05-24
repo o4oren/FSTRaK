@@ -10,7 +10,6 @@ namespace FSTRaK.Models.FlightManager
 {
     internal abstract class AbstractState : IFlightManagerState
     {
-        public abstract void ProcessFlightData(AircraftFlightData Data);
 
         public abstract string Name { get; set; }
 
@@ -25,10 +24,33 @@ namespace FSTRaK.Models.FlightManager
             this.Context = Context;
         }
 
+        /// <summary>
+        /// This method must be implemented by inheriting class.
+        /// Recommendations:
+        /// 1. Handle one time operations in the constructor.
+        /// 2. Use StopWatch for timed insrations of state into the db.
+        /// 3. Check for special conditions at the beginning of the method.
+        /// 4. Don't forget to handle exit from flight.
+        /// </summary>
+        /// <param name="Data"></param>
+        public abstract void ProcessFlightData(AircraftFlightData Data);
+
+
+        /// <summary>
+        /// Handles the exit from flight event - detected when the sim is no longer in flight mode.
+        /// If the flight was exited after reaching the FlightEnded stage, we just switch to SimNotInFlight state.
+        /// Otherwise, we end the flight first.
+        /// </summary>
+        /// <param name="Context"></param>
         protected void HandleFlightExit(FlightManager Context)
         {
             if (!Context.SimConnectInFlight)
             {
+                if (!(Context.State is FlightEndedState))
+                {
+                    Context.State = new FlightEndedState(Context);
+                }
+
                 Context.State = new SimNotInFlightState(Context);
             }
         }
@@ -45,13 +67,13 @@ namespace FSTRaK.Models.FlightManager
             {
                 Context.ActiveFlight.StartTime = time;
             }
-            fe.Altitude = data.altitude;
-            fe.GroundAltitude = data.groundAltitude;
-            fe.Latitude = data.latitude;
-            fe.Longitude = data.longitude;
-            fe.TrueHeading = data.trueHeading;
-            fe.Airspeed = data.indicatedAirpeed;
-            fe.GroundSpeed = data.groundVelocity;
+            fe.Altitude = data.Altitude;
+            fe.GroundAltitude = data.GroundAltitude;
+            fe.Latitude = data.Latitude;
+            fe.Longitude = data.Longitude;
+            fe.TrueHeading = data.TrueHeading;
+            fe.Airspeed = data.IndicatedAirpeed;
+            fe.GroundSpeed = data.GroundVelocity;
             fe.Time = time;
             Context.ActiveFlight.FlightEvents.Add(fe);
             Log.Debug(Context.ActiveFlight.FlightEvents.Last().GetType().ToString());

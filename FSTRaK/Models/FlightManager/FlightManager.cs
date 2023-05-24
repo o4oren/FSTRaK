@@ -87,6 +87,12 @@ namespace FSTRaK.Models.FlightManager
         {            
             switch(e.PropertyName)
             {
+                case nameof(SimConnectService.IsCrashed):
+                    if(_simConnectService.IsCrashed)
+                    {
+                        State = new CrashedState(this);
+                    }
+                    break;
                 case nameof(SimConnectService.FlightData):
                     var data = _simConnectService.FlightData;
 
@@ -96,12 +102,12 @@ namespace FSTRaK.Models.FlightManager
                     if (!(State is SimNotInFlightState))
                     {
                         FlightParams fp = new FlightParams();
-                        fp.TrueAirspeed = data.trueAirspeed;
-                        fp.Heading = data.trueHeading;
-                        fp.IsOnGround = Convert.ToBoolean(data.simOnGround);
-                        fp.Latitude = data.latitude;
-                        fp.Longitude = data.longitude;
-                        fp.Altitude = data.altitude;
+                        fp.TrueAirspeed = data.TrueAirspeed;
+                        fp.Heading = data.TrueHeading;
+                        fp.IsOnGround = Convert.ToBoolean(data.SimOnGround);
+                        fp.Latitude = data.Latitude;
+                        fp.Longitude = data.Longitude;
+                        fp.Altitude = data.Altitude;
                         CurrentFlightParams = fp;
                     }
 

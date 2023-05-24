@@ -19,13 +19,13 @@ namespace FSTRaK.Models.FlightManager
         }
         public override void ProcessFlightData(AircraftFlightData Data)
         {
-            if (!Convert.ToBoolean(Data.simOnGround))
+            if (!Convert.ToBoolean(Data.SimOnGround))
             {
                 Context.State = new FlightState(Context);
                 return;
             }
 
-            if (Data.groundVelocity < 35)
+            if (Data.GroundVelocity < 35)
             {
                 Context.State = new TaxiInState(Context);
                 return;
