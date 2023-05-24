@@ -113,6 +113,8 @@
     <Compile Include="Models\Entity\FlightEvent\FlightEndedEvent.cs" />
     <Compile Include="Models\Entity\FlightEvent\ParkingEvent.cs" />
     <Compile Include="Models\Entity\FlightEvent\LandingEvent.cs" />
+    <Compile Include="Models\Entity\FlightEvent\TaxiInEvent.cs" />
+    <Compile Include="Models\Entity\FlightEvent\TaxiOutEvent.cs" />
     <Compile Include="Models\Entity\FlightEvent\TakeoffEvent.cs" />
     <Compile Include="Models\FlightManager\State\AbstractState.cs" />
     <Compile Include="Models\FlightManager\FlightManager.cs" />

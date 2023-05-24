@@ -12,19 +12,22 @@
 
     <StackPanel Margin="10">
         <StackPanel Orientation="Horizontal" Margin="10">
-            <Label Style="{StaticResource FSTrAkLabel}" Width="180">Map tiles Provider</Label>
+            <Label Style="{StaticResource FSTrAkLabel}" Width="200">Map tiles Provider</Label>
             <ComboBox FontFamily="{StaticResource Slopes}" Foreground="{StaticResource TextColor}" FontSize="24" Width="200"
                       ItemsSource="{Binding MapProviders}" SelectedItem="{Binding SelectedMapProvider}"/>
         </StackPanel>
 
         <StackPanel Orientation="Horizontal" Margin="10" Visibility="{Binding IsShowBingApiKeyField, Converter={StaticResource BoolToVis}}">
-            <Label  Style="{StaticResource FSTrAkLabel}" Width="180">Bing API Key</Label>
+            <Label  Style="{StaticResource FSTrAkLabel}" Width="200">Bing API Key</Label>
             <TextBox FontFamily="{StaticResource Slopes}" Foreground="{StaticResource TextColor}" FontSize="20" Text="{Binding BingApiKey}" TextWrapping="Wrap" Height="100" Width="200"/>
         </StackPanel>
         <StackPanel Orientation="Horizontal" Margin="10">
-            <Label  Style="{StaticResource FSTrAkLabel}" Width="180">Always on Top</Label>
+            <Label  Style="{StaticResource FSTrAkLabel}" Width="200">Always on Top</Label>
             <CheckBox Style="{StaticResource SettingsCheckbox}" FontFamily="{StaticResource Slopes}" FontSize="20" VerticalAlignment="Center" IsChecked="{Binding IsAlwaysOnTop, Mode=TwoWay}"/>
         </StackPanel>
-
+        <StackPanel Orientation="Horizontal" Margin="10">
+            <Label  Style="{StaticResource FSTrAkLabel}" Width="200">Complete Flights Only</Label>
+            <CheckBox Style="{StaticResource SettingsCheckbox}" FontFamily="{StaticResource Slopes}" FontSize="20" VerticalAlignment="Center" IsChecked="{Binding IsSaveOnlyCompleteFlights, Mode=TwoWay}"/>
+        </StackPanel>
     </StackPanel>
 </UserControl>

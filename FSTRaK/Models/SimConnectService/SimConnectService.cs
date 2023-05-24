@@ -361,7 +361,7 @@ namespace FSTRaK
                             {
                                 NearestAirport = a.Icao;
                                 _nearestAirportDistance = distance;
-                                Log.Information($"Closest found airport is {NearestAirport}");
+                                Log.Information($"Closest found airport is {NearestAirport} at {_nearestAirportDistance} meters!");
                             }
                         }
                     }

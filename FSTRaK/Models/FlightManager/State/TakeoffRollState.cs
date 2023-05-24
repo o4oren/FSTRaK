@@ -12,7 +12,7 @@ namespace FSTRaK.Models.FlightManager
         public TakeoffRollState
             (FlightManager Context) : base(Context)
         {
-            this._eventInterval = 1000;
+            this._eventInterval = 2000;
             this.Name = "Takeoff Roll";
             this.IsMovementState = true;
         }
@@ -21,7 +21,7 @@ namespace FSTRaK.Models.FlightManager
 
             if (!Convert.ToBoolean(Data.SimOnGround))
             {
-                TakeoffEvent To = new TakeoffEvent() { FlapsPosition = Data.FlapPosition };
+                TakeoffEvent To = new TakeoffEvent() { FlapsPosition = Data.FlapPosition, FuelWeightLbs = Data.FuelWeightLbs };
                 AddFlightEvent(Data, To);
                 Context.State = new FlightState(Context);
                 return;
@@ -33,8 +33,6 @@ namespace FSTRaK.Models.FlightManager
                 AddFlightEvent(Data);
                 _stopwatch.Restart();
             }
-            
-            HandleFlightExit(Context);
         }
     }
 }

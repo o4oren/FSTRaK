@@ -18,8 +18,11 @@ namespace FSTRaK.Models.FlightManager
         {
             if (Data.SimOnGround == 1)
             {
-                LandingEvent To = new LandingEvent() { VerticalSpeed = Data.VerticalSpeed };
-                AddFlightEvent(Data, To);
+                LandingEvent Le = new LandingEvent() 
+                { 
+                    VerticalSpeed = Data.VerticalSpeed, FuelWeightLbs = Data.FuelWeightLbs
+                };
+                AddFlightEvent(Data, Le);
                 Context.State = new LandedState(Context);
                 return;
             }
@@ -32,8 +35,6 @@ namespace FSTRaK.Models.FlightManager
                 AddFlightEvent(Data, new FlightEvent());
                 _stopwatch.Restart();
             }
-            
-            HandleFlightExit(Context);
         }
     }
 }

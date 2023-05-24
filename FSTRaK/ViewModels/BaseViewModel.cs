@@ -1,4 +1,5 @@
-﻿using System.ComponentModel;
+﻿using Serilog;
+using System.ComponentModel;
 using System.Runtime.CompilerServices;
 
 namespace FSTRaK.ViewModels

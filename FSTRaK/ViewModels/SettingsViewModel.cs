@@ -1,6 +1,8 @@
 ﻿
 
 using System.Collections;
+using System.ComponentModel;
+using System.Runtime.CompilerServices;
 using System.Windows;
 using System.Collections.ObjectModel;
 using MapControl;
@@ -15,11 +17,13 @@ namespace FSTRaK.ViewModels
         private string _selectedMapProvider = "OpenStreetMap";
         public string SelectedMapProvider
         {
-            get {
+            get
+            {
                 return _selectedMapProvider;
             }
-            set {
-                if(value != null && value != _selectedMapProvider)
+            set
+            {
+                if (value != null && value != _selectedMapProvider)
                 {
                     _selectedMapProvider = value;
                     Properties.Settings.Default.MapTileProvider = _selectedMapProvider;
@@ -52,7 +56,7 @@ namespace FSTRaK.ViewModels
             }
         }
 
-        
+
 
         private bool _isShowBingApiKeyField = false;
         public bool IsShowBingApiKeyField
@@ -68,7 +72,7 @@ namespace FSTRaK.ViewModels
             }
         }
 
-        private bool _isAlwaysOnTop = false;
+        private bool _isAlwaysOnTop;
         public bool IsAlwaysOnTop
         {
             get
@@ -80,6 +84,29 @@ namespace FSTRaK.ViewModels
                 _isAlwaysOnTop = value;
                 Properties.Settings.Default.IsAlwaysOnTop = _isAlwaysOnTop;
                 OnPropertyChanged();
+                OnPropertyChanged2();
+
+                Log.Debug("1");
+            }
+        }
+
+        private bool _isSaveOnlyCompleteFlights;
+
+        public bool IsSaveOnlyCompleteFlights
+        {
+            get
+            {
+                return _isSaveOnlyCompleteFlights;
+            }
+            set
+            {
+                _isSaveOnlyCompleteFlights = value;
+                Properties.Settings.Default.IsSaveOnlyCompleteFlights = _isSaveOnlyCompleteFlights;
+                OnPropertyChanged();
+                OnPropertyChanged2();
+
+                Log.Debug("2");
+
             }
         }
 
@@ -91,7 +118,7 @@ namespace FSTRaK.ViewModels
 
             foreach (DictionaryEntry provider in mapProviders)
             {
-                if ((typeof(MapTileLayerBase).IsAssignableFrom(provider.Value.GetType())) 
+                if ((typeof(MapTileLayerBase).IsAssignableFrom(provider.Value.GetType()))
                     || (typeof(WmsImageLayer).IsAssignableFrom(provider.Value.GetType())))
                 {
                     layers.Add(provider.Key.ToString());
@@ -105,6 +132,12 @@ namespace FSTRaK.ViewModels
             SelectedMapProvider = Properties.Settings.Default.MapTileProvider;
             BingApiKey = Properties.Settings.Default.BingApiKey;
             IsAlwaysOnTop = Properties.Settings.Default.IsAlwaysOnTop;
+            IsSaveOnlyCompleteFlights = Properties.Settings.Default.IsSaveOnlyCompleteFlights;
+        }
+
+        protected void OnPropertyChanged2([CallerMemberName] string name = null)
+        {
+            Log.Debug(name);
         }
     }
 }

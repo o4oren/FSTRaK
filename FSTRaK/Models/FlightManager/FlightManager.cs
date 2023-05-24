@@ -93,10 +93,13 @@ namespace FSTRaK.Models.FlightManager
                         State = new CrashedState(this);
                     }
                     break;
+
+
                 case nameof(SimConnectService.FlightData):
                     var data = _simConnectService.FlightData;
 
-                    _state.ProcessFlightData(data);
+                    State.ProcessFlightData(data);
+                    State.HandleFlightExitEvent();
 
                     // Updating the map in realtime if not in non-flight states
                     if (!(State is SimNotInFlightState))

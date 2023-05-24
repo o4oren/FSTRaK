@@ -1,12 +1,11 @@
 ﻿
 using FSTRaK.DataTypes;
 
-
 namespace FSTRaK.Models.FlightManager
 {
     internal class TaxiOutState : AbstractState
     {
-        public override string Name { get; set; } = "Taxi";
+        public override string Name { get; set; }
         public override bool IsMovementState { get; set; }
 
         
@@ -30,8 +29,6 @@ namespace FSTRaK.Models.FlightManager
                 AddFlightEvent(Data, new FlightEvent());
                 _stopwatch.Restart();
             }
-            
-            HandleFlightExit(Context);
         }
     }
 }

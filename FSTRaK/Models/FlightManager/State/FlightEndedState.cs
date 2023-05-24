@@ -43,7 +43,14 @@ namespace FSTRaK.Models.FlightManager
 
                 _isEnded = true;
             }
-            HandleFlightExit(Context);
+        }
+
+        public override void HandleFlightExitEvent()
+        {
+            if (!Context.SimConnectInFlight)
+            {
+                Context.State = new SimNotInFlightState(Context);
+            }
         }
     }
 }

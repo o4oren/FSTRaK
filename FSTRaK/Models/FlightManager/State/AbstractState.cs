@@ -38,20 +38,12 @@ namespace FSTRaK.Models.FlightManager
 
         /// <summary>
         /// Handles the exit from flight event - detected when the sim is no longer in flight mode.
-        /// If the flight was exited after reaching the FlightEnded stage, we just switch to SimNotInFlight state.
-        /// Otherwise, we end the flight first.
         /// </summary>
-        /// <param name="Context"></param>
-        protected void HandleFlightExit(FlightManager Context)
+        public virtual void HandleFlightExitEvent()
         {
             if (!Context.SimConnectInFlight)
             {
-                if (!(Context.State is FlightEndedState))
-                {
-                    Context.State = new FlightEndedState(Context);
-                }
-
-                Context.State = new SimNotInFlightState(Context);
+                Context.State = new FlightEndedState(Context);
             }
         }
 

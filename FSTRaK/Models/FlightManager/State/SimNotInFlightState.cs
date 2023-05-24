@@ -22,5 +22,10 @@ namespace FSTRaK.Models.FlightManager
                 Context.State = new FlightStartedState(Context);
             }
         }
+
+        public override void HandleFlightExitEvent()
+        {
+            // Do nothing
+        }
     }
 }

@@ -27,6 +27,11 @@ namespace FSTRaK.Models.FlightManager
 
             if (Data.GroundVelocity < 35)
             {
+                TaxiInEvent ti = new TaxiInEvent()
+                {
+                    FuelWeightLbs = Data.FuelWeightLbs
+                };
+                AddFlightEvent(Data, ti);
                 Context.State = new TaxiInState(Context);
                 return;
             }
@@ -37,8 +42,6 @@ namespace FSTRaK.Models.FlightManager
                 AddFlightEvent(Data, new FlightEvent());
                 _stopwatch.Restart();
             }
-
-            HandleFlightExit(Context);
         }
     }
 }

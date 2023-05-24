@@ -94,16 +94,15 @@
         <Setter Property="Template">
             <Setter.Value>
                 <ControlTemplate TargetType="{x:Type CheckBox}">
-
                     <StackPanel Orientation="Horizontal">
-                        <Border x:Name="ToggleButtonBorder" BorderThickness="1" Width="24" Height="24" CornerRadius="1">
+                        <Border x:Name="CheckBoxBorder" BorderThickness="1" Width="24" Height="24" CornerRadius="1">
                             <Border.BorderBrush>
                                 <SolidColorBrush Color="{DynamicResource BorderMediumColor}" />
                             </Border.BorderBrush>
                             <Border.Background>
                                 <SolidColorBrush Color="{DynamicResource ControlLightColor}" />
                             </Border.Background>
-                            <ContentControl x:Name="CheckContainer" />
+                            <ContentControl x:Name="CheckContainer" Margin="-5 -5 0 0"/>
                         </Border>
                     </StackPanel>
                     <ControlTemplate.Triggers>
@@ -115,14 +114,13 @@
                                 <Condition Property="IsMouseOver" Value="True"/>
                                 <Condition Property="IsChecked" Value="False"/>
                             </MultiTrigger.Conditions>
-                            <Setter TargetName="ToggleButtonBorder" Property="BorderBrush" Value="{DynamicResource TopBarBackground}"/>
+                            <Setter TargetName="CheckBoxBorder" Property="BorderBrush" Value="{DynamicResource TopBarBackground}"/>
                         </MultiTrigger>
                     </ControlTemplate.Triggers>
                 </ControlTemplate>
             </Setter.Value>
         </Setter>
     </Style>
-
 
     <Style BasedOn="{StaticResource {x:Type ToggleButton}}"
            TargetType="{x:Type RadioButton}"
@@ -201,12 +199,12 @@
                         <Grid VerticalAlignment="Center" HorizontalAlignment="Center" Height="{TemplateBinding Height}" Width="{TemplateBinding Width}" Margin="5" >
                             <Border x:Name="ToggleButtonBorder" BorderThickness="0" Background="Black" Opacity="0.5" CornerRadius="5">
                             </Border>
-                            <Label x:Name="ToggleContent" 
-                                       Content="{TemplateBinding Content}" 
+                            <Grid x:Name="ToggleContent" 
                                        VerticalAlignment="Center" HorizontalAlignment="Center"
-                                       Foreground="white"
-                                       MinWidth="32"
-                                       MinHeight="32"/>
+                                       Width="50"
+                                       Height="50"> 
+                                   <ContentControl Content="{TemplateBinding Content}" HorizontalAlignment="Center" VerticalAlignment="Center"/>
+                                   </Grid>
                         </Grid>
 
                         <ControlTemplate.Triggers>
@@ -233,9 +231,6 @@
             <Setter Property="Foreground" Value="{StaticResource TextColor}" />
         </Style.Setters>
     </Style>
-
-
-
 
     <ControlTemplate x:Key="ComboBoxToggleButton"
                  TargetType="{x:Type ToggleButton}">
@@ -476,6 +471,4 @@
             </Setter.Value>
         </Setter>
     </Style>
-    
-
 </ResourceDictionary>

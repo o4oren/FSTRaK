@@ -62,11 +62,8 @@
         <StackPanel Margin="10" HorizontalAlignment="Right">
             <ToggleButton Style="{StaticResource MapToggleButton}" 
                           IsChecked="{Binding IsCenterOnAirplane}" 
-                          Checked="OnCenterOnAirplaneChecked" Unchecked="OnCenterOnAirplaneUnChecked">
-
-                <ContentControl Content="{StaticResource CenterMap}" />
-            </ToggleButton>
-
+                          Content="{StaticResource CenterMap}"
+                          Checked="OnCenterOnAirplaneChecked" Unchecked="OnCenterOnAirplaneUnChecked" />
         </StackPanel>
     </Grid>
 
