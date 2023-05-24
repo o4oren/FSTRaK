@@ -36,6 +36,7 @@
                 <Canvas 
                     Width="32" Height="32"
                     Opacity="0.9"
+                    Visibility="{Binding Path=IsShowAirplane, Converter={StaticResource BoolToVis}}"
                 >
                     <Path Fill="Red" Stroke="DarkRed" StrokeThickness="1" Data="{StaticResource B737}" />
                 </Canvas>
@@ -44,7 +45,7 @@
                 </map:MapItem.RenderTransform>
             </map:MapItem>
             <map:MapPolyline Locations="{Binding FlightPath}" Stroke="Red" StrokeThickness="2" StrokeLineJoin="round"/>
-            <map:MapPolyline Locations="{Binding LastSegmentLine}" Stroke="Red" StrokeThickness="2" />
+            <map:MapPolyline Locations="{Binding LastSegmentLine}" Stroke="Red" StrokeThickness="2" Visibility="{Binding Path=IsShowAirplane, Converter={StaticResource BoolToVis}}"/>
         </map:Map>
 
         <StackPanel Margin="10">

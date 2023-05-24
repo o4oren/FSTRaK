@@ -1,7 +1,4 @@
-﻿using FSTRaK.Models.Entity;
-using Serilog;
-using System;
-using System.Runtime.Remoting.Contexts;
+﻿using Serilog;
 using System.Windows;
 
 namespace FSTRaK
