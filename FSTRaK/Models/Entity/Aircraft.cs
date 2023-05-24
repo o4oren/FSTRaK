@@ -1,73 +1,20 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.ComponentModel.DataAnnotations;
 
 namespace FSTRaK.Models
 {
     internal class Aircraft : BaseModel
     {
-        private string title;
-
-        public string Title { get => title; set 
-            {
-                if(value != title)
-                {
-                    title = value;
-                    OnPropertyChanged();
-                }
-            } 
-        }
-        private string type;
-        public String Type { get => title; 
-            set
-            {
-                if (value != type)
-                {
-                    type = value;
-                    OnPropertyChanged();
-                }
-            }
-        }
-
-        private string airline;
-        public String Airline
-        {
-            get => title;
-            set
-            {
-                if (value != airline)
-                {
-                    airline = value;
-                    OnPropertyChanged();
-                }
-            }
-        }
-        private string model;
-        public String Model
-        {
-            get => model;
-            set
-            {
-                if (value != model)
-                {
-                    model = value;
-                    OnPropertyChanged();
-                }
-            }
-        }
-        private string tailNumber;
-        public String TailNumber
-        {
-            get => tailNumber;
-            set
-            {
-                if (value != tailNumber)
-                {
-                    tailNumber = value;
-                    OnPropertyChanged();
-                }
-            }
-        }
+        public int ID { get; set; }
+        public string Title { get; set; } 
         
+        public String AircraftType { get; set; }
+    
+        public String Airline { get; set; }
+        public String Model { get; set; }
+        public String TailNumber { get; set; }
+
         public override bool Equals(Object obj)
         {
             if ((obj == null) || !this.GetType().Equals(obj.GetType()))

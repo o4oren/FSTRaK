@@ -36,7 +36,7 @@ namespace FSTRaK.Models.FlightManager
                 aircraft = new Aircraft
                 {
                     Title = Data.title,
-                    Type = Data.atcType,
+                    AircraftType = Data.atcType,
                     Model = Data.model,
                     Airline = Data.airline
                 };

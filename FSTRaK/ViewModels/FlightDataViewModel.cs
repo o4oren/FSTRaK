@@ -257,7 +257,7 @@ namespace FSTRaK.ViewModels
                     {
                         Title = $"Aircraft: {ActiveFlight.Aircraft.Title}";
                         Model = $"Model: {ActiveFlight.Aircraft.Model}";
-                        Type = $"Type: {ActiveFlight.Aircraft.Type}";
+                        Type = $"Type: {ActiveFlight.Aircraft.AircraftType}";
                         Airline = $"Airline: {ActiveFlight.Aircraft.Airline}";
                     }
 

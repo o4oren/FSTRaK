@@ -1,4 +1,7 @@
-﻿using Serilog;
+﻿using FSTRaK.Models.Entity;
+using Serilog;
+using System;
+using System.Runtime.Remoting.Contexts;
 using System.Windows;
 
 namespace FSTRaK
@@ -8,7 +11,6 @@ namespace FSTRaK
     /// </summary>
     public partial class App : Application
     {
-
         void OnApplicationStart(object sender, StartupEventArgs args)
         {
             Log.Logger = new LoggerConfiguration()

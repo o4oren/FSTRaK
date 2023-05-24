@@ -84,9 +84,6 @@ namespace FSTRaK.ViewModels
                 _isAlwaysOnTop = value;
                 Properties.Settings.Default.IsAlwaysOnTop = _isAlwaysOnTop;
                 OnPropertyChanged();
-                OnPropertyChanged2();
-
-                Log.Debug("1");
             }
         }
 
@@ -100,13 +97,10 @@ namespace FSTRaK.ViewModels
             }
             set
             {
+                Log.Debug($"{value}");
                 _isSaveOnlyCompleteFlights = value;
                 Properties.Settings.Default.IsSaveOnlyCompleteFlights = _isSaveOnlyCompleteFlights;
                 OnPropertyChanged();
-                OnPropertyChanged2();
-
-                Log.Debug("2");
-
             }
         }
 

@@ -24,7 +24,7 @@ namespace FSTRaK.Models.FlightManager
             }
 
             //Parking brakes, engines off - end flight
-            if (Data.GroundVelocity < 2 && Data.ParkingBrakesSet == 1)
+            if (Data.GroundVelocity < 2 && Data.ParkingBrakesSet == 1 && Data.MaxEngineRpmPct() < 5)
             {
                 var pe = new ParkingEvent
                 {

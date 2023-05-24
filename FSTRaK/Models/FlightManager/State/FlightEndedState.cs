@@ -1,6 +1,8 @@
 ﻿using FSTRaK.DataTypes;
+using FSTRaK.Models.Entity;
 using Serilog;
 using System;
+using System.Runtime.InteropServices;
 
 namespace FSTRaK.Models.FlightManager
 {
@@ -39,7 +41,11 @@ namespace FSTRaK.Models.FlightManager
 
                 }
 
-                // TODO persist data
+                using (var context = new LogbookContext())
+                {
+                    context.Flights.Add(Context.ActiveFlight);
+                    context.SaveChanges();
+                }
 
                 _isEnded = true;
             }
