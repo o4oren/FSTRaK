@@ -5,14 +5,25 @@
       xmlns:d="http://schemas.microsoft.com/expression/blend/2008" 
       xmlns:viewmodels="clr-namespace:FSTRaK.ViewModels" xmlns:map="clr-namespace:MapControl;assembly=MapControl.WPF"
              d:DataContext="{d:DesignInstance Type=viewmodels:FlightDetailsViewModel}"
-      mc:Ignorable="d" 
-      d:DesignHeight="450" d:DesignWidth="800"
+      mc:Ignorable="d" Width="800" Height="600"
+        Loaded="OnLoaded"
+             Unloaded="OnUnLoaded"
       >
 
-    <Border HorizontalAlignment="Center" Margin="20" 
-          BorderBrush="{StaticResource TextColor}" CornerRadius="5" BorderThickness="1" Padding="8">
+    <Border Margin="10,10,10,10" 
+            BorderBrush="{StaticResource TextColor}" 
+            CornerRadius="5" 
+            BorderThickness="1" 
+            Padding="8"
+            VerticalAlignment="Stretch"
+            HorizontalAlignment="Stretch"
+            >
 
-        <StackPanel Width="500">
+        <Grid Margin="0,0,0,0">
+            <Grid.RowDefinitions>
+                <RowDefinition Height="1*"/>
+                <RowDefinition Height="3*"/>
+            </Grid.RowDefinitions>
             <Grid>
                 <Grid.RowDefinitions>
                     <RowDefinition/>
@@ -49,17 +60,19 @@
                 <TextBlock Grid.Row="2" Grid.Column="2" Text="End Time:"/>
                 <TextBlock Grid.Row="2" Grid.Column="3" Text="{Binding Flight.Aircraft.Title}"/>
             </Grid>
-
-            <map:Map x:Name="logbookMapxMap" 
-                     Height="200"
-                     
+            <Grid Grid.Row="1" HorizontalAlignment="Stretch" VerticalAlignment="Stretch">
+                <map:Map x:Name="logbookMap" 
                  MapLayer="{Binding MapProvider}" 
-                 ZoomLevel="{Binding ZoomLevel}" 
+                 ZoomLevel="1" 
+                 Center="51,0"
                  MapProjection="{StaticResource WebMercatorProjection}"
-                 Center="0,0"
                  Margin="10,10,10,10">
-                <map:MapPolyline Locations="{Binding FlightPath}" Stroke="Red" StrokeThickness="2" StrokeLineJoin="round"/>
-            </map:Map>
-        </StackPanel>
+                    <map:MapPolyline 
+                        Locations="{Binding FlightPath}" 
+                        Stroke="Red" StrokeThickness="3" 
+                        StrokeLineJoin="round"/>
+                </map:Map>
+            </Grid>
+        </Grid>
     </Border>
 </UserControl>

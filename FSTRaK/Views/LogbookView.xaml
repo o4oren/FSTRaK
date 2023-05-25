@@ -24,13 +24,18 @@
         </ResourceDictionary>
     </UserControl.Resources>
 
-    <StackPanel Orientation="Horizontal">
+    <Grid>
+        <Grid.ColumnDefinitions>
+            <ColumnDefinition Width="200"/>
+            <ColumnDefinition />
+        </Grid.ColumnDefinitions>
+        
         <b:Interaction.Triggers>
             <b:EventTrigger EventName="Loaded">
                 <b:InvokeCommandAction Command="{Binding OnLoogbookLoadedCommand}"/>
             </b:EventTrigger>
         </b:Interaction.Triggers>
-        <ListView 
+        <ListView Width="200"
             ItemsSource="{Binding Flights, Mode=OneWay}" 
             IsSynchronizedWithCurrentItem="True" 
             SelectedItem="{Binding SelectedFlight}"
@@ -70,9 +75,9 @@
                 </DataTemplate>
             </ListView.ItemTemplate>
         </ListView>
-        <ContentControl Content="{Binding FlightDetailsViewModel}"
-                     HorizontalContentAlignment="Center">
+        <ContentControl Grid.Column="1" Content="{Binding FlightDetailsViewModel}" Margin="0"
+                     HorizontalContentAlignment="Stretch" VerticalContentAlignment="Stretch">
         </ContentControl>
-    </StackPanel>
+    </Grid>
 
 </UserControl>
