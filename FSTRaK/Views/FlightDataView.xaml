@@ -4,11 +4,9 @@
              xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006" 
              xmlns:d="http://schemas.microsoft.com/expression/blend/2008" 
              xmlns:map="clr-namespace:MapControl;assembly=MapControl.WPF"
-             xmlns:fstrak="clr-namespace:FSTRaK" 
-             xmlns:viewmodels="clr-namespace:FSTRaK.ViewModels"
+             xmlns:viewmodels="clr-namespace:FSTRaK.ViewModels" xmlns:b="http://schemas.microsoft.com/xaml/behaviors"
              d:DataContext="{d:DesignInstance Type=viewmodels:FlightDataViewModel}"
              mc:Ignorable="d" 
-             Loaded="OnLoaded"
              d:DesignHeight="450" d:DesignWidth="800">
     <UserControl.Resources>
         <ResourceDictionary>
@@ -25,9 +23,13 @@
                  MapLayer="{Binding MapProvider}" 
                  ZoomLevel="{Binding ZoomLevel}" 
                  MapProjection="{StaticResource WebMercatorProjection}"
-                 MouseLeftButtonDown="OnMapMoveEvent"
                  Center="{Binding MapCenter, Mode=TwoWay}"
                  Margin="10,10,10,10">
+            <b:Interaction.Triggers>
+                <b:EventTrigger EventName="MouseLeftButtonDown">
+                    <b:InvokeCommandAction Command="{Binding StopCenterOnAirplaneCommand}"/>
+                </b:EventTrigger>
+            </b:Interaction.Triggers>
             <map:MapItem Location="{Binding Location}"
                         Width="32" Height="32"
                         Margin="-16"
@@ -53,9 +55,7 @@
 
             <StackPanel Visibility="{Binding IsShowAirplane, Converter={StaticResource BoolToVis}}">
                 <Label Style="{StaticResource MapOverlayLabel}" Content="{Binding Title}" HorizontalAlignment="Left" />
-                <!-- Label Style="{StaticResource MapOverlayLabel}" Content="{Binding Model}" HorizontalAlignment="Left" / -->
                 <Label Style="{StaticResource MapOverlayLabel}" Content="{Binding Type}" HorizontalAlignment="Left" />
-                <!-- Label Style="{StaticResource MapOverlayLabel}" Content="{Binding Airline}" HorizontalAlignment="Left" / -->
                 <Label Style="{StaticResource MapOverlayLabel}" Content="{Binding FlightParamsText}" HorizontalAlignment="Left" />
             </StackPanel>
         </StackPanel>
@@ -63,8 +63,16 @@
         <StackPanel Margin="10" HorizontalAlignment="Right">
             <ToggleButton Style="{StaticResource MapToggleButton}" 
                           IsChecked="{Binding IsCenterOnAirplane}" 
-                          Content="{StaticResource CenterMap}"
-                          Checked="OnCenterOnAirplaneChecked" Unchecked="OnCenterOnAirplaneUnChecked" />
+                          Content="{StaticResource CenterMap}">
+                <b:Interaction.Triggers>
+                    <b:EventTrigger EventName="Checked">
+                        <b:InvokeCommandAction Command="{Binding CenterOnAirplaneCommand}"/>
+                    </b:EventTrigger>
+                    <b:EventTrigger EventName="Unchecked">
+                        <b:InvokeCommandAction Command="{Binding StopCenterOnAirplaneCommand}"/>
+                    </b:EventTrigger>
+                </b:Interaction.Triggers>
+            </ToggleButton>
         </StackPanel>
     </Grid>
 

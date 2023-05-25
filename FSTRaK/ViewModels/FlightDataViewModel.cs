@@ -15,6 +15,9 @@ namespace FSTRaK.ViewModels
     {
         private FlightManager _flightManager = FlightManager.Instance;
 
+        public RelayCommand CenterOnAirplaneCommand { get; private set; }
+        public RelayCommand StopCenterOnAirplaneCommand { get; private set; }
+
         public Flight ActiveFlight
         {
             get
@@ -124,8 +127,7 @@ namespace FSTRaK.ViewModels
                     return new Location(_flightManager.CurrentFlightParams.Latitude, _flightManager.CurrentFlightParams.Longitude);
                 return new Location(51, 0);
             }
-            private set
-            { }
+            private set { }
         }
 
 
@@ -150,8 +152,7 @@ namespace FSTRaK.ViewModels
                     return _flightManager.CurrentFlightParams.Heading;
                 return 0;
             }
-            private set
-            { }
+            private set { }
         }
 
         string _state = "";
@@ -209,10 +210,7 @@ namespace FSTRaK.ViewModels
                 }
                 return Application.Current.Resources["OpenStreetMap"] as MapTileLayerBase;
             }
-            private set
-            {
-
-            }
+            private set{}
         }
 
 
@@ -221,6 +219,8 @@ namespace FSTRaK.ViewModels
         public FlightDataViewModel()
         {
             _flightManager.PropertyChanged += SimconnectManagerUpdate;
+            CenterOnAirplaneCommand = new RelayCommand(o => IsCenterOnAirplane = true);
+            StopCenterOnAirplaneCommand = new RelayCommand(o => IsCenterOnAirplane = false);
         }
 
         private void SimconnectManagerUpdate(object sender, PropertyChangedEventArgs e)

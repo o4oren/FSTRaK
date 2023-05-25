@@ -582,27 +582,4 @@
             </Setter.Value>
         </Setter>
     </Style>
-    
-            <DataTemplate x:Key="DetailTemplate">
-            <Border Width="300" Height="100" Margin="20"
-          BorderBrush="Aqua" BorderThickness="1" Padding="8">
-                <Grid>
-                    <Grid.RowDefinitions>
-                        <RowDefinition/>
-                        <RowDefinition/>
-                        <RowDefinition/>
-                    </Grid.RowDefinitions>
-                    <Grid.ColumnDefinitions>
-                        <ColumnDefinition/>
-                        <ColumnDefinition/>
-                    </Grid.ColumnDefinitions>
-                    <TextBlock Grid.Row="0" Grid.Column="0" Text="From:"/>
-                    <TextBlock Grid.Row="0" Grid.Column="1" Text="{Binding DepartureAirport}"/>
-                    <TextBlock Grid.Row="1" Grid.Column="0" Text="To:"/>
-                    <TextBlock Grid.Row="1" Grid.Column="1" Text="{Binding ArrivalAirport}"/>
-                    <TextBlock Grid.Row="2" Grid.Column="0" Text="Aircraft:"/>
-                    <TextBlock Grid.Row="2" Grid.Column="1" Text="{Binding Aircraft.Title}"/>
-                </Grid>
-            </Border>
-        </DataTemplate>
 </ResourceDictionary>

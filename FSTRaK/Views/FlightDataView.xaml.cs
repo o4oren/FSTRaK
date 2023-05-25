@@ -13,30 +13,5 @@ namespace FSTRaK.Views
         {
             InitializeComponent();
         }
-   
-        private void OnMapMoveEvent(object sender, MouseButtonEventArgs e)
-        {
-            ((FlightDataViewModel)this.DataContext).IsCenterOnAirplane = false; // Disabled for now
-        }
-
-        private void OnCenterOnAirplaneChecked(object sender, RoutedEventArgs e)
-        {
-            ((FlightDataViewModel)this.DataContext).IsCenterOnAirplane = true;
-        }
-
-        private void OnCenterOnAirplaneUnChecked(object sender, RoutedEventArgs e)
-        {
-            if(DataContext != null)
-            {
-                ((FlightDataViewModel)this.DataContext).IsCenterOnAirplane = false;
-
-            }
-        }
-
-        private void OnLoaded(object sender, RoutedEventArgs e)
-        {
-           // ((FlightDataViewModel)this.DataContext).PropertyChanged += ViewModel_PropertyChanged;
-        }
-
     }
 }
