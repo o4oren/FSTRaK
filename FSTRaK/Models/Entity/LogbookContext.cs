@@ -4,22 +4,17 @@
 using System.Data.Entity;
 using System.Data.Entity.Migrations;
 using System.Data.Entity.ModelConfiguration.Conventions;
-using System.Data.SQLite.EF6.Migrations;
-using System.Runtime.Remoting.Contexts;
+
 
 namespace FSTRaK.Models.Entity
 {
     internal class LogbookContext : DbContext
     {
-        static LogbookContext()
-        {
-            Database.SetInitializer(new MigrateDatabaseToLatestVersion<LogbookContext, ContextMigrationConfiguration>(true));
 
-        }
-        public LogbookContext() : base("FSTrAkDatabase")
+        public LogbookContext() : base("FSTrAkCompactDatabase")
         {
-            this.Configuration.ProxyCreationEnabled = true;
-            this.Configuration.LazyLoadingEnabled = true;
+            this.Configuration.ProxyCreationEnabled = false;
+            this.Configuration.LazyLoadingEnabled = false;
         }
 
         public DbSet<Flight> Flights { get; set; }
@@ -29,18 +24,7 @@ namespace FSTRaK.Models.Entity
         protected override void OnModelCreating(DbModelBuilder modelBuilder)
         {
             modelBuilder.Conventions.Remove<PluralizingTableNameConvention>();
-            modelBuilder.Entity<Flight>()
-        .HasMany(f => f.FlightEvents);
-        }
-    }
 
-    internal sealed class ContextMigrationConfiguration : DbMigrationsConfiguration<LogbookContext>
-    {
-        public ContextMigrationConfiguration()
-        {
-            AutomaticMigrationsEnabled = true;
-            AutomaticMigrationDataLossAllowed = true;
-            SetSqlGenerator("System.Data.SQLite", new SQLiteMigrationSqlGenerator());
         }
     }
 }

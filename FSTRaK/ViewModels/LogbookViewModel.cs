@@ -1,15 +1,9 @@
 ﻿using FSTRaK.Models;
 using FSTRaK.Models.Entity;
-using Serilog;
-using System;
-using System.Collections.Generic;
 using System.Collections.ObjectModel;
 using System.Data.Entity;
-using System.Diagnostics;
 using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
-using System.Windows.Media.Media3D;
+using System.Runtime.Remoting.Contexts;
 
 namespace FSTRaK.ViewModels
 {
@@ -23,11 +17,15 @@ namespace FSTRaK.ViewModels
 
         public LogbookViewModel() 
         {
-                _logbookContext.Flights.Load();
-                Flights = _logbookContext.Flights.Local;
+            var flight = _logbookContext.Flights
+                                .Where(f => f.ID == 1)
+                                .FirstOrDefault<Flight>();
 
+            _logbookContext.Entry(flight).Reference(f => f.Aircraft).Load(); // loads StudentAddress
+            _logbookContext.Entry(flight).Collection(f => f.FlightEvents).Load(); // loads Courses collection 
 
-            Flight f = _logbookContext.Flights.Find(1);
+            Flights = new ObservableCollection<Flight>();
+            Flights.Add(flight);
 
         }
 
