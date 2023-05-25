@@ -1,4 +1,6 @@
-﻿namespace FSTRaK.ViewModels
+﻿using FSTRaK.Views;
+
+namespace FSTRaK.ViewModels
 {
     internal class MainWindowViewModel : BaseViewModel
     {
@@ -10,6 +12,7 @@
 
         private FlightDataViewModel _flightDataViewModel;
         private SettingsViewModel _settingsViewModel;
+        private LogbookViewModel _logbookViewModel;
 
         private object _activeView;
 
@@ -28,6 +31,8 @@
         {
             _flightDataViewModel = new FlightDataViewModel();
             _settingsViewModel = new SettingsViewModel();
+            _logbookViewModel = new LogbookViewModel();
+
             ActiveView = _flightDataViewModel;
 
             MapViewCommand = new RelayCommand(o =>
@@ -37,7 +42,7 @@
 
             LogBookCommand = new RelayCommand(o =>
             {
-                ActiveView = "Hahahaha!";
+                ActiveView = _logbookViewModel;
             });
 
             SettingsCommand = new RelayCommand(o =>

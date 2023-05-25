@@ -24,6 +24,9 @@
             <DataTemplate DataType="{x:Type viewmodels:FlightDataViewModel}" >
                 <views:FlightDataView/>
             </DataTemplate>
+            <DataTemplate DataType="{x:Type viewmodels:LogbookViewModel}" >
+                <views:LogbookView/>
+            </DataTemplate>
             <DataTemplate DataType="{x:Type viewmodels:SettingsViewModel}" >
                 <views:SettingsView/>
             </DataTemplate>

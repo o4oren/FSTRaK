@@ -55,10 +55,6 @@ namespace FSTRaK.Models.FlightManager
         protected void AddFlightEvent(AircraftFlightData data, FlightEvent fe)
         {
             DateTime time = CalculateSimTime(data);
-            if (Context.ActiveFlight.StartTime == null)
-            {
-                Context.ActiveFlight.StartTime = time;
-            }
             fe.Altitude = data.Altitude;
             fe.GroundAltitude = data.GroundAltitude;
             fe.Latitude = data.Latitude;

@@ -4,6 +4,7 @@ namespace FSTRaK.Models
 {
     internal class FlightEvent : BaseModel
     {
+
         public int ID { get; set; }
         public DateTime Time { get; set; }
         public double Latitude { get; set; }
@@ -16,6 +17,5 @@ namespace FSTRaK.Models
         public int FlightID { get; set; }
 
         public virtual Flight Flight { get; set; }
-
     }
 }

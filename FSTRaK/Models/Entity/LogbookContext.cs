@@ -14,10 +14,12 @@ namespace FSTRaK.Models.Entity
         static LogbookContext()
         {
             Database.SetInitializer(new MigrateDatabaseToLatestVersion<LogbookContext, ContextMigrationConfiguration>(true));
+
         }
         public LogbookContext() : base("FSTrAkDatabase")
         {
-            
+            this.Configuration.ProxyCreationEnabled = true;
+            this.Configuration.LazyLoadingEnabled = true;
         }
 
         public DbSet<Flight> Flights { get; set; }
@@ -27,6 +29,8 @@ namespace FSTRaK.Models.Entity
         protected override void OnModelCreating(DbModelBuilder modelBuilder)
         {
             modelBuilder.Conventions.Remove<PluralizingTableNameConvention>();
+            modelBuilder.Entity<Flight>()
+        .HasMany(f => f.FlightEvents);
         }
     }
 
