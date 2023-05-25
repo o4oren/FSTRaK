@@ -16,13 +16,13 @@
                     RowDetailsVisibilityMode="VisibleWhenSelected">
             <DataGrid.Columns>
                 <DataGridTextColumn x:Name="flightIDColumn" Binding="{Binding ID}"
-                                    Header="Flight Id" Width="SizeToHeader"/>
+                                    Header="Flight Id" Width="20"/>
                 <DataGridTextColumn x:Name="Departure" Binding="{Binding DepartureAirport}"
-                                    Header="Dep" Width="SizeToHeader"/>
+                                    Header="Dep" Width="80"/>
                 <DataGridTextColumn x:Name="Arrival" Binding="{Binding ArrivalAirport}"
-                                    Header="Arr" Width="SizeToHeader"/>
+                                    Header="Arr" Width="80"/>
                 <DataGridTextColumn x:Name="AircraftID" Binding="{Binding Aircraft.Title}"
-                                    Header="Ac" Width="SizeToHeader"/>
+                                    Header="Ac" Width="*"/>
             </DataGrid.Columns>
         </DataGrid>
     </Grid>

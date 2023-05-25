@@ -3,7 +3,7 @@ using FSTRaK.Models.Entity;
 using System.Collections.ObjectModel;
 using System.Data.Entity;
 using System.Linq;
-using System.Runtime.Remoting.Contexts;
+using System.Windows.Media.Media3D;
 
 namespace FSTRaK.ViewModels
 {
@@ -17,20 +17,9 @@ namespace FSTRaK.ViewModels
 
         public LogbookViewModel() 
         {
-            var flight = _logbookContext.Flights
-                                .Where(f => f.ID == 1)
-                                .FirstOrDefault<Flight>();
-
-            _logbookContext.Entry(flight).Reference(f => f.Aircraft).Load(); // loads StudentAddress
-            _logbookContext.Entry(flight).Collection(f => f.FlightEvents).Load(); // loads Courses collection 
-
             Flights = new ObservableCollection<Flight>();
-            Flights.Add(flight);
-
+            var flights = _logbookContext.Flights.Where(f => f.ID < 10).Include(f => f.Aircraft);
+            flights.ToList().ForEach(Flights.Add);
         }
-
-        
-
-
     }
 }
