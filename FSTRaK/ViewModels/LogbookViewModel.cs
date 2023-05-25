@@ -1,33 +1,65 @@
 ﻿using FSTRaK.Models;
 using FSTRaK.Models.Entity;
 using FSTRaK.Models.FlightManager;
+using MapControl;
 using System;
 using System.Collections.ObjectModel;
 using System.ComponentModel;
 using System.Data.Entity;
 using System.Linq;
-using System.Text.RegularExpressions;
+using System.Runtime.CompilerServices;
 using System.Threading;
 using System.Threading.Tasks;
-using System.Windows.Forms;
-using System.Windows.Media.Media3D;
 
 namespace FSTRaK.ViewModels
 {
     internal class LogbookViewModel : BaseViewModel
     {
         LogbookContext _logbookContext = new LogbookContext();
+
         FlightManager _flightManager = FlightManager.Instance;
         public RelayCommand OnLoogbookLoadedCommand { get; set; }
 
+        private FlightDetailsViewModel _flightDetailsViewModel;
+
+        public FlightDetailsViewModel FlightDetailsViewModel { 
+            get { return _flightDetailsViewModel; }
+            private set 
+            { 
+                _flightDetailsViewModel = value;
+                OnPropertyChanged();
+            } 
+        }
+
         public ObservableCollection<Flight> Flights { get; set; }
 
-        public int SelectedFlightId { get; set; }
+        private Flight _selectedFlight;
+        public Flight SelectedFlight { get 
+            {
+                if (_selectedFlight == null)
+                {
+                    return new Flight();
+                }
+                return _selectedFlight;
+            } 
+            set 
+            {
+                if(value != null && _selectedFlight != value)
+                {
+                    _selectedFlight = value;
+                    _flightDetailsViewModel.Flight = _selectedFlight;
+                    OnPropertyChanged(nameof(SelectedFlight));
+                }
+            } 
+        }
+
+        public LocationCollection FlightPath = new LocationCollection();
 
 
         public LogbookViewModel() 
         {
             Flights = new ObservableCollection<Flight>();
+            _flightDetailsViewModel = new FlightDetailsViewModel();
 
             _flightManager.PropertyChanged += ((s,e) =>
             {
@@ -41,8 +73,6 @@ namespace FSTRaK.ViewModels
             {
                 LoadFlights();
             });
-
-
         }
 
         private Task LoadFlights()
@@ -53,7 +83,10 @@ namespace FSTRaK.ViewModels
         {
             return Task.Run(() => {
                 Thread.Sleep(delay);
-                var flights = _logbookContext.Flights.Select(f => f).Include(f => f.Aircraft);
+                var flights = _logbookContext.Flights
+                .Select(f => f)
+                .Include(f => f.Aircraft)
+                .Include(f => f.FlightEvents);
                 App.Current.Dispatcher.Invoke((Action)delegate
                 {
                     Flights = new ObservableCollection<Flight>(flights);

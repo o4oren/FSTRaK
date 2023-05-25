@@ -5,7 +5,7 @@
              xmlns:d="http://schemas.microsoft.com/expression/blend/2008" 
              xmlns:viewmodels="clr-namespace:FSTRaK.ViewModels" 
              xmlns:entity="clr-namespace:FSTRaK.Models.Entity" 
-             xmlns:b="http://schemas.microsoft.com/xaml/behaviors"
+             xmlns:b="http://schemas.microsoft.com/xaml/behaviors" xmlns:views="clr-namespace:FSTRaK.Views"
              mc:Ignorable="d" 
              d:DesignHeight="450" d:DesignWidth="800"
              d:DataContext="{d:DesignInstance Type=viewmodels:LogbookViewModel}"
@@ -18,49 +18,9 @@
                 <ResourceDictionary Source="../Resources/MapProvidersDictionary.xaml"/>
                 <ResourceDictionary Source="../Resources/Theme.xaml"/>
             </ResourceDictionary.MergedDictionaries>
-
-            <DataTemplate x:Key="FlightDetailsTemplate">
-                <Border HorizontalAlignment="Stretch" Margin="20"
-          BorderBrush="{StaticResource TextColor}" CornerRadius="5" BorderThickness="1" Padding="8">
-                    <Grid>
-                        <Grid.RowDefinitions>
-                            <RowDefinition/>
-                            <RowDefinition/>
-                            <RowDefinition/>
-                            <RowDefinition/>
-                            <RowDefinition/>
-                            <RowDefinition/>
-                        </Grid.RowDefinitions>
-                        <Grid.ColumnDefinitions>
-                            <ColumnDefinition/>
-                            <ColumnDefinition/>
-                            <ColumnDefinition/>
-                            <ColumnDefinition/>
-                        </Grid.ColumnDefinitions>
-                        <TextBlock Grid.Row="0" Grid.Column="0" Text="From:"/>
-                        <TextBlock Grid.Row="0" Grid.Column="1" Text="{Binding DepartureAirport}"/>
-                        <TextBlock Grid.Row="1" Grid.Column="0" Text="To:"/>
-                        <TextBlock Grid.Row="1" Grid.Column="1" Text="{Binding ArrivalAirport}"/>
-                        <TextBlock Grid.Row="2" Grid.Column="0" Text="Aircraft:"/>
-                        <TextBlock Grid.Row="2" Grid.Column="1" Text="{Binding Aircraft.Title}"/>
-                        <TextBlock Grid.Row="3" Grid.Column="0" Text="Started at:"/>
-                        <TextBlock Grid.Row="3" Grid.Column="1" Text="{Binding StartTime}"/>
-                        <TextBlock Grid.Row="4" Grid.Column="0" Text="Ended at:"/>
-                        <TextBlock Grid.Row="4" Grid.Column="1" Text="{Binding EndTime}"/>
-                        <TextBlock Grid.Row="5" Grid.Column="0" Text="Score:"/>
-                        <TextBlock Grid.Row="5" Grid.Column="1" Text="{Binding Score}"/>
-
-
-                        <TextBlock Grid.Row="0" Grid.Column="2" Text="Score:"/>
-                        <TextBlock Grid.Row="0" Grid.Column="3" Text="{Binding DepartureAirport}"/>
-                        <TextBlock Grid.Row="1" Grid.Column="2" Text="Start Time:"/>
-                        <TextBlock Grid.Row="1" Grid.Column="3" Text="{Binding ArrivalAirport}"/>
-                        <TextBlock Grid.Row="2" Grid.Column="2" Text="End Time:"/>
-                        <TextBlock Grid.Row="2" Grid.Column="3" Text="{Binding Aircraft.Title}"/>
-                    </Grid>
-                </Border>
+            <DataTemplate DataType="{x:Type viewmodels:FlightDetailsViewModel}" >
+                <views:FlightDetailsView/>
             </DataTemplate>
-            
         </ResourceDictionary>
     </UserControl.Resources>
 
@@ -110,8 +70,9 @@
                 </DataTemplate>
             </ListView.ItemTemplate>
         </ListView>
-        <ContentControl Content="{Binding Flights}"
-                    ContentTemplate="{StaticResource FlightDetailsTemplate}" HorizontalContentAlignment="Center"/>
+        <ContentControl Content="{Binding FlightDetailsViewModel}"
+                     HorizontalContentAlignment="Center">
+        </ContentControl>
     </StackPanel>
 
 </UserControl>

@@ -135,6 +135,7 @@
     <Compile Include="Models\FlightManager\State\TaxiInState.cs" />
     <Compile Include="Models\FlightManager\State\TaxiOutState.cs" />
     <Compile Include="RelayCommand.cs" />
+    <Compile Include="ViewModels\FlightDetailsViewModel.cs" />
     <Compile Include="ViewModels\LogbookViewModel.cs" />
     <Compile Include="ViewModels\SettingsViewModel.cs" />
     <Compile Include="Views\FlightDataView.xaml.cs">
@@ -144,6 +145,9 @@
     <Compile Include="Models\SimConnectService\SimConnectService.cs" />
     <Compile Include="ViewModels\BaseViewModel.cs" />
     <Compile Include="ViewModels\MainWindowViewModel.cs" />
+    <Compile Include="Views\FlightDetailsView.xaml.cs">
+      <DependentUpon>FlightDetailsView.xaml</DependentUpon>
+    </Compile>
     <Compile Include="Views\LogbookView.xaml.cs">
       <DependentUpon>LogbookView.xaml</DependentUpon>
     </Compile>
@@ -171,6 +175,10 @@
       <Generator>MSBuild:Compile</Generator>
     </Page>
     <Page Include="Views\FlightDataView.xaml">
+      <SubType>Designer</SubType>
+      <Generator>MSBuild:Compile</Generator>
+    </Page>
+    <Page Include="Views\FlightDetailsView.xaml">
       <SubType>Designer</SubType>
       <Generator>MSBuild:Compile</Generator>
     </Page>
@@ -281,5 +289,6 @@
       <Install>false</Install>
     </BootstrapperPackage>
   </ItemGroup>
+  <ItemGroup />
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
 </Project>
