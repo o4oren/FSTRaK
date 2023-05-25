@@ -107,6 +107,7 @@
     <Compile Include="DataTypes\FlightParams.cs" />
     <Compile Include="DataTypes\NearestAirportRequestType.cs" />
     <Compile Include="DataTypes\SimConnectDataTypes.cs" />
+    <Compile Include="Models\Entity\Migrations\Configuration.cs" />
     <Compile Include="Models\Entity\FlightEvent\CrashEvent.cs" />
     <Compile Include="Models\Entity\FlightEvent\ScoringEvent.cs" />
     <Compile Include="Models\Entity\FlightEvent\FlightStartedEvent.cs" />

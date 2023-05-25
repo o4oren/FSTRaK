@@ -2,6 +2,7 @@
 using FSTRaK.Models.Entity;
 using Serilog;
 using System;
+using System.Linq;
 using System.Runtime.InteropServices;
 
 namespace FSTRaK.Models.FlightManager
@@ -27,6 +28,14 @@ namespace FSTRaK.Models.FlightManager
             {
                 FlightEndedEvent fe = new FlightEndedEvent();
                 AddFlightEvent(Data, fe);
+                Context.ActiveFlight.EndTime = fe.Time;
+
+                var startEvent = Context.ActiveFlight.FlightEvents.FirstOrDefault(e => e is FlightStartedEvent) as FlightStartedEvent;
+                var flightLength = fe.Time - startEvent.Time;
+
+                Context.ActiveFlight.FlightTime = flightLength;
+
+                Context.ActiveFlight.TotalFuelUsed = startEvent.FuelWeightLbs - fe.FuelWeightLbs;
 
                 // Flight ended because it was exited in the sim
                 if (!Context.SimConnectInFlight)

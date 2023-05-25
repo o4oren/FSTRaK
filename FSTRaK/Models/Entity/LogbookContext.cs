@@ -13,8 +13,7 @@ namespace FSTRaK.Models.Entity
 
         public LogbookContext() : base("FSTrAkCompactDatabase")
         {
-            this.Configuration.ProxyCreationEnabled = false;
-            this.Configuration.LazyLoadingEnabled = false;
+            Database.SetInitializer(new MigrateDatabaseToLatestVersion<LogbookContext, Migrations.Configuration>());
         }
 
         public DbSet<Flight> Flights { get; set; }

@@ -53,6 +53,7 @@ namespace FSTRaK.Models.FlightManager
                 _flightStartedEvent.FuelWeightLbs = Data.FuelWeightLbs;
                 _fuelingStopwatch.Start();
                 AddFlightEvent(Data, _flightStartedEvent);
+                Context.ActiveFlight.StartTime = _flightStartedEvent.Time;
             }
 
             // Update start event's fuel quantity if it was a large change (because that indicates the user set up fuel). Small changes can be attributed to APU running.

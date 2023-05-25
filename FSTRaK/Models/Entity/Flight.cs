@@ -1,9 +1,6 @@
 ﻿using System;
-using System.Collections.Generic;
 using System.Collections.ObjectModel;
 using System.ComponentModel.DataAnnotations.Schema;
-using System.Linq;
-using System.Security.Policy;
 
 namespace FSTRaK.Models
 {
@@ -14,14 +11,38 @@ namespace FSTRaK.Models
 
         [Index(nameof(DepartureAirport))]
         public String DepartureAirport { get; set; }
-        
+
         [Index(nameof(ArrivalAirport))]
         public String ArrivalAirport { get; set; }
+
+        public DateTime StartTime { get; set; }
+
+        public DateTime EndTime { get; set; }
+
+        public Int64 FlightTimeMilis { get; set; }
+        [NotMapped]
+        public TimeSpan FlightTime
+        {
+            get { return TimeSpan.FromTicks(FlightTimeMilis); }
+            set { FlightTimeMilis = value.Ticks; }
+        }
+
+        public int FlightDistance { get; set; }
+
+        public double TotalFuelUsed { get; set; }
+
+        public double Score { get; set; }
+
         public ObservableCollection<FlightEvent> FlightEvents { get; private set; }
 
         public Flight()
         {
             this.FlightEvents = new ObservableCollection<FlightEvent>();
+        }
+
+        public override string ToString()
+        {
+            return ID.ToString();
         }
 
     }
