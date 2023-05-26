@@ -49,8 +49,7 @@
                 <TextBlock Grid.Row="3" Grid.Column="1" Text="{Binding Flight.StartTime}"/>
                 <TextBlock Grid.Row="4" Grid.Column="0" Text="Ended at:"/>
                 <TextBlock Grid.Row="4" Grid.Column="1" Text="{Binding Flight.EndTime}"/>
-                <TextBlock Grid.Row="5" Grid.Column="0" Text="Score:"/>
-                <TextBlock Grid.Row="5" Grid.Column="1" Text="{Binding Flight.Score}"/>
+
 
 
                 <TextBlock Grid.Row="0" Grid.Column="2" Text="BlockTime:"/>
@@ -59,6 +58,10 @@
                 <TextBlock Grid.Row="1" Grid.Column="3" Text="{Binding Flight.ArrivalAirport}"/>
                 <TextBlock Grid.Row="2" Grid.Column="2" Text="End Time:"/>
                 <TextBlock Grid.Row="2" Grid.Column="3" Text="{Binding Flight.Aircraft.Title}"/>
+                <TextBlock Grid.Row="3" Grid.Column="2" Text="Landing VS:"/>
+                <TextBlock Grid.Row="3" Grid.Column="3" Text="{Binding LandingVerticalSpeed}"/>
+                <TextBlock Grid.Row="4" Grid.Column="2" Text="Score:"/>
+                <TextBlock Grid.Row="4" Grid.Column="3" Text="{Binding Flight.Score}"/>
             </Grid>
             <Grid Grid.Row="1" HorizontalAlignment="Stretch" VerticalAlignment="Stretch">
                 <map:Map x:Name="logbookMap" 

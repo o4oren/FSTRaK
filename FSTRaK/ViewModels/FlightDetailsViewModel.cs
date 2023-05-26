@@ -25,6 +25,7 @@ namespace FSTRaK.ViewModels
                     FlightPath = new LocationCollection(_flight.FlightEvents.Select(e => new Location(e.Latitude, e.Longitude)));
                     OnPropertyChanged();
                     OnPropertyChanged(nameof(FlightPath));
+                    OnPropertyChanged(nameof(LandingVerticalSpeed));
 
 
                     double minLon = Double.MaxValue, minLat = Double.MaxValue, maxLon = Double.MinValue, maxLat = Double.MinValue;
@@ -46,7 +47,22 @@ namespace FSTRaK.ViewModels
             } 
         }
 
+        public string LandingVerticalSpeed
+        {
+            get
+            {
+                if(_flight != null)
+                {
+                    var landingEvent = (LandingEvent)_flight.FlightEvents.FirstOrDefault(e => e is LandingEvent);
+                    if (landingEvent != null)
+                    {
+                        return $"{landingEvent.VerticalSpeed:F0} ft/m";
+                    }
+                }
 
+                return "";
+            }
+        }
 
         public MapTileLayerBase MapProvider
         {

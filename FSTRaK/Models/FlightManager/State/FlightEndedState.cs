@@ -54,6 +54,11 @@ namespace FSTRaK.Models.FlightManager
 
                 _isEnded = true;
             }
+
+            if(_isEnded && Data.MaxEngineRpmPct() > 5 )
+            {
+                Context.State = new FlightStartedState(Context);
+            }
         }
 
         public override void HandleFlightExitEvent()

@@ -10,7 +10,7 @@ namespace FSTRaK.Models.FlightManager
         public override bool IsMovementState { get; set; }
         public FlightState(FlightManager Context) : base(Context)
         {
-            this._eventInterval = 10000;
+            this._eventInterval = 5000;
             this.Name = "In flight";
             this.IsMovementState = true;
         }
@@ -25,6 +25,19 @@ namespace FSTRaK.Models.FlightManager
                 AddFlightEvent(Data, Le);
                 Context.State = new LandedState(Context);
                 return;
+            }
+
+            if (Data.IndicatedAirpeed < 150)
+            {
+                _eventInterval = 5000;
+            }
+            else if (Data.IndicatedAirpeed > 150 && Data.IndicatedAirpeed < 250)
+            {
+                _eventInterval = 10000;
+            }
+            else if (Data.IndicatedAirpeed > 250)
+            {
+                _eventInterval = 15000;
             }
 
             // TODO add code to handle specific flight events
