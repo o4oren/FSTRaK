@@ -50,14 +50,12 @@
                 <TextBlock Grid.Row="4" Grid.Column="0" Text="Ended at:"/>
                 <TextBlock Grid.Row="4" Grid.Column="1" Text="{Binding Flight.EndTime}"/>
 
-
-
                 <TextBlock Grid.Row="0" Grid.Column="2" Text="BlockTime:"/>
                 <TextBlock Grid.Row="0" Grid.Column="3" Text="{Binding Flight.FlightTime}"/>
-                <TextBlock Grid.Row="1" Grid.Column="2" Text="Start Time:"/>
-                <TextBlock Grid.Row="1" Grid.Column="3" Text="{Binding Flight.ArrivalAirport}"/>
-                <TextBlock Grid.Row="2" Grid.Column="2" Text="End Time:"/>
-                <TextBlock Grid.Row="2" Grid.Column="3" Text="{Binding Flight.Aircraft.Title}"/>
+                <TextBlock Grid.Row="1" Grid.Column="2" Text="Total Fuel used:"/>
+                <TextBlock Grid.Row="1" Grid.Column="3" Text="{Binding Flight.TotalFuelUsed}"/>
+                <TextBlock Grid.Row="2" Grid.Column="2" Text="Total Distance:"/>
+                <TextBlock Grid.Row="2" Grid.Column="3" Text="{Binding FlightDistance}"/>
                 <TextBlock Grid.Row="3" Grid.Column="2" Text="Landing VS:"/>
                 <TextBlock Grid.Row="3" Grid.Column="3" Text="{Binding LandingVerticalSpeed}"/>
                 <TextBlock Grid.Row="4" Grid.Column="2" Text="Score:"/>

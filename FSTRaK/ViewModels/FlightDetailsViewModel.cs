@@ -26,7 +26,7 @@ namespace FSTRaK.ViewModels
                     OnPropertyChanged();
                     OnPropertyChanged(nameof(FlightPath));
                     OnPropertyChanged(nameof(LandingVerticalSpeed));
-
+                    OnPropertyChanged(nameof(FlightDistance));
 
                     double minLon = Double.MaxValue, minLat = Double.MaxValue, maxLon = Double.MinValue, maxLat = Double.MinValue;
 
@@ -58,6 +58,20 @@ namespace FSTRaK.ViewModels
                     {
                         return $"{landingEvent.VerticalSpeed:F0} ft/m";
                     }
+                }
+
+                return "";
+            }
+        }
+
+        public string FlightDistance
+        {
+            get
+            {
+                if (_flight != null)
+                {
+                    var distanceInNM = _flight.FlightDistanceInMeters * 0.0005399568;
+                        return $"{distanceInNM:F2} NM";
                 }
 
                 return "";

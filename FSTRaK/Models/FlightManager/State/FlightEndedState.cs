@@ -1,7 +1,10 @@
 ﻿using FSTRaK.DataTypes;
 using FSTRaK.Models.Entity;
+using MapControl;
 using Serilog;
 using System;
+using System.Collections.ObjectModel;
+using System.Data.Entity;
 using System.Linq;
 using System.Runtime.InteropServices;
 using System.Threading.Tasks;
@@ -31,11 +34,18 @@ namespace FSTRaK.Models.FlightManager
                 Context.ActiveFlight.EndTime = fe.Time;
 
                 var startEvent = Context.ActiveFlight.FlightEvents.FirstOrDefault(e => e is FlightStartedEvent) as FlightStartedEvent;
-                var flightLength = fe.Time - startEvent.Time;
+                var parkingEvent = Context.ActiveFlight.FlightEvents.FirstOrDefault(e => e is ParkingEvent) as FlightStartedEvent;
 
-                Context.ActiveFlight.FlightTime = flightLength;
+                var flightTime = fe.Time - startEvent.Time;
 
-                Context.ActiveFlight.TotalFuelUsed = startEvent.FuelWeightLbs - fe.FuelWeightLbs;
+                Context.ActiveFlight.FlightTime = flightTime;
+
+                if(parkingEvent != null)
+                {
+                    Context.ActiveFlight.TotalFuelUsed = startEvent.FuelWeightLbs - parkingEvent.FuelWeightLbs;
+                }
+
+                Context.ActiveFlight.FlightDistanceInMeters = FlightPathLength(Context.ActiveFlight.FlightEvents);
 
                 // Flight ended because it was exited in the sim
                 if (!Context.SimConnectInFlight)
@@ -47,7 +57,6 @@ namespace FSTRaK.Models.FlightManager
                         // TODO persist data
                         return;
                     }
-
                 }
 
                 SavetFlight();
@@ -59,6 +68,19 @@ namespace FSTRaK.Models.FlightManager
             {
                 Context.State = new FlightStartedState(Context);
             }
+        }
+
+        private double FlightPathLength(ObservableCollection<FlightEvent> flightEvents)
+        {
+            double length = 0;
+            for ( int i = 1; i < flightEvents.Count; i++)
+            {
+                var start = new Location(flightEvents[i - 1].Latitude, flightEvents[i - 1].Longitude);
+                var end = new Location(flightEvents[i].Latitude, flightEvents[i].Longitude);
+
+                length += end.GetDistance(start);
+            }
+            return length;
         }
 
         public override void HandleFlightExitEvent()

@@ -28,7 +28,7 @@ namespace FSTRaK.Models
             set { FlightTimeMilis = value.Ticks; }
         }
 
-        public int FlightDistance { get; set; }
+        public double FlightDistanceInMeters { get; set; }
 
         public double TotalFuelUsed { get; set; }
 
