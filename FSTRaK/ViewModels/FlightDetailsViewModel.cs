@@ -1,5 +1,6 @@
 ﻿
 
+using FSTRaK.DataTypes;
 using FSTRaK.Models;
 using MapControl;
 using Serilog;
@@ -70,7 +71,7 @@ namespace FSTRaK.ViewModels
             {
                 if (_flight != null)
                 {
-                    var distanceInNM = _flight.FlightDistanceInMeters * 0.0005399568;
+                    var distanceInNM = _flight.FlightDistanceInMeters * Consts.MetersToNauticalMiles;
                         return $"{distanceInNM:F2} NM";
                 }
 
