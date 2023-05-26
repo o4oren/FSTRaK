@@ -2,6 +2,7 @@
 using FSTRaK.Models.Entity;
 using FSTRaK.Models.FlightManager;
 using MapControl;
+using Serilog;
 using System;
 using System.Collections.ObjectModel;
 using System.ComponentModel;
@@ -83,10 +84,11 @@ namespace FSTRaK.ViewModels
         {
             return Task.Run(() => {
                 Thread.Sleep(delay);
+
+                // See how we can manage this with lazy loading
                 var flights = _logbookContext.Flights
-                .Select(f => f)
-                .Include(f => f.Aircraft)
-                .Include(f => f.FlightEvents);
+                .Select(f => f).Include(f => f.Aircraft).Include(f=>f.FlightEvents);
+
                 App.Current.Dispatcher.Invoke((Action)delegate
                 {
                     Flights = new ObservableCollection<Flight>(flights);

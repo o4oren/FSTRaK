@@ -45,7 +45,7 @@ namespace FSTRaK.Views
         {
             var rect = logbookMap.MapProjection.BoundingBoxToMapRect(boundingBox);
             var scale = Math.Min(logbookMap.ActualWidth / rect.Width, logbookMap.ActualHeight / rect.Height);
-            var zoomLevel = ViewTransform.ScaleToZoomLevel(10);
+            var zoomLevel = ViewTransform.ScaleToZoomLevel(scale);
             // Set new view
             logbookMap.TargetZoomLevel = Math.Floor(Math.Min(16, zoomLevel) - 1);
             logbookMap.TargetCenter = logbookMap.MapProjection.MapToLocation(rect.Center);

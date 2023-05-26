@@ -15,6 +15,7 @@ namespace FSTRaK.Models
         [Index(nameof(ArrivalAirport))]
         public String ArrivalAirport { get; set; }
 
+        [Index(nameof(StartTime))]
         public DateTime StartTime { get; set; }
 
         public DateTime EndTime { get; set; }

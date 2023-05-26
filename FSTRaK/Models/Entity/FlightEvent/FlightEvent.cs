@@ -1,4 +1,5 @@
 ﻿using System;
+using System.ComponentModel.DataAnnotations.Schema;
 
 namespace FSTRaK.Models
 {
@@ -14,6 +15,8 @@ namespace FSTRaK.Models
         public double GroundSpeed { get; set; }
         public double TrueHeading { get; set; }
         public double GroundAltitude { get; set; }
+
+        [Index(nameof(FlightID))]
         public int FlightID { get; set; }
 
         public virtual Flight Flight { get; set; }

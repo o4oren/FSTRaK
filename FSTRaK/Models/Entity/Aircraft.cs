@@ -7,6 +7,7 @@ namespace FSTRaK.Models
     internal class Aircraft : BaseModel
     {
         public int ID { get; set; }
+
         public string Title { get; set; } 
         
         public String AircraftType { get; set; }

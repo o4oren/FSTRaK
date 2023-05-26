@@ -36,7 +36,7 @@
             </b:EventTrigger>
         </b:Interaction.Triggers>
         <ListView Width="200"
-            ItemsSource="{Binding Flights, Mode=OneWay}" 
+            ItemsSource="{Binding Flights}" 
             IsSynchronizedWithCurrentItem="True" 
             SelectedItem="{Binding SelectedFlight}"
             >
