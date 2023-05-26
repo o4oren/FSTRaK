@@ -76,9 +76,6 @@ namespace FSTRaK.ViewModels
             }
         }
 
-
-
-
         public LocationCollection FlightPath { get; private set; }
         public FlightDetailsViewModel()
         {

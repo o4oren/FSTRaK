@@ -62,11 +62,17 @@ namespace FSTRaK.ViewModels
             Flights = new ObservableCollection<Flight>();
             _flightDetailsViewModel = new FlightDetailsViewModel();
 
-            _flightManager.PropertyChanged += ((s,e) =>
+            _flightManager.PropertyChanged += (async (s,e) =>
             {
                 if(e.PropertyName.Equals(nameof(_flightManager.State)) && (_flightManager.State is FlightEndedState))
                 {
-                    LoadFlights(500);
+                    await LoadFlights(500);
+                    var latestId = _logbookContext.Flights.Max(f => f.ID);
+                    SelectedFlight = _logbookContext.Flights
+                    .Where(f => f.ID == latestId)
+                    .Include(f => f.Aircraft)
+                    .Include(f => f.FlightEvents)
+                    .SingleOrDefault();
                 }
             });
 
@@ -83,17 +89,30 @@ namespace FSTRaK.ViewModels
         private Task LoadFlights(int delay)
         {
             return Task.Run(() => {
+                Log.Debug($"lookign for flights....");
+
                 Thread.Sleep(delay);
 
                 // See how we can manage this with lazy loading
-                var flights = _logbookContext.Flights
-                .Select(f => f).Include(f => f.Aircraft).Include(f=>f.FlightEvents);
-
-                App.Current.Dispatcher.Invoke((Action)delegate
+                try
                 {
-                    Flights = new ObservableCollection<Flight>(flights);
-                    OnPropertyChanged(nameof(Flights));
-                });
+                    var flights = _logbookContext.Flights
+                    .Select(f => f)
+                    .Include(f => f.Aircraft)
+                    .Include(f => f.FlightEvents);
+
+                    Log.Debug($"Found {flights.Count()} flights!");
+                    App.Current.Dispatcher.Invoke((Action)delegate
+                    {
+                        Flights = new ObservableCollection<Flight>(flights);
+                        OnPropertyChanged(nameof(Flights));
+                    });
+                } catch (Exception ex)
+                {
+                    Log.Debug(ex.Message);
+                    Log.Debug(ex.ToString());
+                    Log.Debug(ex.InnerException.ToString());
+                }
             });
         }
     }

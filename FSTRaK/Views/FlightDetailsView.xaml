@@ -63,7 +63,7 @@
             <Grid Grid.Row="1" HorizontalAlignment="Stretch" VerticalAlignment="Stretch">
                 <map:Map x:Name="logbookMap" 
                  MapLayer="{Binding MapProvider}" 
-                 ZoomLevel="1" 
+                 ZoomLevel="3" 
                  Center="51,0"
                  MapProjection="{StaticResource WebMercatorProjection}"
                  Margin="10,10,10,10">
