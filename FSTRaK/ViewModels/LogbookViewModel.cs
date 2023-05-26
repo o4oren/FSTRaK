@@ -16,8 +16,6 @@ namespace FSTRaK.ViewModels
 {
     internal class LogbookViewModel : BaseViewModel
     {
-        LogbookContext _logbookContext = new LogbookContext();
-
         FlightManager _flightManager = FlightManager.Instance;
         public RelayCommand OnLoogbookLoadedCommand { get; set; }
 
@@ -66,13 +64,16 @@ namespace FSTRaK.ViewModels
             {
                 if(e.PropertyName.Equals(nameof(_flightManager.State)) && (_flightManager.State is FlightEndedState))
                 {
-                    await LoadFlights(500);
-                    var latestId = _logbookContext.Flights.Max(f => f.ID);
-                    SelectedFlight = _logbookContext.Flights
-                    .Where(f => f.ID == latestId)
-                    .Include(f => f.Aircraft)
-                    .Include(f => f.FlightEvents)
-                    .SingleOrDefault();
+                    using (var logbookContext = new LogbookContext())
+                    {
+                        await LoadFlights(500);
+                        var latestId = logbookContext.Flights.Max(f => f.ID);
+                        SelectedFlight = logbookContext.Flights
+                        .Where(f => f.ID == latestId)
+                        .Include(f => f.Aircraft)
+                        .Include(f => f.FlightEvents)
+                        .SingleOrDefault();
+                    }
                 }
             });
 
@@ -89,29 +90,30 @@ namespace FSTRaK.ViewModels
         private Task LoadFlights(int delay)
         {
             return Task.Run(() => {
-                Log.Debug($"lookign for flights....");
 
                 Thread.Sleep(delay);
-
-                // See how we can manage this with lazy loading
-                try
+                using (var logbookContext = new LogbookContext())
                 {
-                    var flights = _logbookContext.Flights
-                    .Select(f => f)
-                    .Include(f => f.Aircraft)
-                    .Include(f => f.FlightEvents);
-
-                    Log.Debug($"Found {flights.Count()} flights!");
-                    App.Current.Dispatcher.Invoke((Action)delegate
+                    try
                     {
-                        Flights = new ObservableCollection<Flight>(flights);
-                        OnPropertyChanged(nameof(Flights));
-                    });
-                } catch (Exception ex)
-                {
-                    Log.Debug(ex.Message);
-                    Log.Debug(ex.ToString());
-                    Log.Debug(ex.InnerException.ToString());
+                        var flights = logbookContext.Flights
+                        .Select(f => f)
+                        .Include(f => f.Aircraft)
+                        .Include(f => f.FlightEvents);
+
+                        Log.Debug($"Found {flights.Count()} flights!");
+                        App.Current.Dispatcher.Invoke((Action)delegate
+                        {
+                            Flights = new ObservableCollection<Flight>(flights);
+                            OnPropertyChanged(nameof(Flights));
+                        });
+                    }
+                    catch (Exception ex)
+                    {
+                        Log.Debug(ex.Message);
+                        Log.Debug(ex.ToString());
+                        Log.Debug(ex.InnerException.ToString());
+                    }
                 }
             });
         }

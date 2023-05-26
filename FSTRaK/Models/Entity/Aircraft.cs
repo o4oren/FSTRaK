@@ -1,6 +1,7 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.ComponentModel.DataAnnotations;
+using System.ComponentModel.DataAnnotations.Schema;
 
 namespace FSTRaK.Models
 {
@@ -8,6 +9,7 @@ namespace FSTRaK.Models
     {
         public int ID { get; set; }
 
+        [Index(nameof(Title), IsUnique = true)]
         public string Title { get; set; } 
         
         public String AircraftType { get; set; }

@@ -4,6 +4,7 @@ using Serilog;
 using System;
 using System.Linq;
 using System.Runtime.InteropServices;
+using System.Threading.Tasks;
 
 namespace FSTRaK.Models.FlightManager
 {
@@ -20,7 +21,6 @@ namespace FSTRaK.Models.FlightManager
             this.IsMovementState = false;
             Log.Information($"Flight ended at {DateTime.Now}");
         }
-
 
         public override void ProcessFlightData(AircraftFlightData Data)
         {
@@ -50,11 +50,7 @@ namespace FSTRaK.Models.FlightManager
 
                 }
 
-                using (var context = new LogbookContext())
-                {
-                    context.Flights.Add(Context.ActiveFlight);
-                    context.SaveChanges();
-                }
+                SavetFlight();
 
                 _isEnded = true;
             }
@@ -66,6 +62,24 @@ namespace FSTRaK.Models.FlightManager
             {
                 Context.State = new SimNotInFlightState(Context);
             }
+        }
+
+        private Task SavetFlight()
+        {
+            return Task.Run(() =>
+            {
+                using (var logbookContext = new LogbookContext())
+                {
+                    // Check if the aircraft user is already in the db
+                    var aircraft = logbookContext.Aircraft.Where(a => a.Title == Context.ActiveFlight.Aircraft.Title).FirstOrDefault();
+                    if(aircraft != null )
+                    {
+                        Context.ActiveFlight.Aircraft = aircraft;
+                    }
+                    logbookContext.Flights.Add(Context.ActiveFlight);
+                    logbookContext.SaveChanges();
+                }
+            });
         }
     }
 }
