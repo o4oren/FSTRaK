@@ -38,7 +38,10 @@ namespace FSTRaK.Models.FlightManager
                     Title = Data.title,
                     AircraftType = Data.atcType,
                     Model = Data.model,
-                    Airline = Data.airline
+                    Airline = Data.airline,
+                    TailNumber = Data.AtcId,
+                    NumberOfEngines = Data.NumberOfEngines,
+                    EngineType = Data.EngineType
                 };
                 flight.Aircraft = aircraft;
                 Context.ActiveFlight = flight;

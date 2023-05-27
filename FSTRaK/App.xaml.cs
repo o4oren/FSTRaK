@@ -1,4 +1,6 @@
-﻿using Serilog;
+﻿using FSTRaK.Models.Entity;
+using Serilog;
+using System.Threading.Tasks;
 using System.Windows;
 
 namespace FSTRaK
@@ -18,7 +20,16 @@ namespace FSTRaK
             .WriteTo.Trace()
             .WriteTo.File("log.txt")
             .CreateLogger();
+
+            Task.Run(() =>
+            {
+                using (var logbookContext = new LogbookContext())
+                {
+                    logbookContext.Aircraft.Find(1);
+                }
+            });
         }
+  
 
         void OnApplicationExit(object sender, ExitEventArgs e)
         {

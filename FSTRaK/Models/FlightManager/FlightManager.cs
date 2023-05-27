@@ -105,7 +105,9 @@ namespace FSTRaK.Models.FlightManager
                     if (!(State is SimNotInFlightState))
                     {
                         FlightParams fp = new FlightParams();
-                        fp.TrueAirspeed = data.TrueAirspeed;
+                        fp.IndicatedAirspeed = data.IndicatedAirpeed;
+                        fp.GroundSpeed = data.GroundVelocity;
+                        fp.VeticalSpeed = data.VerticalSpeed;
                         fp.Heading = data.TrueHeading;
                         fp.IsOnGround = Convert.ToBoolean(data.SimOnGround);
                         fp.Latitude = data.Latitude;

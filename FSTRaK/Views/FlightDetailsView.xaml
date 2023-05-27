@@ -68,6 +68,8 @@
                  Center="51,0"
                  MapProjection="{StaticResource WebMercatorProjection}"
                  Margin="10,10,10,10">
+                    <map:MapScale Opacity="0.5" HorizontalAlignment="Right" VerticalAlignment="Bottom" Margin="5" />
+                    <!-- map:MapGraticule Opacity="0.5"/ -->
                     <map:MapPolyline 
                         Locations="{Binding FlightPath}" 
                         Stroke="Red" StrokeThickness="3" 

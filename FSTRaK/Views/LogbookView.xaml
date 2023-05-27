@@ -40,9 +40,14 @@
             IsSynchronizedWithCurrentItem="True" 
             SelectedItem="{Binding SelectedFlight}"
             >
-            
+            <ListView.ContextMenu>
+                <ContextMenu>
+                    <MenuItem Header="Delete" Command="{Binding DeleteFlightCommand}"></MenuItem>
+                </ContextMenu>
+            </ListView.ContextMenu>
+
             <ListView.ItemTemplate>
-                <DataTemplate>
+            <DataTemplate>
                     <Grid>
                         <Grid.ColumnDefinitions>
                             <ColumnDefinition Width="1*" />

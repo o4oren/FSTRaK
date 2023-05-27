@@ -137,7 +137,10 @@ namespace FSTRaK.ViewModels
             {
                 if (_flightManager != null)
                 {
-                    return $"Airspeed: {_flightManager.CurrentFlightParams.TrueAirspeed:F0} Kts\nAltitude: {_flightManager.CurrentFlightParams.Altitude:F0} Ft\nHeading: {_flightManager.CurrentFlightParams.Heading:F0} Deg" +
+                    return $"Airspeed: {_flightManager.CurrentFlightParams.IndicatedAirspeed:F0} Kts\n" +
+                        $"Ground speed: { _flightManager.CurrentFlightParams.GroundSpeed:F0} Kts\n" +
+                        $"Altitude: {_flightManager.CurrentFlightParams.Altitude:F0} Ft\n" +
+                        $"Heading: {_flightManager.CurrentFlightParams.Heading:F0} Deg" +
                         $"\nPosition: {_flightManager.CurrentFlightParams.Latitude:F4},{_flightManager.CurrentFlightParams.Longitude:F4}";
                 }
                 return "";
@@ -241,7 +244,7 @@ namespace FSTRaK.ViewModels
                         MapCenter = Location;
                     }
 
-                    if (FlightPath.Count > 0 || _flightManager.State.IsMovementState)
+                    if (FlightPath.Count > 0 && _flightManager.State.IsMovementState)
                     {
                         var lastSegment = new ObservableCollection<Location>
                         {

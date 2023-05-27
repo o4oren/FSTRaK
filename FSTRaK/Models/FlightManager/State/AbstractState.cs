@@ -60,7 +60,7 @@ namespace FSTRaK.Models.FlightManager
             fe.Latitude = data.Latitude;
             fe.Longitude = data.Longitude;
             fe.TrueHeading = data.TrueHeading;
-            fe.Airspeed = data.IndicatedAirpeed;
+            fe.IndicatedAirspeed = data.IndicatedAirpeed;
             fe.GroundSpeed = data.GroundVelocity;
             fe.Time = time;
             Context.ActiveFlight.FlightEvents.Add(fe);

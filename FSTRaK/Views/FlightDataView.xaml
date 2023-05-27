@@ -46,6 +46,8 @@
                     <RotateTransform CenterX="16" CenterY="16" Angle="{Binding Heading, Mode=OneWay}" />
                 </map:MapItem.RenderTransform>
             </map:MapItem>
+            <map:MapScale Opacity="0.5" HorizontalAlignment="Right" VerticalAlignment="Bottom" Margin="5" />
+            <!-- map:MapGraticule Opacity="0.5"/ -->
             <map:MapPolyline Locations="{Binding FlightPath}" Stroke="Red" StrokeThickness="2" StrokeLineJoin="round"/>
             <map:MapPolyline Locations="{Binding LastSegmentLine}" Stroke="Red" StrokeThickness="2" Visibility="{Binding Path=IsShowAirplane, Converter={StaticResource BoolToVis}}"/>
         </map:Map>
@@ -75,6 +77,4 @@
             </ToggleButton>
         </StackPanel>
     </Grid>
-
-
 </UserControl>

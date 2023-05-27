@@ -1,6 +1,4 @@
 ﻿using FSTRaK.Models.FlightManager;
-using MapControl;
-using MapControl.Caching;
 using Serilog;
 using System;
 using System.Windows;
@@ -25,7 +23,7 @@ namespace FSTRaK.Views
             _flightManager.Initialize();
 
             string bingApiKey = Properties.Settings.Default.BingApiKey;
-            BingMapsTileLayer.ApiKey = bingApiKey;
+            MapControl.BingMapsTileLayer.ApiKey = bingApiKey;
         }
 
         private void ButtonClick_CloseApplication (object sender, RoutedEventArgs e) 

@@ -5,10 +5,8 @@ using MapControl;
 using Serilog;
 using System;
 using System.Collections.ObjectModel;
-using System.ComponentModel;
 using System.Data.Entity;
 using System.Linq;
-using System.Runtime.CompilerServices;
 using System.Threading;
 using System.Threading.Tasks;
 
@@ -18,6 +16,7 @@ namespace FSTRaK.ViewModels
     {
         FlightManager _flightManager = FlightManager.Instance;
         public RelayCommand OnLoogbookLoadedCommand { get; set; }
+        public RelayCommand DeleteFlightCommand { get; set; }
 
         private FlightDetailsViewModel _flightDetailsViewModel;
 
@@ -81,6 +80,28 @@ namespace FSTRaK.ViewModels
             {
                 LoadFlights();
             });
+
+            DeleteFlightCommand = new RelayCommand(o =>
+            {
+                Task.Run(() =>
+                {
+                    using (var logbookContext = new LogbookContext())
+                    {
+                        try
+                        {
+                            logbookContext.Flights.Attach(SelectedFlight);
+                            logbookContext.Flights.Remove(SelectedFlight);
+                            logbookContext.SaveChanges();
+                            LoadFlights();
+                        }
+                        catch (Exception ex)
+                        {
+                            Log.Debug(ex.ToString());
+                        }
+                    }
+                });
+
+            });
         }
 
         private Task LoadFlights()
@@ -101,7 +122,6 @@ namespace FSTRaK.ViewModels
                         .Include(f => f.Aircraft)
                         .Include(f => f.FlightEvents);
 
-                        Log.Debug($"Found {flights.Count()} flights!");
                         App.Current.Dispatcher.Invoke((Action)delegate
                         {
                             Flights = new ObservableCollection<Flight>(flights);

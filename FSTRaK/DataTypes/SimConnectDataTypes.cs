@@ -91,6 +91,12 @@ namespace FSTRaK.DataTypes
         public string model;
         [MarshalAs(UnmanagedType.ByValTStr, SizeConst = 256)]
         public string atcType;
+        [MarshalAs(UnmanagedType.ByValTStr, SizeConst = 32)]
+        public string AtcId;
+
+        public EngineType EngineType;
+        public int NumberOfEngines;
+
 
         public int SimOnGround;
         public double Latitude;

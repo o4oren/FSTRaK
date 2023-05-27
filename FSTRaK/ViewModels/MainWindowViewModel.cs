@@ -10,9 +10,9 @@ namespace FSTRaK.ViewModels
 
 
 
-        private FlightDataViewModel _flightDataViewModel;
-        private SettingsViewModel _settingsViewModel;
-        private LogbookViewModel _logbookViewModel;
+        private readonly FlightDataViewModel _flightDataViewModel;
+        private readonly SettingsViewModel _settingsViewModel;
+        private readonly LogbookViewModel _logbookViewModel;
 
         private object _activeView;
 

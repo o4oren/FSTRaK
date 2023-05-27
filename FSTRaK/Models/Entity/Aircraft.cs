@@ -1,4 +1,5 @@
-﻿using System;
+﻿using FSTRaK.DataTypes;
+using System;
 using System.Collections.Generic;
 using System.ComponentModel.DataAnnotations;
 using System.ComponentModel.DataAnnotations.Schema;
@@ -17,6 +18,10 @@ namespace FSTRaK.Models
         public String Airline { get; set; }
         public String Model { get; set; }
         public String TailNumber { get; set; }
+
+        public int NumberOfEngines { get; set; }
+
+        public EngineType EngineType { get; set; }
 
         public override bool Equals(Object obj)
         {
