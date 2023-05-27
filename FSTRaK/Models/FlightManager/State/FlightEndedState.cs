@@ -29,22 +29,32 @@ namespace FSTRaK.Models.FlightManager
         {
             if(!_isEnded)
             {
-                FlightEndedEvent fe = new FlightEndedEvent();
+                FlightEndedEvent fe = new FlightEndedEvent
+                {
+                    FuelWeightLbs = Data.FuelWeightLbs
+                };
+
                 AddFlightEvent(Data, fe);
+
                 Context.ActiveFlight.EndTime = fe.Time;
 
                 var startEvent = Context.ActiveFlight.FlightEvents.FirstOrDefault(e => e is FlightStartedEvent) as FlightStartedEvent;
-                var parkingEvent = Context.ActiveFlight.FlightEvents.FirstOrDefault(e => e is ParkingEvent) as FlightStartedEvent;
 
                 var flightTime = fe.Time - startEvent.Time;
 
-                Context.ActiveFlight.FlightTime = flightTime;
-
-                if(parkingEvent != null)
+                if(fe.FuelWeightLbs > 0)
                 {
-                    Context.ActiveFlight.TotalFuelUsed = startEvent.FuelWeightLbs - parkingEvent.FuelWeightLbs;
+                    Context.ActiveFlight.TotalFuelUsed = startEvent.FuelWeightLbs - fe.FuelWeightLbs;
+                } else
+                {
+                    var parkingEvent = Context.ActiveFlight.FlightEvents.FirstOrDefault(e => e is ParkingEvent) as FlightStartedEvent;
+                    if (parkingEvent != null)
+                    {
+                        Context.ActiveFlight.TotalFuelUsed = startEvent.FuelWeightLbs - parkingEvent.FuelWeightLbs;
+                    }
                 }
 
+                Context.ActiveFlight.FlightTime = flightTime;
                 Context.ActiveFlight.FlightDistanceInMeters = FlightPathLength(Context.ActiveFlight.FlightEvents);
 
                 // Flight ended because it was exited in the sim
@@ -97,14 +107,25 @@ namespace FSTRaK.Models.FlightManager
             {
                 using (var logbookContext = new LogbookContext())
                 {
-                    // Check if the aircraft user is already in the db
-                    var aircraft = logbookContext.Aircraft.Where(a => a.Title == Context.ActiveFlight.Aircraft.Title).FirstOrDefault();
-                    if(aircraft != null )
+                    try
                     {
-                        Context.ActiveFlight.Aircraft = aircraft;
+                        // Check if the aircraft user is already in the db
+                        var aircraft = logbookContext.Aircraft.Where(a => a.Title == Context.ActiveFlight.Aircraft.Title).FirstOrDefault();
+                        if (aircraft != null)
+                        {
+                            Context.ActiveFlight.Aircraft = aircraft;
+                        }
+                        logbookContext.Flights.Add(Context.ActiveFlight);
+                        logbookContext.SaveChanges();
                     }
-                    logbookContext.Flights.Add(Context.ActiveFlight);
-                    logbookContext.SaveChanges();
+                    catch (Exception ex)
+                    {
+                        Log.Debug(ex.Message);
+
+                        Log.Debug(ex.ToString());
+                        Log.Debug(ex.InnerException.ToString());
+
+                    }
                 }
             });
         }

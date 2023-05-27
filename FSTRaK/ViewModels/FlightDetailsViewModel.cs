@@ -28,6 +28,7 @@ namespace FSTRaK.ViewModels
                     OnPropertyChanged(nameof(FlightPath));
                     OnPropertyChanged(nameof(LandingVerticalSpeed));
                     OnPropertyChanged(nameof(FlightDistance));
+                    OnPropertyChanged(nameof(TotalFuelUsed));
 
                     double minLon = Double.MaxValue, minLat = Double.MaxValue, maxLon = Double.MinValue, maxLat = Double.MinValue;
 
@@ -78,6 +79,19 @@ namespace FSTRaK.ViewModels
                 return "";
             }
         }
+        public string TotalFuelUsed
+        {
+            get
+            {
+                if (_flight != null)
+                {
+                    return $"{_flight.TotalFuelUsed:F2} Lbs";
+                }
+
+                return "";
+            }
+        }
+
 
         public MapTileLayerBase MapProvider
         {
