@@ -7,11 +7,19 @@ using System.Collections.ObjectModel;
 using MapControl;
 using System.Linq;
 using Serilog;
+using FSTRaK.DataTypes;
 
 namespace FSTRaK.ViewModels
 {
+
     internal class SettingsViewModel : BaseViewModel
     {
+        public enum UnitsEnum
+        {
+            Imperial,
+            Metric
+        }
+
         public ObservableCollection<string> MapProviders { get; set; } = new ObservableCollection<string>();
         private string _selectedMapProvider = "OpenStreetMap";
         public string SelectedMapProvider
@@ -55,7 +63,20 @@ namespace FSTRaK.ViewModels
             }
         }
 
-
+        private Units _units;
+        public Units Units
+        {
+            get
+            {
+                return _units;
+            }
+            set
+            {
+                _units = value;
+                Properties.Settings.Default.Units = (int)_units;
+                OnPropertyChanged();
+            }
+        }
 
         private bool _isShowBingApiKeyField = false;
         public bool IsShowBingApiKeyField
@@ -126,6 +147,8 @@ namespace FSTRaK.ViewModels
             BingApiKey = Properties.Settings.Default.BingApiKey;
             IsAlwaysOnTop = Properties.Settings.Default.IsAlwaysOnTop;
             IsSaveOnlyCompleteFlights = Properties.Settings.Default.IsSaveOnlyCompleteFlights;
+            Units = (Units)Properties.Settings.Default.Units;
+
         }
 
         protected void OnPropertyChanged2([CallerMemberName] string name = null)

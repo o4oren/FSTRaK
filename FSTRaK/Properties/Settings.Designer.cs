@@ -70,5 +70,17 @@ namespace FSTRaK.Properties {
                 this["IsSaveOnlyCompleteFlights"] = value;
             }
         }
+        
+        [global::System.Configuration.UserScopedSettingAttribute()]
+        [global::System.Diagnostics.DebuggerNonUserCodeAttribute()]
+        [global::System.Configuration.DefaultSettingValueAttribute("0")]
+        public int Units {
+            get {
+                return ((int)(this["Units"]));
+            }
+            set {
+                this["Units"] = value;
+            }
+        }
     }
 }

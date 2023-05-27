@@ -144,6 +144,7 @@
     <Compile Include="DataTypes\Consts.cs" />
     <Compile Include="DataTypes\FlightParams.cs" />
     <Compile Include="DataTypes\NearestAirportRequestType.cs" />
+    <Compile Include="DataTypes\Settings.cs" />
     <Compile Include="DataTypes\SimConnectDataTypes.cs" />
     <Compile Include="Models\Entity\Migrations\Configuration.cs" />
     <Compile Include="Models\Entity\FlightEvent\CrashEvent.cs" />
