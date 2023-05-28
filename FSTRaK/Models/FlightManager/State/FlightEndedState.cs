@@ -1,5 +1,6 @@
 ﻿using FSTRaK.DataTypes;
 using FSTRaK.Models.Entity;
+using FSTRaK.Utils;
 using MapControl;
 using Serilog;
 using System;
@@ -60,8 +61,7 @@ namespace FSTRaK.Models.FlightManager
                     Context.ActiveFlight.TotalFuelUsed = startEvent.FuelWeightLbs - fe.FuelWeightLbs;
                 } else
                 {
-                    var parkingEvent = Context.ActiveFlight.FlightEvents.FirstOrDefault(e => e is ParkingEvent) as FlightStartedEvent;
-                    if (parkingEvent != null)
+                    if (Context.ActiveFlight.FlightEvents.FirstOrDefault(e => e is ParkingEvent) is ParkingEvent parkingEvent)
                     {
                         Context.ActiveFlight.TotalFuelUsed = startEvent.FuelWeightLbs - parkingEvent.FuelWeightLbs;
                     }
@@ -76,10 +76,8 @@ namespace FSTRaK.Models.FlightManager
                     .GroupBy(e => e.GetType())
                     .Select(e => (ScoringEvent)e.First())
                     .Sum(e => e.ScoreDelta);
-                var rawScore = 100 + scoringDelta;
 
-                Context.ActiveFlight.Score = (rawScore < 0) ? 0 : (rawScore > 100) ? 100 : rawScore;
-
+                Context.ActiveFlight.Score = MathUtils.Clamp(100 + scoringDelta, 0, 100);
 
                 if (Context.ActiveFlight.FlightOutcome == FlightOutcome.Completed || !Properties.Settings.Default.IsSaveOnlyCompleteFlights)
                 {

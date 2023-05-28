@@ -175,6 +175,7 @@
     <Compile Include="Models\FlightManager\State\TaxiInState.cs" />
     <Compile Include="Models\FlightManager\State\TaxiOutState.cs" />
     <Compile Include="RelayCommand.cs" />
+    <Compile Include="Utils\MathUtils.cs" />
     <Compile Include="ViewModels\FlightDetailsViewModel.cs" />
     <Compile Include="ViewModels\LogbookViewModel.cs" />
     <Compile Include="ViewModels\SettingsViewModel.cs" />
