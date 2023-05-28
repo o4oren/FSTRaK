@@ -142,6 +142,7 @@
       <SubType>Designer</SubType>
     </ApplicationDefinition>
     <Compile Include="DataTypes\Consts.cs" />
+    <Compile Include="DataTypes\FlightOutcome.cs" />
     <Compile Include="DataTypes\FlightParams.cs" />
     <Compile Include="DataTypes\NearestAirportRequestType.cs" />
     <Compile Include="DataTypes\Settings.cs" />
@@ -177,10 +178,10 @@
     <Compile Include="ViewModels\FlightDetailsViewModel.cs" />
     <Compile Include="ViewModels\LogbookViewModel.cs" />
     <Compile Include="ViewModels\SettingsViewModel.cs" />
-    <Compile Include="Views\FlightDataView.xaml.cs">
-      <DependentUpon>FlightDataView.xaml</DependentUpon>
+    <Compile Include="Views\LiveView.xaml.cs">
+      <DependentUpon>LiveView.xaml</DependentUpon>
     </Compile>
-    <Compile Include="ViewModels\FlightDataViewModel.cs" />
+    <Compile Include="ViewModels\LiveViewViewModel.cs" />
     <Compile Include="Models\SimConnectService\SimConnectService.cs" />
     <Compile Include="ViewModels\BaseViewModel.cs" />
     <Compile Include="ViewModels\MainWindowViewModel.cs" />
@@ -189,6 +190,9 @@
     </Compile>
     <Compile Include="Views\LogbookView.xaml.cs">
       <DependentUpon>LogbookView.xaml</DependentUpon>
+    </Compile>
+    <Compile Include="Views\OverlayTextCardControl.xaml.cs">
+      <DependentUpon>OverlayTextCardControl.xaml</DependentUpon>
     </Compile>
     <Compile Include="Views\SettingsView.xaml.cs">
       <DependentUpon>SettingsView.xaml</DependentUpon>
@@ -213,7 +217,7 @@
       <SubType>Designer</SubType>
       <Generator>MSBuild:Compile</Generator>
     </Page>
-    <Page Include="Views\FlightDataView.xaml">
+    <Page Include="Views\LiveView.xaml">
       <SubType>Designer</SubType>
       <Generator>MSBuild:Compile</Generator>
     </Page>
@@ -237,6 +241,10 @@
       <DependentUpon>MainWindow.xaml</DependentUpon>
       <SubType>Code</SubType>
     </Compile>
+    <Page Include="Views\OverlayTextCardControl.xaml">
+      <Generator>MSBuild:Compile</Generator>
+      <SubType>Designer</SubType>
+    </Page>
     <Page Include="Views\SettingsView.xaml">
       <SubType>Designer</SubType>
       <Generator>MSBuild:Compile</Generator>

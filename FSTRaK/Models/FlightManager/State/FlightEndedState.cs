@@ -34,6 +34,19 @@ namespace FSTRaK.Models.FlightManager
                     FuelWeightLbs = Data.FuelWeightLbs
                 };
 
+                if (Context.ActiveFlight.FlightEvents.Last() is ParkingEvent)
+                {
+                    Context.ActiveFlight.FlightOutcome = FlightOutcome.Completed;
+                } 
+                else if(Context.ActiveFlight.FlightEvents.Last() is CrashEvent)
+                {
+                    Context.ActiveFlight.FlightOutcome = FlightOutcome.Crashed;
+                }
+                else if (!Context.SimConnectInFlight)
+                {
+                    Context.ActiveFlight.FlightOutcome = FlightOutcome.Exited;
+                }
+
                 AddFlightEvent(Data, fe);
 
                 Context.ActiveFlight.EndTime = fe.Time;
@@ -57,24 +70,15 @@ namespace FSTRaK.Models.FlightManager
                 Context.ActiveFlight.FlightTime = flightTime;
                 Context.ActiveFlight.FlightDistanceInMeters = FlightPathLength(Context.ActiveFlight.FlightEvents);
 
-                // Flight ended because it was exited in the sim
-                if (!Context.SimConnectInFlight)
+
+                if (Context.ActiveFlight.FlightOutcome == FlightOutcome.Completed || !Properties.Settings.Default.IsSaveOnlyCompleteFlights)
                 {
-                    if (!Properties.Settings.Default.IsSaveOnlyCompleteFlights)
-                    {
-                        // TODO get last flight data params
-
-                        // TODO persist data
-                        return;
-                    }
+                    SavetFlight();
                 }
-
-                SavetFlight();
-
                 _isEnded = true;
             }
 
-            if(_isEnded && Data.MaxEngineRpmPct() > 5 )
+            if(_isEnded && Data.MaxEngineRpmPct() > 5 && Context.ActiveFlight.FlightOutcome != FlightOutcome.Crashed)
             {
                 Context.State = new FlightStartedState(Context);
             }

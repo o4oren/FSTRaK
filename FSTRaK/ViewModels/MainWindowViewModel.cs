@@ -10,7 +10,7 @@ namespace FSTRaK.ViewModels
 
 
 
-        private readonly FlightDataViewModel _flightDataViewModel;
+        private readonly LiveViewViewModel _liveViewViewModel;
         private readonly SettingsViewModel _settingsViewModel;
         private readonly LogbookViewModel _logbookViewModel;
 
@@ -29,15 +29,15 @@ namespace FSTRaK.ViewModels
 
         public MainWindowViewModel()
         {
-            _flightDataViewModel = new FlightDataViewModel();
+            _liveViewViewModel = new LiveViewViewModel();
             _settingsViewModel = new SettingsViewModel();
             _logbookViewModel = new LogbookViewModel();
 
-            ActiveView = _flightDataViewModel;
+            ActiveView = _liveViewViewModel;
 
             MapViewCommand = new RelayCommand(o =>
             {
-                ActiveView = _flightDataViewModel;
+                ActiveView = _liveViewViewModel;
             });
 
             LogBookCommand = new RelayCommand(o =>

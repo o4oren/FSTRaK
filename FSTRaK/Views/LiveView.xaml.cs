@@ -7,9 +7,9 @@ namespace FSTRaK.Views
     /// <summary>
     /// Interaction logic for FlightData.xaml
     /// </summary>
-    public partial class FlightDataView : System.Windows.Controls.UserControl
+    public partial class LiveView : System.Windows.Controls.UserControl
     {
-        public FlightDataView()
+        public LiveView()
         {
             InitializeComponent();
         }

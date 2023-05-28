@@ -128,7 +128,7 @@ namespace FSTRaK.Models.FlightManager
                         {
                             ActiveFlight.DepartureAirport = airport;
                         }
-                        else if(_nearestAirportRequestType == NearestAirportRequestType.Arrival)
+                        else if(_nearestAirportRequestType == NearestAirportRequestType.Arrival || _nearestAirportRequestType == NearestAirportRequestType.CrashedNear)
                         {
                             ActiveFlight.ArrivalAirport = airport;
                         }

@@ -7,11 +7,10 @@ using System.Collections.ObjectModel;
 using System.ComponentModel;
 using System.Linq;
 using System.Windows;
-using System.Windows.Navigation;
 
 namespace FSTRaK.ViewModels
 {
-    internal class FlightDataViewModel : BaseViewModel
+    internal class LiveViewViewModel : BaseViewModel
     {
         private FlightManager _flightManager = FlightManager.Instance;
 
@@ -219,7 +218,7 @@ namespace FSTRaK.ViewModels
 
         private DateTime _lastUpdated = DateTime.Now;
 
-        public FlightDataViewModel()
+        public LiveViewViewModel()
         {
             _flightManager.PropertyChanged += SimconnectManagerUpdate;
             CenterOnAirplaneCommand = new RelayCommand(o => IsCenterOnAirplane = true);

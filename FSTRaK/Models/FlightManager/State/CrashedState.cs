@@ -13,6 +13,7 @@ namespace FSTRaK.Models.FlightManager
         {
             IsMovementState = false;
             Name = "Crashed";
+            Context.RequestNearestAirports(DataTypes.NearestAirportRequestType.CrashedNear);
         }
         public override void ProcessFlightData(AircraftFlightData Data)
         {

@@ -1,4 +1,5 @@
-﻿using System;
+﻿using FSTRaK.DataTypes;
+using System;
 using System.Collections.ObjectModel;
 using System.ComponentModel.DataAnnotations.Schema;
 
@@ -32,6 +33,7 @@ namespace FSTRaK.Models
 
         public double TotalFuelUsed { get; set; }
 
+        public FlightOutcome FlightOutcome { get; set; }
         public double Score { get; set; }
 
         public ObservableCollection<FlightEvent> FlightEvents { get; private set; }

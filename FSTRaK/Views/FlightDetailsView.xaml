@@ -3,11 +3,11 @@
       xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
       xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006" 
       xmlns:d="http://schemas.microsoft.com/expression/blend/2008" 
-      xmlns:viewmodels="clr-namespace:FSTRaK.ViewModels" xmlns:map="clr-namespace:MapControl;assembly=MapControl.WPF" 
-             xmlns:views="clr-namespace:FSTRaK.Views"
-      d:DataContext="{d:DesignInstance Type=viewmodels:FlightDetailsViewModel}"
-      mc:Ignorable="d" 
-      d:DesignHeight="450" d:DesignWidth="800"
+      xmlns:viewmodels="clr-namespace:FSTRaK.ViewModels" 
+             xmlns:views="clr-namespace:FSTRaK.Views" 
+             xmlns:map="clr-namespace:MapControl;assembly=MapControl.WPF" d:DataContext="{d:DesignInstance Type=viewmodels:FlightDetailsViewModel}"
+             d:DesignHeight="450" d:DesignWidth="800"
+             mc:Ignorable="d" 
         Loaded="OnLoaded"
              Unloaded="OnUnLoaded"
       >
@@ -47,8 +47,8 @@
                         <views:OverlayTextCardControl Grid.Row="4" Grid.Column="3"  Header="End time:" Text="{Binding Flight.EndTime}"/>
                         <views:OverlayTextCardControl Grid.Row="4" Grid.Column="3"  Header="Block time:" Text="{Binding Flight.FlightTime}"/>
 
-                        <views:OverlayTextCardControl Grid.Row="4" Grid.Column="3"  Header="Total Fuel:" Text="{Binding Flight.TotalFuelUsed}"/>
-                        <views:OverlayTextCardControl Grid.Row="4" Grid.Column="3"  Header="Distance:" Text="{Binding Flight.FlightDistance}"/>
+                        <views:OverlayTextCardControl Grid.Row="4" Grid.Column="3"  Header="Total Fuel:" Text="{Binding TotalFuelUsed}"/>
+                        <views:OverlayTextCardControl Grid.Row="4" Grid.Column="3"  Header="Distance:" Text="{Binding FlightDistance}"/>
                         <views:OverlayTextCardControl Grid.Row="4" Grid.Column="3"  Header="Score:" Text="{Binding Flight.Score}"/>
                     </StackPanel>
                     

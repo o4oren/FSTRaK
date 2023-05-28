@@ -11,7 +11,7 @@ namespace FSTRaK.Views
     /// </summary>
     public partial class MainWindow : Window
     {
-        private FlightManager _flightManager;
+        private readonly FlightManager _flightManager;
         public MainWindow()
         {
             _flightManager = FlightManager.Instance;

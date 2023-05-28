@@ -21,8 +21,8 @@
     </Window.DataContext>
     <Window.Resources>
         <ResourceDictionary>
-            <DataTemplate DataType="{x:Type viewmodels:FlightDataViewModel}" >
-                <views:FlightDataView/>
+            <DataTemplate DataType="{x:Type viewmodels:LiveViewViewModel}" >
+                <views:LiveView/>
             </DataTemplate>
             <DataTemplate DataType="{x:Type viewmodels:LogbookViewModel}" >
                 <views:LogbookView/>

@@ -3,6 +3,7 @@
     internal enum NearestAirportRequestType
     {
         Departure,
-        Arrival
+        Arrival,
+        CrashedNear
     }
 }
