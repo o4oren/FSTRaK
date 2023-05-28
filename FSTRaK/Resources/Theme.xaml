@@ -94,7 +94,6 @@
         <Setter Property="Template">
             <Setter.Value>
                 <ControlTemplate TargetType="{x:Type CheckBox}">
-                    <StackPanel Orientation="Horizontal">
                         <Border x:Name="CheckBoxBorder" BorderThickness="1" Width="24" Height="24" CornerRadius="1">
                             <Border.BorderBrush>
                                 <SolidColorBrush Color="{DynamicResource BorderMediumColor}" />
@@ -104,7 +103,6 @@
                             </Border.Background>
                             <ContentControl x:Name="CheckContainer" Margin="-5 -5 0 0"/>
                         </Border>
-                    </StackPanel>
                     <ControlTemplate.Triggers>
                         <Trigger Property="IsChecked" Value="True">
                             <Setter TargetName="CheckContainer" Property="Content" Value="{DynamicResource CheckV}"/>
