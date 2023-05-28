@@ -272,7 +272,7 @@ namespace FSTRaK
 
             // Start getting data
             _simconnect.RequestSystemState(Requests.FlightLoaded, "FlightLoaded");
-            _simconnect.RequestDataOnSimObject(Requests.FlightDataRequest, DataDefinitions.FlightData, SimConnect.SIMCONNECT_OBJECT_ID_USER, SIMCONNECT_PERIOD.VISUAL_FRAME, SIMCONNECT_DATA_REQUEST_FLAG.DEFAULT, 0u, 0u, 0u);
+            _simconnect.RequestDataOnSimObject(Requests.FlightDataRequest, DataDefinitions.FlightData, SimConnect.SIMCONNECT_OBJECT_ID_USER, SIMCONNECT_PERIOD.VISUAL_FRAME, SIMCONNECT_DATA_REQUEST_FLAG.CHANGED, 0u, 0u, 0u);
 
         }
 
