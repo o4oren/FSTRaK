@@ -70,6 +70,16 @@ namespace FSTRaK.Models.FlightManager
                 Context.ActiveFlight.FlightTime = flightTime;
                 Context.ActiveFlight.FlightDistanceInMeters = FlightPathLength(Context.ActiveFlight.FlightEvents);
 
+                // Calcualate the score.
+                var scoringDelta = Context.ActiveFlight.FlightEvents
+                    .Where(e => e.GetType().IsSubclassOf(typeof(ScoringEvent)))
+                    .GroupBy(e => e.GetType())
+                    .Select(e => (ScoringEvent)e.First())
+                    .Sum(e => e.ScoreDelta);
+                var rawScore = 100 + scoringDelta;
+
+                Context.ActiveFlight.Score = (rawScore < 0) ? 0 : (rawScore > 100) ? 100 : rawScore;
+
 
                 if (Context.ActiveFlight.FlightOutcome == FlightOutcome.Completed || !Properties.Settings.Default.IsSaveOnlyCompleteFlights)
                 {
