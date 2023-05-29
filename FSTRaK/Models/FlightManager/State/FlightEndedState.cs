@@ -5,9 +5,8 @@ using MapControl;
 using Serilog;
 using System;
 using System.Collections.ObjectModel;
-using System.Data.Entity;
 using System.Linq;
-using System.Runtime.InteropServices;
+using System.Text;
 using System.Threading.Tasks;
 
 namespace FSTRaK.Models.FlightManager
@@ -35,31 +34,19 @@ namespace FSTRaK.Models.FlightManager
                     FuelWeightLbs = Data.FuelWeightLbs
                 };
 
-                if (Context.ActiveFlight.FlightEvents.Last() is ParkingEvent)
-                {
-                    Context.ActiveFlight.FlightOutcome = FlightOutcome.Completed;
-                } 
-                else if(Context.ActiveFlight.FlightEvents.Last() is CrashEvent)
-                {
-                    Context.ActiveFlight.FlightOutcome = FlightOutcome.Crashed;
-                }
-                else if (!Context.SimConnectInFlight)
-                {
-                    Context.ActiveFlight.FlightOutcome = FlightOutcome.Exited;
-                }
+                SetFlightOutcome();
 
                 AddFlightEvent(Data, fe);
 
                 Context.ActiveFlight.EndTime = fe.Time;
-
                 var startEvent = Context.ActiveFlight.FlightEvents.FirstOrDefault(e => e is FlightStartedEvent) as FlightStartedEvent;
-
                 var flightTime = fe.Time - startEvent.Time;
 
-                if(fe.FuelWeightLbs > 0)
+                if (fe.FuelWeightLbs > 0)
                 {
                     Context.ActiveFlight.TotalFuelUsed = startEvent.FuelWeightLbs - fe.FuelWeightLbs;
-                } else
+                }
+                else
                 {
                     if (Context.ActiveFlight.FlightEvents.FirstOrDefault(e => e is ParkingEvent) is ParkingEvent parkingEvent)
                     {
@@ -70,14 +57,7 @@ namespace FSTRaK.Models.FlightManager
                 Context.ActiveFlight.FlightTime = flightTime;
                 Context.ActiveFlight.FlightDistanceInMeters = FlightPathLength(Context.ActiveFlight.FlightEvents);
 
-                // Calcualate the score.
-                var scoringDelta = Context.ActiveFlight.FlightEvents
-                    .Where(e => e.GetType().IsSubclassOf(typeof(ScoringEvent)))
-                    .GroupBy(e => e.GetType())
-                    .Select(e => (ScoringEvent)e.First())
-                    .Sum(e => e.ScoreDelta);
-
-                Context.ActiveFlight.Score = MathUtils.Clamp(100 + scoringDelta, 0, 100);
+                CalculateScore();
 
                 if (Context.ActiveFlight.FlightOutcome == FlightOutcome.Completed || !Properties.Settings.Default.IsSaveOnlyCompleteFlights)
                 {
@@ -86,13 +66,48 @@ namespace FSTRaK.Models.FlightManager
                 _isEnded = true;
             }
 
-            if(_isEnded && Data.MaxEngineRpmPct() > 5 && Context.ActiveFlight.FlightOutcome != FlightOutcome.Crashed)
+            if (_isEnded && Data.MaxEngineRpmPct() > 5 && Context.ActiveFlight.FlightOutcome != FlightOutcome.Crashed)
             {
                 Context.State = new FlightStartedState(Context);
             }
         }
 
-        private double FlightPathLength(ObservableCollection<FlightEvent> flightEvents)
+        private void CalculateScore()
+        {
+            var uniqueScoringEvents = Context.ActiveFlight.FlightEvents
+                .OfType<ScoringEvent>()
+                .GroupBy(e => e.GetType())
+                .Select(e => (ScoringEvent)e.First())
+                .ToList<ScoringEvent>();
+
+            var scoringDelta = uniqueScoringEvents.Sum(e => e.ScoreDelta);
+
+            Context.ActiveFlight.Score = MathUtils.Clamp(100 + scoringDelta, 0, 100);
+
+            StringBuilder sb = new StringBuilder();
+            foreach (var item in uniqueScoringEvents)
+            {
+                sb.AppendLine($"{item.Time} {item.GetType().ToString()} {item.ScoreDelta}");
+            }
+        }
+
+        private void SetFlightOutcome()
+        {
+            if (Context.ActiveFlight.FlightEvents.Last() is ParkingEvent)
+            {
+                Context.ActiveFlight.FlightOutcome = FlightOutcome.Completed;
+            }
+            else if (Context.ActiveFlight.FlightEvents.Last() is CrashEvent)
+            {
+                Context.ActiveFlight.FlightOutcome = FlightOutcome.Crashed;
+            }
+            else if (!Context.SimConnectInFlight)
+            {
+                Context.ActiveFlight.FlightOutcome = FlightOutcome.Exited;
+            }
+        }
+
+        private double FlightPathLength(ObservableCollection<BaseFlightEvent> flightEvents)
         {
             double length = 0;
             for ( int i = 1; i < flightEvents.Count; i++)
@@ -136,7 +151,6 @@ namespace FSTRaK.Models.FlightManager
 
                         Log.Debug(ex.ToString());
                         Log.Debug(ex.InnerException.ToString());
-
                     }
                 }
             });

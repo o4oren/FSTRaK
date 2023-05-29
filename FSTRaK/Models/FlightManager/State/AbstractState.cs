@@ -52,7 +52,7 @@ namespace FSTRaK.Models.FlightManager
         /// </summary>
         /// <param name="data"></param>
         /// <param name="fe"></param>
-        protected void AddFlightEvent(AircraftFlightData data, FlightEvent fe)
+        protected void AddFlightEvent(AircraftFlightData data, BaseFlightEvent fe)
         {
             DateTime time = CalculateSimTime(data);
             fe.Altitude = data.Altitude;
@@ -69,7 +69,7 @@ namespace FSTRaK.Models.FlightManager
 
         protected void AddFlightEvent(AircraftFlightData data)
         {
-            FlightEvent fe = new FlightEvent();
+            BaseFlightEvent fe = new BaseFlightEvent();
             AddFlightEvent(data, fe);
         }
 

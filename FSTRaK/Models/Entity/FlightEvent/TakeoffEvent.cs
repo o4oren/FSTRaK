@@ -6,7 +6,7 @@ using System.Threading.Tasks;
 
 namespace FSTRaK.Models
 {
-    internal class TakeoffEvent : FlightEvent
+    internal class TakeoffEvent : BaseFlightEvent
     {
         public double FlapsPosition { get; set; }
         public double FuelWeightLbs { get; set; }

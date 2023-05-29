@@ -36,11 +36,13 @@ namespace FSTRaK.Models
         public FlightOutcome FlightOutcome { get; set; }
         public double Score { get; set; }
 
-        public ObservableCollection<FlightEvent> FlightEvents { get; private set; }
+        public string ScoreDetails { get; set; }
+
+        public ObservableCollection<BaseFlightEvent> FlightEvents { get; private set; }
 
         public Flight()
         {
-            this.FlightEvents = new ObservableCollection<FlightEvent>();
+            this.FlightEvents = new ObservableCollection<BaseFlightEvent>();
         }
 
         public override string ToString()

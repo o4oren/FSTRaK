@@ -1,6 +1,7 @@
 ﻿
 
 using FSTRaK.DataTypes;
+using FSTRaK.Models.Entity.FlightEvent;
 
 namespace FSTRaK.Models.FlightManager
 {
@@ -40,9 +41,31 @@ namespace FSTRaK.Models.FlightManager
             // Add event if stopwatch is not started, check if interval has elapsed otherwise
             if (!_stopwatch.IsRunning || _stopwatch.ElapsedMilliseconds > _eventInterval)
             {
-                AddFlightEvent(Data, new FlightEvent());
+                BaseFlightEvent fe = CheckEnvelopeExceedingEvents(Data);
+                AddFlightEvent(Data, fe);
                 _stopwatch.Restart();
             }
+        }
+
+        private BaseFlightEvent CheckEnvelopeExceedingEvents(AircraftFlightData data)
+        {
+            if(data.Overspeed == 1)
+            {
+                return new OverspeedEvent();
+            }
+            if (data.FlapSpeedExceeded == 1)
+            {
+                return new FlapsSpeedExceededEvent();
+            }
+            if (data.GearSpeedExceeded == 1)
+            {
+                return new GearsSpeedExceededEvent();
+            }
+            if (data.StallWarning == 1)
+            {
+                return new StallWarningEvent();
+            }
+            return new BaseFlightEvent();
         }
     }
 }

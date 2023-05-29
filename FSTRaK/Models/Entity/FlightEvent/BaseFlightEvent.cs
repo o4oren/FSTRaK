@@ -3,7 +3,7 @@ using System.ComponentModel.DataAnnotations.Schema;
 
 namespace FSTRaK.Models
 {
-    internal class FlightEvent : BaseModel
+    internal class BaseFlightEvent : BaseModel
     {
 
         public int ID { get; set; }

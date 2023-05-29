@@ -2,7 +2,7 @@
 
 namespace FSTRaK.Models
 {
-    internal class FlightEndedEvent : FlightEvent
+    internal class FlightEndedEvent : BaseFlightEvent
     {
         public double FuelWeightLbs { get; set; }
 

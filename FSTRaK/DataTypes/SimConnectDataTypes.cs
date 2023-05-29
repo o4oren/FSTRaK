@@ -114,6 +114,7 @@ namespace FSTRaK.DataTypes
         public int FlapSpeedExceeded;
         public int GearSpeedExceeded;
         public int Overspeed;
+        public int StallWarning;
         public double FlapPosition;
         public double FuelWeightLbs;
         public int ParkingBrakesSet;
