@@ -1,0 +1,141 @@
+﻿using FSTRaK.Models;
+using FSTRaK.Models.Entity;
+using FSTRaK.Models.FlightManager;
+using MapControl;
+using Serilog;
+using System;
+using System.Collections.ObjectModel;
+using System.Data.Entity;
+using System.Linq;
+using System.Threading;
+using System.Threading.Tasks;
+
+namespace FSTRaK.ViewModels
+{
+    internal class LogbookViewModel : BaseViewModel
+    {
+        FlightManager _flightManager = FlightManager.Instance;
+        public RelayCommand OnLoogbookLoadedCommand { get; set; }
+        public RelayCommand DeleteFlightCommand { get; set; }
+
+        private FlightDetailsViewModel _flightDetailsViewModel;
+
+        public FlightDetailsViewModel FlightDetailsViewModel { 
+            get { return _flightDetailsViewModel; }
+            private set 
+            { 
+                _flightDetailsViewModel = value;
+                OnPropertyChanged();
+            } 
+        }
+
+        public ObservableCollection<Flight> Flights { get; set; }
+
+        private Flight _selectedFlight;
+        public Flight SelectedFlight { get 
+            {
+                if (_selectedFlight == null)
+                {
+                    return new Flight();
+                }
+                return _selectedFlight;
+            } 
+            set 
+            {
+                if(value != null && _selectedFlight != value)
+                {
+                    _selectedFlight = value;
+                    _flightDetailsViewModel.Flight = _selectedFlight;
+                    OnPropertyChanged(nameof(SelectedFlight));
+                }
+            } 
+        }
+
+        public LocationCollection FlightPath = new LocationCollection();
+
+
+        public LogbookViewModel() 
+        {
+            Flights = new ObservableCollection<Flight>();
+            _flightDetailsViewModel = new FlightDetailsViewModel();
+
+            _flightManager.PropertyChanged += (async (s,e) =>
+            {
+                if(e.PropertyName.Equals(nameof(_flightManager.State)) && (_flightManager.State is FlightEndedState))
+                {
+                    using (var logbookContext = new LogbookContext())
+                    {
+                        await LoadFlights(500);
+                        var latestId = logbookContext.Flights.Max(f => f.ID);
+                        SelectedFlight = logbookContext.Flights
+                        .Where(f => f.ID == latestId)
+                        .Include(f => f.Aircraft)
+                        .Include(f => f.FlightEvents)
+                        .SingleOrDefault();
+                    }
+                }
+            });
+
+            OnLoogbookLoadedCommand = new RelayCommand(o =>
+            {
+                LoadFlights();
+            });
+
+            DeleteFlightCommand = new RelayCommand(o =>
+            {
+                Task.Run(() =>
+                {
+                    using (var logbookContext = new LogbookContext())
+                    {
+                        try
+                        {
+                            logbookContext.Flights.Attach(SelectedFlight);
+                            logbookContext.Flights.Remove(SelectedFlight);
+                            logbookContext.SaveChanges();
+                            LoadFlights();
+                        }
+                        catch (Exception ex)
+                        {
+                            Log.Debug(ex.ToString());
+                        }
+                    }
+                });
+
+            });
+        }
+
+        private Task LoadFlights()
+        {
+            return LoadFlights(0);
+        }
+        private Task LoadFlights(int delay)
+        {
+            return Task.Run(() => {
+
+                Thread.Sleep(delay);
+                using (var logbookContext = new LogbookContext())
+                {
+                    try
+                    {
+                        var flights = logbookContext.Flights
+                        .Select(f => f)
+                        .Include(f => f.Aircraft)
+                        .Include(f => f.FlightEvents);
+
+                        App.Current.Dispatcher.Invoke((Action)delegate
+                        {
+                            Flights = new ObservableCollection<Flight>(flights);
+                            OnPropertyChanged(nameof(Flights));
+                        });
+                    }
+                    catch (Exception ex)
+                    {
+                        Log.Debug(ex.Message);
+                        Log.Debug(ex.ToString());
+                        Log.Debug(ex.InnerException.ToString());
+                    }
+                }
+            });
+        }
+    }
+}

@@ -2,8 +2,21 @@
              xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
              xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
              xmlns:local="clr-namespace:FSTRaK"
-             StartupUri="MainWindow.xaml">
+             Startup="OnApplicationStart"
+             Exit="OnApplicationExit"
+             StartupUri="Views/MainWindow.xaml">
     <Application.Resources>
-         
+        <ResourceDictionary>
+            <ResourceDictionary.MergedDictionaries>
+                <ResourceDictionary>
+                    <FontFamily x:Key="Slopes">pack://application:,,,/Resources/Fonts/#Slopes</FontFamily>
+                </ResourceDictionary>
+                <ResourceDictionary Source="Resources/ButtonsTheme.xaml" />
+                <ResourceDictionary Source="Resources/Theme.xaml" />
+                <ResourceDictionary Source="Resources/Images.xaml" />
+                <ResourceDictionary Source="Resources/MapProvidersDictionary.xaml"/>
+            </ResourceDictionary.MergedDictionaries>
+            <BooleanToVisibilityConverter x:Key="BoolToVis" />
+        </ResourceDictionary>
     </Application.Resources>
 </Application>
