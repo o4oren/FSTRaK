@@ -12,14 +12,6 @@
              Unloaded="OnUnLoaded"
       >
 
-    <Border Margin="10,10,10,10" 
-            BorderBrush="{StaticResource TextColor}" 
-            CornerRadius="5" 
-            BorderThickness="1" 
-            Padding="8"
-            VerticalAlignment="Stretch"
-            HorizontalAlignment="Stretch"
-            >
 
         <Grid Margin="0,0,0,0">
 
@@ -39,7 +31,7 @@
                         StrokeLineJoin="round"
                         />
                 </map:Map>
-                <StackPanel Orientation="Horizontal">
+                <StackPanel Orientation="Horizontal" Margin="10">
                     <StackPanel HorizontalAlignment="left">
                         <views:OverlayTextCardControl Grid.Row="4" Grid.Column="3"  Header="Aircraft:" Text="{Binding Flight.Aircraft.Title}"/>
                         <views:OverlayTextCardControl Grid.Row="4" Grid.Column="3"  Header="Aircraft Model:" Text="{Binding Flight.Aircraft.Model}"/>
@@ -49,5 +41,4 @@
                 </StackPanel>
             </Grid>
         </Grid>
-    </Border>
 </UserControl>

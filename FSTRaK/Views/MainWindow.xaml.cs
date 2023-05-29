@@ -1,6 +1,7 @@
 ﻿using FSTRaK.Models.FlightManager;
 using Serilog;
 using System;
+using System.IO;
 using System.Windows;
 using System.Windows.Input;
 
@@ -16,6 +17,18 @@ namespace FSTRaK.Views
         {
             _flightManager = FlightManager.Instance;
             InitializeComponent();
+
+            // Add to tray
+            System.Windows.Forms.NotifyIcon icon = new System.Windows.Forms.NotifyIcon();
+            Stream iconStream = Application.GetResourceStream(new Uri("pack://application:,,,/Resources/Images/FSTrAk.ico")).Stream;
+            icon.Icon = new System.Drawing.Icon(iconStream);
+            icon.Visible = true;
+            icon.DoubleClick +=
+                delegate (object sender, EventArgs args)
+                {
+                    this.Show();
+                    this.WindowState = WindowState.Normal;
+                };
         }
 
         private void OnLoad(object sender, RoutedEventArgs e)
@@ -36,6 +49,14 @@ namespace FSTRaK.Views
             Serilog.Log.Debug("mouse!");
             Log.Debug($"{sender.GetType()}");
             DragMove();
+        }
+
+        protected override void OnStateChanged(EventArgs e)
+        {
+            if (WindowState == System.Windows.WindowState.Minimized)
+                this.Hide();
+
+            base.OnStateChanged(e);
         }
 
 
