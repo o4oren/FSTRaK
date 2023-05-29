@@ -148,7 +148,6 @@ namespace FSTRaK.Models.FlightManager
                     catch (Exception ex)
                     {
                         Log.Debug(ex.Message);
-
                         Log.Debug(ex.ToString());
                         Log.Debug(ex.InnerException.ToString());
                     }

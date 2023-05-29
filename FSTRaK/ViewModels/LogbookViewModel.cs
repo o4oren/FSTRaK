@@ -9,6 +9,7 @@ using System.Data.Entity;
 using System.Linq;
 using System.Threading;
 using System.Threading.Tasks;
+using System.Windows.Media.Media3D;
 
 namespace FSTRaK.ViewModels
 {
@@ -104,6 +105,18 @@ namespace FSTRaK.ViewModels
             });
         }
 
+        private string _searchText;
+        public string SearchText 
+        { 
+            get { return _searchText; }
+            set
+            {
+                _searchText = value;
+                SearchFlights();
+            }
+        }
+    
+
         private Task LoadFlights()
         {
             return LoadFlights(0);
@@ -119,6 +132,42 @@ namespace FSTRaK.ViewModels
                     {
                         var flights = logbookContext.Flights
                         .Select(f => f)
+                        .Include(f => f.Aircraft)
+                        .Include(f => f.FlightEvents);
+
+                        App.Current.Dispatcher.Invoke((Action)delegate
+                        {
+                            Flights = new ObservableCollection<Flight>(flights);
+                            OnPropertyChanged(nameof(Flights));
+                        });
+                    }
+                    catch (Exception ex)
+                    {
+                        Log.Debug(ex.Message);
+                        Log.Debug(ex.ToString());
+                        Log.Debug(ex.InnerException.ToString());
+                    }
+                }
+            });
+        }
+
+        private Task SearchFlights()
+        {
+            if(SearchText == null || SearchText.Equals(string.Empty))
+                return LoadFlights();
+
+            return Task.Run(() => {
+                using (var logbookContext = new LogbookContext())
+                {
+                    try
+                    {
+                        var flights = logbookContext.Flights
+                        .Where(f => 
+                            f.DepartureAirport.ToLower().Equals(SearchText.ToLower())
+                            || f.ArrivalAirport.ToLower().Equals(SearchText.ToLower())
+                            || f.Aircraft.Title.ToLower().Contains(SearchText.ToLower())
+                            || f.Aircraft.Model.ToLower().Contains(SearchText.ToLower())
+                            )
                         .Include(f => f.Aircraft)
                         .Include(f => f.FlightEvents);
 
