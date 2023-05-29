@@ -36,22 +36,14 @@
                     <map:MapPolyline 
                         Locations="{Binding FlightPath}" 
                         Stroke="Red" StrokeThickness="3" 
-                        StrokeLineJoin="round"/>
+                        StrokeLineJoin="round"
+                        />
                 </map:Map>
                 <StackPanel Orientation="Horizontal">
                     <StackPanel HorizontalAlignment="left">
                         <views:OverlayTextCardControl Grid.Row="4" Grid.Column="3"  Header="Aircraft:" Text="{Binding Flight.Aircraft.Title}"/>
-                        <views:OverlayTextCardControl Grid.Row="4" Grid.Column="3"  Header="Departed:" Text="{Binding Flight.DepartureAirport}"/>
-                        <views:OverlayTextCardControl Grid.Row="4" Grid.Column="3"  Header="Arrived:" Text="{Binding Flight.ArrivalAirport}"/>
-                        <views:OverlayTextCardControl Grid.Row="4" Grid.Column="3"  Header="Start time:" Text="{Binding Flight.StartTime}"/>
-                        <views:OverlayTextCardControl Grid.Row="4" Grid.Column="3"  Header="End time:" Text="{Binding Flight.EndTime}"/>
-                        <views:OverlayTextCardControl Grid.Row="4" Grid.Column="3"  Header="Block time:" Text="{Binding Flight.FlightTime}"/>
-
-                        <views:OverlayTextCardControl Grid.Row="4" Grid.Column="3"  Header="Total Fuel:" Text="{Binding TotalFuelUsed}"/>
-                        <views:OverlayTextCardControl Grid.Row="4" Grid.Column="3"  Header="Distance:" Text="{Binding FlightDistance}"/>
-                        <views:OverlayTextCardControl Grid.Row="4" Grid.Column="3"  Header="Score:" Text="{Binding Flight.Score}"/>
+                        <views:OverlayTextCardControl Grid.Row="4" Grid.Column="3"  Header="Flight Parameters:" Text="{Binding FlightParams}"/>
                     </StackPanel>
-                    
                 </StackPanel>
             </Grid>
         </Grid>

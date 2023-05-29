@@ -6,6 +6,7 @@ using MapControl;
 using Serilog;
 using System;
 using System.Linq;
+using System.Text;
 using System.Windows;
 
 namespace FSTRaK.ViewModels
@@ -13,6 +14,7 @@ namespace FSTRaK.ViewModels
     internal class FlightDetailsViewModel : BaseViewModel
     {
         private Flight _flight;
+        StringBuilder _sb;
         public Flight Flight { 
             get 
             {
@@ -22,13 +24,22 @@ namespace FSTRaK.ViewModels
             {
                 if (_flight != value)
                 {
+                    
                     _flight = value;
                     FlightPath = new LocationCollection(_flight.FlightEvents.Select(e => new Location(e.Latitude, e.Longitude)));
-                    OnPropertyChanged();
-                    OnPropertyChanged(nameof(FlightPath));
-                    OnPropertyChanged(nameof(LandingVerticalSpeed));
-                    OnPropertyChanged(nameof(FlightDistance));
-                    OnPropertyChanged(nameof(TotalFuelUsed));
+ 
+                    FlightParams = _sb.Clear()
+                        .AppendLine($"Departed From: {_flight.DepartureAirport}")
+                        .AppendLine($"Arrived At: {_flight.ArrivalAirport}")
+                        .AppendLine($"Start Time: {_flight.StartTime}")
+                        .AppendLine($"End Time: {_flight.EndTime}")
+                        .AppendLine($"Block Time: {_flight.FlightTime}")
+                        .AppendLine($"Fuel Used: {TotalFuelUsed}")
+                        .AppendLine($"Flown Distance VSI: {FlightDistance}")
+                        .AppendLine($"Landing VSI: {LandingVerticalSpeed}")
+                        .AppendLine($"Score: {_flight.Score}")
+                        .ToString();
+
 
                     double minLon = Double.MaxValue, minLat = Double.MaxValue, maxLon = Double.MinValue, maxLat = Double.MinValue;
 
@@ -44,10 +55,26 @@ namespace FSTRaK.ViewModels
                     var boundingBox = new BoundingBox(minLat, minLon, maxLat, maxLon);
                     Log.Debug($"{boundingBox.Center} {boundingBox.Width}");
                     ViewPort = boundingBox;
-                 
+
+                    OnPropertyChanged();
+                    OnPropertyChanged(nameof(FlightPath));
+
                 }
             } 
         }
+
+        private string _flightParams;
+            
+        public string FlightParams
+        {
+            get { return _flightParams; }
+            set 
+            {
+                _flightParams = value; 
+                OnPropertyChanged();
+            }
+        }
+
 
         public string LandingVerticalSpeed
         {
@@ -133,7 +160,7 @@ namespace FSTRaK.ViewModels
         public LocationCollection FlightPath { get; private set; }
         public FlightDetailsViewModel()
         {
-
+            _sb = new StringBuilder();
         }
     }
 }

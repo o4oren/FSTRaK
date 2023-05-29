@@ -5,6 +5,7 @@
         xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
         xmlns:views="clr-namespace:FSTRaK.Views"
         xmlns:viewmodels="clr-namespace:FSTRaK.ViewModels"
+        xmlns:p="clr-namespace:FSTRaK.Properties"
         mc:Ignorable="d"
         Loaded="OnLoad"
         WindowState="Normal"
@@ -13,9 +14,12 @@
         AllowsTransparency="true"
         ResizeMode="CanResizeWithGrip"
         Deactivated="Window_Deactivated"
-        Title="FSTRaK"  
-        Width="1024"
-        Height="768">
+        Height="{Binding Source={x:Static p:Settings.Default}, Path=Height, Mode=TwoWay}"
+        Width="{Binding Source={x:Static p:Settings.Default}, Path=Width, Mode=TwoWay}"
+        Left="{Binding Source={x:Static p:Settings.Default}, Path=Left, Mode=TwoWay}"
+        Top="{Binding Source={x:Static p:Settings.Default}, Path=Top, Mode=TwoWay}"
+        Title="FSTRaK"
+    >
     <Window.DataContext>
         <viewmodels:MainWindowViewModel/>
     </Window.DataContext>
@@ -67,7 +71,7 @@
                         <RadioButton Style="{StaticResource MenuButtonTheme}"  Command="{Binding SettingsCommand}" Content="Settings" HorizontalAlignment="Right"/>
                     </StackPanel>
                     <Button Margin="0, 15, 15, 0" VerticalAlignment="Top" Height="15" Width="15" Style="{StaticResource CloseButtonTheme}"  HorizontalAlignment="Right" Click="ButtonClick_CloseApplication" ClickMode="Release">X</Button>
-                 </Grid>
+                </Grid>
             </Border>
             <ContentControl Name="cont" Grid.Row="1" Grid.Column="0" Grid.ColumnSpan="2" Content="{Binding ActiveView}"></ContentControl>
         </Grid>
