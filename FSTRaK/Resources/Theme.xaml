@@ -580,4 +580,42 @@
             </Setter.Value>
         </Setter>
     </Style>
+
+
+    <Style x:Key="FSTrAkTextBox"
+       TargetType="TextBox">
+        <Setter Property="Template">
+            <Setter.Value>
+                <ControlTemplate TargetType="TextBox">
+                    <Border x:Name="Border"
+                Padding="2"
+                SnapsToDevicePixels="true"
+                            BorderThickness="1"
+                            CornerRadius="15"
+                            Background="white"
+                            >
+                        <Border.BorderBrush>
+                            <SolidColorBrush Color="{DynamicResource BorderMediumColor}" />
+                        </Border.BorderBrush>
+                        <TextBox x:Name="TextBox"
+                            Margin="10 0 10 0" 
+                                 BorderThickness="0"
+                                 BorderBrush="Transparent" 
+                                 FontFamily="{StaticResource Slopes}" FontSize="22" Foreground="{StaticResource TextColor}"
+                                 Text="{Binding RelativeSource={RelativeSource TemplatedParent}, Path=Text, UpdateSourceTrigger=PropertyChanged}"
+                                 
+                                 />
+                    </Border>
+                    <ControlTemplate.Triggers>
+                        <Trigger Property="IsMouseOver" Value="True">
+                            <Setter TargetName="Border" Property="BorderBrush" Value="{StaticResource MidBorderBrush}"/>
+                        </Trigger>
+                        <Trigger Property="IsKeyboardFocused" Value="True">
+                            <Setter TargetName="Border" Property="BorderBrush" Value="purple"/>
+                        </Trigger>
+                    </ControlTemplate.Triggers>
+                </ControlTemplate>
+            </Setter.Value>
+        </Setter>
+    </Style>
 </ResourceDictionary>
