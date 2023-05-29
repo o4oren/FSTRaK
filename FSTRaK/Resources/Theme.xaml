@@ -58,6 +58,21 @@
     <SolidColorBrush x:Key="BrightTextColor" Color="{DynamicResource PrimaryBright}"/>
     <SolidColorBrush x:Key="MidBorderBrush" Color="{DynamicResource PrimaryMid}"/>
 
+    <Color x:Key="CloseButtonColor">Red</Color>
+    <Color x:Key="CloseButtonColorHover">#cc1b1b</Color>
+    <Color x:Key="CloseButtonColorPressed">DarkRed</Color>
+    <Color x:Key="MinButtonColor">#fcba03</Color>
+    <Color x:Key="MinButtonColorHover">#ffd257</Color>
+    <Color x:Key="MinButtonColorPressed">#ffef3b</Color>
+
+    <SolidColorBrush x:Key="CloseButtonColorBrush" Color="{DynamicResource CloseButtonColor}"/>
+    <SolidColorBrush x:Key="CloseButtonColorHoverBrush" Color="{DynamicResource CloseButtonColorHover}"/>
+    <SolidColorBrush x:Key="CloseButtonColorPressedBrush" Color="{DynamicResource CloseButtonColorPressed}"/>
+    <SolidColorBrush x:Key="MinButtonColorBrush" Color="{DynamicResource MinButtonColor}"/>
+    <SolidColorBrush x:Key="MinButtonColorHoverBrush" Color="{DynamicResource MinButtonColorHover}"/>
+    <SolidColorBrush x:Key="MinButtonColorPressedBrush" Color="{DynamicResource MinButtonColorPressed}"/>
+
+
 
     <LinearGradientBrush x:Key="MenuPopupBrush"
                      EndPoint="0.5,1"

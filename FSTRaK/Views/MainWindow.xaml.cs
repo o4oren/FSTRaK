@@ -44,6 +44,11 @@ namespace FSTRaK.Views
             Close();
         }
 
+        private void ButtonClick_MinimizeApplication(object sender, RoutedEventArgs e)
+        {
+            WindowState = WindowState.Minimized;
+        }
+
         private void DragWindow(object sender, MouseButtonEventArgs e)
         {
             Serilog.Log.Debug("mouse!");
