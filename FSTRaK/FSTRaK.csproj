@@ -105,6 +105,9 @@
     <ErrorReport>prompt</ErrorReport>
     <Prefer32Bit>true</Prefer32Bit>
   </PropertyGroup>
+  <PropertyGroup>
+    <ApplicationIcon>FSTrAk.ico</ApplicationIcon>
+  </PropertyGroup>
   <ItemGroup>
     <Reference Include="Microsoft.FlightSimulator.SimConnect, Version=11.0.62651.3, Culture=neutral, processorArchitecture=AMD64">
       <SpecificVersion>False</SpecificVersion>
@@ -142,11 +145,16 @@
       <SubType>Designer</SubType>
     </ApplicationDefinition>
     <Compile Include="DataTypes\Consts.cs" />
+    <Compile Include="DataTypes\LandingRate.cs" />
     <Compile Include="DataTypes\FlightOutcome.cs" />
     <Compile Include="DataTypes\FlightParams.cs" />
     <Compile Include="DataTypes\NearestAirportRequestType.cs" />
     <Compile Include="DataTypes\Settings.cs" />
     <Compile Include="DataTypes\SimConnectDataTypes.cs" />
+    <Compile Include="Models\Entity\FlightEvent\StallWarningEvent.cs" />
+    <Compile Include="Models\Entity\FlightEvent\OverspeedEvent.cs" />
+    <Compile Include="Models\Entity\FlightEvent\GearspeedExceededEvent.cs" />
+    <Compile Include="Models\Entity\FlightEvent\FlapsSpeedExceededEvent.cs" />
     <Compile Include="Models\Entity\Migrations\Configuration.cs" />
     <Compile Include="Models\Entity\FlightEvent\CrashEvent.cs" />
     <Compile Include="Models\Entity\FlightEvent\ScoringEvent.cs" />
@@ -163,7 +171,7 @@
     <Compile Include="Models\Entity\Aircraft.cs" />
     <Compile Include="Models\BaseModel.cs" />
     <Compile Include="Models\Entity\Flight.cs" />
-    <Compile Include="Models\Entity\FlightEvent\FlightEvent.cs" />
+    <Compile Include="Models\Entity\FlightEvent\BaseFlightEvent.cs" />
     <Compile Include="Models\FlightManager\State\FlightEndedState.cs" />
     <Compile Include="Models\FlightManager\State\FlightState.cs" />
     <Compile Include="Models\FlightManager\State\LandedState.cs" />
@@ -292,6 +300,8 @@
     <None Include="App.config" />
   </ItemGroup>
   <ItemGroup>
+    <Resource Include="Resources\Images\FSTrAk.ico" />
+    <Resource Include="FSTrAk.ico" />
     <Content Include="sqlceca40.dll">
       <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
     </Content>
@@ -310,6 +320,7 @@
     <Content Include="sqlcese40.dll">
       <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
     </Content>
+    <None Include="Resources\Images\FSTrAk-Icon.xcf" />
     <None Include="System.Data.SqlServerCe.dll">
       <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
     </None>
