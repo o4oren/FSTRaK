@@ -6,16 +6,19 @@ using Serilog;
 using System;
 using System.Collections.ObjectModel;
 using System.Data.Entity;
+using System.Diagnostics;
 using System.Linq;
 using System.Threading;
 using System.Threading.Tasks;
-using System.Windows.Media.Media3D;
+using System.Timers;
 
 namespace FSTRaK.ViewModels
 {
     internal class LogbookViewModel : BaseViewModel
     {
         FlightManager _flightManager = FlightManager.Instance;
+
+        private System.Timers.Timer _typingTimer;
         public RelayCommand OnLoogbookLoadedCommand { get; set; }
         public RelayCommand DeleteFlightCommand { get; set; }
 
@@ -59,8 +62,9 @@ namespace FSTRaK.ViewModels
         {
             Flights = new ObservableCollection<Flight>();
             _flightDetailsViewModel = new FlightDetailsViewModel();
+            _typingTimer = new System.Timers.Timer(500);
 
-            _flightManager.PropertyChanged += (async (s,e) =>
+            _flightManager.PropertyChanged += async (s,e) =>
             {
                 if(e.PropertyName.Equals(nameof(_flightManager.State)) && (_flightManager.State is FlightEndedState))
                 {
@@ -75,7 +79,7 @@ namespace FSTRaK.ViewModels
                         .SingleOrDefault();
                     }
                 }
-            });
+            };
 
             OnLoogbookLoadedCommand = new RelayCommand(o =>
             {
@@ -103,6 +107,14 @@ namespace FSTRaK.ViewModels
                 });
 
             });
+
+            _typingTimer.Elapsed += _typingTimer_Elapsed;
+        }
+
+        private void _typingTimer_Elapsed(object sender, ElapsedEventArgs e)
+        {
+            SearchFlights();
+            _typingTimer.Stop();
         }
 
         private string _searchText;
@@ -111,8 +123,10 @@ namespace FSTRaK.ViewModels
             get { return _searchText; }
             set
             {
+                _typingTimer.Stop();
+                _typingTimer.Start();
                 _searchText = value;
-                SearchFlights();
+                // Actual search is in the typingTimerElapsed event handler.
             }
         }
     

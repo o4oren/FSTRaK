@@ -40,8 +40,8 @@
                 <b:InvokeCommandAction Command="{Binding OnLoogbookLoadedCommand}"/>
             </b:EventTrigger>
         </b:Interaction.Triggers>
-            <TextBox Text="{Binding SearchText, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}"></TextBox>
-            <ListView Width="200" VerticalAlignment="Stretch"
+        <TextBox Text="{Binding SearchText, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}" />
+        <ListView Width="200" VerticalAlignment="Stretch"
                       Grid.Row="1"
             ItemsSource="{Binding Flights}" 
             IsSynchronizedWithCurrentItem="True" 
