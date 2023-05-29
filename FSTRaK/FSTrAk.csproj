@@ -142,6 +142,7 @@
       <SubType>Designer</SubType>
     </ApplicationDefinition>
     <Compile Include="DataTypes\Consts.cs" />
+    <Compile Include="DataTypes\LandingRate.cs" />
     <Compile Include="DataTypes\FlightOutcome.cs" />
     <Compile Include="DataTypes\FlightParams.cs" />
     <Compile Include="DataTypes\NearestAirportRequestType.cs" />

@@ -27,11 +27,19 @@ namespace FSTRaK.ViewModels
                     
                     _flight = value;
                     FlightPath = new LocationCollection(_flight.FlightEvents.Select(e => new Location(e.Latitude, e.Longitude)));
- 
-                    FlightParams = _sb.Clear()
-                        .AppendLine($"Departed From: {_flight.DepartureAirport}")
-                        .AppendLine($"Arrived At: {_flight.ArrivalAirport}")
-                        .AppendLine($"Start Time: {_flight.StartTime}")
+
+                    _sb.Clear()
+                        .AppendLine($"Departed From: {_flight.DepartureAirport}");
+                        
+                    if(_flight.FlightOutcome == FlightOutcome.Crashed)
+                    {
+                        _sb.AppendLine(($"Crashed Near {_flight.ArrivalAirport}"));
+                    } else
+                    {
+                        _sb.AppendLine(($"Arrived At: {_flight.ArrivalAirport}"));
+                    }
+
+                        _sb.AppendLine($"Start Time: {_flight.StartTime}")
                         .AppendLine($"End Time: {_flight.EndTime}")
                         .AppendLine($"Block Time: {_flight.FlightTime}")
                         .AppendLine($"Fuel Used: {TotalFuelUsed}")
@@ -40,6 +48,7 @@ namespace FSTRaK.ViewModels
                         .AppendLine($"Score: {_flight.Score}")
                         .ToString();
 
+                    FlightParams = _sb.ToString();
 
                     double minLon = Double.MaxValue, minLat = Double.MaxValue, maxLon = Double.MinValue, maxLat = Double.MinValue;
 
