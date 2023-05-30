@@ -5,6 +5,7 @@ using FSTRaK.Models;
 using MapControl;
 using Serilog;
 using System;
+using System.Collections.ObjectModel;
 using System.Linq;
 using System.Text;
 using System.Windows;
@@ -26,7 +27,7 @@ namespace FSTRaK.ViewModels
                 {
                     
                     _flight = value;
-                    FlightPath = new LocationCollection(_flight.FlightEvents.Select(e => new Location(e.Latitude, e.Longitude)));
+                    FlightPath = new ObservableCollection<Location>(_flight.FlightEvents.Select(e => new Location(e.Latitude, e.Longitude)));
 
                     _sb.Clear()
                         .AppendLine($"Departed From: {_flight.DepartureAirport}");
@@ -52,13 +53,12 @@ namespace FSTRaK.ViewModels
 
                     double minLon = Double.MaxValue, minLat = Double.MaxValue, maxLon = Double.MinValue, maxLat = Double.MinValue;
 
-                    FlightPath.ForEach(coords =>
+                    FlightPath.ToList().ForEach(coords =>
                     {
                         minLon = Math.Min(minLon, coords.Longitude);
                         maxLon = Math.Max(maxLon, coords.Longitude);
                         minLat = Math.Min(minLat, coords.Latitude);
                         maxLat = Math.Max(maxLat, coords.Latitude);
-
                     });
 
                     var boundingBox = new BoundingBox(minLat, minLon, maxLat, maxLon);
@@ -166,7 +166,7 @@ namespace FSTRaK.ViewModels
             }
         }
 
-        public LocationCollection FlightPath { get; private set; }
+        public ObservableCollection<Location> FlightPath { get; private set; }
         public FlightDetailsViewModel()
         {
             _sb = new StringBuilder();

@@ -34,7 +34,7 @@
                 <StackPanel Orientation="Horizontal" Margin="10">
                     <StackPanel HorizontalAlignment="left">
                         <views:OverlayTextCardControl Grid.Row="4" Grid.Column="3"  Header="Aircraft:" Text="{Binding Flight.Aircraft.Title}"/>
-                        <views:OverlayTextCardControl Grid.Row="4" Grid.Column="3"  Header="Aircraft Model:" Text="{Binding Flight.Aircraft.Model}"/>
+                        <views:OverlayTextCardControl Grid.Row="4" Grid.Column="3"  Header="{Binding Flight.Aircraft.AircraftType}" Text="{Binding Flight.Aircraft.Model}"/>
 
                         <views:OverlayTextCardControl Grid.Row="4" Grid.Column="3"  Header="Flight Parameters:" Text="{Binding FlightParams}"/>
                     </StackPanel>

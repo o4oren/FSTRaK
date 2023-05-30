@@ -1,7 +1,10 @@
 ﻿using FSTRaK.Models.Entity;
 using Serilog;
+using Serilog.Exceptions;
 using System.Threading.Tasks;
 using System.Windows;
+using System.Windows.Forms;
+using System.Windows.Threading;
 
 namespace FSTRaK
 {
@@ -13,6 +16,7 @@ namespace FSTRaK
         void OnApplicationStart(object sender, StartupEventArgs args)
         {
             Log.Logger = new LoggerConfiguration()
+            .Enrich.WithExceptionDetails()
             .MinimumLevel.Information()
 #if DEBUG
             .MinimumLevel.Debug()
@@ -39,6 +43,15 @@ namespace FSTRaK
                 smc.Close();
             }
             FSTRaK.Properties.Settings.Default.Save();
+        }
+
+        void App_DispatcherUnhandledException(object sender, DispatcherUnhandledExceptionEventArgs e)
+        {
+            Log.Error(e.Exception, "Un handled error occured!");
+            
+
+            // Prevent default unhandled exception processing
+            e.Handled = true;
         }
     }
 }
