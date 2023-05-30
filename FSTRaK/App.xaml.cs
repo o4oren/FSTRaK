@@ -1,6 +1,7 @@
 ﻿using FSTRaK.Models.Entity;
 using Serilog;
 using Serilog.Exceptions;
+using System;
 using System.Threading.Tasks;
 using System.Windows;
 using System.Windows.Threading;
@@ -28,7 +29,14 @@ namespace FSTRaK
             {
                 using (var logbookContext = new LogbookContext())
                 {
-                    logbookContext.Aircraft.Find(1);
+                    try
+                    {
+                        logbookContext.Aircraft.Find(1);
+                    }
+                    catch (Exception ex)
+                    {
+                        Log.Error(ex, ex.Message);
+                    }
                 }
             });
         }

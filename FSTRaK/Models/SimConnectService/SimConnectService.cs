@@ -200,7 +200,7 @@ namespace FSTRaK
             }
             catch (COMException ex)
             {
-                Log.Debug(ex.Message);
+                Log.Debug(ex, ex.Message);
                 // Do nothing
             }
         }
@@ -378,7 +378,7 @@ namespace FSTRaK
                 }
             } catch (Exception ex)
             {
-                Log.Error(ex.Message);
+                Log.Error(ex, ex.Message);
             }
         }
 

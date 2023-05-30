@@ -4,6 +4,7 @@
              xmlns:local="clr-namespace:FSTRaK"
              Startup="OnApplicationStart"
              Exit="OnApplicationExit"
+             DispatcherUnhandledException="App_DispatcherUnhandledException"
              StartupUri="Views/MainWindow.xaml">
     <Application.Resources>
         <ResourceDictionary>

@@ -70,13 +70,21 @@ namespace FSTRaK.ViewModels
                 {
                     using (var logbookContext = new LogbookContext())
                     {
-                        await LoadFlights(500);
-                        var latestId = logbookContext.Flights.Max(f => f.ID);
-                        SelectedFlight = logbookContext.Flights
-                        .Where(f => f.ID == latestId)
-                        .Include(f => f.Aircraft)
-                        .Include(f => f.FlightEvents)
-                        .SingleOrDefault();
+                        try
+                        {
+                            await LoadFlights(500);
+                            var latestId = logbookContext.Flights.Max(f => f.ID);
+                            SelectedFlight = logbookContext.Flights
+                            .Where(f => f.ID == latestId)
+                            .Include(f => f.Aircraft)
+                            .Include(f => f.FlightEvents)
+                            .SingleOrDefault();
+                        }
+                        catch (Exception ex)
+                        {
+                            Log.Error(ex, ex.Message);
+                        }
+
                     }
                 }
             };
@@ -101,7 +109,7 @@ namespace FSTRaK.ViewModels
                         }
                         catch (Exception ex)
                         {
-                            Log.Debug(ex.ToString());
+                            Log.Debug(ex, ex.Message);
                         }
                     }
                 });
@@ -157,11 +165,11 @@ namespace FSTRaK.ViewModels
                     }
                     catch (Exception ex)
                     {
-                        Log.Debug(ex.Message);
-                        Log.Debug(ex.ToString());
-                        Log.Debug(ex.InnerException.ToString());
+                        Log.Error(ex, "Unhandled error occured!");
                     }
                 }
+                throw new Exception("hahah!");
+
             });
         }
 
@@ -193,7 +201,7 @@ namespace FSTRaK.ViewModels
                     }
                     catch (Exception ex)
                     {
-                        Log.Error(ex, "Unhandled error occured!");
+                        Log.Error(ex, "Exception fetching Flights!");
                     }
                 }
             });
