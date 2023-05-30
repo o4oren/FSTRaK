@@ -193,9 +193,7 @@ namespace FSTRaK.ViewModels
                     }
                     catch (Exception ex)
                     {
-                        Log.Debug(ex.Message);
-                        Log.Debug(ex.ToString());
-                        Log.Debug(ex.InnerException.ToString());
+                        Log.Error(ex, "Unhandled error occured!");
                     }
                 }
             });

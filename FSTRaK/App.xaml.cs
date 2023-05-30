@@ -3,7 +3,6 @@ using Serilog;
 using Serilog.Exceptions;
 using System.Threading.Tasks;
 using System.Windows;
-using System.Windows.Forms;
 using System.Windows.Threading;
 
 namespace FSTRaK
@@ -47,9 +46,7 @@ namespace FSTRaK
 
         void App_DispatcherUnhandledException(object sender, DispatcherUnhandledExceptionEventArgs e)
         {
-            Log.Error(e.Exception, "Un handled error occured!");
-            
-
+            Log.Error(e.Exception, "Unhandled error occured!");
             // Prevent default unhandled exception processing
             e.Handled = true;
         }
