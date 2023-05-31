@@ -168,8 +168,6 @@ namespace FSTRaK.ViewModels
                         Log.Error(ex, "Unhandled error occured!");
                     }
                 }
-                throw new Exception("hahah!");
-
             });
         }
 
