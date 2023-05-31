@@ -2,6 +2,7 @@
 using Serilog;
 using Serilog.Exceptions;
 using System;
+using System.Threading;
 using System.Threading.Tasks;
 using System.Windows;
 using System.Windows.Threading;
@@ -13,7 +14,27 @@ namespace FSTRaK
     /// </summary>
     public partial class App : Application
     {
-        void OnApplicationStart(object sender, StartupEventArgs args)
+        private static Mutex _mutex = null;
+
+
+
+        const string appName = "FSTrAk";
+
+        protected override void OnStartup(StartupEventArgs e)
+        {
+            _mutex = new Mutex(true, appName, out bool createdNew);
+
+            if (!createdNew)
+            {
+                MessageBox.Show("An instance of FSTrAk is already running...", "FSTrAk");
+                Application.Current.Shutdown();
+            }
+
+            base.OnStartup(e);
+        }
+
+
+    void OnApplicationStart(object sender, StartupEventArgs args)
         {
             Log.Logger = new LoggerConfiguration()
             .Enrich.WithExceptionDetails()
