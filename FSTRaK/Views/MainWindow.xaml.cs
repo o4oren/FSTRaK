@@ -51,8 +51,6 @@ namespace FSTRaK.Views
 
         private void DragWindow(object sender, MouseButtonEventArgs e)
         {
-            Serilog.Log.Debug("mouse!");
-            Log.Debug($"{sender.GetType()}");
             DragMove();
         }
 

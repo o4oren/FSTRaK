@@ -117,7 +117,6 @@ namespace FSTRaK.ViewModels
             }
             set
             {
-                Log.Debug($"{value}");
                 _isSaveOnlyCompleteFlights = value;
                 Properties.Settings.Default.IsSaveOnlyCompleteFlights = _isSaveOnlyCompleteFlights;
                 OnPropertyChanged();
@@ -149,11 +148,6 @@ namespace FSTRaK.ViewModels
             IsSaveOnlyCompleteFlights = Properties.Settings.Default.IsSaveOnlyCompleteFlights;
             Units = (Units)Properties.Settings.Default.Units;
 
-        }
-
-        protected void OnPropertyChanged2([CallerMemberName] string name = null)
-        {
-            Log.Debug(name);
         }
     }
 }

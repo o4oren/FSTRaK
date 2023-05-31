@@ -66,7 +66,7 @@ namespace FSTRaK.Models.FlightManager
                 {
                     _flightStartedEvent.FuelWeightLbs = Data.FuelWeightLbs;
                     _prevFuelQuantity = Data.FuelWeightLbs;
-                    Log.Debug($"Fuel Quantity updated to {_flightStartedEvent.FuelWeightLbs}");
+                    Log.Information($"Fuel Quantity updated to {_flightStartedEvent.FuelWeightLbs}");
                 }
             }
 

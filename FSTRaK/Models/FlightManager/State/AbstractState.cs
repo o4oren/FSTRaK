@@ -64,7 +64,6 @@ namespace FSTRaK.Models.FlightManager
             fe.GroundSpeed = data.GroundVelocity;
             fe.Time = time;
             Context.ActiveFlight.FlightEvents.Add(fe);
-            Log.Debug(Context.ActiveFlight.FlightEvents.Last().GetType().ToString());
         }
 
         protected void AddFlightEvent(AircraftFlightData data)

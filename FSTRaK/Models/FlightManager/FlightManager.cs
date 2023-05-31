@@ -123,7 +123,7 @@ namespace FSTRaK.Models.FlightManager
                     var airport = _simConnectService.NearestAirport;
                     if(ActiveFlight != null && CurrentFlightParams.IsOnGround)
                     {
-                        Log.Debug($"xxx {airport} requested for {NearestAirportRequestType.Departure}");
+                        Log.Debug($"xxx {airport} requested for {_nearestAirportRequestType}");
                         if(_nearestAirportRequestType == NearestAirportRequestType.Departure)
                         {
                             ActiveFlight.DepartureAirport = airport;
@@ -132,6 +132,8 @@ namespace FSTRaK.Models.FlightManager
                         {
                             ActiveFlight.ArrivalAirport = airport;
                         }
+                        var prefix  = (_nearestAirportRequestType == NearestAirportRequestType.Departure) ? "Departing from" : "Landed at";
+                        Log.Information($"{prefix} {airport}");
                     }
                     break;
 

@@ -191,7 +191,7 @@ namespace FSTRaK
         {
             try
             {
-                Log.Debug("Trying to connect");
+                Log.Information("Trying to connect to the simulator...");
                 _simconnect = new SimConnect("FSTrAk", lHwnd, WM_USER_SIMCONNECT, null, 0);
                 if (_simconnect != null)
                 {
@@ -331,14 +331,14 @@ namespace FSTRaK
 
         void simconnect_OnRecvOpen(SimConnect sender, SIMCONNECT_RECV_OPEN data)
         {
-            Log.Information("Sim connection Openned!");
+            Log.Information("Sim connection success!");
             _connectionTimer.Stop();
             IsConnected = true;
         }
 
         void simconnect_OnRecvException(SimConnect sender, SIMCONNECT_RECV_EXCEPTION data)
         {
-            Log.Error(data.dwException.ToString());
+            Log.Error($"Simconnect excpetion {data.dwException}");
         }
 
         private void Simconnect_OnRecvSimobjectData(SimConnect sender, SIMCONNECT_RECV_SIMOBJECT_DATA data)
