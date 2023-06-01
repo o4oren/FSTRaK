@@ -6,6 +6,7 @@ using Serilog;
 using System;
 using System.Collections.ObjectModel;
 using System.Linq;
+using System.Runtime.Remoting.Contexts;
 using System.Text;
 using System.Threading.Tasks;
 
@@ -136,7 +137,7 @@ namespace FSTRaK.Models.FlightManager
                 {
                     try
                     {
-                        // Check if the aircraft user is already in the db
+                        // Check if the aircraft is already in the db
                         var aircraft = logbookContext.Aircraft.Where(a => a.Title == Context.ActiveFlight.Aircraft.Title).FirstOrDefault();
                         if (aircraft != null)
                         {

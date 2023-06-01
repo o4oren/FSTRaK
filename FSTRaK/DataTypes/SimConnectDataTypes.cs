@@ -124,6 +124,10 @@ namespace FSTRaK.DataTypes
         public double Engine3MaxRpmPct;
         public double Engine4MaxRpmPct;
 
+        public double Throttle1Position;
+        public double Throttle2Position;
+        public double Throttle3Position;
+        public double Throttle4Position;
 
         /// <summary>
         /// Used to determine negine start up
@@ -132,6 +136,16 @@ namespace FSTRaK.DataTypes
         public double MaxEngineRpmPct() 
         {
             return new double[] { Engine1MaxRpmPct, Engine2MaxRpmPct, Engine3MaxRpmPct, Engine4MaxRpmPct}.Max();
+        }
+
+        public double MaxThorttlePosition()
+        {
+            return new double[] { Throttle1Position, Throttle2Position, Throttle3Position, Throttle3Position }.Max();
+        }
+
+        public double MinThrottlePosition()
+        {
+            return new double[] { Throttle1Position, Throttle1Position, Throttle2Position, Throttle3Position }.Min();
         }
 
     }
