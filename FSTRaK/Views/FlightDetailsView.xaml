@@ -3,9 +3,9 @@
       xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
       xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006" 
       xmlns:d="http://schemas.microsoft.com/expression/blend/2008" 
-      xmlns:viewmodels="clr-namespace:FSTRaK.ViewModels" 
+             xmlns:viewmodels="clr-namespace:FSTRaK.ViewModels" 
              xmlns:views="clr-namespace:FSTRaK.Views" 
-             xmlns:map="clr-namespace:MapControl;assembly=MapControl.WPF" d:DataContext="{d:DesignInstance Type=viewmodels:FlightDetailsViewModel}"
+             xmlns:map="clr-namespace:MapControl;assembly=MapControl.WPF" xmlns:oxy1="clr-namespace:OxyPlot.Series;assembly=OxyPlot" xmlns:oxy="http://oxyplot.org/wpf" d:DataContext="{d:DesignInstance Type=viewmodels:FlightDetailsViewModel}"
              d:DesignHeight="450" d:DesignWidth="800"
              mc:Ignorable="d" 
         Loaded="OnLoaded"
@@ -37,16 +37,17 @@
                         <views:OverlayTextCardControl Grid.Row="4" Grid.Column="3"  Header="Flight Parameters:" Text="{Binding FlightParams}"/>
                     </StackPanel>
                 </StackPanel>
-            <StackPanel Margin="10" HorizontalAlignment="Right">
-                <ToggleButton Style="{StaticResource MapToggleButton}" 
-                          IsChecked="{Binding IsShowPath, Mode=TwoWay}" 
-                          Content="{StaticResource PathButton}">
-                </ToggleButton>
-                <ToggleButton Style="{StaticResource MapToggleButton}" 
-                          IsChecked="{Binding IsShowFlightDetails, Mode=TwoWay}" 
-                          Content="{StaticResource detailsButton}">
-                </ToggleButton>
-            </StackPanel>
-        </Grid>
+                <StackPanel Margin="10" HorizontalAlignment="Right">
+                    <ToggleButton Style="{StaticResource MapToggleButton}" 
+                              IsChecked="{Binding IsShowPath, Mode=TwoWay}" 
+                              Content="{StaticResource PathButton}">
+                    </ToggleButton>
+                    <ToggleButton Style="{StaticResource MapToggleButton}" 
+                              IsChecked="{Binding IsShowFlightDetails, Mode=TwoWay}" 
+                              Content="{StaticResource detailsButton}">
+                    </ToggleButton>
+                </StackPanel>
+
+            </Grid>
         </Grid>
 </UserControl>
