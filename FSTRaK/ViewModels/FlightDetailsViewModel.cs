@@ -9,6 +9,7 @@ using System.Collections.ObjectModel;
 using System.Linq;
 using System.Text;
 using System.Windows;
+using System.Windows.Navigation;
 
 namespace FSTRaK.ViewModels
 {
@@ -27,7 +28,9 @@ namespace FSTRaK.ViewModels
                 {
                     
                     _flight = value;
-                    FlightPath = new ObservableCollection<Location>(_flight.FlightEvents.Select(e => new Location(e.Latitude, e.Longitude)));
+                    FlightPath = new ObservableCollection<Location>(_flight.FlightEvents
+                        .OrderBy(e => e.ID)
+                        .Select(e => new Location(e.Latitude, e.Longitude)));
 
                     _sb.Clear()
                         .AppendLine($"Departed From: {_flight.DepartureAirport}");
@@ -71,6 +74,8 @@ namespace FSTRaK.ViewModels
                 }
             } 
         }
+
+        public ObservableCollection<Location> FlightPath { get; private set; }
 
         private string _flightParams;
             
@@ -126,7 +131,7 @@ namespace FSTRaK.ViewModels
 
                     if(Properties.Settings.Default.Units.Equals((int)Units.Metric))
                     {
-                        totalFuelUsed = totalFuelUsed * DataTypes.Consts.LbsToKgs;
+                        totalFuelUsed *= DataTypes.Consts.LbsToKgs;
                         units = "Kg";
                     }
 
@@ -166,7 +171,33 @@ namespace FSTRaK.ViewModels
             }
         }
 
-        public ObservableCollection<Location> FlightPath { get; private set; }
+        private bool _isShowPath = true;
+        public bool IsShowPath { get 
+            {
+                return _isShowPath;
+            } 
+            set
+            {
+                _isShowPath = value;
+                OnPropertyChanged();
+            }
+        }
+
+        private bool _isShowFlightDetails = true;
+        public bool IsShowFlightDetails
+        {
+            get
+            {
+                return _isShowFlightDetails;
+            }
+            set
+            {
+                _isShowFlightDetails = value;
+                OnPropertyChanged();
+            }
+        }
+
+        
         public FlightDetailsViewModel()
         {
             _sb = new StringBuilder();

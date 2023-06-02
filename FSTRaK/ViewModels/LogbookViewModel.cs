@@ -55,9 +55,6 @@ namespace FSTRaK.ViewModels
             } 
         }
 
-        public LocationCollection FlightPath = new LocationCollection();
-
-
         public LogbookViewModel() 
         {
             Flights = new ObservableCollection<Flight>();

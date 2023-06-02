@@ -11,8 +11,6 @@
         Loaded="OnLoaded"
              Unloaded="OnUnLoaded"
       >
-
-
         <Grid Margin="0,0,0,0">
 
             <Grid Grid.Row="1" HorizontalAlignment="Stretch" VerticalAlignment="Stretch">
@@ -29,16 +27,26 @@
                         Locations="{Binding FlightPath}" 
                         Stroke="Red" StrokeThickness="2" 
                         StrokeLineJoin="round"
+                        Visibility="{Binding IsShowPath, Converter={StaticResource BoolToVis}}"
                         />
                 </map:Map>
                 <StackPanel Orientation="Horizontal" Margin="10">
-                    <StackPanel HorizontalAlignment="left">
+                <StackPanel HorizontalAlignment="left" Visibility="{Binding IsShowFlightDetails, Converter={StaticResource BoolToVis}}">
                         <views:OverlayTextCardControl Grid.Row="4" Grid.Column="3"  Header="Aircraft:" Text="{Binding Flight.Aircraft.Title}"/>
                         <views:OverlayTextCardControl Grid.Row="4" Grid.Column="3"  Header="{Binding Flight.Aircraft.AircraftType}" Text="{Binding Flight.Aircraft.Model}"/>
-
                         <views:OverlayTextCardControl Grid.Row="4" Grid.Column="3"  Header="Flight Parameters:" Text="{Binding FlightParams}"/>
                     </StackPanel>
                 </StackPanel>
-            </Grid>
+            <StackPanel Margin="10" HorizontalAlignment="Right">
+                <ToggleButton Style="{StaticResource MapToggleButton}" 
+                          IsChecked="{Binding IsShowPath, Mode=TwoWay}" 
+                          Content="{StaticResource PathButton}">
+                </ToggleButton>
+                <ToggleButton Style="{StaticResource MapToggleButton}" 
+                          IsChecked="{Binding IsShowFlightDetails, Mode=TwoWay}" 
+                          Content="{StaticResource detailsButton}">
+                </ToggleButton>
+            </StackPanel>
+        </Grid>
         </Grid>
 </UserControl>

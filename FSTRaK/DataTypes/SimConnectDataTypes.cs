@@ -1,4 +1,5 @@
 ﻿
+using System.Collections.Generic;
 using System.Linq;
 using System.Runtime.InteropServices;
 
@@ -71,9 +72,10 @@ namespace FSTRaK.DataTypes
 
     public enum EVENTS
     {
-        FLIGHT_LOADED,
-        PAUSE,
-        CRASHED
+        FlightLoaded,
+        AircraftLoaded,
+        Pause,
+        Crashed
     }
 
     [StructLayout(LayoutKind.Sequential, CharSet = CharSet.Ansi, Pack = 1)]
@@ -145,7 +147,10 @@ namespace FSTRaK.DataTypes
 
         public double MinThrottlePosition()
         {
-            return new double[] { Throttle1Position, Throttle1Position, Throttle2Position, Throttle3Position }.Min();
+            var thorttlePositionArray = new List<double>( new double[] { Throttle1Position, Throttle1Position, Throttle2Position, Throttle3Position });
+            if (NumberOfEngines == 0)
+                return 0;
+            return thorttlePositionArray.GetRange(0,NumberOfEngines).Min();
         }
 
     }
