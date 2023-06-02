@@ -5,6 +5,7 @@ using FSTRaK.Models;
 using MapControl;
 using Serilog;
 using System;
+using System.Collections.Generic;
 using System.Collections.ObjectModel;
 using System.Linq;
 using System.Text;
@@ -70,6 +71,7 @@ namespace FSTRaK.ViewModels
 
                     OnPropertyChanged();
                     OnPropertyChanged(nameof(FlightPath));
+                    OnPropertyChanged(nameof(AltSpeedGroundAltDictionary));
                 }
             } 
         }
@@ -87,6 +89,23 @@ namespace FSTRaK.ViewModels
                 _flightParams = value; 
                 OnPropertyChanged();
             }
+        }
+
+        public Dictionary<double, double[]> AltSpeedGroundAltDictionary
+        {
+            get 
+            {
+                Dictionary<double, double[]> altSpeedGroundDictionary = new Dictionary<double, double[]>();
+
+                foreach (var e in _flight.FlightEvents.OrderBy(e => e.Time).GroupBy(e => (e.Time - new DateTime(1970, 1, 1)).TotalMilliseconds).Select(g => g.First()))
+                {
+                    double[] altSpeedGroundArray = new double[] { e.Altitude, e.GroundSpeed, e.GroundAltitude };
+                    altSpeedGroundDictionary.Add(e.Time.ToOADate(), altSpeedGroundArray);
+                }
+
+                return altSpeedGroundDictionary;
+            }
+            private set { }
         }
 
 
