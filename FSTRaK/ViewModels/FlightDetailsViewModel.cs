@@ -3,14 +3,13 @@
 using FSTRaK.DataTypes;
 using FSTRaK.Models;
 using MapControl;
-using OxyPlot;
 using Serilog;
 using System;
 using System.Collections.ObjectModel;
 using System.Linq;
 using System.Text;
 using System.Windows;
-using System.Windows.Navigation;
+using System.Windows.Documents;
 
 namespace FSTRaK.ViewModels
 {
@@ -71,25 +70,11 @@ namespace FSTRaK.ViewModels
 
                     OnPropertyChanged();
                     OnPropertyChanged(nameof(FlightPath));
-                    OnPropertyChanged(nameof(Altitudes));
-
                 }
             } 
         }
 
         public ObservableCollection<Location> FlightPath { get; private set; }
-
-        public ObservableCollection<DataPoint> Altitudes {
-            get 
-            { 
-                if(_flight == null)
-                    return new ObservableCollection<DataPoint>();
-                var altitudes = new ObservableCollection<DataPoint>(_flight.FlightEvents.OrderBy(e => e.ID).Select(e => new DataPoint(e.ID, e.Altitude)));
-                return altitudes;
-            }
-            private set
-            { } 
-        }
 
 
         private string _flightParams;
