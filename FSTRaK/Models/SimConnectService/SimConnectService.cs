@@ -105,6 +105,19 @@ namespace FSTRaK
             }
         }
 
+        private string _loadedAircraft = string.Empty;
+        public string LoadedAircraft
+        {
+            get => _loadedAircraft;
+            private set
+            {
+                if (value != _loadedAircraft)
+                {
+                    _loadedAircraft = value;
+                    OnPropertyChanged();
+                }
+            }
+        }
 
 
         private AircraftFlightData _flightData;
@@ -303,6 +316,7 @@ namespace FSTRaK
             };
             if (data.uEventID == (uint)EVENTS.AircraftLoaded)
             {
+                LoadedAircraft = data.szFileName;
                 Log.Debug(data.szFileName);
             };
 

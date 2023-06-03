@@ -14,7 +14,10 @@ namespace FSTRaK.Models
         public string Title { get; set; } 
         
         public String AircraftType { get; set; }
-    
+
+        public String Manufacturer { get; set; }
+
+
         public String Airline { get; set; }
         public String Model { get; set; }
         public String TailNumber { get; set; }

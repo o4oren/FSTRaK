@@ -147,7 +147,7 @@ namespace FSTRaK.Models.FlightManager
                     }
                     catch (Exception ex)
                     {
-                        Log.Error(ex, "Unhandled error occured!");
+                        Log.Error(ex, "An error occured while trying to persist the flight!");
                     }
                 }
             });

@@ -21,11 +21,7 @@ namespace FSTRaK.Views
         {
             InitializeComponent();
             logbookMap.AnimationDuration = new TimeSpan(0, 0, 0, 0, 600);
-
-                
         }
-
-
 
         private void OnLoaded(object s, RoutedEventArgs e)
         {

@@ -255,7 +255,7 @@ namespace FSTRaK.ViewModels
 
 
                     // Begining of flight
-                    if (_flightManager.State is FlightStartedState && ActiveFlight != null)
+                    if (_flightManager.State is FlightStartedState && ActiveFlight != null && ActiveFlight.Aircraft != null)
                     {
                         Title = $"Aircraft: {ActiveFlight.Aircraft.Title}";
                         Model = $"Model: {ActiveFlight.Aircraft.Model}";

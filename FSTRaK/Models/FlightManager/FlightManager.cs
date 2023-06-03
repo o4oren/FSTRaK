@@ -142,6 +142,11 @@ namespace FSTRaK.Models.FlightManager
             }
         }
 
+        public string GetLoadedAircraftFileName()
+        {
+            return _simConnectService.LoadedAircraft;
+        }
+
         internal void RequestNearestAirports(NearestAirportRequestType nearestAirportRequestType)
         {
             _nearestAirportRequestType = nearestAirportRequestType;
