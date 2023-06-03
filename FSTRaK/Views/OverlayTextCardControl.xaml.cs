@@ -36,5 +36,5 @@ namespace FSTRaK.Views
     public static readonly DependencyProperty TextProperty =
         DependencyProperty.Register("Text", typeof(string), typeof(OverlayTextCardControl), new PropertyMetadata(default(string)));
 
-    }
+    }   
 }

@@ -1,4 +1,5 @@
 ﻿using System;
+using System.ComponentModel.DataAnnotations.Schema;
 
 namespace FSTRaK.Models
 {
@@ -7,6 +8,7 @@ namespace FSTRaK.Models
     /// </summary>
     internal abstract class ScoringEvent : BaseFlightEvent
     {
-        public abstract int ScoreDelta { get; set; }
+        public int ScoreDelta { get; set; } = 0;
+        [NotMapped] public abstract string EventName { get; set; }
     }
 }

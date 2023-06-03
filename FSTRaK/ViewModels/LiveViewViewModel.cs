@@ -6,6 +6,7 @@ using System;
 using System.Collections.ObjectModel;
 using System.ComponentModel;
 using System.Linq;
+using System.Text;
 using System.Windows;
 
 namespace FSTRaK.ViewModels
@@ -24,50 +25,6 @@ namespace FSTRaK.ViewModels
                 if (_flightManager.ActiveFlight != null)
                     return _flightManager.ActiveFlight;
                 return null;
-            }
-        }
-
-        private string _title;
-        public string Title
-        {
-            get { return _title; }
-            set
-            {
-                _title = value;
-                OnPropertyChanged();
-            }
-        }
-
-        private string _model;
-        public string Model
-        {
-            get { return _model; }
-            set
-            {
-                _model = value;
-                OnPropertyChanged();
-            }
-        }
-
-        private string _airline;
-        public string Airline
-        {
-            get { return _airline; }
-            set
-            {
-                _airline = value;
-                OnPropertyChanged();
-            }
-        }
-
-        private string _type;
-        public string Type
-        {
-            get { return _type; }
-            set
-            {
-                _type = value;
-                OnPropertyChanged();
             }
         }
 
@@ -253,15 +210,6 @@ namespace FSTRaK.ViewModels
                         LastSegmentLine = lastSegment;
                     }
 
-
-                    // Begining of flight
-                    if (_flightManager.State is FlightStartedState && ActiveFlight != null && ActiveFlight.Aircraft != null)
-                    {
-                        Title = $"Aircraft: {ActiveFlight.Aircraft.Title}";
-                        Model = $"Model: {ActiveFlight.Aircraft.Model}";
-                        Type = $"Type: {ActiveFlight.Aircraft.AircraftType}";
-                        Airline = $"Airline: {ActiveFlight.Aircraft.Airline}";
-                    }
 
                     OnPropertyChanged(nameof(_flightManager.ActiveFlight));
                     OnPropertyChanged(nameof(Location));

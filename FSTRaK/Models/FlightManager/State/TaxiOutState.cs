@@ -11,7 +11,7 @@ namespace FSTRaK.Models.FlightManager
         
         public TaxiOutState(FlightManager Context) : base(Context)
         {
-            this._eventInterval = 5000;
+            this._eventInterval = 10000;
             this.Name = "Taxi Out";
             this.IsMovementState = true;
         }

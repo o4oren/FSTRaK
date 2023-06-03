@@ -1,10 +1,6 @@
 ﻿using FSTRaK.DataTypes;
-using System;
-using System.Collections.Generic;
 using System.ComponentModel.DataAnnotations.Schema;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
+
 
 namespace FSTRaK.Models
 {
@@ -21,6 +17,8 @@ namespace FSTRaK.Models
 
         public double TouchDownPitchDegrees { get; set; }
         public double TouchDownBankDegress { get; set; }
-        public override int ScoreDelta { get; set; }
+
+        [NotMapped] public override string EventName { get; set; } = "Landing";
+
     }
 }

@@ -57,7 +57,7 @@ namespace FSTRaK.Models.FlightManager
                 Context.ActiveFlight.FlightTime = flightTime;
                 Context.ActiveFlight.FlightDistanceInMeters = FlightPathLength(Context.ActiveFlight.FlightEvents);
 
-                CalculateScore();
+                Context.ActiveFlight.UpdateScore();
 
                 if (Context.ActiveFlight.FlightOutcome == FlightOutcome.Completed || !Properties.Settings.Default.IsSaveOnlyCompleteFlights)
                 {
@@ -69,25 +69,6 @@ namespace FSTRaK.Models.FlightManager
             if (_isEnded && Data.MaxEngineRpmPct() > 5 && Context.ActiveFlight.FlightOutcome != FlightOutcome.Crashed)
             {
                 Context.State = new FlightStartedState(Context);
-            }
-        }
-
-        private void CalculateScore()
-        {
-            var uniqueScoringEvents = Context.ActiveFlight.FlightEvents
-                .OfType<ScoringEvent>()
-                .GroupBy(e => e.GetType())
-                .Select(e => (ScoringEvent)e.First())
-                .ToList<ScoringEvent>();
-
-            var scoringDelta = uniqueScoringEvents.Sum(e => e.ScoreDelta);
-
-            Context.ActiveFlight.Score = MathUtils.Clamp(100 + scoringDelta, 0, 100);
-
-            StringBuilder sb = new StringBuilder();
-            foreach (var item in uniqueScoringEvents)
-            {
-                sb.AppendLine($"{item.Time} {item.GetType().ToString()} {item.ScoreDelta}");
             }
         }
 

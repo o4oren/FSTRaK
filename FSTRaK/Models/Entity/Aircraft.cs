@@ -1,8 +1,8 @@
 ﻿using FSTRaK.DataTypes;
 using System;
 using System.Collections.Generic;
-using System.ComponentModel.DataAnnotations;
 using System.ComponentModel.DataAnnotations.Schema;
+using System.Text;
 
 namespace FSTRaK.Models
 {
@@ -36,6 +36,17 @@ namespace FSTRaK.Models
             {
                 return ((Aircraft)obj).Title == this.Title;
             }
+        }
+
+        public override string ToString()
+        {
+            StringBuilder builder = new StringBuilder();
+            builder.AppendLine(this.Title)
+            .AppendLine($"{this.Manufacturer} {this.AircraftType}")
+            .AppendLine(this.TailNumber);
+            if (this.Airline != string.Empty)
+                builder.AppendLine(this.Airline);
+            return builder.ToString();
         }
 
         public override int GetHashCode()

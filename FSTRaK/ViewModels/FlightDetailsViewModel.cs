@@ -7,7 +7,9 @@ using Serilog;
 using System;
 using System.Collections.Generic;
 using System.Collections.ObjectModel;
+using System.ComponentModel;
 using System.Linq;
+using System.Runtime.CompilerServices;
 using System.Text;
 using System.Windows;
 using System.Windows.Documents;
@@ -68,6 +70,8 @@ namespace FSTRaK.ViewModels
                     var boundingBox = new BoundingBox(minLat, minLon, maxLat, maxLon);
                     Log.Debug($"{boundingBox.Center} {boundingBox.Width}");
                     ViewPort = boundingBox;
+
+                    ScoreboardText = _flight.GetScoreDetails();
 
                     OnPropertyChanged();
                     OnPropertyChanged(nameof(FlightPath));
@@ -240,7 +244,32 @@ namespace FSTRaK.ViewModels
             }
         }
 
-        
+        private bool _isShowScoreboard = false;
+        public bool IsShowScoreboard
+        {
+            get
+            {
+                return _isShowScoreboard;
+            }
+            set
+            {
+                _isShowScoreboard = value;
+                OnPropertyChanged();
+            }
+        }
+
+        private string scoreboardText;
+
+        public string ScoreboardText 
+        { 
+            get => scoreboardText;
+            set {
+                scoreboardText = value;
+                OnPropertyChanged();
+            }
+        }
+
+
 
         public FlightDetailsViewModel()
         {

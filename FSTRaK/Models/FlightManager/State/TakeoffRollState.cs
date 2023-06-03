@@ -12,7 +12,7 @@ namespace FSTRaK.Models.FlightManager
         public TakeoffRollState
             (FlightManager Context) : base(Context)
         {
-            this._eventInterval = 2000;
+            this._eventInterval = 5000;
             this.Name = "Takeoff Roll";
             this.IsMovementState = true;
         }

@@ -8,7 +8,7 @@
              xmlns:map="clr-namespace:MapControl;assembly=MapControl.WPF"  
              xmlns:oxy="http://oxyplot.org/wpf" 
              d:DataContext="{d:DesignInstance Type=viewmodels:FlightDetailsViewModel}"
-             d:DesignHeight="450" d:DesignWidth="800"
+             d:DesignHeight="600" d:DesignWidth="800"
              mc:Ignorable="d" 
         Loaded="OnLoaded"
              Unloaded="OnUnLoaded"
@@ -34,10 +34,11 @@
                 </map:Map>
                 <StackPanel Orientation="Horizontal" Margin="10">
                 <StackPanel HorizontalAlignment="left" Visibility="{Binding IsShowFlightDetails, Converter={StaticResource BoolToVis}}">
-                        <views:OverlayTextCardControl Grid.Row="4" Grid.Column="3"  Header="Aircraft:" Text="{Binding Flight.Aircraft.Title}"/>
-                        <views:OverlayTextCardControl Grid.Row="4" Grid.Column="3"  Header="{Binding Flight.Aircraft.AircraftType}" Text="{Binding Flight.Aircraft.Model}"/>
-                        <views:OverlayTextCardControl Grid.Row="4" Grid.Column="3"  Header="Flight Parameters:" Text="{Binding FlightParams}"/>
-                    </StackPanel>
+                    <views:OverlayTextCardControl Grid.Row="4" Grid.Column="3"  Header="Aircraft:" Text="{Binding Flight.Aircraft}"/>
+                    <views:OverlayTextCardControl Grid.Row="4" Grid.Column="3"  Header="Flight Parameters:" Text="{Binding FlightParams}"/>
+                    <views:OverlayTextCardControl Grid.Row="4" Grid.Column="3"  Header="Scoreboard:" Text="{Binding ScoreboardText}" Visibility="{Binding IsShowScoreboard, Converter={StaticResource BoolToVis}}"/>
+
+                </StackPanel>
                 </StackPanel>
                 <StackPanel Margin="10" HorizontalAlignment="Right">
                     <ToggleButton Style="{StaticResource MapToggleButton}" 
@@ -51,6 +52,10 @@
                 <ToggleButton Style="{StaticResource MapToggleButton}" 
                               IsChecked="{Binding IsShowAltSpeedCharts, Mode=TwoWay}" 
                               Content="{StaticResource chartsButton}">
+                </ToggleButton>
+                <ToggleButton Style="{StaticResource MapToggleButton}" 
+                              IsChecked="{Binding IsShowScoreboard, Mode=TwoWay}" 
+                              Content="{StaticResource Scoreboard}">
                 </ToggleButton>
             </StackPanel>
             <Grid Margin="10" HorizontalAlignment="Center" VerticalAlignment="Bottom" Visibility="{Binding IsShowAltSpeedCharts, Converter={StaticResource BoolToVis}}">

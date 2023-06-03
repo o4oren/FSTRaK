@@ -14,5 +14,7 @@ namespace FSTRaK.Models
         [Column("FuelWeightLbs")]
         public double FuelWeightLbs { get; set; }
 
+
+
     }
 }

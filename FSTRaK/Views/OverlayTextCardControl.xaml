@@ -32,7 +32,7 @@
                        />
             <TextBlock Grid.Row="1"                                        
                        Foreground="{StaticResource BrightTextColor}"
-                       FontSize="24"
+                       FontSize="22"
                        Margin="5"
                        FontFamily="{StaticResource Slopes}"
                        TextWrapping="Wrap"

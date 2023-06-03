@@ -5,6 +5,12 @@ namespace FSTRaK.Models
 {
     internal class CrashEvent : ScoringEvent
     {
-        public override int ScoreDelta { get; set; } = -100;
+
+        [NotMapped] public override string EventName { get; set; } = "Crashed";
+
+        public CrashEvent() 
+        {
+            ScoreDelta = -100;
+        }
     }
 }

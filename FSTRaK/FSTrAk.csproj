@@ -250,7 +250,6 @@
     <None Include="Properties\DataSources\FSTRaK.Models.CrashEvent.datasource" />
     <None Include="Properties\DataSources\FSTRaK.Models.Flight.datasource" />
     <None Include="Properties\DataSources\FSTRaK.Models.FlightEndedEvent.datasource" />
-    <None Include="Properties\DataSources\FSTRaK.Models.FlightEvent.datasource" />
     <None Include="Properties\DataSources\FSTRaK.Models.FlightStartedEvent.datasource" />
     <None Include="Properties\DataSources\FSTRaK.Models.LandingEvent.datasource" />
     <None Include="Properties\DataSources\FSTRaK.Models.ParkingEvent.datasource" />

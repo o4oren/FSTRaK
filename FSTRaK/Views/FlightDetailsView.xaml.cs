@@ -78,7 +78,7 @@ namespace FSTRaK.Views
 
                         var altPlot = AltSpeedChart.Plot.AddScatter(timeX, altY);
                         altPlot.Label ="Altitude";
-                        altPlot.Smooth = true;
+                        altPlot.Smooth = false;
                         altPlot.MarkerSize = 0;
                         altPlot.LineWidth = 2;
 
@@ -90,9 +90,9 @@ namespace FSTRaK.Views
 
                         var speedPlot = AltSpeedChart.Plot.AddScatter(timeX, speedY);
                         speedPlot.Label = "Ground Speed";
-                        speedPlot.Smooth = true;
+                        speedPlot.Smooth = false;
                         speedPlot.YAxisIndex = 2;
-                        speedPlot.Smooth = true;
+                        speedPlot.Smooth = false;
                         speedPlot.MarkerSize = 0;
                         speedPlot.LineWidth = 2;
 
