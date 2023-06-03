@@ -89,7 +89,7 @@ namespace FSTRaK.Models.FlightManager
                     Aircraft aircraft;
                     try
                     {
-                        // If aircraft is already in the db, let's use that instead.
+                        // If aircraft is already in the db, let's use the existing records instead.
                         aircraft = logbookContext.Aircraft.Where(a => a.Title == Data.title).FirstOrDefault();
                         if (aircraft != null)
                         {
@@ -112,7 +112,7 @@ namespace FSTRaK.Models.FlightManager
                             aircraft = logbookContext.Aircraft.Add(aircraft);
                             flight.Aircraft = aircraft;
 
-                            // The data returned in somconnect simvars in not consistent, so we will try to fill data from the loaded aircraft file.
+                            // The data returned in simconnect simvars in not consistent, so we will try to fill data from the loaded aircraft file.
                             var filename = Context.GetLoadedAircraftFileName();
 
                             using (var fileStream = File.OpenRead(filename))
