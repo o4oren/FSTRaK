@@ -104,6 +104,8 @@ namespace FSTRaK.Views
                         AltSpeedChart.Refresh();
                     }
                     break;
+
+
             }
         }
 

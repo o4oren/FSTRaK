@@ -9,6 +9,5 @@ namespace FSTRaK.Models
     internal abstract class ScoringEvent : BaseFlightEvent
     {
         public int ScoreDelta { get; set; } = 0;
-        [NotMapped] public abstract string EventName { get; set; }
     }
 }

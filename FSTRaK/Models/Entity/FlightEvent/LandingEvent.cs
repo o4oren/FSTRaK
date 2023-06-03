@@ -20,5 +20,10 @@ namespace FSTRaK.Models
 
         [NotMapped] public override string EventName { get; set; } = "Landing";
 
+        public override string ToString()
+        {
+            return $"{LandingRate}\n" + base.ToString() + $"\n{VerticalSpeed:F0} ft/m";
+        }
+
     }
 }

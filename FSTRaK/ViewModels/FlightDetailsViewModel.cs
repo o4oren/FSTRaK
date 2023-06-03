@@ -3,16 +3,14 @@
 using FSTRaK.DataTypes;
 using FSTRaK.Models;
 using MapControl;
+using ScottPlot;
 using Serilog;
 using System;
 using System.Collections.Generic;
 using System.Collections.ObjectModel;
-using System.ComponentModel;
+using System.Diagnostics.Eventing.Reader;
 using System.Linq;
-using System.Runtime.CompilerServices;
-using System.Text;
 using System.Windows;
-using System.Windows.Documents;
 
 namespace FSTRaK.ViewModels
 {
@@ -52,11 +50,35 @@ namespace FSTRaK.ViewModels
 
                     FlightParams = _flight.ToString();
 
+                    GeneratePushpins();
+
                     OnPropertyChanged();
                     OnPropertyChanged(nameof(FlightPath));
                     OnPropertyChanged(nameof(AltSpeedGroundAltDictionary));
                 }
             } 
+        }
+
+        private void GeneratePushpins()
+        {
+            var markerEvents = _flight.FlightEvents.Where(e => e is ScoringEvent || e is TakeoffEvent);
+            MarkerList.Clear();
+            foreach (var e in markerEvents)
+            {
+                FlightEventPushpin pin = new FlightEventPushpin();
+                if(e is ScoringEvent @event)
+                {
+                    if (@event.ScoreDelta < -15)
+                        pin.Color = "Red";
+                    else if (@event.ScoreDelta < 0)
+                        pin.Color = "Yellow";
+
+
+                }
+                pin.Text = e.ToString();
+                pin.Location = $"{e.Latitude},{e.Longitude}";
+                MarkerList.Add(pin);
+            }
         }
 
         public ObservableCollection<Location> FlightPath { get; private set; }
@@ -74,13 +96,14 @@ namespace FSTRaK.ViewModels
             }
         }
 
-        private ObservableCollection<BaseFlightEvent> _markerList;
+        private ObservableCollection<FlightEventPushpin> _markerList = new ObservableCollection<FlightEventPushpin>();
 
-        public ObservableCollection<BaseFlightEvent> MarkerList
+        public ObservableCollection<FlightEventPushpin> MarkerList
         {
             get { return _markerList; }
             set
             {
+                
                 _markerList = value;
                 OnPropertyChanged();
             }
@@ -228,6 +251,15 @@ namespace FSTRaK.ViewModels
                 scoreboardText = value;
                 OnPropertyChanged();
             }
+        }
+
+        public class FlightEventPushpin
+        {
+            public string Location { get; set; }
+            public string Text { get; set; } = string.Empty;
+
+            public string Color { get; set; } = "Green";
+
         }
     }
 }

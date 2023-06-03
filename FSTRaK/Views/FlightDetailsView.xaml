@@ -6,13 +6,41 @@
              xmlns:viewmodels="clr-namespace:FSTRaK.ViewModels" 
              xmlns:views="clr-namespace:FSTRaK.Views" 
              xmlns:map="clr-namespace:MapControl;assembly=MapControl.WPF"  
-             xmlns:oxy="http://oxyplot.org/wpf" 
              d:DataContext="{d:DesignInstance Type=viewmodels:FlightDetailsViewModel}"
              d:DesignHeight="600" d:DesignWidth="800"
              mc:Ignorable="d" 
         Loaded="OnLoaded"
              Unloaded="OnUnLoaded"
       >
+    <UserControl.Resources>
+        <Style x:Key="PushpinItemStyle" TargetType="map:MapItem">
+            <Setter Property="AutoCollapse" Value="True"/>
+            <Setter Property="Location" Value="{Binding Location}"/>
+            <Setter Property="HorizontalAlignment" Value="Center"/>
+            <Setter Property="VerticalAlignment" Value="Bottom"/>
+            <Setter Property="Template">
+                <Setter.Value>
+                    <ControlTemplate TargetType="map:MapItem">
+                        <map:MapItem Location="{Binding Location}">
+                            <Canvas Width="50" Height="80">
+                                <Path Data="M 0,0 L 50,0 50,50 25,80 0,50 0,0" Fill="{Binding Color}" Stroke="Wheat" StrokeThickness="2" />
+                                <TextBlock FontSize="10" Foreground="White" Margin="5" TextAlignment="Center">
+                         <ContentControl Content="{Binding Text}"/>
+                         
+                                </TextBlock>
+                            </Canvas>
+                        </map:MapItem>
+                    </ControlTemplate>
+                </Setter.Value>
+            </Setter>
+            <Style.Triggers>
+                <Trigger Property="IsSelected" Value="True">
+                    <Setter Property="Panel.ZIndex" Value="1"/>
+                    <Setter Property="Foreground" Value="OrangeRed"/>
+                </Trigger>
+            </Style.Triggers>
+        </Style>
+    </UserControl.Resources>
         <Grid Margin="0,0,0,0">
 
             <Grid Grid.Row="1" HorizontalAlignment="Stretch" VerticalAlignment="Stretch">
@@ -22,7 +50,8 @@
                  ZoomLevel="3" 
                  Center="51,0"
                  MapProjection="{StaticResource WebMercatorProjection}"
-                 Margin="10,10,10,10">
+                 Margin="10,10,10,10"
+                         >
                     <map:MapScale Opacity="0.5" HorizontalAlignment="Right" VerticalAlignment="Bottom" Margin="5" />
                     <!-- map:MapGraticule Opacity="0.5"/ -->
                     <map:MapPolyline 
@@ -31,7 +60,10 @@
                         StrokeLineJoin="round"
                         Visibility="{Binding IsShowPath, Converter={StaticResource BoolToVis}}"
                         />
-                </map:Map>
+                <map:MapItemsControl ItemsSource="{Binding MarkerList}" ItemContainerStyle="{StaticResource PushpinItemStyle}"/>
+
+                    
+            </map:Map>
                 <StackPanel Orientation="Horizontal" Margin="10">
                 <StackPanel HorizontalAlignment="left" Visibility="{Binding IsShowFlightDetails, Converter={StaticResource BoolToVis}}">
                     <views:OverlayTextCardControl Grid.Row="4" Grid.Column="3"  Header="Aircraft:" Text="{Binding Flight.Aircraft}"/>
