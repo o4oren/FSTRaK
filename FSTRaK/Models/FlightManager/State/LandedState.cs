@@ -31,7 +31,7 @@ namespace FSTRaK.Models.FlightManager
             if (landingData.VerticalSpeed < -500)
             {
                 le.LandingRate = LandingRate.Hard;
-                le.ScoreDelta = -20;
+                le.ScoreDelta = -25;
             }
             else if (landingData.VerticalSpeed < -350)
             {
@@ -45,7 +45,7 @@ namespace FSTRaK.Models.FlightManager
             else if (landingData.VerticalSpeed < -175)
             {
                 le.LandingRate = LandingRate.Perfect;
-                le.ScoreDelta = 20;
+                le.ScoreDelta = 10;
             }
             else if (landingData.VerticalSpeed < -125)
             {

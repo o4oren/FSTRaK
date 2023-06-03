@@ -8,6 +8,7 @@ using System.Linq;
 using System.Runtime.Remoting.Contexts;
 using System.Text;
 using System.Windows.Documents;
+using System.Windows.Media.Media3D;
 
 namespace FSTRaK.Models
 {
@@ -53,7 +54,35 @@ namespace FSTRaK.Models
 
         public override string ToString()
         {
-            return ID.ToString();
+            StringBuilder sb = new StringBuilder();
+            sb.AppendLine($"Departed From: {this.DepartureAirport}");
+
+            if (this.FlightOutcome == FlightOutcome.Crashed)
+            {
+                sb.AppendLine(($"Crashed Near {this.ArrivalAirport}"));
+            }
+            else
+            {
+                sb.AppendLine(($"Arrived At: {this.ArrivalAirport}"));
+            }
+
+            sb.AppendLine($"Start Time: {this.StartTime}")
+            .AppendLine($"End Time: {this.EndTime}")
+            .AppendLine($"Block Time: {this.FlightTime}")
+            .AppendLine($"Fuel Used: {TotalFuelUsed}")
+            .AppendLine($"Flown Distance VSI: {FlightDistanceInMeters * Consts.MetersToNauticalMiles} NM");
+
+            var landingEvent = (LandingEvent)this.FlightEvents.FirstOrDefault(e => e is LandingEvent);
+            if (landingEvent != null)
+            {
+                sb.AppendLine($"{landingEvent.VerticalSpeed:F0} ft/m");
+            }
+
+            
+            sb.AppendLine($"Score: {this.Score}")
+            .ToString();
+
+            return sb.ToString();
         }
 
         /// <summary>

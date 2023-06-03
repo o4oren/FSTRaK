@@ -19,7 +19,6 @@ namespace FSTRaK.ViewModels
     internal class FlightDetailsViewModel : BaseViewModel
     {
         private Flight _flight;
-        StringBuilder _sb;
         public Flight Flight { 
             get 
             {
@@ -34,28 +33,6 @@ namespace FSTRaK.ViewModels
                     FlightPath = new ObservableCollection<Location>(_flight.FlightEvents
                         .OrderBy(e => e.ID)
                         .Select(e => new Location(e.Latitude, e.Longitude)));
-
-                    _sb.Clear()
-                        .AppendLine($"Departed From: {_flight.DepartureAirport}");
-                        
-                    if(_flight.FlightOutcome == FlightOutcome.Crashed)
-                    {
-                        _sb.AppendLine(($"Crashed Near {_flight.ArrivalAirport}"));
-                    } else
-                    {
-                        _sb.AppendLine(($"Arrived At: {_flight.ArrivalAirport}"));
-                    }
-
-                        _sb.AppendLine($"Start Time: {_flight.StartTime}")
-                        .AppendLine($"End Time: {_flight.EndTime}")
-                        .AppendLine($"Block Time: {_flight.FlightTime}")
-                        .AppendLine($"Fuel Used: {TotalFuelUsed}")
-                        .AppendLine($"Flown Distance VSI: {FlightDistance}")
-                        .AppendLine($"Landing VSI: {LandingVerticalSpeed}")
-                        .AppendLine($"Score: {_flight.Score}")
-                        .ToString();
-
-                    FlightParams = _sb.ToString();
 
                     double minLon = Double.MaxValue, minLat = Double.MaxValue, maxLon = Double.MinValue, maxLat = Double.MinValue;
 
@@ -73,6 +50,8 @@ namespace FSTRaK.ViewModels
 
                     ScoreboardText = _flight.GetScoreDetails();
 
+                    FlightParams = _flight.ToString();
+
                     OnPropertyChanged();
                     OnPropertyChanged(nameof(FlightPath));
                     OnPropertyChanged(nameof(AltSpeedGroundAltDictionary));
@@ -88,9 +67,21 @@ namespace FSTRaK.ViewModels
         public string FlightParams
         {
             get { return _flightParams; }
-            set 
+            private set 
             {
                 _flightParams = value; 
+                OnPropertyChanged();
+            }
+        }
+
+        private ObservableCollection<BaseFlightEvent> _markerList;
+
+        public ObservableCollection<BaseFlightEvent> MarkerList
+        {
+            get { return _markerList; }
+            set
+            {
+                _markerList = value;
                 OnPropertyChanged();
             }
         }
@@ -123,36 +114,6 @@ namespace FSTRaK.ViewModels
         }
 
 
-        public string LandingVerticalSpeed
-        {
-            get
-            {
-                if(_flight != null)
-                {
-                    var landingEvent = (LandingEvent)_flight.FlightEvents.FirstOrDefault(e => e is LandingEvent);
-                    if (landingEvent != null)
-                    {
-                        return $"{landingEvent.VerticalSpeed:F0} ft/m";
-                    }
-                }
-
-                return "";
-            }
-        }
-
-        public string FlightDistance
-        {
-            get
-            {
-                if (_flight != null)
-                {
-                    var distanceInNM = _flight.FlightDistanceInMeters * Consts.MetersToNauticalMiles;
-                        return $"{distanceInNM:F2} NM";
-                }
-
-                return "";
-            }
-        }
         public string TotalFuelUsed
         {
             get
@@ -267,13 +228,6 @@ namespace FSTRaK.ViewModels
                 scoreboardText = value;
                 OnPropertyChanged();
             }
-        }
-
-
-
-        public FlightDetailsViewModel()
-        {
-            _sb = new StringBuilder();
         }
     }
 }
