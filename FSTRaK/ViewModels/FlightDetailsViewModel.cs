@@ -95,12 +95,22 @@ namespace FSTRaK.ViewModels
         {
             get 
             {
+                // Building a dictionaty where keys are the timestamp and values are arrays of groundspeed altitude and ground altitude.
                 Dictionary<double, double[]> altSpeedGroundDictionary = new Dictionary<double, double[]>();
-
-                foreach (var e in _flight.FlightEvents.OrderBy(e => e.Time).GroupBy(e => (e.Time - new DateTime(1970, 1, 1)).TotalMilliseconds).Select(g => g.First()))
+                var movementTime = _flight.FlightEvents.Where(e => e is TaxiOutEvent).FirstOrDefault(); 
+                if(movementTime != null)
                 {
-                    double[] altSpeedGroundArray = new double[] { e.Altitude, e.GroundSpeed, e.GroundAltitude };
-                    altSpeedGroundDictionary.Add(e.Time.ToOADate(), altSpeedGroundArray);
+                    var dataPoints = _flight.FlightEvents
+                        .Where(e => e.Time > movementTime.Time)
+                        .OrderBy(e => e.Time)
+                        .GroupBy(e => (e.Time - new DateTime(1970, 1, 1))
+                        .TotalMilliseconds)
+                        .Select(g => g.First());
+                foreach (var e in dataPoints)
+                    {
+                        double[] altSpeedGroundArray = new double[] { e.Altitude, e.GroundSpeed, e.GroundAltitude };
+                        altSpeedGroundDictionary.Add(e.Time.ToOADate(), altSpeedGroundArray);
+                    }
                 }
 
                 return altSpeedGroundDictionary;
@@ -216,7 +226,22 @@ namespace FSTRaK.ViewModels
             }
         }
 
+        private bool _isShowAltSpeedCharts = false;
+        public bool IsShowAltSpeedCharts
+        {
+            get
+            {
+                return _isShowAltSpeedCharts;
+            }
+            set
+            {
+                _isShowAltSpeedCharts = value;
+                OnPropertyChanged();
+            }
+        }
+
         
+
         public FlightDetailsViewModel()
         {
             _sb = new StringBuilder();

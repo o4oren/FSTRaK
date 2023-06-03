@@ -48,9 +48,16 @@
                               IsChecked="{Binding IsShowFlightDetails, Mode=TwoWay}" 
                               Content="{StaticResource detailsButton}">
                     </ToggleButton>
-                </StackPanel>
-            <WpfPlot x:Name="AltSpeedChart" />
-
+                <ToggleButton Style="{StaticResource MapToggleButton}" 
+                              IsChecked="{Binding IsShowAltSpeedCharts, Mode=TwoWay}" 
+                              Content="{StaticResource chartsButton}">
+                </ToggleButton>
+            </StackPanel>
+            <Grid Margin="10" HorizontalAlignment="Center" VerticalAlignment="Bottom" Visibility="{Binding IsShowAltSpeedCharts, Converter={StaticResource BoolToVis}}">
+                <Border x:Name="ToggleButtonBorder" BorderThickness="0" Background="Black" Opacity="0.7" CornerRadius="5" Margin="10">
+                </Border>
+                <WpfPlot x:Name="AltSpeedChart" Margin="10"/>
+            </Grid>
         </Grid>
         </Grid>
 </UserControl>
