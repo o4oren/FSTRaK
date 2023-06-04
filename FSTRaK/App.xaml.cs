@@ -1,4 +1,5 @@
-﻿using FSTRaK.Models.Entity;
+﻿using FSTRaK.Models;
+using FSTRaK.Models.Entity;
 using Serilog;
 using Serilog.Exceptions;
 using System;
@@ -60,6 +61,8 @@ namespace FSTRaK
                     }
                 }
             });
+
+            var airportResolder = AirportResolver.Instance;
         }
   
 

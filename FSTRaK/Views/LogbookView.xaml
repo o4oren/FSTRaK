@@ -4,7 +4,6 @@
              xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006" 
              xmlns:d="http://schemas.microsoft.com/expression/blend/2008" 
              xmlns:viewmodels="clr-namespace:FSTRaK.ViewModels" 
-             xmlns:entity="clr-namespace:FSTRaK.Models.Entity" 
              xmlns:b="http://schemas.microsoft.com/xaml/behaviors" xmlns:views="clr-namespace:FSTRaK.Views"
              mc:Ignorable="d" 
              d:DesignHeight="450" d:DesignWidth="800"
@@ -78,10 +77,10 @@
                             <TextBlock Grid.Row="0" Grid.Column="1" Text="{Binding StartTime}" />
 
                             <TextBlock Grid.Row="1" Text="Departure" />
-                            <TextBlock Grid.Row="1" Grid.Column="1" Text="{Binding Path=DepartureAirport}" />
+                        <TextBlock Grid.Row="1" Grid.Column="1" Text="{Binding Path=DepartureAirportDetails.name}" />
 
                             <TextBlock Grid.Row="2" Text="Arrival" />
-                            <TextBlock Grid.Row="2" Grid.Column="1" Text="{Binding Path=ArrivalAirport}" />
+                        <TextBlock Grid.Row="2" Grid.Column="1" Text="{Binding Path=ArrivalAirportDetails.name}" />
 
                             <TextBlock Grid.Row="3" Text="Aircraft" />
                             <TextBlock Grid.Row="3" Grid.Column="1" Text="{Binding Path=Aircraft.Title}" />

@@ -1,4 +1,5 @@
 ﻿using FSTRaK.DataTypes;
+using FSTRaK.Models.Entity;
 using FSTRaK.Utils;
 using System;
 using System.Collections.Generic;
@@ -46,6 +47,41 @@ namespace FSTRaK.Models
         public string ScoreDetails { get; set; }
 
         public ObservableCollection<BaseFlightEvent> FlightEvents { get; private set; }
+
+        [NotMapped] public Airport DepartureAirportDetails 
+        {
+            get
+            {
+                try
+                {
+                    var airport = AirportResolver.Instance.AirportsDictionary[DepartureAirport];
+                    return airport;
+                }
+                catch (Exception)
+                {
+                    return new Airport
+                    {
+                        icao = DepartureAirport
+                    };
+                }
+
+            }
+        }
+
+        [NotMapped]
+        public Airport ArrivalAirportDetails
+        {
+            get
+            {
+                var airport = AirportResolver.Instance.AirportsDictionary[ArrivalAirport];
+                if (airport == null)
+                    airport = new Airport
+                    {
+                        icao = ArrivalAirport
+                    };
+                return airport;
+            }
+        }
 
         public Flight()
         {
