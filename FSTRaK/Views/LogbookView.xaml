@@ -64,29 +64,18 @@
                                 <ColumnDefinition Width="1*" />
                                 <ColumnDefinition Width="2*" />
                             </Grid.ColumnDefinitions>
-                            <Grid.RowDefinitions>
-                                <RowDefinition Height="1*" />
-                                <RowDefinition Height="1*" />
-                                <RowDefinition Height="1*" />
-                                <RowDefinition Height="1*" />
-                                <RowDefinition Height="1*" />
-                                <RowDefinition Height="1*" />
-                            </Grid.RowDefinitions>
+                        <StackPanel>
+                            <TextBlock Text="{Binding StartTime}" />
 
-                            <TextBlock Grid.Row="0" Text="Date" />
-                            <TextBlock Grid.Row="0" Grid.Column="1" Text="{Binding StartTime}" />
+                            <TextBlock Text="{Binding Path=DepartureAirportDetails}" />
 
-                            <TextBlock Grid.Row="1" Text="Departure" />
-                        <TextBlock Grid.Row="1" Grid.Column="1" Text="{Binding Path=DepartureAirportDetails.name}" />
+                            <TextBlock Text="{Binding Path=ArrivalAirportDetails}" />
 
-                            <TextBlock Grid.Row="2" Text="Arrival" />
-                        <TextBlock Grid.Row="2" Grid.Column="1" Text="{Binding Path=ArrivalAirportDetails.name}" />
+                            <TextBlock Text="{Binding Path=Aircraft.Title}" />
 
-                            <TextBlock Grid.Row="3" Text="Aircraft" />
-                            <TextBlock Grid.Row="3" Grid.Column="1" Text="{Binding Path=Aircraft.Title}" />
+                            <TextBlock Text="{Binding Path=FlightTime}" />
+                        </StackPanel>
 
-                            <TextBlock Grid.Row="4" Text="Flight Time" />
-                            <TextBlock Grid.Row="4" Grid.Column="1" Text="{Binding Path=FlightTime}" />
                         </Grid>
                     </DataTemplate>
                 </ListView.ItemTemplate>

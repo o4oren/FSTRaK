@@ -91,15 +91,15 @@ namespace FSTRaK.Models
         public override string ToString()
         {
             var sb = new StringBuilder();
-            sb.AppendLine($"Departed From: {this.DepartureAirport}");
+            sb.AppendLine($"Departed From: {this.DepartureAirportDetails}");
 
             if (this.FlightOutcome == FlightOutcome.Crashed)
             {
-                sb.AppendLine(($"Crashed Near {this.ArrivalAirport}"));
+                sb.AppendLine(($"Crashed Near {this.ArrivalAirportDetails}"));
             }
             else
             {
-                sb.AppendLine(($"Arrived At: {this.ArrivalAirport}"));
+                sb.AppendLine(($"Arrived At: {this.ArrivalAirportDetails}"));
             }
 
             sb.AppendLine($"Start Time: {this.StartTime}")
