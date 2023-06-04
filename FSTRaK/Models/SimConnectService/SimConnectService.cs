@@ -175,7 +175,7 @@ namespace FSTRaK
         internal void Initialize()
         {
             //  Create a handle and hook to recieve windows messages
-            WindowInteropHelper lWih = new WindowInteropHelper(System.Windows.Application.Current.MainWindow);
+            var lWih = new WindowInteropHelper(System.Windows.Application.Current.MainWindow);
             lHwnd = lWih.Handle;
             gHs = HwndSource.FromHwnd(lHwnd);
             gHs.AddHook(new HwndSourceHook(WndProc));
@@ -393,7 +393,7 @@ namespace FSTRaK
 
                 if (myCoordinates != null)
                 {
-                    foreach (SIMCONNECT_DATA_FACILITY_AIRPORT a in data.rgData.Cast<SIMCONNECT_DATA_FACILITY_AIRPORT>())
+                    foreach (var a in data.rgData.Cast<SIMCONNECT_DATA_FACILITY_AIRPORT>())
                     {
                         var airportCoord = new GeoCoordinate(a.Latitude, a.Longitude);
                         var distance = airportCoord.GetDistanceTo(myCoordinates);

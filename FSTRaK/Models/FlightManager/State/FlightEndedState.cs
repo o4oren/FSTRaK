@@ -29,7 +29,7 @@ namespace FSTRaK.Models.FlightManager
         {
             if(!_isEnded)
             {
-                FlightEndedEvent fe = new FlightEndedEvent
+                var fe = new FlightEndedEvent
                 {
                     FuelWeightLbs = Data.FuelWeightLbs
                 };
@@ -91,7 +91,7 @@ namespace FSTRaK.Models.FlightManager
         private double FlightPathLength(ObservableCollection<BaseFlightEvent> flightEvents)
         {
             double length = 0;
-            for ( int i = 1; i < flightEvents.Count; i++)
+            for ( var i = 1; i < flightEvents.Count; i++)
             {
                 var start = new Location(flightEvents[i - 1].Latitude, flightEvents[i - 1].Longitude);
                 var end = new Location(flightEvents[i].Latitude, flightEvents[i].Longitude);

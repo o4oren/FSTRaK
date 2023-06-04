@@ -125,9 +125,9 @@ namespace FSTRaK.ViewModels
 
         public SettingsViewModel() : base()
         {
-            ResourceDictionary mapProviders = new ResourceDictionary();
+            var mapProviders = new ResourceDictionary();
             mapProviders.Source = new System.Uri("pack://application:,,,/Resources/MapProvidersDictionary.xaml", uriKind: System.UriKind.Absolute);
-            ObservableCollection<string> layers = new ObservableCollection<string>();
+            var layers = new ObservableCollection<string>();
 
             foreach (DictionaryEntry provider in mapProviders)
             {

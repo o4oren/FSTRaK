@@ -70,10 +70,10 @@ namespace FSTRaK.Views
 
                     if (altSpeedGroundSeries != null)
                     {
-                        double[] timeX = altSpeedGroundSeries.Keys.ToArray();
-                        double[] altY = altSpeedGroundSeries.Values.Select(v => v[0]).ToArray();
-                        double[] speedY = altSpeedGroundSeries.Values.Select(v => v[1]).ToArray();
-                        double[] groundAltY = altSpeedGroundSeries.Values.Select(v => v[2]).ToArray();
+                        var timeX = altSpeedGroundSeries.Keys.ToArray();
+                        var altY = altSpeedGroundSeries.Values.Select(v => v[0]).ToArray();
+                        var speedY = altSpeedGroundSeries.Values.Select(v => v[1]).ToArray();
+                        var groundAltY = altSpeedGroundSeries.Values.Select(v => v[2]).ToArray();
                         AltSpeedChart.Plot.Clear();
 
                         var altPlot = AltSpeedChart.Plot.AddScatter(timeX, altY);

@@ -23,7 +23,7 @@ namespace FSTRaK.Models.FlightManager
 
         private void ProcessLandingData(AircraftFlightData landingData)
         {
-            LandingEvent le = new LandingEvent()
+            var le = new LandingEvent()
             {
                 VerticalSpeed = landingData.VerticalSpeed
             };
@@ -69,7 +69,7 @@ namespace FSTRaK.Models.FlightManager
 
             if (Data.GroundVelocity < 35 && Data.MaxThorttlePosition() < 50)
             {
-                TaxiInEvent ti = new TaxiInEvent()
+                var ti = new TaxiInEvent()
                 {
                     FuelWeightLbs = Data.FuelWeightLbs
                 };

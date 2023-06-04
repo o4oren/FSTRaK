@@ -40,7 +40,7 @@ namespace FSTRaK.Models
 
         public override string ToString()
         {
-            StringBuilder builder = new StringBuilder();
+            var builder = new StringBuilder();
             builder.AppendLine(this.Title)
             .AppendLine($"{this.Manufacturer} {this.AircraftType}")
             .AppendLine(this.TailNumber);
@@ -51,7 +51,7 @@ namespace FSTRaK.Models
 
         public override int GetHashCode()
         {
-            int hashCode = -702049157;
+            var hashCode = -702049157;
             hashCode = hashCode * -1521134295 + EqualityComparer<string>.Default.GetHashCode(Title);
             hashCode = hashCode * -1521134295 + EqualityComparer<string>.Default.GetHashCode(Model);
             return hashCode;

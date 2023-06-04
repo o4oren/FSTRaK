@@ -3,12 +3,10 @@
 using FSTRaK.DataTypes;
 using FSTRaK.Models;
 using MapControl;
-using ScottPlot;
 using Serilog;
 using System;
 using System.Collections.Generic;
 using System.Collections.ObjectModel;
-using System.Diagnostics.Eventing.Reader;
 using System.Linq;
 using System.Windows;
 
@@ -18,54 +16,60 @@ namespace FSTRaK.ViewModels
     {
         private Flight _flight;
         public Flight Flight { 
-            get 
+            get => _flight;
+            set
             {
-                return _flight;
-            } 
-            set 
-            {
-                if (_flight != value)
+                if (_flight == value) return;
+                _flight = value;
+                FlightPath = new ObservableCollection<Location>(_flight.FlightEvents
+                    .OrderBy(e => e.ID)
+                    .Select(e => new Location(e.Latitude, e.Longitude)));
+
+                double minLon = Double.MaxValue, minLat = Double.MaxValue, maxLon = Double.MinValue, maxLat = Double.MinValue;
+
+                FlightPath.ToList().ForEach(coords =>
                 {
-                    
-                    _flight = value;
-                    FlightPath = new ObservableCollection<Location>(_flight.FlightEvents
-                        .OrderBy(e => e.ID)
-                        .Select(e => new Location(e.Latitude, e.Longitude)));
+                    minLon = Math.Min(minLon, coords.Longitude);
+                    maxLon = Math.Max(maxLon, coords.Longitude);
+                    minLat = Math.Min(minLat, coords.Latitude);
+                    maxLat = Math.Max(maxLat, coords.Latitude);
+                });
 
-                    double minLon = Double.MaxValue, minLat = Double.MaxValue, maxLon = Double.MinValue, maxLat = Double.MinValue;
+                var boundingBox = new BoundingBox(minLat, minLon, maxLat, maxLon);
+                Log.Debug($"{boundingBox.Center} {boundingBox.Width}");
+                ViewPort = boundingBox;
 
-                    FlightPath.ToList().ForEach(coords =>
-                    {
-                        minLon = Math.Min(minLon, coords.Longitude);
-                        maxLon = Math.Max(maxLon, coords.Longitude);
-                        minLat = Math.Min(minLat, coords.Latitude);
-                        maxLat = Math.Max(maxLat, coords.Latitude);
-                    });
+                ScoreboardText = _flight.GetScoreDetails();
 
-                    var boundingBox = new BoundingBox(minLat, minLon, maxLat, maxLon);
-                    Log.Debug($"{boundingBox.Center} {boundingBox.Width}");
-                    ViewPort = boundingBox;
+                FlightParams = _flight.ToString();
 
-                    ScoreboardText = _flight.GetScoreDetails();
+                GeneratePushpins();
 
-                    FlightParams = _flight.ToString();
-
-                    GeneratePushpins();
-
-                    OnPropertyChanged();
-                    OnPropertyChanged(nameof(FlightPath));
-                    OnPropertyChanged(nameof(AltSpeedGroundAltDictionary));
-                }
+                OnPropertyChanged();
+                OnPropertyChanged(nameof(FlightPath));
+                OnPropertyChanged(nameof(AltSpeedGroundAltDictionary));
             } 
         }
 
         private void GeneratePushpins()
         {
-            var markerEvents = _flight.FlightEvents.Where(e => e is ScoringEvent || e is TakeoffEvent);
+            var markerEvents = _flight.FlightEvents.Where(e => e is ScoringEvent || e is TakeoffEvent).ToList();
+
+            // Clear adjacent landings
+            var landings = markerEvents.Where(e => e is LandingEvent).ToList();
+            for (var i = 0; i < landings.Count; i++)
+            {
+                if (i <= 0) continue;
+                if (landings[i].Time < landings[i - 1].Time.AddSeconds(10))
+                {
+                    markerEvents.Remove(landings[i]);
+                }
+            }
+
             MarkerList.Clear();
             foreach (var e in markerEvents)
             {
-                FlightEventPushpin pin = new FlightEventPushpin();
+                var pin = new FlightEventPushpin();
                 if(e is ScoringEvent @event)
                 {
                     if (@event.ScoreDelta < -15)
@@ -88,7 +92,7 @@ namespace FSTRaK.ViewModels
             
         public string FlightParams
         {
-            get { return _flightParams; }
+            get => _flightParams;
             private set 
             {
                 _flightParams = value; 
@@ -100,7 +104,7 @@ namespace FSTRaK.ViewModels
 
         public ObservableCollection<FlightEventPushpin> MarkerList
         {
-            get { return _markerList; }
+            get => _markerList;
             set
             {
                 
@@ -113,27 +117,26 @@ namespace FSTRaK.ViewModels
         {
             get 
             {
-                // Building a dictionaty where keys are the timestamp and values are arrays of groundspeed altitude and ground altitude.
-                Dictionary<double, double[]> altSpeedGroundDictionary = new Dictionary<double, double[]>();
-                var movementTime = _flight.FlightEvents.Where(e => e is TaxiOutEvent).FirstOrDefault(); 
-                if(movementTime != null)
+                // Building a dictionary where keys are the timestamp and values are arrays of ground speed altitude and ground altitude.
+                var altSpeedGroundDictionary = new Dictionary<double, double[]>();
+                var movementTime = _flight.FlightEvents.FirstOrDefault(e => e is TaxiOutEvent);
+                if (movementTime == null) return altSpeedGroundDictionary;
                 {
                     var dataPoints = _flight.FlightEvents
                         .Where(e => e.Time > movementTime.Time)
                         .OrderBy(e => e.Time)
                         .GroupBy(e => (e.Time - new DateTime(1970, 1, 1))
-                        .TotalMilliseconds)
+                            .TotalMilliseconds)
                         .Select(g => g.First());
-                foreach (var e in dataPoints)
+                    foreach (var e in dataPoints)
                     {
-                        double[] altSpeedGroundArray = new double[] { e.Altitude, e.GroundSpeed, e.GroundAltitude };
+                        var altSpeedGroundArray = new double[] { e.Altitude, e.GroundSpeed, e.GroundAltitude };
                         altSpeedGroundDictionary.Add(e.Time.ToOADate(), altSpeedGroundArray);
                     }
                 }
 
                 return altSpeedGroundDictionary;
             }
-            private set { }
         }
 
 
@@ -141,21 +144,16 @@ namespace FSTRaK.ViewModels
         {
             get
             {
-                if (_flight != null)
-                {
-                    var totalFuelUsed = _flight.TotalFuelUsed;
-                    var units = "Lbs";
+                if (_flight == null) return "";
+                var totalFuelUsed = _flight.TotalFuelUsed;
+                var units = "Lbs";
 
-                    if(Properties.Settings.Default.Units.Equals((int)Units.Metric))
-                    {
-                        totalFuelUsed *= DataTypes.Consts.LbsToKgs;
-                        units = "Kg";
-                    }
+                if (!Properties.Settings.Default.Units.Equals((int)Units.Metric)) return $"{totalFuelUsed:F2} {units}";
+                totalFuelUsed *= DataTypes.Consts.LbsToKgs;
+                units = "Kg";
 
-                    return $"{totalFuelUsed:F2} {units}";
-                }
+                return $"{totalFuelUsed:F2} {units}";
 
-                return "";
             }
         }
 
@@ -164,7 +162,7 @@ namespace FSTRaK.ViewModels
         {
             get
             {
-                string resoueceKey = Properties.Settings.Default.MapTileProvider;
+                var resoueceKey = Properties.Settings.Default.MapTileProvider;
                 var resource = Application.Current.Resources[resoueceKey] as MapTileLayerBase;
                 if (resource != null)
                 {
@@ -177,7 +175,7 @@ namespace FSTRaK.ViewModels
 
         private BoundingBox _viewPort;
         public BoundingBox ViewPort { 
-            get { return _viewPort; }
+            get => _viewPort;
             set
             {
                 if (_viewPort != value) 
@@ -189,10 +187,7 @@ namespace FSTRaK.ViewModels
         }
 
         private bool _isShowPath = true;
-        public bool IsShowPath { get 
-            {
-                return _isShowPath;
-            } 
+        public bool IsShowPath { get => _isShowPath;
             set
             {
                 _isShowPath = value;
@@ -203,10 +198,7 @@ namespace FSTRaK.ViewModels
         private bool _isShowFlightDetails = true;
         public bool IsShowFlightDetails
         {
-            get
-            {
-                return _isShowFlightDetails;
-            }
+            get => _isShowFlightDetails;
             set
             {
                 _isShowFlightDetails = value;
@@ -217,10 +209,7 @@ namespace FSTRaK.ViewModels
         private bool _isShowAltSpeedCharts = false;
         public bool IsShowAltSpeedCharts
         {
-            get
-            {
-                return _isShowAltSpeedCharts;
-            }
+            get => _isShowAltSpeedCharts;
             set
             {
                 _isShowAltSpeedCharts = value;
@@ -231,10 +220,7 @@ namespace FSTRaK.ViewModels
         private bool _isShowScoreboard = false;
         public bool IsShowScoreboard
         {
-            get
-            {
-                return _isShowScoreboard;
-            }
+            get => _isShowScoreboard;
             set
             {
                 _isShowScoreboard = value;

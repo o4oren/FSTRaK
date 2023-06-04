@@ -21,7 +21,7 @@ namespace FSTRaK.Models.FlightManager
 
             if (!Convert.ToBoolean(Data.SimOnGround))
             {
-                TakeoffEvent To = new TakeoffEvent() { FlapsPosition = Data.FlapPosition, FuelWeightLbs = Data.FuelWeightLbs };
+                var To = new TakeoffEvent() { FlapsPosition = Data.FlapPosition, FuelWeightLbs = Data.FuelWeightLbs };
                 AddFlightEvent(Data, To);
                 Context.State = new FlightState(Context);
                 return;

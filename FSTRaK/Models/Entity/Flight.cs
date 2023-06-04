@@ -90,7 +90,7 @@ namespace FSTRaK.Models
 
         public override string ToString()
         {
-            StringBuilder sb = new StringBuilder();
+            var sb = new StringBuilder();
             sb.AppendLine($"Departed From: {this.DepartureAirport}");
 
             if (this.FlightOutcome == FlightOutcome.Crashed)
@@ -142,8 +142,8 @@ namespace FSTRaK.Models
         public string GetScoreDetails()
         {
             var scoringEvents = GetScoringEvents();
-            StringBuilder builder = new StringBuilder();
-            foreach(ScoringEvent se in scoringEvents)
+            var builder = new StringBuilder();
+            foreach(var se in scoringEvents)
             {
                 if(se.ScoreDelta != 0)
                 {

@@ -104,7 +104,7 @@ namespace FSTRaK.Models.FlightManager
                     // Updating the map in realtime if not in non-flight states
                     if (!(State is SimNotInFlightState))
                     {
-                        FlightParams fp = new FlightParams();
+                        var fp = new FlightParams();
                         fp.IndicatedAirspeed = data.IndicatedAirpeed;
                         fp.GroundSpeed = data.GroundVelocity;
                         fp.VeticalSpeed = data.VerticalSpeed;

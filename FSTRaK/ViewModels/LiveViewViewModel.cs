@@ -161,7 +161,7 @@ namespace FSTRaK.ViewModels
         {
             get
             {
-                string resoueceKey = Properties.Settings.Default.MapTileProvider;
+                var resoueceKey = Properties.Settings.Default.MapTileProvider;
                 var resource = Application.Current.Resources[resoueceKey] as MapTileLayerBase;
                 if (resource != null)
                 {

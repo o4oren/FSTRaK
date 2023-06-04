@@ -24,7 +24,7 @@ namespace FSTRaK.Models
 
         private async void LoadAirportsJson()
         {
-            FileStream openStream = File.OpenRead(@".\Resources\\Data\\airports.json");
+            var openStream = File.OpenRead(@".\Resources\\Data\\airports.json");
             AirportsDictionary =
                 await JsonSerializer.DeserializeAsync<Dictionary<string, Airport>>(openStream);
             openStream.Close();

@@ -38,7 +38,7 @@ namespace FSTRaK.Models.FlightManager
             // This should only happen once per flight
             if (!_isStarted)
             {
-                Flight flight = new Flight();
+                var flight = new Flight();
                 Context.ActiveFlight = flight;
 
                 SetAircraftAsynchronously(flight, Data);
@@ -71,7 +71,7 @@ namespace FSTRaK.Models.FlightManager
             if (Data.CameraState == (int)CameraState.Cockpit && 
                 (Data.Latitude != Context.CurrentFlightParams.Latitude || Data.Longitude != Context.CurrentFlightParams.Longitude) && Data.GroundVelocity > 1)
             {
-                TaxiOutEvent to = new TaxiOutEvent
+                var to = new TaxiOutEvent
                 {
                     FuelWeightLbs = Data.FuelWeightLbs
                 };

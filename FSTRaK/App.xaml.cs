@@ -23,7 +23,7 @@ namespace FSTRaK
 
         protected override void OnStartup(StartupEventArgs e)
         {
-            _mutex = new Mutex(true, appName, out bool createdNew);
+            _mutex = new Mutex(true, appName, out var createdNew);
 
             if (!createdNew)
             {

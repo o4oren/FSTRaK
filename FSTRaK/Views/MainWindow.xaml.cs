@@ -19,8 +19,8 @@ namespace FSTRaK.Views
             InitializeComponent();
 
             // Add to tray
-            System.Windows.Forms.NotifyIcon icon = new System.Windows.Forms.NotifyIcon();
-            Stream iconStream = Application.GetResourceStream(new Uri("pack://application:,,,/Resources/Images/FSTrAk.ico")).Stream;
+            var icon = new System.Windows.Forms.NotifyIcon();
+            var iconStream = Application.GetResourceStream(new Uri("pack://application:,,,/Resources/Images/FSTrAk.ico")).Stream;
             icon.Icon = new System.Drawing.Icon(iconStream);
             icon.Visible = true;
             icon.DoubleClick +=
@@ -35,7 +35,7 @@ namespace FSTRaK.Views
         {
             _flightManager.Initialize();
 
-            string bingApiKey = Properties.Settings.Default.BingApiKey;
+            var bingApiKey = Properties.Settings.Default.BingApiKey;
             MapControl.BingMapsTileLayer.ApiKey = bingApiKey;
         }
 
@@ -65,7 +65,7 @@ namespace FSTRaK.Views
 
         private void Window_Deactivated(object sender, EventArgs e)
         {
-            Window window = (Window)sender;
+            var window = (Window)sender;
             window.Topmost = Properties.Settings.Default.IsAlwaysOnTop;
 
         }

@@ -41,7 +41,7 @@ namespace FSTRaK.Models.FlightManager
             // Add event if stopwatch is not started, check if interval has elapsed otherwise
             if (!_stopwatch.IsRunning || _stopwatch.ElapsedMilliseconds > _eventInterval)
             {
-                BaseFlightEvent fe = CheckEnvelopeExceedingEvents(Data);
+                var fe = CheckEnvelopeExceedingEvents(Data);
                 AddFlightEvent(Data, fe);
                 _stopwatch.Restart();
             }
