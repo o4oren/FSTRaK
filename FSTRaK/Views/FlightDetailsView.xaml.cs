@@ -9,6 +9,7 @@ using System.Drawing;
 using System.Linq;
 using System.Windows;
 using System.Windows.Controls;
+using FSTRaK.Utils;
 
 namespace FSTRaK.Views
 {
@@ -26,24 +27,35 @@ namespace FSTRaK.Views
         private void OnLoaded(object s, RoutedEventArgs e)
         {
             ((FlightDetailsViewModel)DataContext).PropertyChanged += DataModel_OnPropertyChange;
+
+            var graphColor = ResourceUtils.GetColorFromResource("BorderLightColor");
+
             AltSpeedChart.Plot.XAxis.DateTimeFormat(true);
             AltSpeedChart.Plot.YAxis.Label("Altitude");
-            var yAxis2 = AltSpeedChart.Plot.AddAxis(ScottPlot.Renderable.Edge.Right);
+            AltSpeedChart.Plot.YAxis2.Label("Ground Speed");
+            AltSpeedChart.Plot.YAxis2.Ticks(true);
 
-            // add a legend to the corner
+            
             var legend = AltSpeedChart.Plot.Legend();
-            legend.FontBold = true;
-            legend.FontColor = Color.White;
-            legend.FillColor = Color.Transparent;
-            legend.OutlineColor = Color.White;
 
+            legend.FontBold = true;
+
+            legend.FontColor = graphColor;
+                
+            legend.FillColor = Color.Transparent;
+            legend.OutlineColor = graphColor;
             AltSpeedChart.Plot.Style(ScottPlot.Style.Black);
             AltSpeedChart.Plot.Style(
                 figureBackground: Color.Transparent,
-                dataBackground: Color.Transparent);
+                dataBackground: Color.Transparent
+                );
+            AltSpeedChart.Plot.XAxis.Color(graphColor);
+            AltSpeedChart.Plot.XAxis2.Color(graphColor);
 
+            AltSpeedChart.Plot.YAxis.Color(graphColor);
+            AltSpeedChart.Plot.YAxis2.Color(graphColor);
 
-            yAxis2.Label("Ground speed");
+            
 
         }
 
@@ -91,7 +103,7 @@ namespace FSTRaK.Views
                         var speedPlot = AltSpeedChart.Plot.AddScatter(timeX, speedY);
                         speedPlot.Label = "Ground Speed";
                         speedPlot.Smooth = false;
-                        speedPlot.YAxisIndex = 2;
+                        speedPlot.YAxisIndex = 1;
                         speedPlot.Smooth = false;
                         speedPlot.MarkerSize = 0;
                         speedPlot.LineWidth = 2;
