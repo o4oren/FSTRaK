@@ -3,10 +3,12 @@ using FSTRaK.Models.Entity;
 using Serilog;
 using System;
 using System.Diagnostics;
+using System.Globalization;
 using System.IO;
 using System.Linq;
 using System.Runtime.Remoting.Metadata.W3cXsd2001;
 using System.Text;
+using System.Threading;
 using System.Threading.Tasks;
 using System.Windows.Markup;
 using System.Windows.Media.Media3D;
@@ -140,6 +142,11 @@ namespace FSTRaK.Models.FlightManager
                                         }
                                     }
                                 }
+                                // Capitalize manufacturer name correctly.
+                                CultureInfo cultureInfo = new CultureInfo("en-US");
+                                TextInfo textInfo = cultureInfo.TextInfo;
+                                aircraft.Manufacturer = textInfo.ToTitleCase(aircraft.Manufacturer.ToLower());
+
                             }
                         }
                     }
