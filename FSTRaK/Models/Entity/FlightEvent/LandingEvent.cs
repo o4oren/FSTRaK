@@ -22,7 +22,7 @@ namespace FSTRaK.Models
 
         public override string ToString()
         {
-            return $"{LandingRate}\n" + base.ToString() + $"\n{VerticalSpeed:F0} ft/m";
+            return $"{LandingRate}\n" + base.ToString() + $"\n{VerticalSpeed:F0} fpm";
         }
 
     }
