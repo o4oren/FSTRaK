@@ -19,11 +19,11 @@ namespace FSTRaK
 
 
 
-        const string appName = "FSTrAk";
+        const string AppName = "FSTrAk";
 
         protected override void OnStartup(StartupEventArgs e)
         {
-            _mutex = new Mutex(true, appName, out var createdNew);
+            _mutex = new Mutex(true, AppName, out var createdNew);
 
             if (!createdNew)
             {
@@ -62,7 +62,7 @@ namespace FSTRaK
                 }
             });
 
-            var airportResolder = AirportResolver.Instance;
+            var airportResolver = AirportResolver.Instance;
         }
   
 
@@ -78,7 +78,7 @@ namespace FSTRaK
 
         void App_DispatcherUnhandledException(object sender, DispatcherUnhandledExceptionEventArgs e)
         {
-            Log.Error(e.Exception, "Unhandled error occured!");
+            Log.Error(e.Exception, "Unhandled error occurred!");
             // Prevent default unhandled exception processing
             e.Handled = true;
         }

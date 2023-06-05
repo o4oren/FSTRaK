@@ -20,14 +20,14 @@ namespace FSTRaK
 
     internal sealed class SimConnectService : INotifyPropertyChanged
     {
-        private const int CONNECTION_INTERVAL = 10000;
-        private const int WM_USER_SIMCONNECT = 0x0402;
-        private const string MAIN_MENU_FLT = "flights\\other\\MainMenu.FLT";
+        private const int ConnectionInterval = 10000;
+        private const int WmUserSimconnect = 0x0402;
+        private const string MainMenuFlt = "flights\\other\\MainMenu.FLT";
         private SimConnect _simconnect = null;
 
-        private HwndSource gHs;
+        private HwndSource _gHs;
         Timer _connectionTimer;
-        private IntPtr lHwnd;
+        private IntPtr _lHwnd;
 
         private bool _isConnected = false;
         public bool IsConnected
@@ -152,19 +152,19 @@ namespace FSTRaK
         public event PropertyChangedEventHandler PropertyChanged;
 
         private SimConnectService(){ }
-        private static readonly object _lock = new object();
-        private static SimConnectService instance = null;
+        private static readonly object Lock = new object();
+        private static SimConnectService _instance = null;
         public static SimConnectService Instance
         {
             get
             {
-                lock (_lock)
+                lock (Lock)
                 {
-                    if (instance == null)
+                    if (_instance == null)
                     {
-                        instance = new SimConnectService();
+                        _instance = new SimConnectService();
                     }
-                    return instance;
+                    return _instance;
                 }
             }
         }
@@ -176,15 +176,15 @@ namespace FSTRaK
         {
             //  Create a handle and hook to recieve windows messages
             var lWih = new WindowInteropHelper(System.Windows.Application.Current.MainWindow);
-            lHwnd = lWih.Handle;
-            gHs = HwndSource.FromHwnd(lHwnd);
-            gHs.AddHook(new HwndSourceHook(WndProc));
+            _lHwnd = lWih.Handle;
+            _gHs = HwndSource.FromHwnd(_lHwnd);
+            _gHs.AddHook(new HwndSourceHook(WndProc));
 
-            setConnectionTimer();
-            waitForSimConnection();
+            SetConnectionTimer();
+            WaitForSimConnection();
         }
 
-        private void waitForSimConnection()
+        private void WaitForSimConnection()
         {
             ConnectToSimulator();
             if (_simconnect == null)
@@ -193,9 +193,9 @@ namespace FSTRaK
             }
         }
 
-        private void setConnectionTimer()
+        private void SetConnectionTimer()
         {
-            _connectionTimer = new Timer(CONNECTION_INTERVAL);
+            _connectionTimer = new Timer(ConnectionInterval);
             _connectionTimer.Elapsed += (sender, e) => ConnectToSimulator();
             _connectionTimer.AutoReset = true;
         }
@@ -205,7 +205,7 @@ namespace FSTRaK
             try
             {
                 Log.Information("Trying to connect to the simulator...");
-                _simconnect = new SimConnect("FSTrAk", lHwnd, WM_USER_SIMCONNECT, null, 0);
+                _simconnect = new SimConnect("FSTrAk", _lHwnd, WmUserSimconnect, null, 0);
                 if (_simconnect != null)
                 {
                     ConfigureSimconnect();
@@ -278,10 +278,10 @@ namespace FSTRaK
             _simconnect.RegisterDataDefineStruct<AircraftFlightData>(DataDefinitions.FlightData);
 
             // Subscribe to System events
-            _simconnect.SubscribeToSystemEvent(EVENTS.FlightLoaded, "FlightLoaded");
-            _simconnect.SubscribeToSystemEvent(EVENTS.Pause, "Pause_EX1");
-            _simconnect.SubscribeToSystemEvent(EVENTS.Crashed, "Crashed");
-            _simconnect.SubscribeToSystemEvent(EVENTS.AircraftLoaded, "AircraftLoaded");
+            _simconnect.SubscribeToSystemEvent(Events.FlightLoaded, "FlightLoaded");
+            _simconnect.SubscribeToSystemEvent(Events.Pause, "Pause_EX1");
+            _simconnect.SubscribeToSystemEvent(Events.Crashed, "Crashed");
+            _simconnect.SubscribeToSystemEvent(Events.AircraftLoaded, "AircraftLoaded");
 
 
 
@@ -309,12 +309,12 @@ namespace FSTRaK
 
         private void Simconnect_OnRecvFilename(SimConnect sender, SIMCONNECT_RECV_EVENT_FILENAME data)
         {
-            if (data.uEventID == (uint)EVENTS.FlightLoaded)
+            if (data.uEventID == (uint)Events.FlightLoaded)
             {
                 LoadedFlight = data.szFileName;
                 Log.Debug(LoadedFlight);
             };
-            if (data.uEventID == (uint)EVENTS.AircraftLoaded)
+            if (data.uEventID == (uint)Events.AircraftLoaded)
             {
                 LoadedAircraft = data.szFileName;
                 Log.Debug(data.szFileName);
@@ -326,16 +326,16 @@ namespace FSTRaK
         {
             switch (data.uEventID)
             {
-                case (int)EVENTS.FlightLoaded:
+                case (int)Events.FlightLoaded:
                     // Do nothing, this is handled in OnRecvFileName
                     break;
-                case (int)EVENTS.Pause:
+                case (int)Events.Pause:
                     PauseState = data.dwData;
                     break;
-                case (int)EVENTS.Crashed:
+                case (int)Events.Crashed:
                     IsCrashed = true;
                     break;
-                case (int)EVENTS.AircraftLoaded:
+                case (int)Events.AircraftLoaded:
                     // Do nothing, this is handled in OnRecvFileName;
                     break;
             }
@@ -343,7 +343,7 @@ namespace FSTRaK
 
         private void UpdateInFlightState()
         {
-            if (!LoadedFlight.Equals(MAIN_MENU_FLT) && PauseState != 1)
+            if (!LoadedFlight.Equals(MainMenuFlt) && PauseState != 1)
             {
                 IsInFlight = true;
             }
@@ -428,7 +428,7 @@ namespace FSTRaK
             handled = false;
             // If message is coming from simconnect and the connection is not null;
             // Continue and receive message.
-            if (msg == WM_USER_SIMCONNECT && _simconnect != null)
+            if (msg == WmUserSimconnect && _simconnect != null)
             {
                 _simconnect.ReceiveMessage();
                 handled = true;

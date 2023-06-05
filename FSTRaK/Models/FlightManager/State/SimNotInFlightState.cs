@@ -1,20 +1,20 @@
 ﻿using FSTRaK.DataTypes;
 
-namespace FSTRaK.Models.FlightManager
+namespace FSTRaK.Models.FlightManager.State
 {
     internal class SimNotInFlightState : AbstractState
     {
-        public override string Name { get; set; }
-        public override bool IsMovementState { get; set; }
-        public SimNotInFlightState(FlightManager Context): base(Context) 
+        public sealed override string Name { get; set; }
+        public sealed override bool IsMovementState { get; set; }
+        public SimNotInFlightState(FlightManager context): base(context) 
         {
             Name = "Not in flight";
             IsMovementState = false;
 
-            Context.CurrentFlightParams = new FlightParams();
-            Context.ActiveFlight = null;
+            context.CurrentFlightParams = new FlightParams();
+            context.ActiveFlight = null;
         }
-        public override void ProcessFlightData(AircraftFlightData Data)
+        public override void ProcessFlightData(AircraftFlightData data)
         {
             
             if(Context.SimConnectInFlight)

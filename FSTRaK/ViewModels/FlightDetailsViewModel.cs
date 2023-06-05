@@ -23,7 +23,7 @@ namespace FSTRaK.ViewModels
                 if (_flight == value) return;
                 _flight = value;
                 FlightPath = new ObservableCollection<Location>(_flight.FlightEvents
-                    .OrderBy(e => e.ID)
+                    .OrderBy(e => e.Id)
                     .Select(e => new Location(e.Latitude, e.Longitude)));
 
                 double minLon = Double.MaxValue, minLat = Double.MaxValue, maxLon = Double.MinValue, maxLat = Double.MinValue;
@@ -231,13 +231,13 @@ namespace FSTRaK.ViewModels
             }
         }
 
-        private string scoreboardText;
+        private string _scoreboardText;
 
         public string ScoreboardText 
         { 
-            get => scoreboardText;
+            get => _scoreboardText;
             set {
-                scoreboardText = value;
+                _scoreboardText = value;
                 OnPropertyChanged();
             }
         }

@@ -1,49 +1,47 @@
-﻿
-
-using FSTRaK.DataTypes;
+﻿using FSTRaK.DataTypes;
 using FSTRaK.Models.Entity.FlightEvent;
 
-namespace FSTRaK.Models.FlightManager
+namespace FSTRaK.Models.FlightManager.State
 {
     internal class FlightState : AbstractState
     {
-        public override string Name { get; set; }
-        public override bool IsMovementState { get; set; }
-        public FlightState(FlightManager Context) : base(Context)
+        public sealed override string Name { get; set; }
+        public sealed override bool IsMovementState { get; set; }
+        public FlightState(FlightManager context) : base(context)
         {
-            this._eventInterval = 10000;
+            this.EventInterval = 10000;
             this.Name = "In flight";
             this.IsMovementState = true;
         }
-        public override void ProcessFlightData(AircraftFlightData Data)
+        public override void ProcessFlightData(AircraftFlightData data)
         {
-            if (Data.SimOnGround == 1)
+            if (data.SimOnGround == 1)
             {
-                Context.State = new LandedState(Context, Data);
+                Context.State = new LandedState(Context, data);
                 return;
             }
 
-            if (Data.IndicatedAirpeed < 150)
+            if (data.IndicatedAirpeed < 150)
             {
-                _eventInterval = 10000;
+                EventInterval = 10000;
             }
-            else if (Data.IndicatedAirpeed > 150 && Data.IndicatedAirpeed < 250)
+            else if (data.IndicatedAirpeed > 150 && data.IndicatedAirpeed < 250)
             {
-                _eventInterval = 12000;
+                EventInterval = 12000;
             }
-            else if (Data.IndicatedAirpeed > 250 || Data.Altitude > 10000)
+            else if (data.IndicatedAirpeed > 250 || data.Altitude > 10000)
             {
-                _eventInterval = 20000;
+                EventInterval = 20000;
             }
 
             // TODO add code to handle specific flight events
 
             // Add event if stopwatch is not started, check if interval has elapsed otherwise
-            if (!_stopwatch.IsRunning || _stopwatch.ElapsedMilliseconds > _eventInterval)
+            if (!Stopwatch.IsRunning || Stopwatch.ElapsedMilliseconds > EventInterval)
             {
-                var fe = CheckEnvelopeExceedingEvents(Data);
-                AddFlightEvent(Data, fe);
-                _stopwatch.Restart();
+                var fe = CheckEnvelopeExceedingEvents(data);
+                AddFlightEvent(data, fe);
+                Stopwatch.Restart();
             }
         }
 

@@ -70,7 +70,7 @@ namespace FSTRaK.DataTypes
         NearbyAirports
     }
 
-    public enum EVENTS
+    public enum Events
     {
         FlightLoaded,
         AircraftLoaded,

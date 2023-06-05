@@ -1,37 +1,35 @@
-﻿
-
+﻿using System;
 using FSTRaK.DataTypes;
-using System;
 
-namespace FSTRaK.Models.FlightManager
+namespace FSTRaK.Models.FlightManager.State
 {
     internal class TakeoffRollState : AbstractState
     {
-        public override string Name { get; set; }
-        public override bool IsMovementState { get; set; }
+        public sealed override string Name { get; set; }
+        public sealed override bool IsMovementState { get; set; }
         public TakeoffRollState
-            (FlightManager Context) : base(Context)
+            (FlightManager context) : base(context)
         {
-            this._eventInterval = 5000;
+            this.EventInterval = 5000;
             this.Name = "Takeoff Roll";
             this.IsMovementState = true;
         }
-        public override void ProcessFlightData(AircraftFlightData Data)
+        public override void ProcessFlightData(AircraftFlightData data)
         {
 
-            if (!Convert.ToBoolean(Data.SimOnGround))
+            if (!Convert.ToBoolean(data.SimOnGround))
             {
-                var To = new TakeoffEvent() { FlapsPosition = Data.FlapPosition, FuelWeightLbs = Data.FuelWeightLbs };
-                AddFlightEvent(Data, To);
+                var to = new TakeoffEvent() { FlapsPosition = data.FlapPosition, FuelWeightLbs = data.FuelWeightLbs };
+                AddFlightEvent(data, to);
                 Context.State = new FlightState(Context);
                 return;
             }
 
             // Add event if stopwatch is not started, check if interval has elapsed otherwise
-            if (!_stopwatch.IsRunning || _stopwatch.ElapsedMilliseconds > _eventInterval)
+            if (!Stopwatch.IsRunning || Stopwatch.ElapsedMilliseconds > EventInterval)
             {
-                AddFlightEvent(Data);
-                _stopwatch.Restart();
+                AddFlightEvent(data);
+                Stopwatch.Restart();
             }
         }
     }

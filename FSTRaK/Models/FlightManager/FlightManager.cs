@@ -3,6 +3,7 @@ using Serilog;
 using System;
 using System.ComponentModel;
 using System.Runtime.CompilerServices;
+using FSTRaK.Models.FlightManager.State;
 
 namespace FSTRaK.Models.FlightManager
 {
@@ -12,8 +13,8 @@ namespace FSTRaK.Models.FlightManager
     /// </summary>
     internal sealed class FlightManager : INotifyPropertyChanged
     {
-        private static readonly object _lock = new object();
-        private static FlightManager instance = null;
+        private static readonly object Lock = new object();
+        private static FlightManager _instance = null;
         private FlightManager() { }
 
         public event PropertyChangedEventHandler PropertyChanged;
@@ -22,13 +23,9 @@ namespace FSTRaK.Models.FlightManager
         {
             get
             {
-                lock (_lock)
+                lock (Lock)
                 {
-                    if (instance == null)
-                    {
-                        instance = new FlightManager();
-                    }
-                    return instance;
+                    return _instance ?? (_instance = new FlightManager());
                 }
             }
         }
@@ -107,7 +104,7 @@ namespace FSTRaK.Models.FlightManager
                         var fp = new FlightParams();
                         fp.IndicatedAirspeed = data.IndicatedAirpeed;
                         fp.GroundSpeed = data.GroundVelocity;
-                        fp.VeticalSpeed = data.VerticalSpeed;
+                        fp.VerticalSpeed = data.VerticalSpeed;
                         fp.Heading = data.TrueHeading;
                         fp.IsOnGround = Convert.ToBoolean(data.SimOnGround);
                         fp.Latitude = data.Latitude;

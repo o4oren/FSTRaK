@@ -11,6 +11,7 @@ using System.Linq;
 using System.Threading;
 using System.Threading.Tasks;
 using System.Timers;
+using FSTRaK.Models.FlightManager.State;
 
 namespace FSTRaK.ViewModels
 {
@@ -70,9 +71,9 @@ namespace FSTRaK.ViewModels
                         try
                         {
                             await LoadFlights(500);
-                            var latestId = logbookContext.Flights.Max(f => f.ID);
+                            var latestId = logbookContext.Flights.Max(f => f.Id);
                             SelectedFlight = logbookContext.Flights
-                            .Where(f => f.ID == latestId)
+                            .Where(f => f.Id == latestId)
                             .Include(f => f.Aircraft)
                             .Include(f => f.FlightEvents)
                             .SingleOrDefault();

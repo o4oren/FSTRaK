@@ -13,7 +13,7 @@ namespace FSTRaK.DataTypes
         public double Longitude;
         public double IndicatedAirspeed;
         public double GroundSpeed;
-        public double VeticalSpeed;
+        public double VerticalSpeed;
         public double Altitude;
         public bool IsOnGround;
     }

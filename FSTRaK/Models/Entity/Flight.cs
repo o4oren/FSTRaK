@@ -12,7 +12,7 @@ namespace FSTRaK.Models
 {
     internal class Flight : BaseModel
     {
-        public int ID { get; set; }
+        public int Id { get; set; }
         public virtual Aircraft Aircraft { get; set; }
 
         [Index(nameof(DepartureAirport))]
@@ -34,7 +34,7 @@ namespace FSTRaK.Models
             set { FlightTimeMilis = value.Ticks; }
         }
 
-        public double FlightDistanceNM { get; set; }
+        public double FlightDistanceNm { get; set; }
 
         public double TotalFuelUsed { get; set; }
 
@@ -43,7 +43,7 @@ namespace FSTRaK.Models
 
         public string ScoreDetails { get; set; }
 
-        public ObservableCollection<BaseFlightEvent> FlightEvents { get; private set; }
+        public ObservableCollection<BaseFlightEvent> FlightEvents { get; }
 
         private Airport _departureAirportDetails;
 
@@ -63,7 +63,7 @@ namespace FSTRaK.Models
                 {
                     _departureAirportDetails = new Airport
                     {
-                        icao = DepartureAirport
+                        Icao = DepartureAirport
                     };
                 }
                 return _departureAirportDetails;
@@ -89,7 +89,7 @@ namespace FSTRaK.Models
                 {
                     _arrivalAirportDetails = new Airport
                     {
-                        icao = ArrivalAirport
+                        Icao = ArrivalAirport
                     };
                 }
                 return _arrivalAirportDetails;
@@ -126,7 +126,7 @@ namespace FSTRaK.Models
 
 
 
-            sb.AppendLine($"Flown Distance: {FlightDistanceNM:F0} NM");
+            sb.AppendLine($"Flown Distance: {FlightDistanceNm:F0} NM");
 
             var landingEvent = (LandingEvent)this.FlightEvents.FirstOrDefault(e => e is LandingEvent);
             if (landingEvent != null)
@@ -134,10 +134,8 @@ namespace FSTRaK.Models
                 sb.AppendLine($"Lnading VS: {landingEvent.VerticalSpeed:F0} ft/m");
             }
 
-            
-            sb.Append($"Score: {this.Score}")
-            .ToString();
 
+            sb.Append($"Score: {this.Score}");
             return sb.ToString();
         }
 

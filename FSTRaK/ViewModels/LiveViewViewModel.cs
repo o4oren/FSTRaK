@@ -8,6 +8,7 @@ using System.ComponentModel;
 using System.Linq;
 using System.Text;
 using System.Windows;
+using FSTRaK.Models.FlightManager.State;
 
 namespace FSTRaK.ViewModels
 {
