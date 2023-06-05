@@ -31,23 +31,27 @@ namespace FSTRaK.Models.FlightManager
             if (landingData.VerticalSpeed < -500)
             {
                 le.LandingRate = LandingRate.Hard;
-                le.ScoreDelta = -25;
+                le.ScoreDelta = -35;
             }
             else if (landingData.VerticalSpeed < -350)
             {
-                le.LandingRate = LandingRate.Aceeptable;
+                le.LandingRate = LandingRate.Fair;
                 le.ScoreDelta = -10;
             }
-            else if (landingData.VerticalSpeed < -275)
+            else if (landingData.VerticalSpeed < -190)
             {
                 le.LandingRate = LandingRate.Good;
             }
-            else if (landingData.VerticalSpeed < -175)
-            {
+            else if (landingData.VerticalSpeed < -165)
+            {   
                 le.LandingRate = LandingRate.Perfect;
-                le.ScoreDelta = 10;
+                le.ScoreDelta = +10;
             }
-            else if (landingData.VerticalSpeed < -125)
+            else if (landingData.VerticalSpeed < -135)
+            {
+                le.LandingRate = LandingRate.Good;
+            }
+            else if (landingData.VerticalSpeed < -101)
             {
                 le.LandingRate = LandingRate.Soft;
                 le.ScoreDelta = -10;

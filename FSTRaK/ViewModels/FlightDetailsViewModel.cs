@@ -7,6 +7,7 @@ using Serilog;
 using System;
 using System.Collections.Generic;
 using System.Collections.ObjectModel;
+using System.Drawing;
 using System.Linq;
 using System.Windows;
 
@@ -70,9 +71,11 @@ namespace FSTRaK.ViewModels
             foreach (var e in markerEvents)
             {
                 var pin = new FlightEventPushpin();
-                if(e is ScoringEvent @event)
+                if (e is ScoringEvent @event)
                 {
-                    if (@event.ScoreDelta < -15)
+                    if (@event.ScoreDelta > 0)
+                        pin.Color = "#FFC5CBF9";
+                    if (@event.ScoreDelta <= -20)
                         pin.Color = "Red";
                     else if (@event.ScoreDelta < 0)
                         pin.Color = "#DE970B";

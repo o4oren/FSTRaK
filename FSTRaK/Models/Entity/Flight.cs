@@ -1,5 +1,6 @@
 ﻿using FSTRaK.DataTypes;
 using FSTRaK.Models.Entity;
+using FSTRaK.Utils;
 using System;
 using System.Collections.Generic;
 using System.Collections.ObjectModel;
@@ -44,37 +45,54 @@ namespace FSTRaK.Models
 
         public ObservableCollection<BaseFlightEvent> FlightEvents { get; private set; }
 
+        private Airport _departureAirportDetails;
+
         [NotMapped] public Airport DepartureAirportDetails 
         {
             get
             {
                 try
                 {
+                    if (_departureAirportDetails != null)
+                        return _departureAirportDetails;
+
                     var airport = AirportResolver.Instance.AirportsDictionary[DepartureAirport];
-                    return airport;
+                    _departureAirportDetails = airport;
                 }
                 catch (Exception)
                 {
-                    return new Airport
+                    _departureAirportDetails = new Airport
                     {
                         icao = DepartureAirport
                     };
                 }
+                return _departureAirportDetails;
             }
         }
 
+
+        private Airport _arrivalAirportDetails;
         [NotMapped]
         public Airport ArrivalAirportDetails
         {
             get
             {
-                var airport = AirportResolver.Instance.AirportsDictionary[ArrivalAirport];
-                if (airport == null)
-                    airport = new Airport
+                try
+                {
+                    if (_arrivalAirportDetails != null)
+                        return _arrivalAirportDetails;
+
+                    var airport = AirportResolver.Instance.AirportsDictionary[ArrivalAirport];
+                    _arrivalAirportDetails = airport;
+                }
+                catch (Exception)
+                {
+                    _arrivalAirportDetails = new Airport
                     {
                         icao = ArrivalAirport
                     };
-                return airport;
+                }
+                return _arrivalAirportDetails;
             }
         }
 
@@ -129,7 +147,7 @@ namespace FSTRaK.Models
         public void UpdateScore()
         {
             var scoringEvents = GetScoringEvents();
-            Score = 100 - scoringEvents.Sum(e => e.ScoreDelta);
+            Score = MathUtils.Clamp(100 + scoringEvents.Sum(e => e.ScoreDelta), 0, 110);
         }
 
         private List<ScoringEvent> GetScoringEvents()
