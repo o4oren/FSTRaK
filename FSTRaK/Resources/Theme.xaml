@@ -120,6 +120,24 @@
     </LinearGradientBrush>
 
 
+    <LinearGradientBrush x:Key="SilverGradientLarge"
+                     StartPoint="0,0"
+                     EndPoint="1,1">
+        <LinearGradientBrush.GradientStops>
+            <GradientStopCollection>
+                <GradientStop Color="#F1F0ED"
+                    Offset="0" />
+                <GradientStop Color="#B3B6B5"
+                    Offset="0.15" />
+                <GradientStop Color="#8E8D8D"
+                    Offset="0.85" />
+                <GradientStop Color="#F1F0ED"
+                    Offset="1" />
+            </GradientStopCollection>
+        </LinearGradientBrush.GradientStops>
+    </LinearGradientBrush>
+    
+
     <!--Styles and templates.-->
 
     <Style TargetType="{x:Type CheckBox}" x:Key="SettingsCheckbox">
@@ -144,7 +162,7 @@
                                 <Condition Property="IsMouseOver" Value="True"/>
                                 <Condition Property="IsChecked" Value="False"/>
                             </MultiTrigger.Conditions>
-                            <Setter TargetName="CheckBoxBorder" Property="BorderBrush" Value="{DynamicResource TopBarBackground}"/>
+                            <Setter TargetName="CheckBoxBorder" Property="BorderBrush" Value="{DynamicResource SilverGradient}"/>
                         </MultiTrigger>
                     </ControlTemplate.Triggers>
                 </ControlTemplate>
@@ -299,6 +317,11 @@
                 </Path.Stroke>
             </Path>
         </Grid>
+        <ControlTemplate.Triggers>
+            <Trigger Property="IsMouseOver" Value="true">
+                <Setter TargetName="Border" Property="BorderBrush" Value="{StaticResource SilverGradientLarge}" />
+            </Trigger>
+        </ControlTemplate.Triggers>
     </ControlTemplate>
 
     <ControlTemplate x:Key="ComboBoxTextBox"
@@ -307,6 +330,11 @@
           Focusable="False"
           Background="{TemplateBinding Background}" 
                 />
+        <ControlTemplate.Triggers>
+            <Trigger Property="IsMouseOver" Value="true">
+                <Setter TargetName="PART_ContentHost" Property="BorderBrush" Value="{StaticResource SilverGradient}" />
+            </Trigger>
+        </ControlTemplate.Triggers>
     </ControlTemplate>
 
     <Style x:Key="{x:Type ComboBox}"
@@ -640,7 +668,7 @@
                     </Border>
                     <ControlTemplate.Triggers>
                         <Trigger Property="IsMouseOver" Value="True">
-                            <Setter TargetName="Border" Property="BorderBrush" Value="{StaticResource MidBorderBrush}"/>
+                            <Setter TargetName="Border" Property="BorderBrush" Value="{StaticResource SilverGradient}"/>
                         </Trigger>
                         <Trigger Property="IsKeyboardFocused" Value="True">
                             <Setter TargetName="Border" Property="BorderBrush" Value="purple"/>

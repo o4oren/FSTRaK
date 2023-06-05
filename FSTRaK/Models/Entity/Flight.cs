@@ -6,10 +6,7 @@ using System.Collections.Generic;
 using System.Collections.ObjectModel;
 using System.ComponentModel.DataAnnotations.Schema;
 using System.Linq;
-using System.Runtime.Remoting.Contexts;
 using System.Text;
-using System.Windows.Documents;
-using System.Windows.Media.Media3D;
 
 namespace FSTRaK.Models
 {
@@ -37,7 +34,7 @@ namespace FSTRaK.Models
             set { FlightTimeMilis = value.Ticks; }
         }
 
-        public double FlightDistanceInMeters { get; set; }
+        public double FlightDistanceNM { get; set; }
 
         public double TotalFuelUsed { get; set; }
 
@@ -105,13 +102,13 @@ namespace FSTRaK.Models
             sb.AppendLine($"Start Time: {this.StartTime}")
             .AppendLine($"End Time: {this.EndTime}")
             .AppendLine($"Block Time: {this.FlightTime}")
-            .AppendLine($"Fuel Used: {TotalFuelUsed}")
-            .AppendLine($"Flown Distance VSI: {FlightDistanceInMeters * Consts.MetersToNauticalMiles} NM");
+            .AppendLine($"Fuel Used: {TotalFuelUsed:F1}")
+            .AppendLine($"Flown Distance: {FlightDistanceNM:F0} NM");
 
             var landingEvent = (LandingEvent)this.FlightEvents.FirstOrDefault(e => e is LandingEvent);
             if (landingEvent != null)
             {
-                sb.AppendLine($"{landingEvent.VerticalSpeed:F0} ft/m");
+                sb.AppendLine($"Lnading VS: {landingEvent.VerticalSpeed:F0} ft/m");
             }
 
             

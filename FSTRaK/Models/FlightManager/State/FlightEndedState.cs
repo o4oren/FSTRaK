@@ -55,7 +55,7 @@ namespace FSTRaK.Models.FlightManager
                 }
 
                 Context.ActiveFlight.FlightTime = flightTime;
-                Context.ActiveFlight.FlightDistanceInMeters = FlightPathLength(Context.ActiveFlight.FlightEvents);
+                Context.ActiveFlight.FlightDistanceNM = FlightPathLength(Context.ActiveFlight.FlightEvents) * Consts.MetersToNauticalMiles; ;
 
                 Context.ActiveFlight.UpdateScore();
 

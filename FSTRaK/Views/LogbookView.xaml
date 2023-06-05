@@ -94,25 +94,49 @@
                 <ListView.ItemTemplate>
                     <DataTemplate>
                         <StackPanel>
-                        <StackPanel Orientation="Horizontal">
-                            <TextBlock HorizontalAlignment="Left" FontFamily="{StaticResource Slopes}" FontSize="20" Foreground="{StaticResource TextColor}">
-                                <Run Text="{Binding DepartureAirport}"/>
+                        <Grid HorizontalAlignment="Stretch">
+                            <Grid.ColumnDefinitions>
+                                <ColumnDefinition />
+                                <ColumnDefinition />
+                                <ColumnDefinition />
+
+                            </Grid.ColumnDefinitions>
+                            <Grid.RowDefinitions>
+                                <RowDefinition />
+                                <RowDefinition />
+                            </Grid.RowDefinitions>
+                            <TextBlock Grid.Column="0" HorizontalAlignment="Left" FontFamily="{StaticResource Slopes}" FontSize="20" Foreground="{StaticResource TextColor}">
+                                <Run Text="{Binding DepartureAirport, Mode=OneTime}"/>
                             </TextBlock>
-                            <ContentControl>=></ContentControl>
-                            <TextBlock HorizontalAlignment="Right"
-                                       FontFamily="{StaticResource Slopes}" FontSize="20" Foreground="{StaticResource TextColor}">
-                                <Run Text="{Binding ArrivalAirport}"/>
+                            <TextBlock Grid.Column="0" Grid.Row="1" HorizontalAlignment="Left" FontFamily="{StaticResource Slopes}" FontSize="16" Foreground="{StaticResource TextColor}">
+                                <Run Text="{Binding StartTime, Mode=OneTime}"/>
                             </TextBlock>
-                        </StackPanel>
+
+                            <ContentControl Grid.Column="1" VerticalAlignment="Center">
+                                <ContentControl.RenderTransform>
+                                    <TranslateTransform X="32" Y="-8" />
+                                </ContentControl.RenderTransform>
+                                <Path Data="{StaticResource LeftArrow}" Fill="{StaticResource TextColor}">
+                                    <Path.RenderTransform>
+                                        <ScaleTransform ScaleX="-1.0"/>
+                                    </Path.RenderTransform>
+
+                                </Path>
+                            </ContentControl>
+
+                            <TextBlock Grid.Column="2" HorizontalAlignment="Left" FontFamily="{StaticResource Slopes}" FontSize="20" Foreground="{StaticResource TextColor}">
+                                <Run Text="{Binding ArrivalAirport, Mode=OneTime}"/>
+                            </TextBlock>
+                            <TextBlock Grid.Column="2" Grid.Row="1" HorizontalAlignment="Left" FontFamily="{StaticResource Slopes}" FontSize="16" Foreground="{StaticResource TextColor}">
+                                <Run Text="{Binding EndTime, Mode=OneTime}"/>
+                            </TextBlock>
+                        </Grid>
 
                         <TextBlock
                             FontFamily="{StaticResource Slopes}" FontSize="20" Foreground="{StaticResource TextColor}">
-                            <Run Text="{Binding StartTime}" />
-                            <Run Text="{Binding FlightTime}" />
+                            <Run Text="{Binding FlightDistanceInMeters}"/><Run Text="{Binding FlightTime}"/> / <Run Text="{Binding FlightDistanceNM}"/> NM
                             <LineBreak />
-                            <Run Text="{Binding Path=Aircraft.Manufacturer}"/> <Run Text="{Binding Path=Aircraft.AircraftType}"/>
-                            <LineBreak />
-                            <Run Text="{Binding Path=Aircraft.TailNumber}"/>
+                            <Run Text="{Binding Path=Aircraft.Manufacturer}"/> <Run Text="{Binding Path=Aircraft.AircraftType}"/>, <Run Text="{Binding Path=Aircraft.TailNumber}"/>
                             <LineBreak />
                             <Run Text="{Binding Path=Aircraft.Airline}"/>
                         </TextBlock>
