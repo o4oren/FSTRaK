@@ -20,6 +20,38 @@
             <DataTemplate DataType="{x:Type viewmodels:FlightDetailsViewModel}" >
                 <views:FlightDetailsView/>
             </DataTemplate>
+
+            <Style x:Key="ListViewItemStyle" TargetType="ListViewItem">
+                <Setter Property="Template">
+                    <Setter.Value>
+                        <ControlTemplate TargetType="ListBoxItem">
+                            <Border Name="_Border"
+                                Padding="2"
+                                    BorderBrush="{StaticResource MidBorderBrush}"
+                                    Background="white"
+                                    BorderThickness="1"
+                                    Margin="3"
+                                    CornerRadius="5"
+                                    Width="auto"
+                                SnapsToDevicePixels="true">
+                                <ContentPresenter />
+                            </Border>
+                            <ControlTemplate.Triggers>
+                                <Trigger Property="IsSelected" Value="true">
+                                    <Setter TargetName="_Border" Property="Background" Value="{StaticResource BrightTextColor}"/>
+                                    <Setter TargetName="_Border" Property="BorderThickness" Value="1"/>
+                                </Trigger>
+                                <Trigger Property="IsMouseOver" Value="true">
+                                    <Setter TargetName="_Border" Property="Background" Value="{StaticResource BrightTextColor}"/>
+                                    <Setter TargetName="_Border" Property="BorderThickness" Value="1"/>
+                                    <Setter TargetName="_Border" Property="BorderBrush" Value="{StaticResource SilverGradient}"/>
+
+                                </Trigger>
+                            </ControlTemplate.Triggers>
+                        </ControlTemplate>
+                    </Setter.Value>
+                </Setter>
+            </Style>
         </ResourceDictionary>
     </UserControl.Resources>
 
@@ -48,7 +80,9 @@
         <ListView Width="280" VerticalAlignment="Stretch"
                       Grid.Row="1"
             ItemsSource="{Binding Flights}" 
+                  ItemContainerStyle="{StaticResource ListViewItemStyle}"
             IsSynchronizedWithCurrentItem="True" 
+                  d:ItemsSource="{d:SampleData}"
             SelectedItem="{Binding SelectedFlight}"
             >
                 <ListView.ContextMenu>
@@ -61,19 +95,21 @@
                     <DataTemplate>
                         <StackPanel>
                         <StackPanel Orientation="Horizontal">
-                            <TextBlock HorizontalAlignment="Left">
+                            <TextBlock HorizontalAlignment="Left" FontFamily="{StaticResource Slopes}" FontSize="20" Foreground="{StaticResource TextColor}">
                                 <Run Text="{Binding DepartureAirport}"/>
                             </TextBlock>
                             <ContentControl>=></ContentControl>
-                            <TextBlock HorizontalAlignment="Right">
+                            <TextBlock HorizontalAlignment="Right"
+                                       FontFamily="{StaticResource Slopes}" FontSize="20" Foreground="{StaticResource TextColor}">
                                 <Run Text="{Binding ArrivalAirport}"/>
                             </TextBlock>
                         </StackPanel>
 
-                        <TextBlock>
+                        <TextBlock
+                            FontFamily="{StaticResource Slopes}" FontSize="20" Foreground="{StaticResource TextColor}">
                             <Run Text="{Binding StartTime}" />
                             <Run Text="{Binding FlightTime}" />
-
+                            <LineBreak />
                             <Run Text="{Binding Path=Aircraft.Manufacturer}"/> <Run Text="{Binding Path=Aircraft.AircraftType}"/>
                             <LineBreak />
                             <Run Text="{Binding Path=Aircraft.TailNumber}"/>

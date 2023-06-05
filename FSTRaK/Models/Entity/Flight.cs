@@ -127,7 +127,7 @@ namespace FSTRaK.Models
         public void UpdateScore()
         {
             var scoringEvents = GetScoringEvents();
-            Score = scoringEvents.Sum(e => e.ScoreDelta);
+            Score = 100 - scoringEvents.Sum(e => e.ScoreDelta);
         }
 
         private List<ScoringEvent> GetScoringEvents()

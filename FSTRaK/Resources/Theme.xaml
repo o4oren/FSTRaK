@@ -102,6 +102,23 @@
         </LinearGradientBrush.GradientStops>
     </LinearGradientBrush>
 
+    <LinearGradientBrush x:Key="SilverGradient"
+                     StartPoint="0,0"
+                     EndPoint="1,1">
+        <LinearGradientBrush.GradientStops>
+            <GradientStopCollection>
+                <GradientStop Color="#F1F0ED"
+                    Offset="0" />
+                <GradientStop Color="#B3B6B5"
+                    Offset="0.4" />
+                <GradientStop Color="#8E8D8D"
+                    Offset="0.6" />
+                <GradientStop Color="#F1F0ED"
+                    Offset="1" />
+            </GradientStopCollection>
+        </LinearGradientBrush.GradientStops>
+    </LinearGradientBrush>
+
 
     <!--Styles and templates.-->
 
@@ -633,4 +650,5 @@
             </Setter.Value>
         </Setter>
     </Style>
+
 </ResourceDictionary>
