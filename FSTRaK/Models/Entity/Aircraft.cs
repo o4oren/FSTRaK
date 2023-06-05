@@ -45,7 +45,7 @@ namespace FSTRaK.Models
             .AppendLine($"{this.Manufacturer} {this.AircraftType}")
             .AppendLine(this.TailNumber);
             if (this.Airline != string.Empty)
-                builder.AppendLine(this.Airline);
+                builder.Append(this.Airline);
             return builder.ToString();
         }
 

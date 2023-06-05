@@ -75,7 +75,7 @@ namespace FSTRaK.ViewModels
                     if (@event.ScoreDelta < -15)
                         pin.Color = "Red";
                     else if (@event.ScoreDelta < 0)
-                        pin.Color = "Yellow";
+                        pin.Color = "#DE970B";
 
 
                 }

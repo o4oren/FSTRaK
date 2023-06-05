@@ -1,12 +1,10 @@
 ﻿using FSTRaK.DataTypes;
 using FSTRaK.Models.Entity;
-using FSTRaK.Utils;
 using MapControl;
 using Serilog;
 using System;
 using System.Collections.ObjectModel;
 using System.Linq;
-using System.Text;
 using System.Threading.Tasks;
 
 namespace FSTRaK.Models.FlightManager
@@ -63,6 +61,7 @@ namespace FSTRaK.Models.FlightManager
                 {
                     SavetFlight();
                 }
+                Log.Information($"Flight Ended!\n{Context.ActiveFlight.ToString()}");
                 _isEnded = true;
             }
 

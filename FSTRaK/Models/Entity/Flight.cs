@@ -1,6 +1,5 @@
 ﻿using FSTRaK.DataTypes;
 using FSTRaK.Models.Entity;
-using FSTRaK.Utils;
 using System;
 using System.Collections.Generic;
 using System.Collections.ObjectModel;
@@ -61,7 +60,6 @@ namespace FSTRaK.Models
                         icao = DepartureAirport
                     };
                 }
-
             }
         }
 
@@ -101,9 +99,16 @@ namespace FSTRaK.Models
 
             sb.AppendLine($"Start Time: {this.StartTime}")
             .AppendLine($"End Time: {this.EndTime}")
-            .AppendLine($"Block Time: {this.FlightTime}")
-            .AppendLine($"Fuel Used: {TotalFuelUsed:F1}")
-            .AppendLine($"Flown Distance: {FlightDistanceNM:F0} NM");
+            .AppendLine($"Block Time: {this.FlightTime}");
+
+            if (Properties.Settings.Default.Units == (int)Units.Metric)
+                sb.AppendLine($"Fuel Used: {(TotalFuelUsed * Consts.LbsToKgs):F1} Kg");
+            else
+                sb.AppendLine($"Fuel Used: {TotalFuelUsed:F1} Lbs");
+
+
+
+            sb.AppendLine($"Flown Distance: {FlightDistanceNM:F0} NM");
 
             var landingEvent = (LandingEvent)this.FlightEvents.FirstOrDefault(e => e is LandingEvent);
             if (landingEvent != null)
@@ -112,7 +117,7 @@ namespace FSTRaK.Models
             }
 
             
-            sb.AppendLine($"Score: {this.Score}")
+            sb.Append($"Score: {this.Score}")
             .ToString();
 
             return sb.ToString();

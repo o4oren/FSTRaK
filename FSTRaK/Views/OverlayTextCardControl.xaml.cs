@@ -13,28 +13,42 @@ namespace FSTRaK.Views
         public OverlayTextCardControl()
         {
             InitializeComponent();
+            
         }
 
-        
+        public bool IsHeaderVisible
+        {
+            get
+            {
+                return Header != string.Empty;
+            }
+        }
 
-    public string Header
-    {
-        get { return (string)GetValue(HeaderProperty); }
-        set { SetValue(HeaderProperty, value); }
-    }
+        public bool IsTextVisible
+        {
+            get
+            {
+                return Text != string.Empty;
+            }
+        }
 
-    public static readonly DependencyProperty HeaderProperty =
-        DependencyProperty.Register("Header", typeof(string), typeof(OverlayTextCardControl), new PropertyMetadata(default(string)));
+        public string Header
+        {
+            get { return (string)GetValue(HeaderProperty); }
+            set { SetValue(HeaderProperty, value); }
+        }
+
+        public static readonly DependencyProperty HeaderProperty =
+            DependencyProperty.Register("Header", typeof(string), typeof(OverlayTextCardControl), new PropertyMetadata(default(string)));
 
 
-    public string Text
-    {
-        get { return (string)GetValue(TextProperty); }
-        set { SetValue(TextProperty, value); }
-    }
+        public string Text
+        {
+            get { return (string)GetValue(TextProperty); }
+            set { SetValue(TextProperty, value); }
+        }
 
-    public static readonly DependencyProperty TextProperty =
-        DependencyProperty.Register("Text", typeof(string), typeof(OverlayTextCardControl), new PropertyMetadata(default(string)));
-
-    }   
+        public static readonly DependencyProperty TextProperty =
+            DependencyProperty.Register("Text", typeof(string), typeof(OverlayTextCardControl), new PropertyMetadata(default(string)));
+        }
 }

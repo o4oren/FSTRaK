@@ -64,9 +64,8 @@
                 <StackPanel Orientation="Horizontal" Margin="10">
                 <StackPanel HorizontalAlignment="left" Visibility="{Binding IsShowFlightDetails, Converter={StaticResource BoolToVis}}">
                     <views:OverlayTextCardControl Grid.Row="4" Grid.Column="3"  Header="Aircraft:" Text="{Binding Flight.Aircraft}"/>
-                    <views:OverlayTextCardControl Grid.Row="4" Grid.Column="3"  Header="Flight Parameters:" Text="{Binding FlightParams}"/>
+                    <views:OverlayTextCardControl Grid.Row="4" Grid.Column="3"  Header="Flight Details:" Text="{Binding Flight}" />
                     <views:OverlayTextCardControl Grid.Row="4" Grid.Column="3"  Header="Scoreboard:" Text="{Binding ScoreboardText}" Visibility="{Binding IsShowScoreboard, Converter={StaticResource BoolToVis}}"/>
-
                 </StackPanel>
                 </StackPanel>
                 <StackPanel Margin="10" HorizontalAlignment="Right">

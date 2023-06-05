@@ -47,6 +47,7 @@ namespace FSTRaK.Models.FlightManager
                 
                 Context.RequestNearestAirports(NearestAirportRequestType.Departure);
                 _isStarted = true;
+                Log.Information("Flight started!");
             }
             
             if (Data.CameraState == (int)CameraState.Cockpit && Context.ActiveFlight.FlightEvents.Count == 0)
@@ -146,7 +147,7 @@ namespace FSTRaK.Models.FlightManager
                                 CultureInfo cultureInfo = new CultureInfo("en-US");
                                 TextInfo textInfo = cultureInfo.TextInfo;
                                 aircraft.Manufacturer = textInfo.ToTitleCase(aircraft.Manufacturer.ToLower());
-
+                                Log.Information(aircraft.ToString());
                             }
                         }
                     }

@@ -13,7 +13,9 @@
             <Grid.RowDefinitions>
                 <RowDefinition />
                 <RowDefinition />
-            </Grid.RowDefinitions>
+            <RowDefinition />
+
+        </Grid.RowDefinitions>
             
         <Border 
         Background="Black" 
@@ -21,7 +23,8 @@
         CornerRadius="5"
         Grid.Row="0" Grid.RowSpan="2"
         />
-        <Label Grid.Row="0"                                 
+        <Label Grid.Row="0"
+               x:Name="header"
                        Foreground="{StaticResource BrightTextColor}"
                        FontSize="18"
                        Margin="2"
@@ -29,8 +32,11 @@
                        Content="{Binding ElementName=OpverlayTextCard, Path=Header}"
                        HorizontalAlignment="Left"
                        VerticalAlignment="Center"
+               Visibility="{Binding IsHeaderVisible, Converter={StaticResource BoolToVis}}"
                        />
-            <TextBlock Grid.Row="1"                                        
+            <TextBlock 
+                x:Name="text"
+                Grid.Row="1"                                        
                        Foreground="{StaticResource BrightTextColor}"
                        FontSize="22"
                        Margin="5"
@@ -39,6 +45,7 @@
                        Text="{Binding ElementName=OpverlayTextCard, Path=Text}"
                        HorizontalAlignment="Left"
                        VerticalAlignment="Center"
+                Visibility="{Binding IsTextVisible, Converter={StaticResource BoolToVis}}"
                        />
-        </Grid>
+    </Grid>
 </UserControl>
