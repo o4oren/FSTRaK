@@ -104,7 +104,7 @@ namespace FSTRaK.Models.FlightManager
                     // Updating the map in realtime if not in non-flight states
                     if (!(State is SimNotInFlightState))
                     {
-                        FlightParams fp = new FlightParams();
+                        var fp = new FlightParams();
                         fp.IndicatedAirspeed = data.IndicatedAirpeed;
                         fp.GroundSpeed = data.GroundVelocity;
                         fp.VeticalSpeed = data.VerticalSpeed;
@@ -123,7 +123,6 @@ namespace FSTRaK.Models.FlightManager
                     var airport = _simConnectService.NearestAirport;
                     if(ActiveFlight != null && CurrentFlightParams.IsOnGround)
                     {
-                        Log.Debug($"xxx {airport} requested for {NearestAirportRequestType.Departure}");
                         if(_nearestAirportRequestType == NearestAirportRequestType.Departure)
                         {
                             ActiveFlight.DepartureAirport = airport;
@@ -132,6 +131,8 @@ namespace FSTRaK.Models.FlightManager
                         {
                             ActiveFlight.ArrivalAirport = airport;
                         }
+                        var prefix  = (_nearestAirportRequestType == NearestAirportRequestType.Departure) ? "Departing" : "Landed";
+                        Log.Information($"{prefix} - found {airport} at {_simConnectService.NearestAirportDistance * Consts.MetersToNauticalMiles} NM");
                     }
                     break;
 
@@ -139,6 +140,11 @@ namespace FSTRaK.Models.FlightManager
                     SimConnectInFlight = _simConnectService.IsInFlight;
                     break;
             }
+        }
+
+        public string GetLoadedAircraftFileName()
+        {
+            return _simConnectService.LoadedAircraft;
         }
 
         internal void RequestNearestAirports(NearestAirportRequestType nearestAirportRequestType)

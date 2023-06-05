@@ -6,15 +6,19 @@ using Serilog;
 using System;
 using System.Collections.ObjectModel;
 using System.Data.Entity;
+using System.Diagnostics;
 using System.Linq;
 using System.Threading;
 using System.Threading.Tasks;
+using System.Timers;
 
 namespace FSTRaK.ViewModels
 {
     internal class LogbookViewModel : BaseViewModel
     {
         FlightManager _flightManager = FlightManager.Instance;
+
+        private System.Timers.Timer _typingTimer;
         public RelayCommand OnLoogbookLoadedCommand { get; set; }
         public RelayCommand DeleteFlightCommand { get; set; }
 
@@ -51,30 +55,36 @@ namespace FSTRaK.ViewModels
             } 
         }
 
-        public LocationCollection FlightPath = new LocationCollection();
-
-
         public LogbookViewModel() 
         {
             Flights = new ObservableCollection<Flight>();
             _flightDetailsViewModel = new FlightDetailsViewModel();
+            _typingTimer = new System.Timers.Timer(500);
 
-            _flightManager.PropertyChanged += (async (s,e) =>
+            _flightManager.PropertyChanged += async (s,e) =>
             {
                 if(e.PropertyName.Equals(nameof(_flightManager.State)) && (_flightManager.State is FlightEndedState))
                 {
                     using (var logbookContext = new LogbookContext())
                     {
-                        await LoadFlights(500);
-                        var latestId = logbookContext.Flights.Max(f => f.ID);
-                        SelectedFlight = logbookContext.Flights
-                        .Where(f => f.ID == latestId)
-                        .Include(f => f.Aircraft)
-                        .Include(f => f.FlightEvents)
-                        .SingleOrDefault();
+                        try
+                        {
+                            await LoadFlights(500);
+                            var latestId = logbookContext.Flights.Max(f => f.ID);
+                            SelectedFlight = logbookContext.Flights
+                            .Where(f => f.ID == latestId)
+                            .Include(f => f.Aircraft)
+                            .Include(f => f.FlightEvents)
+                            .SingleOrDefault();
+                        }
+                        catch (Exception ex)
+                        {
+                            Log.Error(ex, ex.Message);
+                        }
+
                     }
                 }
-            });
+            };
 
             OnLoogbookLoadedCommand = new RelayCommand(o =>
             {
@@ -96,13 +106,35 @@ namespace FSTRaK.ViewModels
                         }
                         catch (Exception ex)
                         {
-                            Log.Debug(ex.ToString());
+                            Log.Debug(ex, ex.Message);
                         }
                     }
                 });
 
             });
+
+            _typingTimer.Elapsed += _typingTimer_Elapsed;
         }
+
+        private void _typingTimer_Elapsed(object sender, ElapsedEventArgs e)
+        {
+            SearchFlights();
+            _typingTimer.Stop();
+        }
+
+        private string _searchText;
+        public string SearchText 
+        { 
+            get { return _searchText; }
+            set
+            {
+                _typingTimer.Stop();
+                _typingTimer.Start();
+                _searchText = value;
+                // Actual search is in the typingTimerElapsed event handler.
+            }
+        }
+    
 
         private Task LoadFlights()
         {
@@ -130,9 +162,41 @@ namespace FSTRaK.ViewModels
                     }
                     catch (Exception ex)
                     {
-                        Log.Debug(ex.Message);
-                        Log.Debug(ex.ToString());
-                        Log.Debug(ex.InnerException.ToString());
+                        Log.Error(ex, "Unhandled error occured!");
+                    }
+                }
+            });
+        }
+
+        private Task SearchFlights()
+        {
+            if(SearchText == null || SearchText.Equals(string.Empty))
+                return LoadFlights();
+
+            return Task.Run(() => {
+                using (var logbookContext = new LogbookContext())
+                {
+                    try
+                    {
+                        var flights = logbookContext.Flights
+                        .Where(f => 
+                            f.DepartureAirport.ToLower().Equals(SearchText.ToLower())
+                            || f.ArrivalAirport.ToLower().Equals(SearchText.ToLower())
+                            || f.Aircraft.Title.ToLower().Contains(SearchText.ToLower())
+                            || f.Aircraft.Model.ToLower().Contains(SearchText.ToLower())
+                            )
+                        .Include(f => f.Aircraft)
+                        .Include(f => f.FlightEvents);
+
+                        App.Current.Dispatcher.Invoke((Action)delegate
+                        {
+                            Flights = new ObservableCollection<Flight>(flights);
+                            OnPropertyChanged(nameof(Flights));
+                        });
+                    }
+                    catch (Exception ex)
+                    {
+                        Log.Error(ex, "Exception fetching Flights!");
                     }
                 }
             });

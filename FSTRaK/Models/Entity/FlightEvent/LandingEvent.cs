@@ -1,22 +1,29 @@
 ﻿using FSTRaK.DataTypes;
-using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
+using System.ComponentModel.DataAnnotations.Schema;
+
 
 namespace FSTRaK.Models
 {
     internal class LandingEvent : ScoringEvent
     {
+        [Column("FlapsPosition")]
         public double FlapsPosition { get; set; }
         public double VerticalSpeed { get; set; }
+
+        [Column("FuelWeightLbs")]
         public double FuelWeightLbs { get; set; }
 
         public LandingRate LandingRate { get; set; }
 
         public double TouchDownPitchDegrees { get; set; }
         public double TouchDownBankDegress { get; set; }
-        public override int ScoreDelta { get; set; }
+
+        [NotMapped] public override string EventName { get; set; } = "Landing";
+
+        public override string ToString()
+        {
+            return $"{LandingRate}\n" + base.ToString() + $"\n{VerticalSpeed:F0} fpm";
+        }
+
     }
 }

@@ -1,6 +1,7 @@
 ﻿
 
 
+using Serilog;
 using System.Data.Entity;
 using System.Data.Entity.ModelConfiguration.Conventions;
 
@@ -13,6 +14,7 @@ namespace FSTRaK.Models.Entity
         public LogbookContext() : base("FSTrAkCompactDatabase")
         {
             Database.SetInitializer(new MigrateDatabaseToLatestVersion<LogbookContext, Migrations.Configuration>());
+            this.Database.Log = s => Log.Debug(s);
         }
 
         public DbSet<Flight> Flights { get; set; }

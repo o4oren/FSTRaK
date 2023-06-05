@@ -117,7 +117,6 @@ namespace FSTRaK.ViewModels
             }
             set
             {
-                Log.Debug($"{value}");
                 _isSaveOnlyCompleteFlights = value;
                 Properties.Settings.Default.IsSaveOnlyCompleteFlights = _isSaveOnlyCompleteFlights;
                 OnPropertyChanged();
@@ -126,9 +125,9 @@ namespace FSTRaK.ViewModels
 
         public SettingsViewModel() : base()
         {
-            ResourceDictionary mapProviders = new ResourceDictionary();
+            var mapProviders = new ResourceDictionary();
             mapProviders.Source = new System.Uri("pack://application:,,,/Resources/MapProvidersDictionary.xaml", uriKind: System.UriKind.Absolute);
-            ObservableCollection<string> layers = new ObservableCollection<string>();
+            var layers = new ObservableCollection<string>();
 
             foreach (DictionaryEntry provider in mapProviders)
             {
@@ -149,11 +148,6 @@ namespace FSTRaK.ViewModels
             IsSaveOnlyCompleteFlights = Properties.Settings.Default.IsSaveOnlyCompleteFlights;
             Units = (Units)Properties.Settings.Default.Units;
 
-        }
-
-        protected void OnPropertyChanged2([CallerMemberName] string name = null)
-        {
-            Log.Debug(name);
         }
     }
 }

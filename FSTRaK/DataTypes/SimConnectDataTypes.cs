@@ -1,4 +1,5 @@
 ﻿
+using System.Collections.Generic;
 using System.Linq;
 using System.Runtime.InteropServices;
 
@@ -71,9 +72,10 @@ namespace FSTRaK.DataTypes
 
     public enum EVENTS
     {
-        FLIGHT_LOADED,
-        PAUSE,
-        CRASHED
+        FlightLoaded,
+        AircraftLoaded,
+        Pause,
+        Crashed
     }
 
     [StructLayout(LayoutKind.Sequential, CharSet = CharSet.Ansi, Pack = 1)]
@@ -124,6 +126,10 @@ namespace FSTRaK.DataTypes
         public double Engine3MaxRpmPct;
         public double Engine4MaxRpmPct;
 
+        public double Throttle1Position;
+        public double Throttle2Position;
+        public double Throttle3Position;
+        public double Throttle4Position;
 
         /// <summary>
         /// Used to determine negine start up
@@ -132,6 +138,19 @@ namespace FSTRaK.DataTypes
         public double MaxEngineRpmPct() 
         {
             return new double[] { Engine1MaxRpmPct, Engine2MaxRpmPct, Engine3MaxRpmPct, Engine4MaxRpmPct}.Max();
+        }
+
+        public double MaxThorttlePosition()
+        {
+            return new double[] { Throttle1Position, Throttle2Position, Throttle3Position, Throttle3Position }.Max();
+        }
+
+        public double MinThrottlePosition()
+        {
+            var thorttlePositionArray = new List<double>( new double[] { Throttle1Position, Throttle1Position, Throttle2Position, Throttle3Position });
+            if (NumberOfEngines == 0)
+                return 0;
+            return thorttlePositionArray.GetRange(0,NumberOfEngines).Min();
         }
 
     }

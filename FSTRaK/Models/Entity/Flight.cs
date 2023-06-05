@@ -1,7 +1,12 @@
 ﻿using FSTRaK.DataTypes;
+using FSTRaK.Models.Entity;
+using FSTRaK.Utils;
 using System;
+using System.Collections.Generic;
 using System.Collections.ObjectModel;
 using System.ComponentModel.DataAnnotations.Schema;
+using System.Linq;
+using System.Text;
 
 namespace FSTRaK.Models
 {
@@ -29,7 +34,7 @@ namespace FSTRaK.Models
             set { FlightTimeMilis = value.Ticks; }
         }
 
-        public double FlightDistanceInMeters { get; set; }
+        public double FlightDistanceNM { get; set; }
 
         public double TotalFuelUsed { get; set; }
 
@@ -40,6 +45,41 @@ namespace FSTRaK.Models
 
         public ObservableCollection<BaseFlightEvent> FlightEvents { get; private set; }
 
+        [NotMapped] public Airport DepartureAirportDetails 
+        {
+            get
+            {
+                try
+                {
+                    var airport = AirportResolver.Instance.AirportsDictionary[DepartureAirport];
+                    return airport;
+                }
+                catch (Exception)
+                {
+                    return new Airport
+                    {
+                        icao = DepartureAirport
+                    };
+                }
+
+            }
+        }
+
+        [NotMapped]
+        public Airport ArrivalAirportDetails
+        {
+            get
+            {
+                var airport = AirportResolver.Instance.AirportsDictionary[ArrivalAirport];
+                if (airport == null)
+                    airport = new Airport
+                    {
+                        icao = ArrivalAirport
+                    };
+                return airport;
+            }
+        }
+
         public Flight()
         {
             this.FlightEvents = new ObservableCollection<BaseFlightEvent>();
@@ -47,8 +87,74 @@ namespace FSTRaK.Models
 
         public override string ToString()
         {
-            return ID.ToString();
+            var sb = new StringBuilder();
+            sb.AppendLine($"Departed From: {this.DepartureAirportDetails}");
+
+            if (this.FlightOutcome == FlightOutcome.Crashed)
+            {
+                sb.AppendLine(($"Crashed Near {this.ArrivalAirportDetails}"));
+            }
+            else
+            {
+                sb.AppendLine(($"Arrived At: {this.ArrivalAirportDetails}"));
+            }
+
+            sb.AppendLine($"Start Time: {this.StartTime}")
+            .AppendLine($"End Time: {this.EndTime}")
+            .AppendLine($"Block Time: {this.FlightTime}")
+            .AppendLine($"Fuel Used: {TotalFuelUsed:F1}")
+            .AppendLine($"Flown Distance: {FlightDistanceNM:F0} NM");
+
+            var landingEvent = (LandingEvent)this.FlightEvents.FirstOrDefault(e => e is LandingEvent);
+            if (landingEvent != null)
+            {
+                sb.AppendLine($"Lnading VS: {landingEvent.VerticalSpeed:F0} ft/m");
+            }
+
+            
+            sb.AppendLine($"Score: {this.Score}")
+            .ToString();
+
+            return sb.ToString();
         }
 
+        /// <summary>
+        /// To be called after the flight is concluded. This method calculates the total score of the flight so it can be persisted.
+        /// </summary>
+        public void UpdateScore()
+        {
+            var scoringEvents = GetScoringEvents();
+            Score = 100 - scoringEvents.Sum(e => e.ScoreDelta);
+        }
+
+        private List<ScoringEvent> GetScoringEvents()
+        {
+            return this.FlightEvents
+            .OfType<ScoringEvent>()
+            .GroupBy(e => e.GetType())
+            .Select(e => (ScoringEvent)e.First())
+            .ToList<ScoringEvent>();
+        }
+
+        public string GetScoreDetails()
+        {
+            var scoringEvents = GetScoringEvents();
+            var builder = new StringBuilder();
+            foreach(var se in scoringEvents)
+            {
+                if(se.ScoreDelta != 0)
+                {
+                    if(se is LandingEvent)
+                    {
+                        builder.AppendLine($"{((LandingEvent)se).LandingRate} {se.EventName} {se.ScoreDelta} Points");
+                    }
+                    else
+                    {
+                        builder.AppendLine($"{se.EventName} {se.ScoreDelta} Points");
+                    }
+                }
+            }
+            return builder.ToString();
+        }
     }
 }

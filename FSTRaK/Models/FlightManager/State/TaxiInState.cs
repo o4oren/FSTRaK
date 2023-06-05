@@ -11,13 +11,13 @@ namespace FSTRaK.Models.FlightManager
 
         public TaxiInState(FlightManager Context) : base(Context)
         {
-            this._eventInterval = 5000;
+            this._eventInterval = 10000;
             this.Name = "Taxi In";
             this.IsMovementState = true;
         }
         public override void ProcessFlightData(AircraftFlightData Data)
         {
-            if (Data.GroundVelocity > 35)
+            if ((Data.GroundVelocity > 40 && Data.MinThrottlePosition() > 75) || Data.SimOnGround != 1)
             {
                 Context.State = new TakeoffRollState(Context);
                 return;

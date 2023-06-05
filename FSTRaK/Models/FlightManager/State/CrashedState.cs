@@ -17,7 +17,7 @@ namespace FSTRaK.Models.FlightManager
         }
         public override void ProcessFlightData(AircraftFlightData Data)
         {
-            CrashEvent ce = new CrashEvent();
+            var ce = new CrashEvent();
             AddFlightEvent(Data, ce);
 
             Context.State = new FlightEndedState(Context);

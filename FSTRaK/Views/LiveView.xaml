@@ -55,7 +55,7 @@
         <StackPanel Margin="10" HorizontalAlignment="Left">
             <views:OverlayTextCardControl Text="{Binding State}"/>
             <StackPanel Visibility="{Binding IsShowAirplane, Converter={StaticResource BoolToVis}}" MaxWidth="200">
-                <views:OverlayTextCardControl Header="Aircraft" Text="{Binding Title}"/>
+                <views:OverlayTextCardControl Header="Aircraft" Text="{Binding ActiveFlight.Aircraft}"/>
                 <views:OverlayTextCardControl Header="Flight Parameters" Text="{Binding FlightParamsText}"/>
             </StackPanel>
         </StackPanel>

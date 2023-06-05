@@ -3,6 +3,7 @@ using System.ComponentModel.DataAnnotations.Schema;
 
 namespace FSTRaK.Models
 {
+    [Table("FlightEvent")]
     internal class BaseFlightEvent : BaseModel
     {
 
@@ -20,5 +21,23 @@ namespace FSTRaK.Models
         public int FlightID { get; set; }
 
         public virtual Flight Flight { get; set; }
+
+        [NotMapped] public virtual string EventName { get; set; } = "Flight event";
+
+
+        [NotMapped]
+        public string Location 
+        { 
+            get
+            {
+                return $"{Latitude},{Longitude}";
+            }
+            private set { } 
+        }
+
+        public override string ToString()
+        {
+            return $"{EventName}\n{Time.ToShortTimeString()}";
+        }
     }
 }

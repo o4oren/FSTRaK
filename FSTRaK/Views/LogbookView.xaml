@@ -4,7 +4,6 @@
              xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006" 
              xmlns:d="http://schemas.microsoft.com/expression/blend/2008" 
              xmlns:viewmodels="clr-namespace:FSTRaK.ViewModels" 
-             xmlns:entity="clr-namespace:FSTRaK.Models.Entity" 
              xmlns:b="http://schemas.microsoft.com/xaml/behaviors" xmlns:views="clr-namespace:FSTRaK.Views"
              mc:Ignorable="d" 
              d:DesignHeight="450" d:DesignWidth="800"
@@ -21,66 +20,131 @@
             <DataTemplate DataType="{x:Type viewmodels:FlightDetailsViewModel}" >
                 <views:FlightDetailsView/>
             </DataTemplate>
+
+            <Style x:Key="ListViewItemStyle" TargetType="ListViewItem">
+                <Setter Property="Template">
+                    <Setter.Value>
+                        <ControlTemplate TargetType="ListBoxItem">
+                            <Border Name="_Border"
+                                Padding="2"
+                                    BorderBrush="{StaticResource MidBorderBrush}"
+                                    Background="white"
+                                    BorderThickness="1"
+                                    Margin="3"
+                                    CornerRadius="5"
+                                    Width="auto"
+                                SnapsToDevicePixels="true">
+                                <ContentPresenter />
+                            </Border>
+                            <ControlTemplate.Triggers>
+                                <Trigger Property="IsSelected" Value="true">
+                                    <Setter TargetName="_Border" Property="Background" Value="{StaticResource BrightTextColor}"/>
+                                    <Setter TargetName="_Border" Property="BorderThickness" Value="1"/>
+                                </Trigger>
+                                <Trigger Property="IsMouseOver" Value="true">
+                                    <Setter TargetName="_Border" Property="Background" Value="{StaticResource BrightTextColor}"/>
+                                    <Setter TargetName="_Border" Property="BorderThickness" Value="1"/>
+                                    <Setter TargetName="_Border" Property="BorderBrush" Value="{StaticResource SilverGradient}"/>
+
+                                </Trigger>
+                            </ControlTemplate.Triggers>
+                        </ControlTemplate>
+                    </Setter.Value>
+                </Setter>
+            </Style>
         </ResourceDictionary>
     </UserControl.Resources>
 
-    <Grid>
+    <Grid Margin="5">
         <Grid.ColumnDefinitions>
-            <ColumnDefinition Width="200"/>
+            <ColumnDefinition Width="300"/>
             <ColumnDefinition />
         </Grid.ColumnDefinitions>
-        
+
+        <Grid.RowDefinitions>
+            <RowDefinition Height="auto"/>
+            <RowDefinition Height="*"/>
+        </Grid.RowDefinitions>
+
         <b:Interaction.Triggers>
             <b:EventTrigger EventName="Loaded">
                 <b:InvokeCommandAction Command="{Binding OnLoogbookLoadedCommand}"/>
             </b:EventTrigger>
         </b:Interaction.Triggers>
-        <ListView Width="200"
+        <TextBox Style="{StaticResource FSTrAkTextBox}" 
+                 Text="{Binding SearchText, 
+            Mode=TwoWay, 
+            UpdateSourceTrigger=PropertyChanged}" 
+                 Margin="0 10 0 10"
+                 />
+        <ListView Width="280" VerticalAlignment="Stretch"
+                      Grid.Row="1"
             ItemsSource="{Binding Flights}" 
+                  ItemContainerStyle="{StaticResource ListViewItemStyle}"
             IsSynchronizedWithCurrentItem="True" 
+                  d:ItemsSource="{d:SampleData}"
             SelectedItem="{Binding SelectedFlight}"
             >
-            <ListView.ContextMenu>
-                <ContextMenu>
-                    <MenuItem Header="Delete" Command="{Binding DeleteFlightCommand}"></MenuItem>
-                </ContextMenu>
-            </ListView.ContextMenu>
+                <ListView.ContextMenu>
+                    <ContextMenu>
+                        <MenuItem Header="Delete" Command="{Binding DeleteFlightCommand}"></MenuItem>
+                    </ContextMenu>
+                </ListView.ContextMenu>
 
-            <ListView.ItemTemplate>
-            <DataTemplate>
-                    <Grid>
-                        <Grid.ColumnDefinitions>
-                            <ColumnDefinition Width="1*" />
-                            <ColumnDefinition Width="2*" />
-                        </Grid.ColumnDefinitions>
-                        <Grid.RowDefinitions>
-                            <RowDefinition Height="1*" />
-                            <RowDefinition Height="1*" />
-                            <RowDefinition Height="1*" />
-                            <RowDefinition Height="1*" />
-                            <RowDefinition Height="1*" />
-                            <RowDefinition Height="1*" />
-                        </Grid.RowDefinitions>
+                <ListView.ItemTemplate>
+                    <DataTemplate>
+                        <StackPanel>
+                        <Grid HorizontalAlignment="Stretch">
+                            <Grid.ColumnDefinitions>
+                                <ColumnDefinition />
+                                <ColumnDefinition />
+                                <ColumnDefinition />
 
-                        <TextBlock Grid.Row="0" Text="Date" />
-                        <TextBlock Grid.Row="0" Grid.Column="1" Text="{Binding StartTime}" />
+                            </Grid.ColumnDefinitions>
+                            <Grid.RowDefinitions>
+                                <RowDefinition />
+                                <RowDefinition />
+                            </Grid.RowDefinitions>
+                            <TextBlock Grid.Column="0" HorizontalAlignment="Left" FontFamily="{StaticResource Slopes}" FontSize="20" Foreground="{StaticResource TextColor}">
+                                <Run Text="{Binding DepartureAirport, Mode=OneTime}"/>
+                            </TextBlock>
+                            <TextBlock Grid.Column="0" Grid.Row="1" HorizontalAlignment="Left" FontFamily="{StaticResource Slopes}" FontSize="16" Foreground="{StaticResource TextColor}">
+                                <Run Text="{Binding StartTime, Mode=OneTime}"/>
+                            </TextBlock>
 
-                        <TextBlock Grid.Row="1" Text="Departure" />
-                        <TextBlock Grid.Row="1" Grid.Column="1" Text="{Binding Path=DepartureAirport}" />
+                            <ContentControl Grid.Column="1" VerticalAlignment="Center">
+                                <ContentControl.RenderTransform>
+                                    <TranslateTransform X="32" Y="-8" />
+                                </ContentControl.RenderTransform>
+                                <Path Data="{StaticResource LeftArrow}" Fill="{StaticResource TextColor}">
+                                    <Path.RenderTransform>
+                                        <ScaleTransform ScaleX="-1.0"/>
+                                    </Path.RenderTransform>
 
-                        <TextBlock Grid.Row="2" Text="Arrival" />
-                        <TextBlock Grid.Row="2" Grid.Column="1" Text="{Binding Path=ArrivalAirport}" />
+                                </Path>
+                            </ContentControl>
 
-                        <TextBlock Grid.Row="3" Text="Aircraft" />
-                        <TextBlock Grid.Row="3" Grid.Column="1" Text="{Binding Path=Aircraft.Title}" />
+                            <TextBlock Grid.Column="2" HorizontalAlignment="Left" FontFamily="{StaticResource Slopes}" FontSize="20" Foreground="{StaticResource TextColor}">
+                                <Run Text="{Binding ArrivalAirport, Mode=OneTime}"/>
+                            </TextBlock>
+                            <TextBlock Grid.Column="2" Grid.Row="1" HorizontalAlignment="Left" FontFamily="{StaticResource Slopes}" FontSize="16" Foreground="{StaticResource TextColor}">
+                                <Run Text="{Binding EndTime, Mode=OneTime}"/>
+                            </TextBlock>
+                        </Grid>
 
-                        <TextBlock Grid.Row="4" Text="Flight Time" />
-                        <TextBlock Grid.Row="4" Grid.Column="1" Text="{Binding Path=FlightTime}" />
-                    </Grid>
-                </DataTemplate>
-            </ListView.ItemTemplate>
-        </ListView>
-        <ContentControl Grid.Column="1" Content="{Binding FlightDetailsViewModel}" Margin="0"
+                        <TextBlock
+                            FontFamily="{StaticResource Slopes}" FontSize="20" Foreground="{StaticResource TextColor}">
+                            <Run Text="{Binding FlightDistanceInMeters}"/><Run Text="{Binding FlightTime}"/> / <Run Text="{Binding FlightDistanceNM}"/> NM
+                            <LineBreak />
+                            <Run Text="{Binding Path=Aircraft.Manufacturer}"/> <Run Text="{Binding Path=Aircraft.AircraftType}"/>, <Run Text="{Binding Path=Aircraft.TailNumber}"/>
+                            <LineBreak />
+                            <Run Text="{Binding Path=Aircraft.Airline}"/>
+                        </TextBlock>
+                        </StackPanel>
+                    </DataTemplate>
+                </ListView.ItemTemplate>
+            </ListView>
+            <ContentControl Grid.Column="1" Grid.RowSpan="2" Content="{Binding FlightDetailsViewModel}" Margin="0"
                      HorizontalContentAlignment="Stretch" VerticalContentAlignment="Stretch">
         </ContentControl>
     </Grid>

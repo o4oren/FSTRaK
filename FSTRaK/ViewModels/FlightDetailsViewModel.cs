@@ -5,8 +5,9 @@ using FSTRaK.Models;
 using MapControl;
 using Serilog;
 using System;
+using System.Collections.Generic;
+using System.Collections.ObjectModel;
 using System.Linq;
-using System.Text;
 using System.Windows;
 
 namespace FSTRaK.ViewModels
@@ -14,126 +15,145 @@ namespace FSTRaK.ViewModels
     internal class FlightDetailsViewModel : BaseViewModel
     {
         private Flight _flight;
-        StringBuilder _sb;
         public Flight Flight { 
-            get 
+            get => _flight;
+            set
             {
-                return _flight;
-            } 
-            set 
-            {
-                if (_flight != value)
+                if (_flight == value) return;
+                _flight = value;
+                FlightPath = new ObservableCollection<Location>(_flight.FlightEvents
+                    .OrderBy(e => e.ID)
+                    .Select(e => new Location(e.Latitude, e.Longitude)));
+
+                double minLon = Double.MaxValue, minLat = Double.MaxValue, maxLon = Double.MinValue, maxLat = Double.MinValue;
+
+                FlightPath.ToList().ForEach(coords =>
                 {
-                    
-                    _flight = value;
-                    FlightPath = new LocationCollection(_flight.FlightEvents.Select(e => new Location(e.Latitude, e.Longitude)));
+                    minLon = Math.Min(minLon, coords.Longitude);
+                    maxLon = Math.Max(maxLon, coords.Longitude);
+                    minLat = Math.Min(minLat, coords.Latitude);
+                    maxLat = Math.Max(maxLat, coords.Latitude);
+                });
 
-                    _sb.Clear()
-                        .AppendLine($"Departed From: {_flight.DepartureAirport}");
-                        
-                    if(_flight.FlightOutcome == FlightOutcome.Crashed)
-                    {
-                        _sb.AppendLine(($"Crashed Near {_flight.ArrivalAirport}"));
-                    } else
-                    {
-                        _sb.AppendLine(($"Arrived At: {_flight.ArrivalAirport}"));
-                    }
+                var boundingBox = new BoundingBox(minLat, minLon, maxLat, maxLon);
+                Log.Debug($"{boundingBox.Center} {boundingBox.Width}");
+                ViewPort = boundingBox;
 
-                        _sb.AppendLine($"Start Time: {_flight.StartTime}")
-                        .AppendLine($"End Time: {_flight.EndTime}")
-                        .AppendLine($"Block Time: {_flight.FlightTime}")
-                        .AppendLine($"Fuel Used: {TotalFuelUsed}")
-                        .AppendLine($"Flown Distance VSI: {FlightDistance}")
-                        .AppendLine($"Landing VSI: {LandingVerticalSpeed}")
-                        .AppendLine($"Score: {_flight.Score}")
-                        .ToString();
+                ScoreboardText = _flight.GetScoreDetails();
 
-                    FlightParams = _sb.ToString();
+                FlightParams = _flight.ToString();
 
-                    double minLon = Double.MaxValue, minLat = Double.MaxValue, maxLon = Double.MinValue, maxLat = Double.MinValue;
+                GeneratePushpins();
 
-                    FlightPath.ForEach(coords =>
-                    {
-                        minLon = Math.Min(minLon, coords.Longitude);
-                        maxLon = Math.Max(maxLon, coords.Longitude);
-                        minLat = Math.Min(minLat, coords.Latitude);
-                        maxLat = Math.Max(maxLat, coords.Latitude);
-
-                    });
-
-                    var boundingBox = new BoundingBox(minLat, minLon, maxLat, maxLon);
-                    Log.Debug($"{boundingBox.Center} {boundingBox.Width}");
-                    ViewPort = boundingBox;
-
-                    OnPropertyChanged();
-                    OnPropertyChanged(nameof(FlightPath));
-
-                }
+                OnPropertyChanged();
+                OnPropertyChanged(nameof(FlightPath));
+                OnPropertyChanged(nameof(AltSpeedGroundAltDictionary));
             } 
         }
+
+        private void GeneratePushpins()
+        {
+            var markerEvents = _flight.FlightEvents.Where(e => e is ScoringEvent || e is TakeoffEvent).ToList();
+
+            // Clear adjacent landings
+            var landings = markerEvents.Where(e => e is LandingEvent).ToList();
+            for (var i = 0; i < landings.Count; i++)
+            {
+                if (i <= 0) continue;
+                if (landings[i].Time < landings[i - 1].Time.AddSeconds(10))
+                {
+                    markerEvents.Remove(landings[i]);
+                }
+            }
+
+            MarkerList.Clear();
+            foreach (var e in markerEvents)
+            {
+                var pin = new FlightEventPushpin();
+                if(e is ScoringEvent @event)
+                {
+                    if (@event.ScoreDelta < -15)
+                        pin.Color = "Red";
+                    else if (@event.ScoreDelta < 0)
+                        pin.Color = "Yellow";
+
+
+                }
+                pin.Text = e.ToString();
+                pin.Location = $"{e.Latitude},{e.Longitude}";
+                MarkerList.Add(pin);
+            }
+        }
+
+        public ObservableCollection<Location> FlightPath { get; private set; }
+
 
         private string _flightParams;
             
         public string FlightParams
         {
-            get { return _flightParams; }
-            set 
+            get => _flightParams;
+            private set 
             {
                 _flightParams = value; 
                 OnPropertyChanged();
             }
         }
 
+        private ObservableCollection<FlightEventPushpin> _markerList = new ObservableCollection<FlightEventPushpin>();
 
-        public string LandingVerticalSpeed
+        public ObservableCollection<FlightEventPushpin> MarkerList
         {
-            get
+            get => _markerList;
+            set
             {
-                if(_flight != null)
+                
+                _markerList = value;
+                OnPropertyChanged();
+            }
+        }
+
+        public Dictionary<double, double[]> AltSpeedGroundAltDictionary
+        {
+            get 
+            {
+                // Building a dictionary where keys are the timestamp and values are arrays of ground speed altitude and ground altitude.
+                var altSpeedGroundDictionary = new Dictionary<double, double[]>();
+                var movementTime = _flight.FlightEvents.FirstOrDefault(e => e is TaxiOutEvent);
+                if (movementTime == null) return altSpeedGroundDictionary;
                 {
-                    var landingEvent = (LandingEvent)_flight.FlightEvents.FirstOrDefault(e => e is LandingEvent);
-                    if (landingEvent != null)
+                    var dataPoints = _flight.FlightEvents
+                        .Where(e => e.Time > movementTime.Time)
+                        .OrderBy(e => e.Time)
+                        .GroupBy(e => (e.Time - new DateTime(1970, 1, 1))
+                            .TotalMilliseconds)
+                        .Select(g => g.First());
+                    foreach (var e in dataPoints)
                     {
-                        return $"{landingEvent.VerticalSpeed:F0} ft/m";
+                        var altSpeedGroundArray = new double[] { e.Altitude, e.GroundSpeed, e.GroundAltitude };
+                        altSpeedGroundDictionary.Add(e.Time.ToOADate(), altSpeedGroundArray);
                     }
                 }
 
-                return "";
+                return altSpeedGroundDictionary;
             }
         }
 
-        public string FlightDistance
-        {
-            get
-            {
-                if (_flight != null)
-                {
-                    var distanceInNM = _flight.FlightDistanceInMeters * Consts.MetersToNauticalMiles;
-                        return $"{distanceInNM:F2} NM";
-                }
 
-                return "";
-            }
-        }
         public string TotalFuelUsed
         {
             get
             {
-                if (_flight != null)
-                {
-                    var totalFuelUsed = _flight.TotalFuelUsed;
-                    var units = "Lbs";
+                if (_flight == null) return "";
+                var totalFuelUsed = _flight.TotalFuelUsed;
+                var units = "Lbs";
 
-                    if(Properties.Settings.Default.Units.Equals((int)Units.Metric))
-                    {
-                        totalFuelUsed = totalFuelUsed * DataTypes.Consts.LbsToKgs;
-                        units = "Kg";
-                    }
+                if (!Properties.Settings.Default.Units.Equals((int)Units.Metric)) return $"{totalFuelUsed:F2} {units}";
+                totalFuelUsed *= DataTypes.Consts.LbsToKgs;
+                units = "Kg";
 
-                    return $"{totalFuelUsed:F2} {units}";
-                }
+                return $"{totalFuelUsed:F2} {units}";
 
-                return "";
             }
         }
 
@@ -142,7 +162,7 @@ namespace FSTRaK.ViewModels
         {
             get
             {
-                string resoueceKey = Properties.Settings.Default.MapTileProvider;
+                var resoueceKey = Properties.Settings.Default.MapTileProvider;
                 var resource = Application.Current.Resources[resoueceKey] as MapTileLayerBase;
                 if (resource != null)
                 {
@@ -155,7 +175,7 @@ namespace FSTRaK.ViewModels
 
         private BoundingBox _viewPort;
         public BoundingBox ViewPort { 
-            get { return _viewPort; }
+            get => _viewPort;
             set
             {
                 if (_viewPort != value) 
@@ -166,10 +186,66 @@ namespace FSTRaK.ViewModels
             }
         }
 
-        public LocationCollection FlightPath { get; private set; }
-        public FlightDetailsViewModel()
+        private bool _isShowPath = true;
+        public bool IsShowPath { get => _isShowPath;
+            set
+            {
+                _isShowPath = value;
+                OnPropertyChanged();
+            }
+        }
+
+        private bool _isShowFlightDetails = true;
+        public bool IsShowFlightDetails
         {
-            _sb = new StringBuilder();
+            get => _isShowFlightDetails;
+            set
+            {
+                _isShowFlightDetails = value;
+                OnPropertyChanged();
+            }
+        }
+
+        private bool _isShowAltSpeedCharts = false;
+        public bool IsShowAltSpeedCharts
+        {
+            get => _isShowAltSpeedCharts;
+            set
+            {
+                _isShowAltSpeedCharts = value;
+                OnPropertyChanged();
+            }
+        }
+
+        private bool _isShowScoreboard = false;
+        public bool IsShowScoreboard
+        {
+            get => _isShowScoreboard;
+            set
+            {
+                _isShowScoreboard = value;
+                OnPropertyChanged();
+            }
+        }
+
+        private string scoreboardText;
+
+        public string ScoreboardText 
+        { 
+            get => scoreboardText;
+            set {
+                scoreboardText = value;
+                OnPropertyChanged();
+            }
+        }
+
+        public class FlightEventPushpin
+        {
+            public string Location { get; set; }
+            public string Text { get; set; } = string.Empty;
+
+            public string Color { get; set; } = "Green";
+
         }
     }
 }

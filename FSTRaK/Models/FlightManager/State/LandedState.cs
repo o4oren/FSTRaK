@@ -23,7 +23,7 @@ namespace FSTRaK.Models.FlightManager
 
         private void ProcessLandingData(AircraftFlightData landingData)
         {
-            LandingEvent le = new LandingEvent()
+            var le = new LandingEvent()
             {
                 VerticalSpeed = landingData.VerticalSpeed
             };
@@ -31,12 +31,12 @@ namespace FSTRaK.Models.FlightManager
             if (landingData.VerticalSpeed < -500)
             {
                 le.LandingRate = LandingRate.Hard;
-                le.ScoreDelta -= 20;
+                le.ScoreDelta = -25;
             }
             else if (landingData.VerticalSpeed < -350)
             {
                 le.LandingRate = LandingRate.Aceeptable;
-                le.ScoreDelta -= 10;
+                le.ScoreDelta = -10;
             }
             else if (landingData.VerticalSpeed < -275)
             {
@@ -45,12 +45,12 @@ namespace FSTRaK.Models.FlightManager
             else if (landingData.VerticalSpeed < -175)
             {
                 le.LandingRate = LandingRate.Perfect;
-                le.ScoreDelta += 20;
+                le.ScoreDelta = 10;
             }
             else if (landingData.VerticalSpeed < -125)
             {
                 le.LandingRate = LandingRate.Soft;
-                le.ScoreDelta -= 10;
+                le.ScoreDelta = -10;
             }
 
             // TODO future handling of pitch
@@ -67,9 +67,9 @@ namespace FSTRaK.Models.FlightManager
                 return;
             }
 
-            if (Data.GroundVelocity < 35)
+            if (Data.GroundVelocity < 35 && Data.MaxThorttlePosition() < 50)
             {
-                TaxiInEvent ti = new TaxiInEvent()
+                var ti = new TaxiInEvent()
                 {
                     FuelWeightLbs = Data.FuelWeightLbs
                 };

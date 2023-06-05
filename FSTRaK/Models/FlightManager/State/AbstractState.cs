@@ -54,7 +54,7 @@ namespace FSTRaK.Models.FlightManager
         /// <param name="fe"></param>
         protected void AddFlightEvent(AircraftFlightData data, BaseFlightEvent fe)
         {
-            DateTime time = CalculateSimTime(data);
+            var time = CalculateSimTime(data);
             fe.Altitude = data.Altitude;
             fe.GroundAltitude = data.GroundAltitude;
             fe.Latitude = data.Latitude;
@@ -64,12 +64,11 @@ namespace FSTRaK.Models.FlightManager
             fe.GroundSpeed = data.GroundVelocity;
             fe.Time = time;
             Context.ActiveFlight.FlightEvents.Add(fe);
-            Log.Debug(Context.ActiveFlight.FlightEvents.Last().GetType().ToString());
         }
 
         protected void AddFlightEvent(AircraftFlightData data)
         {
-            BaseFlightEvent fe = new BaseFlightEvent();
+            var fe = new BaseFlightEvent();
             AddFlightEvent(data, fe);
         }
 

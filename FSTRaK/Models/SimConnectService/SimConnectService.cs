@@ -32,7 +32,7 @@ namespace FSTRaK
         private bool _isConnected = false;
         public bool IsConnected
         {
-            get => _isConnected; 
+            get => _isConnected;
             private set
             {
                 if (value != _isConnected)
@@ -46,10 +46,10 @@ namespace FSTRaK
         private bool _isInFlight = false;
         public bool IsInFlight
         {
-            get => _isInFlight; 
+            get => _isInFlight;
             private set
             {
-                if(value != _isInFlight)
+                if (value != _isInFlight)
                 {
                     _isInFlight = value;
                     OnPropertyChanged(nameof(IsInFlight));
@@ -57,7 +57,7 @@ namespace FSTRaK
                 }
             }
         }
-        
+
         // PAUSE_STATE_FLAG_OFF 0 
         // PAUSE_STATE_FLAG_PAUSE 1 // "full" Pause (sim + traffic + etc...) 
         // PAUSE_STATE_FLAG_PAUSE_WITH_SOUND 2 // FSX Legacy Pause (not used anymore) 
@@ -83,7 +83,7 @@ namespace FSTRaK
             get => _isCrashed;
             private set
             {
-                if(value != _isCrashed)
+                if (value != _isCrashed)
                 {
                     _isCrashed = value;
                     OnPropertyChanged(nameof(IsCrashed));
@@ -105,6 +105,19 @@ namespace FSTRaK
             }
         }
 
+        private string _loadedAircraft = string.Empty;
+        public string LoadedAircraft
+        {
+            get => _loadedAircraft;
+            private set
+            {
+                if (value != _loadedAircraft)
+                {
+                    _loadedAircraft = value;
+                    OnPropertyChanged();
+                }
+            }
+        }
 
 
         private AircraftFlightData _flightData;
@@ -121,7 +134,7 @@ namespace FSTRaK
             }
         }
 
-        private double _nearestAirportDistance = Double.MaxValue;
+        public double NearestAirportDistance { get; set; } = Double.MaxValue;
         private string _nearestAirport = string.Empty;
         public string NearestAirport
         {
@@ -162,7 +175,7 @@ namespace FSTRaK
         internal void Initialize()
         {
             //  Create a handle and hook to recieve windows messages
-            WindowInteropHelper lWih = new WindowInteropHelper(System.Windows.Application.Current.MainWindow);
+            var lWih = new WindowInteropHelper(System.Windows.Application.Current.MainWindow);
             lHwnd = lWih.Handle;
             gHs = HwndSource.FromHwnd(lHwnd);
             gHs.AddHook(new HwndSourceHook(WndProc));
@@ -191,7 +204,7 @@ namespace FSTRaK
         {
             try
             {
-                Log.Debug("Trying to connect");
+                Log.Information("Trying to connect to the simulator...");
                 _simconnect = new SimConnect("FSTrAk", lHwnd, WM_USER_SIMCONNECT, null, 0);
                 if (_simconnect != null)
                 {
@@ -200,7 +213,7 @@ namespace FSTRaK
             }
             catch (COMException ex)
             {
-                Log.Debug(ex.Message);
+                Log.Debug(ex, ex.Message);
                 // Do nothing
             }
         }
@@ -257,12 +270,19 @@ namespace FSTRaK
             _simconnect.AddToDataDefinition(DataDefinitions.FlightData, "GENERAL ENG PCT MAX RPM:3", "percent", SIMCONNECT_DATATYPE.FLOAT64, 0.0f, SimConnect.SIMCONNECT_UNUSED);
             _simconnect.AddToDataDefinition(DataDefinitions.FlightData, "GENERAL ENG PCT MAX RPM:4", "percent", SIMCONNECT_DATATYPE.FLOAT64, 0.0f, SimConnect.SIMCONNECT_UNUSED);
 
+            _simconnect.AddToDataDefinition(DataDefinitions.FlightData, "GENERAL ENG THROTTLE LEVER POSITION:1", "percent", SIMCONNECT_DATATYPE.FLOAT64, 0.0f, SimConnect.SIMCONNECT_UNUSED);
+            _simconnect.AddToDataDefinition(DataDefinitions.FlightData, "GENERAL ENG THROTTLE LEVER POSITION:2", "percent", SIMCONNECT_DATATYPE.FLOAT64, 0.0f, SimConnect.SIMCONNECT_UNUSED);
+            _simconnect.AddToDataDefinition(DataDefinitions.FlightData, "GENERAL ENG THROTTLE LEVER POSITION:3", "percent", SIMCONNECT_DATATYPE.FLOAT64, 0.0f, SimConnect.SIMCONNECT_UNUSED);
+            _simconnect.AddToDataDefinition(DataDefinitions.FlightData, "GENERAL ENG THROTTLE LEVER POSITION:4", "percent", SIMCONNECT_DATATYPE.FLOAT64, 0.0f, SimConnect.SIMCONNECT_UNUSED);
+
             _simconnect.RegisterDataDefineStruct<AircraftFlightData>(DataDefinitions.FlightData);
 
             // Subscribe to System events
-            _simconnect.SubscribeToSystemEvent(EVENTS.FLIGHT_LOADED, "FlightLoaded");
-            _simconnect.SubscribeToSystemEvent(EVENTS.PAUSE, "Pause_EX1");
-            _simconnect.SubscribeToSystemEvent(EVENTS.CRASHED, "Crashed");
+            _simconnect.SubscribeToSystemEvent(EVENTS.FlightLoaded, "FlightLoaded");
+            _simconnect.SubscribeToSystemEvent(EVENTS.Pause, "Pause_EX1");
+            _simconnect.SubscribeToSystemEvent(EVENTS.Crashed, "Crashed");
+            _simconnect.SubscribeToSystemEvent(EVENTS.AircraftLoaded, "AircraftLoaded");
+
 
 
             // Register listeners on simconnect events
@@ -289,22 +309,34 @@ namespace FSTRaK
 
         private void Simconnect_OnRecvFilename(SimConnect sender, SIMCONNECT_RECV_EVENT_FILENAME data)
         {
-            LoadedFlight = data.szFileName;
-            Log.Debug(LoadedFlight);
+            if (data.uEventID == (uint)EVENTS.FlightLoaded)
+            {
+                LoadedFlight = data.szFileName;
+                Log.Debug(LoadedFlight);
+            };
+            if (data.uEventID == (uint)EVENTS.AircraftLoaded)
+            {
+                LoadedAircraft = data.szFileName;
+                Log.Debug(data.szFileName);
+            };
+
         }
 
         private void Simconnect_OnRecvEvent(SimConnect sender, SIMCONNECT_RECV_EVENT data)
         {
             switch (data.uEventID)
             {
-                case (int)EVENTS.FLIGHT_LOADED:
+                case (int)EVENTS.FlightLoaded:
                     // Do nothing, this is handled in OnRecvFileName
                     break;
-                case (int)EVENTS.PAUSE:
+                case (int)EVENTS.Pause:
                     PauseState = data.dwData;
                     break;
-                case (int)EVENTS.CRASHED:
+                case (int)EVENTS.Crashed:
                     IsCrashed = true;
+                    break;
+                case (int)EVENTS.AircraftLoaded:
+                    // Do nothing, this is handled in OnRecvFileName;
                     break;
             }
         }
@@ -331,14 +363,14 @@ namespace FSTRaK
 
         void simconnect_OnRecvOpen(SimConnect sender, SIMCONNECT_RECV_OPEN data)
         {
-            Log.Information("Sim connection Openned!");
+            Log.Information("Sim connection success!");
             _connectionTimer.Stop();
             IsConnected = true;
         }
 
         void simconnect_OnRecvException(SimConnect sender, SIMCONNECT_RECV_EXCEPTION data)
         {
-            Log.Error(data.dwException.ToString());
+            Log.Error($"Simconnect excpetion {data.dwException}");
         }
 
         private void Simconnect_OnRecvSimobjectData(SimConnect sender, SIMCONNECT_RECV_SIMOBJECT_DATA data)
@@ -349,7 +381,7 @@ namespace FSTRaK
 
         public void RequestNearestAirport()
         {
-            _nearestAirportDistance = Double.MaxValue;
+            NearestAirportDistance = Double.MaxValue;
             _simconnect.RequestFacilitiesList_EX1(SIMCONNECT_FACILITY_LIST_TYPE.AIRPORT, Requests.NearbyAirportsRequest);
         }
 
@@ -361,24 +393,24 @@ namespace FSTRaK
 
                 if (myCoordinates != null)
                 {
-                    foreach (SIMCONNECT_DATA_FACILITY_AIRPORT a in data.rgData.Cast<SIMCONNECT_DATA_FACILITY_AIRPORT>())
+                    foreach (var a in data.rgData.Cast<SIMCONNECT_DATA_FACILITY_AIRPORT>())
                     {
                         var airportCoord = new GeoCoordinate(a.Latitude, a.Longitude);
                         var distance = airportCoord.GetDistanceTo(myCoordinates);
-                        if (distance < _nearestAirportDistance)
+                        if (distance < NearestAirportDistance)
                         {
                             if(a.Icao != NearestAirport)
                             {
                                 NearestAirport = a.Icao;
-                                _nearestAirportDistance = distance;
-                                Log.Information($"Closest found airport is {NearestAirport} at {_nearestAirportDistance} meters!");
+                                NearestAirportDistance = distance;
+                                Log.Information($"Closest found airport is {NearestAirport} at {NearestAirportDistance} meters!");
                             }
                         }
                     }
                 }
             } catch (Exception ex)
             {
-                Log.Error(ex.Message);
+                Log.Error(ex, ex.Message);
             }
         }
 

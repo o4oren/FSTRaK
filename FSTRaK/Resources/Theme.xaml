@@ -1,5 +1,5 @@
 ﻿<ResourceDictionary xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
-                    xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml">
+                    xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml" xmlns:map="clr-namespace:MapControl;assembly=MapControl.WPF">
 
     <!--Pallete-->
     <Color x:Key="PrimaryBright">#F2F5F8</Color>
@@ -58,6 +58,21 @@
     <SolidColorBrush x:Key="BrightTextColor" Color="{DynamicResource PrimaryBright}"/>
     <SolidColorBrush x:Key="MidBorderBrush" Color="{DynamicResource PrimaryMid}"/>
 
+    <Color x:Key="CloseButtonColor">Red</Color>
+    <Color x:Key="CloseButtonColorHover">#cc1b1b</Color>
+    <Color x:Key="CloseButtonColorPressed">DarkRed</Color>
+    <Color x:Key="MinButtonColor">#fcba03</Color>
+    <Color x:Key="MinButtonColorHover">#ffd257</Color>
+    <Color x:Key="MinButtonColorPressed">#ffef3b</Color>
+
+    <SolidColorBrush x:Key="CloseButtonColorBrush" Color="{DynamicResource CloseButtonColor}"/>
+    <SolidColorBrush x:Key="CloseButtonColorHoverBrush" Color="{DynamicResource CloseButtonColorHover}"/>
+    <SolidColorBrush x:Key="CloseButtonColorPressedBrush" Color="{DynamicResource CloseButtonColorPressed}"/>
+    <SolidColorBrush x:Key="MinButtonColorBrush" Color="{DynamicResource MinButtonColor}"/>
+    <SolidColorBrush x:Key="MinButtonColorHoverBrush" Color="{DynamicResource MinButtonColorHover}"/>
+    <SolidColorBrush x:Key="MinButtonColorPressedBrush" Color="{DynamicResource MinButtonColorPressed}"/>
+
+
 
     <LinearGradientBrush x:Key="MenuPopupBrush"
                      EndPoint="0.5,1"
@@ -87,6 +102,41 @@
         </LinearGradientBrush.GradientStops>
     </LinearGradientBrush>
 
+    <LinearGradientBrush x:Key="SilverGradient"
+                     StartPoint="0,0"
+                     EndPoint="1,1">
+        <LinearGradientBrush.GradientStops>
+            <GradientStopCollection>
+                <GradientStop Color="#F1F0ED"
+                    Offset="0" />
+                <GradientStop Color="#B3B6B5"
+                    Offset="0.4" />
+                <GradientStop Color="#8E8D8D"
+                    Offset="0.6" />
+                <GradientStop Color="#F1F0ED"
+                    Offset="1" />
+            </GradientStopCollection>
+        </LinearGradientBrush.GradientStops>
+    </LinearGradientBrush>
+
+
+    <LinearGradientBrush x:Key="SilverGradientLarge"
+                     StartPoint="0,0"
+                     EndPoint="1,1">
+        <LinearGradientBrush.GradientStops>
+            <GradientStopCollection>
+                <GradientStop Color="#F1F0ED"
+                    Offset="0" />
+                <GradientStop Color="#B3B6B5"
+                    Offset="0.15" />
+                <GradientStop Color="#8E8D8D"
+                    Offset="0.85" />
+                <GradientStop Color="#F1F0ED"
+                    Offset="1" />
+            </GradientStopCollection>
+        </LinearGradientBrush.GradientStops>
+    </LinearGradientBrush>
+    
 
     <!--Styles and templates.-->
 
@@ -112,7 +162,7 @@
                                 <Condition Property="IsMouseOver" Value="True"/>
                                 <Condition Property="IsChecked" Value="False"/>
                             </MultiTrigger.Conditions>
-                            <Setter TargetName="CheckBoxBorder" Property="BorderBrush" Value="{DynamicResource TopBarBackground}"/>
+                            <Setter TargetName="CheckBoxBorder" Property="BorderBrush" Value="{DynamicResource SilverGradient}"/>
                         </MultiTrigger>
                     </ControlTemplate.Triggers>
                 </ControlTemplate>
@@ -267,6 +317,11 @@
                 </Path.Stroke>
             </Path>
         </Grid>
+        <ControlTemplate.Triggers>
+            <Trigger Property="IsMouseOver" Value="true">
+                <Setter TargetName="Border" Property="BorderBrush" Value="{StaticResource SilverGradientLarge}" />
+            </Trigger>
+        </ControlTemplate.Triggers>
     </ControlTemplate>
 
     <ControlTemplate x:Key="ComboBoxTextBox"
@@ -275,6 +330,11 @@
           Focusable="False"
           Background="{TemplateBinding Background}" 
                 />
+        <ControlTemplate.Triggers>
+            <Trigger Property="IsMouseOver" Value="true">
+                <Setter TargetName="PART_ContentHost" Property="BorderBrush" Value="{StaticResource SilverGradient}" />
+            </Trigger>
+        </ControlTemplate.Triggers>
     </ControlTemplate>
 
     <Style x:Key="{x:Type ComboBox}"
@@ -580,4 +640,43 @@
             </Setter.Value>
         </Setter>
     </Style>
+
+
+    <Style x:Key="FSTrAkTextBox"
+       TargetType="TextBox">
+        <Setter Property="Template">
+            <Setter.Value>
+                <ControlTemplate TargetType="TextBox">
+                    <Border x:Name="Border"
+                Padding="2"
+                SnapsToDevicePixels="true"
+                            BorderThickness="1"
+                            CornerRadius="15"
+                            Background="white"
+                            >
+                        <Border.BorderBrush>
+                            <SolidColorBrush Color="{DynamicResource BorderMediumColor}" />
+                        </Border.BorderBrush>
+                        <TextBox x:Name="TextBox"
+                            Margin="10 0 10 0" 
+                                 BorderThickness="0"
+                                 BorderBrush="Transparent" 
+                                 FontFamily="{StaticResource Slopes}" FontSize="22" Foreground="{StaticResource TextColor}"
+                                 Text="{Binding RelativeSource={RelativeSource TemplatedParent}, Path=Text, UpdateSourceTrigger=PropertyChanged}"
+                                 
+                                 />
+                    </Border>
+                    <ControlTemplate.Triggers>
+                        <Trigger Property="IsMouseOver" Value="True">
+                            <Setter TargetName="Border" Property="BorderBrush" Value="{StaticResource SilverGradient}"/>
+                        </Trigger>
+                        <Trigger Property="IsKeyboardFocused" Value="True">
+                            <Setter TargetName="Border" Property="BorderBrush" Value="purple"/>
+                        </Trigger>
+                    </ControlTemplate.Triggers>
+                </ControlTemplate>
+            </Setter.Value>
+        </Setter>
+    </Style>
+
 </ResourceDictionary>

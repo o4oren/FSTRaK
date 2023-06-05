@@ -29,7 +29,7 @@ namespace FSTRaK.Models.FlightManager
         {
             if(!_isEnded)
             {
-                FlightEndedEvent fe = new FlightEndedEvent
+                var fe = new FlightEndedEvent
                 {
                     FuelWeightLbs = Data.FuelWeightLbs
                 };
@@ -55,9 +55,9 @@ namespace FSTRaK.Models.FlightManager
                 }
 
                 Context.ActiveFlight.FlightTime = flightTime;
-                Context.ActiveFlight.FlightDistanceInMeters = FlightPathLength(Context.ActiveFlight.FlightEvents);
+                Context.ActiveFlight.FlightDistanceNM = FlightPathLength(Context.ActiveFlight.FlightEvents) * Consts.MetersToNauticalMiles; ;
 
-                CalculateScore();
+                Context.ActiveFlight.UpdateScore();
 
                 if (Context.ActiveFlight.FlightOutcome == FlightOutcome.Completed || !Properties.Settings.Default.IsSaveOnlyCompleteFlights)
                 {
@@ -69,25 +69,6 @@ namespace FSTRaK.Models.FlightManager
             if (_isEnded && Data.MaxEngineRpmPct() > 5 && Context.ActiveFlight.FlightOutcome != FlightOutcome.Crashed)
             {
                 Context.State = new FlightStartedState(Context);
-            }
-        }
-
-        private void CalculateScore()
-        {
-            var uniqueScoringEvents = Context.ActiveFlight.FlightEvents
-                .OfType<ScoringEvent>()
-                .GroupBy(e => e.GetType())
-                .Select(e => (ScoringEvent)e.First())
-                .ToList<ScoringEvent>();
-
-            var scoringDelta = uniqueScoringEvents.Sum(e => e.ScoreDelta);
-
-            Context.ActiveFlight.Score = MathUtils.Clamp(100 + scoringDelta, 0, 100);
-
-            StringBuilder sb = new StringBuilder();
-            foreach (var item in uniqueScoringEvents)
-            {
-                sb.AppendLine($"{item.Time} {item.GetType().ToString()} {item.ScoreDelta}");
             }
         }
 
@@ -110,7 +91,7 @@ namespace FSTRaK.Models.FlightManager
         private double FlightPathLength(ObservableCollection<BaseFlightEvent> flightEvents)
         {
             double length = 0;
-            for ( int i = 1; i < flightEvents.Count; i++)
+            for ( var i = 1; i < flightEvents.Count; i++)
             {
                 var start = new Location(flightEvents[i - 1].Latitude, flightEvents[i - 1].Longitude);
                 var end = new Location(flightEvents[i].Latitude, flightEvents[i].Longitude);
@@ -136,7 +117,7 @@ namespace FSTRaK.Models.FlightManager
                 {
                     try
                     {
-                        // Check if the aircraft user is already in the db
+                        // Check if the aircraft is already in the db
                         var aircraft = logbookContext.Aircraft.Where(a => a.Title == Context.ActiveFlight.Aircraft.Title).FirstOrDefault();
                         if (aircraft != null)
                         {
@@ -147,10 +128,7 @@ namespace FSTRaK.Models.FlightManager
                     }
                     catch (Exception ex)
                     {
-                        Log.Debug(ex.Message);
-
-                        Log.Debug(ex.ToString());
-                        Log.Debug(ex.InnerException.ToString());
+                        Log.Error(ex, "An error occured while trying to persist the flight!");
                     }
                 }
             });

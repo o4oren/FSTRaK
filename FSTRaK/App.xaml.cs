@@ -1,7 +1,12 @@
-﻿using FSTRaK.Models.Entity;
+﻿using FSTRaK.Models;
+using FSTRaK.Models.Entity;
 using Serilog;
+using Serilog.Exceptions;
+using System;
+using System.Threading;
 using System.Threading.Tasks;
 using System.Windows;
+using System.Windows.Threading;
 
 namespace FSTRaK
 {
@@ -10,9 +15,30 @@ namespace FSTRaK
     /// </summary>
     public partial class App : Application
     {
-        void OnApplicationStart(object sender, StartupEventArgs args)
+        private static Mutex _mutex = null;
+
+
+
+        const string appName = "FSTrAk";
+
+        protected override void OnStartup(StartupEventArgs e)
+        {
+            _mutex = new Mutex(true, appName, out var createdNew);
+
+            if (!createdNew)
+            {
+                MessageBox.Show("An instance of FSTrAk is already running...", "FSTrAk");
+                Application.Current.Shutdown();
+            }
+
+            base.OnStartup(e);
+        }
+
+
+    void OnApplicationStart(object sender, StartupEventArgs args)
         {
             Log.Logger = new LoggerConfiguration()
+            .Enrich.WithExceptionDetails()
             .MinimumLevel.Information()
 #if DEBUG
             .MinimumLevel.Debug()
@@ -25,9 +51,18 @@ namespace FSTRaK
             {
                 using (var logbookContext = new LogbookContext())
                 {
-                    logbookContext.Aircraft.Find(1);
+                    try
+                    {
+                        logbookContext.Aircraft.Find(1);
+                    }
+                    catch (Exception ex)
+                    {
+                        Log.Error(ex, ex.Message);
+                    }
                 }
             });
+
+            var airportResolder = AirportResolver.Instance;
         }
   
 
@@ -39,6 +74,13 @@ namespace FSTRaK
                 smc.Close();
             }
             FSTRaK.Properties.Settings.Default.Save();
+        }
+
+        void App_DispatcherUnhandledException(object sender, DispatcherUnhandledExceptionEventArgs e)
+        {
+            Log.Error(e.Exception, "Unhandled error occured!");
+            // Prevent default unhandled exception processing
+            e.Handled = true;
         }
     }
 }
