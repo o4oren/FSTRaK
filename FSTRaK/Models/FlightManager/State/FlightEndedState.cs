@@ -27,6 +27,7 @@ namespace FSTRaK.Models.FlightManager.State
         {
             if(!_isEnded)
             {
+
                 var fe = new FlightEndedEvent
                 {
                     FuelWeightLbs = data.FuelWeightLbs
@@ -77,15 +78,15 @@ namespace FSTRaK.Models.FlightManager.State
 
         private void SetFlightOutcome()
         {
-            if (Context.ActiveFlight.FlightEvents.Last() is ParkingEvent)
+            if (Context.ActiveFlight.FlightEvents.LastOrDefault() is ParkingEvent)
             {
                 Context.ActiveFlight.FlightOutcome = FlightOutcome.Completed;
             }
-            else if (Context.ActiveFlight.FlightEvents.Last() is CrashEvent)
+            else if (Context.ActiveFlight.FlightEvents.LastOrDefault() is CrashEvent)
             {
                 Context.ActiveFlight.FlightOutcome = FlightOutcome.Crashed;
             }
-            else if (!Context.SimConnectInFlight)
+            else
             {
                 Context.ActiveFlight.FlightOutcome = FlightOutcome.Exited;
             }
