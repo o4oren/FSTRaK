@@ -6,7 +6,7 @@ namespace FSTRaK.Models
     [Table("FlightEvent")]
     internal class BaseFlightEvent : BaseModel
     {
-
+        [Column("ID")]
         public int Id { get; set; }
         public DateTime Time { get; set; }
         public double Latitude { get; set; }

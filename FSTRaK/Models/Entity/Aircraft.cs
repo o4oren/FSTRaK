@@ -8,6 +8,7 @@ namespace FSTRaK.Models
 {
     internal class Aircraft : BaseModel
     {
+        [Column("ID")]
         public int Id { get; set; }
 
         [Index(nameof(Title), IsUnique = true)]

@@ -32,7 +32,6 @@
                        Content="{Binding ElementName=OpverlayTextCard, Path=Header}"
                        HorizontalAlignment="Left"
                        VerticalAlignment="Center"
-               Visibility="{Binding IsHeaderVisible, Converter={StaticResource BoolToVis}}"
                        />
             <TextBlock 
                 x:Name="text"
@@ -45,7 +44,6 @@
                        Text="{Binding ElementName=OpverlayTextCard, Path=Text}"
                        HorizontalAlignment="Left"
                        VerticalAlignment="Center"
-                Visibility="{Binding IsTextVisible, Converter={StaticResource BoolToVis}}"
                        />
     </Grid>
 </UserControl>

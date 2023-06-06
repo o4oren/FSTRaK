@@ -12,6 +12,7 @@ namespace FSTRaK.Models
 {
     internal class Flight : BaseModel
     {
+        [Column("ID")]
         public int Id { get; set; }
         public virtual Aircraft Aircraft { get; set; }
 
@@ -165,9 +166,9 @@ namespace FSTRaK.Models
             {
                 if(se.ScoreDelta != 0)
                 {
-                    if(se is LandingEvent)
+                    if(se is LandingEvent @event)
                     {
-                        builder.AppendLine($"{((LandingEvent)se).LandingRate} {se.EventName} {se.ScoreDelta} Points");
+                        builder.AppendLine($"{@event.LandingRate} {se.EventName} {se.ScoreDelta} Points");
                     }
                     else
                     {

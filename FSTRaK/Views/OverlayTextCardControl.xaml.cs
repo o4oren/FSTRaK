@@ -13,12 +13,7 @@ namespace FSTRaK.Views
         public OverlayTextCardControl()
         {
             InitializeComponent();
-            
         }
-
-        public bool IsHeaderVisible => Header != string.Empty;
-
-        public bool IsTextVisible => Text != string.Empty;
 
         public string Header
         {

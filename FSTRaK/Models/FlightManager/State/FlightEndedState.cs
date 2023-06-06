@@ -63,7 +63,7 @@ namespace FSTRaK.Models.FlightManager.State
 
                 if (Context.ActiveFlight.FlightOutcome == FlightOutcome.Completed || !Properties.Settings.Default.IsSaveOnlyCompleteFlights)
                 {
-                    SavetFlight();
+                    SaveFlight();
                 }
                 Log.Information($"Flight Ended!\n{Context.ActiveFlight.ToString()}");
                 _isEnded = true;
@@ -112,7 +112,7 @@ namespace FSTRaK.Models.FlightManager.State
             }
         }
 
-        private Task SavetFlight()
+        private Task SaveFlight()
         {
             return Task.Run(() =>
             {
@@ -120,18 +120,12 @@ namespace FSTRaK.Models.FlightManager.State
                 {
                     try
                     {
-                        // Check if the aircraft is already in the db
-                        var aircraft = logbookContext.Aircraft.FirstOrDefault(a => a.Title == Context.ActiveFlight.Aircraft.Title);
-                        if (aircraft != null)
-                        {
-                            Context.ActiveFlight.Aircraft = aircraft;
-                        }
                         logbookContext.Flights.Add(Context.ActiveFlight);
                         logbookContext.SaveChanges();
                     }
                     catch (Exception ex)
                     {
-                        Log.Error(ex, "An error occured while trying to persist the flight!");
+                        Log.Error(ex, "An error occurred while trying to persist the flight!");
                     }
                 }
             });

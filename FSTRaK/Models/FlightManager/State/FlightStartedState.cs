@@ -36,14 +36,18 @@ namespace FSTRaK.Models.FlightManager.State
             // This should only happen once per flight
             if (!_isStarted)
             {
-                var flight = new Flight();
-                Context.ActiveFlight = flight;
+                using (var logbookContext = new LogbookContext())
+                {
+                    var flight = logbookContext.Flights.Create();
+                    Context.ActiveFlight = flight;
 
-                SetAircraftAsynchronously(flight, data);
-                
-                Context.RequestNearestAirports(NearestAirportRequestType.Departure);
-                _isStarted = true;
-                Log.Information("Flight started!");
+                    SetAircraftAsynchronously(flight, data);
+
+                    Context.RequestNearestAirports(NearestAirportRequestType.Departure);
+                    _isStarted = true;
+                    Log.Information("Flight started!");
+                }  
+
             }
             
             if (data.CameraState == (int)CameraState.Cockpit && Context.ActiveFlight.FlightEvents.Count == 0)
@@ -68,7 +72,7 @@ namespace FSTRaK.Models.FlightManager.State
 
             // Compare the location to determine movement ONLY after out of the "ready to fly" screen
             if (data.CameraState == (int)CameraState.Cockpit && 
-                (data.Latitude != Context.CurrentFlightParams.Latitude || data.Longitude != Context.CurrentFlightParams.Longitude) && data.GroundVelocity > 1)
+                (Math.Abs(data.Latitude - Context.CurrentFlightParams.Latitude) > 0.0000001 || Math.Abs(data.Longitude - Context.CurrentFlightParams.Longitude) > 0.0000001) && data.GroundVelocity > 1)
             {
                 var to = new TaxiOutEvent
                 {
@@ -85,75 +89,90 @@ namespace FSTRaK.Models.FlightManager.State
             {
                 using (var logbookContext = new LogbookContext())
                 {
-                    Aircraft aircraft;
                     try
                     {
                         // If aircraft is already in the db, let's use the existing records instead.
-                        aircraft = logbookContext.Aircraft.Where(a => a.Title == data.title).FirstOrDefault();
+                        var aircraft = logbookContext.Aircraft.FirstOrDefault(a => a.Title == data.title);
                         if (aircraft != null)
                         {
                             Context.ActiveFlight.Aircraft = aircraft;
                         }
                         else
                         {
-                            aircraft = new Aircraft
-                            {
-                                Title = data.title,
-                                Manufacturer = data.atcType,
-                                Model = data.model,
-                                AircraftType = data.model,
-                                Airline = data.airline,
-                                TailNumber = data.AtcId,
-                                NumberOfEngines = data.NumberOfEngines,
-                                EngineType = data.EngineType
-                            };
+                            aircraft = logbookContext.Aircraft.Create();
+
+                            aircraft.Title = data.title;
+                            aircraft.Manufacturer = data.atcType;
+                            aircraft.Model = data.model;
+                            aircraft.AircraftType = data.model;
+                            aircraft.Airline = data.airline;
+                            aircraft.TailNumber = data.AtcId;
+                            aircraft.NumberOfEngines = data.NumberOfEngines;
+                            aircraft.EngineType = data.EngineType;
+                        
+
+                            EnrichAircraftDataFromFile(aircraft);
+
+                            // Capitalize manufacturer name correctly.
+                            var cultureInfo = new CultureInfo("en-US");
+                            var textInfo = cultureInfo.TextInfo;
+                            aircraft.Manufacturer = textInfo.ToTitleCase(aircraft.Manufacturer.ToLower());
 
                             aircraft = logbookContext.Aircraft.Add(aircraft);
                             flight.Aircraft = aircraft;
-
-                            // The data returned in simconnect simvars in not consistent, so we will try to fill data from the loaded aircraft file.
-                            var filename = Context.GetLoadedAircraftFileName();
-
-                            using (var fileStream = File.OpenRead(filename))
-                            using (var streamReader = new StreamReader(fileStream, Encoding.UTF8, true, 128))
-                            {
-                                String line;
-                                while ((line = streamReader.ReadLine()) != null)
-                                {
-                                    var parts = line.Split('=');
-                                    if (parts.Length > 1)
-                                    {
-                                        if (parts[0].Trim() == "icao_type_designator")
-                                        {
-                                            aircraft.AircraftType = parts[1].Trim('"', ' ', '\t');
-                                        }
-
-                                        if (parts[0].Trim() == "icao_manufacturer")
-                                        {
-                                            aircraft.Manufacturer = parts[1].Trim('"', ' ', '\t');
-                                        }
-
-                                        if (parts[0].Trim() == "icao_model")
-                                        {
-                                            aircraft.Model = parts[1].Trim('"', ' ', '\t');
-                                        }
-                                    }
-                                }
-                                // Capitalize manufacturer name correctly.
-                                CultureInfo cultureInfo = new CultureInfo("en-US");
-                                TextInfo textInfo = cultureInfo.TextInfo;
-                                aircraft.Manufacturer = textInfo.ToTitleCase(aircraft.Manufacturer.ToLower());
-                                Log.Information(aircraft.ToString());
-                            }
                         }
                     }
                     catch (Exception ex)
                     {
-                        Log.Error(ex, "Unhandled error occured!");
+                        Log.Error(ex, "Unhandled error occurred!");
+                    }
+                    finally
+                    {
+                        Log.Information(flight.Aircraft.ToString());
                     }
                 }
 
             });
+        }
+
+        private void EnrichAircraftDataFromFile(Aircraft aircraft)
+        {
+            var filename = Context.GetLoadedAircraftFileName();
+            if (String.IsNullOrEmpty(filename))
+                return;
+
+            try
+            {
+                using (var fileStream = File.OpenRead(filename))
+                using (var streamReader = new StreamReader(fileStream, Encoding.UTF8, true, 128))
+                {
+                    String line;
+                    while ((line = streamReader.ReadLine()) != null)
+                    {
+                        var parts = line.Split('=');
+                        if (parts.Length <= 1) continue;
+                        if (parts[0].Trim() == "icao_type_designator")
+                        {
+                            aircraft.AircraftType = parts[1].Trim('"', ' ', '\t');
+                        }
+
+                        if (parts[0].Trim() == "icao_manufacturer")
+                        {
+                            aircraft.Manufacturer = parts[1].Trim('"', ' ', '\t');
+                        }
+
+                        if (parts[0].Trim() == "icao_model")
+                        {
+                            aircraft.Model = parts[1].Trim('"', ' ', '\t');
+                        }
+                    }
+                }
+            }
+            catch (Exception ex)
+            {
+                Log.Error("Could not enrich aircraft from file.", ex.Message);
+            }
+
         }
     }
 }

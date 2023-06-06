@@ -134,7 +134,7 @@
 
                         <TextBlock
                             FontFamily="{StaticResource Slopes}" FontSize="20" Foreground="{StaticResource TextColor}">
-                            <Run Text="{Binding FlightDistanceInMeters}"/><Run Text="{Binding FlightTime}"/> / <Run Text="{Binding FlightDistanceNm}"/> NM
+                            <Run Text="{Binding FlightDistanceNm}"/> NM / <Run Text="{Binding FlightTime}"/>
                             <LineBreak />
                             <Run Text="{Binding Path=Aircraft.Manufacturer}"/> <Run Text="{Binding Path=Aircraft.AircraftType}"/>, <Run Text="{Binding Path=Aircraft.TailNumber}"/>
                             <LineBreak />

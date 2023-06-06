@@ -14,6 +14,8 @@ namespace FSTRaK.Utils
 
         public static string GetAircraftIcon(Aircraft aircraft)
         {
+            if (aircraft == null)
+                return "B737";
             if (aircraft.NumberOfEngines == 1 && aircraft.EngineType == EngineType.Piston)
             {
                 return "C172";

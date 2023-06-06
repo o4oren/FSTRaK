@@ -9,6 +9,7 @@ using System.Linq;
 using System.Text;
 using System.Windows;
 using FSTRaK.Models.FlightManager.State;
+using FSTRaK.Utils;
 
 namespace FSTRaK.ViewModels
 {
@@ -45,7 +46,25 @@ namespace FSTRaK.ViewModels
             set
             {
                 if (value != _isCenterOnAirplane)
-                    _isCenterOnAirplane = value; OnPropertyChanged();
+                {
+                    _isCenterOnAirplane = value; 
+                    OnPropertyChanged();
+                }
+            }
+        }
+
+        private string _airplaneIcon = "";
+
+        public string AirplaneIcon
+        {
+            get => _airplaneIcon;
+            set
+            {
+                if (value != _airplaneIcon)
+                {
+                    _airplaneIcon = value; 
+                    OnPropertyChanged();
+                }
             }
         }
 
@@ -55,8 +74,7 @@ namespace FSTRaK.ViewModels
             get => _zoomLevel;
             set
             {
-                if (value != _zoomLevel)
-                    _zoomLevel = value;
+                _zoomLevel = value;
                 OnPropertyChanged();
             }
         }
@@ -67,7 +85,7 @@ namespace FSTRaK.ViewModels
             get => _mapCenter;
             set
             {
-                if (_mapCenter != value)
+                if (!_mapCenter.Equals(value))
                 {
                     _mapCenter = value;
                     OnPropertyChanged();
@@ -209,6 +227,13 @@ namespace FSTRaK.ViewModels
                     }
 
 
+                    if (ActiveFlight?.Aircraft != null)
+                    {
+                        AirplaneIcon = ResourceUtils.GetAircraftIcon(ActiveFlight.Aircraft);
+                    }
+
+
+
                     OnPropertyChanged(nameof(_flightManager.ActiveFlight));
                     OnPropertyChanged(nameof(Location));
                     break;
@@ -223,7 +248,7 @@ namespace FSTRaK.ViewModels
 
                 case nameof(_flightManager.State):
                     // View related state change updates
-                    IsShowAirplane = _flightManager.State is SimNotInFlightState ? false : true;
+                    IsShowAirplane = !(_flightManager.State is SimNotInFlightState);
 
                     if (_flightManager.State is FlightStartedState || _flightManager.State is SimNotInFlightState)
                     {
@@ -238,10 +263,8 @@ namespace FSTRaK.ViewModels
                     }
                     else if (_flightManager.State is FlightStartedState)
                     {
-
                         ZoomLevel = 13;
                         IsCenterOnAirplane = true;
-                        
                     }
 
                     State = _flightManager.State.Name;
