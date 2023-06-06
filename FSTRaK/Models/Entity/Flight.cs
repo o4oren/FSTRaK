@@ -30,8 +30,8 @@ namespace FSTRaK.Models
         [NotMapped]
         public TimeSpan FlightTime
         {
-            get { return TimeSpan.FromTicks(FlightTimeMilis); }
-            set { FlightTimeMilis = value.Ticks; }
+            get => TimeSpan.FromTicks(FlightTimeMilis);
+            set => FlightTimeMilis = value.Ticks;
         }
 
         public double FlightDistanceNm { get; set; }

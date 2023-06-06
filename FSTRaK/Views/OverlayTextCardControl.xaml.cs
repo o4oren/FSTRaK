@@ -16,26 +16,14 @@ namespace FSTRaK.Views
             
         }
 
-        public bool IsHeaderVisible
-        {
-            get
-            {
-                return Header != string.Empty;
-            }
-        }
+        public bool IsHeaderVisible => Header != string.Empty;
 
-        public bool IsTextVisible
-        {
-            get
-            {
-                return Text != string.Empty;
-            }
-        }
+        public bool IsTextVisible => Text != string.Empty;
 
         public string Header
         {
-            get { return (string)GetValue(HeaderProperty); }
-            set { SetValue(HeaderProperty, value); }
+            get => (string)GetValue(HeaderProperty);
+            set => SetValue(HeaderProperty, value);
         }
 
         public static readonly DependencyProperty HeaderProperty =
@@ -44,8 +32,8 @@ namespace FSTRaK.Views
 
         public string Text
         {
-            get { return (string)GetValue(TextProperty); }
-            set { SetValue(TextProperty, value); }
+            get => (string)GetValue(TextProperty);
+            set => SetValue(TextProperty, value);
         }
 
         public static readonly DependencyProperty TextProperty =

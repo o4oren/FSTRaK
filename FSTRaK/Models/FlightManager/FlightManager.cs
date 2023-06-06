@@ -42,7 +42,7 @@ namespace FSTRaK.Models.FlightManager
         private Flight _activeFlight;
         public Flight ActiveFlight
         {
-            get { return _activeFlight; }
+            get => _activeFlight;
             set
             {
                 if (value != _activeFlight)
@@ -56,7 +56,7 @@ namespace FSTRaK.Models.FlightManager
         private FlightParams _currentFlightParams;
         public FlightParams CurrentFlightParams
         {
-            get { return _currentFlightParams; }
+            get => _currentFlightParams;
             set
             {
                 _currentFlightParams = value;
@@ -66,7 +66,7 @@ namespace FSTRaK.Models.FlightManager
 
         private AbstractState _state;
         internal AbstractState State { 
-            get { return _state; }
+            get => _state;
             set
             {
                 _state = value;
@@ -76,7 +76,8 @@ namespace FSTRaK.Models.FlightManager
         }
 
         private bool _simConnectInFlight = false;
-        public bool SimConnectInFlight { get { return _simConnectInFlight; } set { if( _simConnectInFlight == value ) return; _simConnectInFlight = value; OnPropertyChanged(); } }
+        public bool SimConnectInFlight { get => _simConnectInFlight;
+            set { if( _simConnectInFlight == value ) return; _simConnectInFlight = value; OnPropertyChanged(); } }
 
         private NearestAirportRequestType _nearestAirportRequestType = NearestAirportRequestType.Departure;
 

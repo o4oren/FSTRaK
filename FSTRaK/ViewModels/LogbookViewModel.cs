@@ -26,7 +26,7 @@ namespace FSTRaK.ViewModels
         private FlightDetailsViewModel _flightDetailsViewModel;
 
         public FlightDetailsViewModel FlightDetailsViewModel { 
-            get { return _flightDetailsViewModel; }
+            get => _flightDetailsViewModel;
             private set 
             { 
                 _flightDetailsViewModel = value;
@@ -126,7 +126,7 @@ namespace FSTRaK.ViewModels
         private string _searchText;
         public string SearchText 
         { 
-            get { return _searchText; }
+            get => _searchText;
             set
             {
                 _typingTimer.Stop();

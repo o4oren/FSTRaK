@@ -1,9 +1,6 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
-using System.Windows;
+﻿using System.Windows;
+using FSTRaK.DataTypes;
+using FSTRaK.Models;
 
 namespace FSTRaK.Utils
 {
@@ -13,7 +10,16 @@ namespace FSTRaK.Utils
         {
             var mColor = (System.Windows.Media.Color)Application.Current.Resources[name];
             return System.Drawing.Color.FromArgb(mColor.A, mColor.R, mColor.G, mColor.B);
-            
+        }
+
+        public static string GetAircraftIcon(Aircraft aircraft)
+        {
+            if (aircraft.NumberOfEngines == 1 && aircraft.EngineType == EngineType.Piston)
+            {
+                return "C172";
+            }
+
+            return "B737";
         }
     }
 }

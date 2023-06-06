@@ -123,10 +123,7 @@ namespace FSTRaK
         private AircraftFlightData _flightData;
         public AircraftFlightData FlightData
         {
-            get
-            {
-                return _flightData;
-            }
+            get => _flightData;
             private set
             {
                 _flightData = value;
@@ -138,10 +135,7 @@ namespace FSTRaK
         private string _nearestAirport = string.Empty;
         public string NearestAirport
         {
-            get
-            {
-                return _nearestAirport;
-            }
+            get => _nearestAirport;
             private set
             {
                 _nearestAirport = value;

@@ -14,7 +14,7 @@ namespace FSTRaK.ViewModels
 {
     internal class LiveViewViewModel : BaseViewModel
     {
-        private FlightManager _flightManager = FlightManager.Instance;
+        private readonly FlightManager _flightManager = FlightManager.Instance;
 
         public RelayCommand CenterOnAirplaneCommand { get; private set; }
         public RelayCommand StopCenterOnAirplaneCommand { get; private set; }
@@ -33,7 +33,7 @@ namespace FSTRaK.ViewModels
 
         public bool IsShowAirplane
         {
-            get { return _isShowAirplane; }
+            get => _isShowAirplane;
             set { _isShowAirplane = value; OnPropertyChanged(); }
         }
 
@@ -41,7 +41,7 @@ namespace FSTRaK.ViewModels
 
         public bool IsCenterOnAirplane
         {
-            get { return _isCenterOnAirplane; }
+            get => _isCenterOnAirplane;
             set
             {
                 if (value != _isCenterOnAirplane)
@@ -52,7 +52,7 @@ namespace FSTRaK.ViewModels
         private double _zoomLevel = 13;
         public double ZoomLevel
         {
-            get { return _zoomLevel; }
+            get => _zoomLevel;
             set
             {
                 if (value != _zoomLevel)
@@ -64,7 +64,7 @@ namespace FSTRaK.ViewModels
         private Location _mapCenter = new Location(51, 0);
         public Location MapCenter
         {
-            get { return _mapCenter; }
+            get => _mapCenter;
             set
             {
                 if (_mapCenter != value)
@@ -119,10 +119,7 @@ namespace FSTRaK.ViewModels
 
         public string State
         {
-            get
-            {
-                return _state;
-            }
+            get => _state;
             private set
             {
                 if (_state != value)

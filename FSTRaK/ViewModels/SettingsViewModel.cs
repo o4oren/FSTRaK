@@ -24,10 +24,7 @@ namespace FSTRaK.ViewModels
         private string _selectedMapProvider = "OpenStreetMap";
         public string SelectedMapProvider
         {
-            get
-            {
-                return _selectedMapProvider;
-            }
+            get => _selectedMapProvider;
             set
             {
                 if (value != null && value != _selectedMapProvider)
@@ -50,10 +47,7 @@ namespace FSTRaK.ViewModels
         private string _bingApiKey = "";
         public string BingApiKey
         {
-            get
-            {
-                return _bingApiKey;
-            }
+            get => _bingApiKey;
             set
             {
                 _bingApiKey = value;
@@ -66,10 +60,7 @@ namespace FSTRaK.ViewModels
         private Units _units;
         public Units Units
         {
-            get
-            {
-                return _units;
-            }
+            get => _units;
             set
             {
                 _units = value;
@@ -81,10 +72,7 @@ namespace FSTRaK.ViewModels
         private bool _isShowBingApiKeyField = false;
         public bool IsShowBingApiKeyField
         {
-            get
-            {
-                return _isShowBingApiKeyField;
-            }
+            get => _isShowBingApiKeyField;
             private set
             {
                 _isShowBingApiKeyField = value;
@@ -95,10 +83,7 @@ namespace FSTRaK.ViewModels
         private bool _isAlwaysOnTop;
         public bool IsAlwaysOnTop
         {
-            get
-            {
-                return _isAlwaysOnTop;
-            }
+            get => _isAlwaysOnTop;
             set
             {
                 _isAlwaysOnTop = value;
@@ -111,10 +96,7 @@ namespace FSTRaK.ViewModels
 
         public bool IsSaveOnlyCompleteFlights
         {
-            get
-            {
-                return _isSaveOnlyCompleteFlights;
-            }
+            get => _isSaveOnlyCompleteFlights;
             set
             {
                 _isSaveOnlyCompleteFlights = value;

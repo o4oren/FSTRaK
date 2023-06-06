@@ -28,10 +28,7 @@ namespace FSTRaK.Models
         [NotMapped]
         public string Location 
         { 
-            get
-            {
-                return $"{Latitude},{Longitude}";
-            }
+            get => $"{Latitude},{Longitude}";
             private set { } 
         }
 
