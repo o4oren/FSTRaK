@@ -85,6 +85,7 @@
                   d:ItemsSource="{d:SampleData}"
             SelectedItem="{Binding SelectedFlight}"
                       ScrollViewer.CanContentScroll="False"
+                      ScrollViewer.HorizontalScrollBarVisibility="Disabled"
             >
                 <ListView.ContextMenu>
                     <ContextMenu>

@@ -59,6 +59,10 @@
     <SolidColorBrush x:Key="BrightTextColor" Color="{DynamicResource PrimaryBright}"/>
     <SolidColorBrush x:Key="MidBorderBrush" Color="{DynamicResource PrimaryMid}"/>
 
+    <SolidColorBrush x:Key="BorderLightColorBrush" Color="{DynamicResource BorderLightColor}"/>
+    <SolidColorBrush x:Key="BorderMidColorBrush" Color="{DynamicResource BorderMediumColor}"/>
+    
+
     <Color x:Key="CloseButtonColor">Red</Color>
     <Color x:Key="CloseButtonColorHover">#cc1b1b</Color>
     <Color x:Key="CloseButtonColorPressed">DarkRed</Color>
@@ -746,7 +750,7 @@
                     </Border>
                     <ControlTemplate.Triggers>
                         <Trigger Property="IsHighlighted" Value="True">
-                            <Setter Property="Background" TargetName="Bd" Value="#D7E0EA"/>
+                            <Setter Property="Background" TargetName="Bd" Value="{StaticResource BrightTextColor}"/>
                         </Trigger>
                     </ControlTemplate.Triggers>
                 </ControlTemplate>
@@ -768,7 +772,7 @@
         <Setter Property="Template">
             <Setter.Value>
                 <ControlTemplate TargetType="{x:Type Thumb}">
-                    <Border CornerRadius="2"
+                    <Border CornerRadius="5"
                 Background="{TemplateBinding Background}"
                 BorderBrush="{TemplateBinding BorderBrush}"
                 BorderThickness="1" />
@@ -781,35 +785,18 @@
                  TargetType="{x:Type ScrollBar}">
         <Grid>
             <Grid.RowDefinitions>
-                <RowDefinition MaxHeight="18" />
                 <RowDefinition Height="0.00001*" />
-                <RowDefinition MaxHeight="18" />
             </Grid.RowDefinitions>
-            <Border Grid.RowSpan="2"
+            <Border Grid.RowSpan="1"
             CornerRadius="2"
             Background="#F0F0F0" />
             <Track x:Name="PART_Track"
-           Grid.Row="1"
            IsDirectionReversed="true">
                 <Track.Thumb>
                     <Thumb Style="{StaticResource ScrollBarThumb}"
-                           Background="{StaticResource SilverGradientSecondSide}"
+                           Background="{StaticResource BorderMidColorBrush}"
+
                Margin="1,0,1,0">
-                        <Thumb.BorderBrush>
-
-                            <LinearGradientBrush StartPoint="0,0"
-                                 EndPoint="1,0">
-                                <LinearGradientBrush.GradientStops>
-                                    <GradientStopCollection>
-                                        <GradientStop Color="{DynamicResource BorderLightColor}"
-                                Offset="0.0" />
-                                        <GradientStop Color="{DynamicResource BorderDarkColor}"
-                                Offset="1.0" />
-                                    </GradientStopCollection>
-                                </LinearGradientBrush.GradientStops>
-                            </LinearGradientBrush>
-
-                        </Thumb.BorderBrush>
                     </Thumb>
                 </Track.Thumb>
 
@@ -821,38 +808,21 @@
                  TargetType="{x:Type ScrollBar}">
         <Grid>
             <Grid.ColumnDefinitions>
-                <ColumnDefinition MaxWidth="10" />
                 <ColumnDefinition Width="0.00001*" />
-                <ColumnDefinition MaxWidth="10" />
             </Grid.ColumnDefinitions>
             <Border Grid.ColumnSpan="3"
             CornerRadius="2"
             Background="#F0F0F0" />
 
             <Track x:Name="PART_Track"
-           Grid.Column="1"
            IsDirectionReversed="False">
                 <Track.Thumb>
                     <Thumb Style="{StaticResource ScrollBarThumb}"
                Margin="0,1,0,1"
-               Background="{StaticResource SilverGradientOneSide}"
+               Background="{StaticResource BorderMidColorBrush}"
                >
 
-                        <Thumb.BorderBrush>
 
-                            <LinearGradientBrush StartPoint="0,0"
-                                 EndPoint="1,0">
-                                <LinearGradientBrush.GradientStops>
-                                    <GradientStopCollection>
-                                        <GradientStop Color="{DynamicResource BorderLightColor}"
-                                Offset="0.0" />
-                                        <GradientStop Color="{DynamicResource BorderDarkColor}"
-                                Offset="1.0" />
-                                    </GradientStopCollection>
-                                </LinearGradientBrush.GradientStops>
-                            </LinearGradientBrush>
-
-                        </Thumb.BorderBrush>
                     </Thumb>
                 </Track.Thumb>
             </Track>
