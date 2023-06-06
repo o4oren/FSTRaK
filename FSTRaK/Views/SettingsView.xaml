@@ -30,7 +30,13 @@
 
         <StackPanel Orientation="Horizontal" Margin="10" Visibility="{Binding IsShowBingApiKeyField, Converter={StaticResource BoolToVis}}">
             <Label  Style="{StaticResource FSTrAkLabel}" Width="200">Bing API Key</Label>
-            <TextBox FontFamily="{StaticResource Slopes}" Foreground="{StaticResource TextColor}" FontSize="20" Text="{Binding BingApiKey}" TextWrapping="Wrap" Height="100" Width="200"/>
+            <TextBox FontFamily="{StaticResource Slopes}" Foreground="{StaticResource TextColor}" FontSize="20" Text="{Binding BingApiKey}" TextWrapping="Wrap" Height="100" Width="200">
+                <TextBox.ToolTip>
+                    Bing map require an API Key. 
+                    Please see the instructions at 
+                    https://learn.microsoft.com/en-us/bingmaps/getting-started/bing-maps-dev-center-help/getting-a-bing-maps-key
+            </TextBox.ToolTip>
+            </TextBox>
         </StackPanel>
         <StackPanel Orientation="Horizontal" Margin="10">
             <Label Style="{StaticResource FSTrAkLabel}" Width="200">Units</Label>
