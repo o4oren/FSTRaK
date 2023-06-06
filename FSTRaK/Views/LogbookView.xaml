@@ -78,17 +78,18 @@
                  Margin="0 10 0 10"
                  />
         <ListView Width="280" VerticalAlignment="Stretch"
-                      Grid.Row="1"
-            ItemsSource="{Binding Flights}" 
+                      Grid.Row="1" Grid.Column="0"
+                      ItemsSource="{Binding Flights}" 
                   ItemContainerStyle="{StaticResource ListViewItemStyle}"
             IsSynchronizedWithCurrentItem="True" 
                   d:ItemsSource="{d:SampleData}"
             SelectedItem="{Binding SelectedFlight}"
+                      ScrollViewer.CanContentScroll="False"
             >
                 <ListView.ContextMenu>
                     <ContextMenu>
-                        <MenuItem Header="Delete" Command="{Binding DeleteFlightCommand}"></MenuItem>
-                    </ContextMenu>
+                        <MenuItem Header="Delete Flight" Command="{Binding DeleteFlightCommand}"></MenuItem>
+                </ContextMenu>
                 </ListView.ContextMenu>
 
                 <ListView.ItemTemplate>

@@ -38,8 +38,8 @@ namespace FSTRaK.Models.FlightManager.State
                 AddFlightEvent(data, fe);
 
                 Context.ActiveFlight.EndTime = fe.Time;
-                var startEvent = Context.ActiveFlight.FlightEvents.FirstOrDefault(e => e is FlightStartedEvent) as FlightStartedEvent;
-                if (startEvent != null)
+                if (Context.ActiveFlight.FlightEvents.FirstOrDefault(e => e is FlightStartedEvent) is FlightStartedEvent
+                    startEvent)
                 {
                     var flightTime = fe.Time - startEvent.Time;
 
