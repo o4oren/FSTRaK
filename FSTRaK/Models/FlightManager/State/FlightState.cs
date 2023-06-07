@@ -23,11 +23,11 @@ namespace FSTRaK.Models.FlightManager.State
 
             if (data.IndicatedAirpeed < 150)
             {
-                EventInterval = 10000;
+                EventInterval = 6000;
             }
             else if (data.IndicatedAirpeed > 150 && data.IndicatedAirpeed < 250)
             {
-                EventInterval = 12000;
+                EventInterval = 10000;
             }
             else if (data.IndicatedAirpeed > 250 || data.Altitude > 10000)
             {
