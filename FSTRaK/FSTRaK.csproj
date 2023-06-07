@@ -271,7 +271,9 @@
   </ItemGroup>
   <ItemGroup>
     <Resource Include="Resources\Images\FSTrAk.ico" />
-    <Resource Include="FSTrAk.ico" />
+    <Resource Include="FSTrAk.ico">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </Resource>
     <Content Include="sqlceca40.dll">
       <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
     </Content>
@@ -290,9 +292,9 @@
     <Content Include="sqlcese40.dll">
       <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
     </Content>
-    <None Include="Resources\Data\airports.json">
+    <Content Include="Resources\Data\airports.json">
       <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
-    </None>
+    </Content>
     <None Include="Resources\Images\FSTrAk-Icon.xcf" />
     <None Include="System.Data.SqlServerCe.dll">
       <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>

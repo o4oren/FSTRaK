@@ -5,8 +5,6 @@ VisualStudioVersion = 17.5.33530.505
 MinimumVisualStudioVersion = 10.0.40219.1
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "FSTrAk", "FSTRaK\FSTrAk.csproj", "{B23FF8BA-B0CF-4388-9B13-5AB81059D6AB}"
 EndProject
-Project("{54435603-DBB4-11D2-8724-00A0C9A8B90C}") = "FSTrAkSetup", "FSTrAkSetup\FSTrAkSetup.vdproj", "{6040B889-5FA2-4BDC-B58F-8E84301C6D1B}"
-EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
 		Debug|Any CPU = Debug|Any CPU
@@ -25,13 +23,6 @@ Global
 		{B23FF8BA-B0CF-4388-9B13-5AB81059D6AB}.Release|x64.ActiveCfg = Release|x64
 		{B23FF8BA-B0CF-4388-9B13-5AB81059D6AB}.Release|x64.Build.0 = Release|x64
 		{B23FF8BA-B0CF-4388-9B13-5AB81059D6AB}.Release|x86.ActiveCfg = Release|x64
-		{6040B889-5FA2-4BDC-B58F-8E84301C6D1B}.Debug|Any CPU.ActiveCfg = Debug
-		{6040B889-5FA2-4BDC-B58F-8E84301C6D1B}.Debug|x64.ActiveCfg = Release
-		{6040B889-5FA2-4BDC-B58F-8E84301C6D1B}.Debug|x64.Build.0 = Release
-		{6040B889-5FA2-4BDC-B58F-8E84301C6D1B}.Debug|x86.ActiveCfg = Debug
-		{6040B889-5FA2-4BDC-B58F-8E84301C6D1B}.Release|Any CPU.ActiveCfg = Release
-		{6040B889-5FA2-4BDC-B58F-8E84301C6D1B}.Release|x64.ActiveCfg = Release
-		{6040B889-5FA2-4BDC-B58F-8E84301C6D1B}.Release|x86.ActiveCfg = Release
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE

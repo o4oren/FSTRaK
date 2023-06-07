@@ -14,6 +14,12 @@ namespace FSTRaK.Utils
         public static readonly List<string> A320IconCandidates = new List<string>(new string[] { "A318", "A319", "A320", "A-320", "A321", "A20N", "A21N" });
         public static readonly List<string> C172 = new List<string>(new string[] { "C172", "172", "C140", "C170", "C210", "C182", "C177" });
         public static readonly List<string> B747 = new List<string>(new string[] { "742", "741", "747", "743", "744" });
+        public static readonly List<string> B767 = new List<string>(new string[] { "767", "762", "763", "764" });
+        public static readonly List<string> B777 = new List<string>(new string[] { "777", "772", "773", "778", "779", "77X" });
+        public static readonly List<string> B787 = new List<string>(new string[] { "787", "788", "789", "78X" });
+        public static readonly List<string> A340 = new List<string>(new string[] { "340", "343", "345", "346", "347" });
+        public static readonly List<string> A330 = new List<string>(new string[] { "330", "332", "333", "339", "A310", "A300", "33X", "33Y", "359", "35K" });
+        public static readonly List<string> A380 = new List<string>(new string[] { "380", "388" });
 
         public static System.Drawing.Color GetColorFromResource(string name)
         {
@@ -35,6 +41,27 @@ namespace FSTRaK.Utils
 
             if (B747.Any(aircraft.AircraftType.Contains))
                 return "B747";
+
+
+            if (B767.Any(aircraft.AircraftType.Contains))
+                return "B767";
+
+
+            if (B777.Any(aircraft.AircraftType.Contains))
+                return "B777";
+
+
+            if (B787.Any(aircraft.AircraftType.Contains))
+                return "B787";
+
+            if (A340.Any(aircraft.AircraftType.Contains))
+                return "A340";
+
+            if (A330.Any(aircraft.AircraftType.Contains))
+                return "A330";
+
+            if (A380.Any(aircraft.AircraftType.Contains))
+                return "A380";
 
 
             // If not matched on the type, try other heuristics
