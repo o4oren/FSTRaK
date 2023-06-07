@@ -578,6 +578,14 @@
             "PrerequisitesLocation" = "2:1"
             "Url" = "8:"
             "ComponentsUrl" = "8:"
+                "Items"
+                {
+                    "{EDC2488A-8267-493A-A98E-7D9C3B36CDF3}:.NETFramework,Version=v4.7.2"
+                    {
+                    "Name" = "8:Microsoft .NET Framework 4.7.2 (x86 and x64)"
+                    "ProductCode" = "8:.NETFramework,Version=v4.7.2"
+                    }
+                }
             }
         }
         "Release"
@@ -602,6 +610,14 @@
             "PrerequisitesLocation" = "2:1"
             "Url" = "8:"
             "ComponentsUrl" = "8:"
+                "Items"
+                {
+                    "{EDC2488A-8267-493A-A98E-7D9C3B36CDF3}:.NETFramework,Version=v4.7.2"
+                    {
+                    "Name" = "8:Microsoft .NET Framework 4.7.2 (x86 and x64)"
+                    "ProductCode" = "8:.NETFramework,Version=v4.7.2"
+                    }
+                }
             }
         }
     }
@@ -1664,15 +1680,15 @@
         {
         "Name" = "8:Microsoft Visual Studio"
         "ProductName" = "8:FSTrAk"
-        "ProductCode" = "8:{2569AF6F-A3E2-4939-A587-6BCC1ADD2DED}"
-        "PackageCode" = "8:{6AF3AFCE-7E88-44D7-9B47-F6562CB73DD5}"
+        "ProductCode" = "8:{56428A11-939C-4AF6-BDF1-08D0F408988E}"
+        "PackageCode" = "8:{B363C9AC-A14C-4A11-832D-AF4B2ECE1FC9}"
         "UpgradeCode" = "8:{D8205431-4139-4E48-95BB-B33EC233C960}"
         "AspNetVersion" = "8:2.0.50727.0"
         "RestartWWWService" = "11:FALSE"
         "RemovePreviousVersions" = "11:TRUE"
         "DetectNewerInstalledVersion" = "11:TRUE"
         "InstallAllUsers" = "11:FALSE"
-        "ProductVersion" = "8:1.0.0"
+        "ProductVersion" = "8:1.0.1"
         "Manufacturer" = "8:FSTrAk"
         "ARPHELPTELEPHONE" = "8:"
         "ARPHELPLINK" = "8:"
@@ -2242,7 +2258,7 @@
             }
             "{5259A561-127C-4D43-A0A1-72F10C7B3BF8}:_E26B435BF5A4497EB35028CDF800662D"
             {
-            "SourcePath" = "8:..\\FSTRaK\\obj\\x64\\Release\\FSTRaK.exe"
+            "SourcePath" = "8:..\\FSTRaK\\obj\\x64\\Debug\\FSTRaK.exe"
             "TargetName" = "8:"
             "Tag" = "8:"
             "Folder" = "8:_26CFFA3E4E6A4BE18B31D33970E8B9B7"

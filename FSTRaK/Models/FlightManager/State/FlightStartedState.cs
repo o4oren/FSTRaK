@@ -91,7 +91,7 @@ namespace FSTRaK.Models.FlightManager.State
                 {
                     try
                     {
-                        // If aircraft is already in the db, let's use the existing records instead.
+                        // If aircraft is already in the db, let's use the existing record.
                         var aircraft = logbookContext.Aircraft.FirstOrDefault(a => a.Title == data.title);
                         if (aircraft != null)
                         {

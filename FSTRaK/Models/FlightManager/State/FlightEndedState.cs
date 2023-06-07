@@ -121,6 +121,12 @@ namespace FSTRaK.Models.FlightManager.State
                 {
                     try
                     {
+                        // Aircraft is potentially already in the db, so we attach it in this dbcontext. If the aircraft was pulled from the db in the flightstarted phase, it will have an ID.
+                        if (Context.ActiveFlight.Aircraft.Id != 0)
+                        {
+                            logbookContext.Aircraft.Attach(Context.ActiveFlight.Aircraft);
+                        }
+                        
                         logbookContext.Flights.Add(Context.ActiveFlight);
                         logbookContext.SaveChanges();
                     }
