@@ -3,10 +3,12 @@ using FSTRaK.Models.Entity;
 using Serilog;
 using Serilog.Exceptions;
 using System;
+using System.IO;
 using System.Threading;
 using System.Threading.Tasks;
 using System.Windows;
 using System.Windows.Threading;
+using FSTRaK.Utils;
 
 namespace FSTRaK
 {
@@ -16,8 +18,6 @@ namespace FSTRaK
     public partial class App : Application
     {
         private static Mutex _mutex = null;
-
-
 
         const string AppName = "FSTrAk";
 
@@ -36,7 +36,11 @@ namespace FSTRaK
 
 
     void OnApplicationStart(object sender, StartupEventArgs args)
-        {
+    {
+        AppDomain.CurrentDomain.SetData("DataDirectory", PathUtil.GetApplicationLocalDataPath());
+
+            var logPath = Path.Combine(PathUtil.GetApplicationLocalDataPath(), "log.txt");
+
             Log.Logger = new LoggerConfiguration()
             .Enrich.WithExceptionDetails()
             .MinimumLevel.Information()
@@ -44,8 +48,9 @@ namespace FSTRaK
             .MinimumLevel.Debug()
 #endif
             .WriteTo.Trace()
-            .WriteTo.File("log.txt")
+            .WriteTo.File(logPath)
             .CreateLogger();
+
 
             Task.Run(() =>
             {
