@@ -310,12 +310,6 @@
         "Entry"
         {
         "MsmKey" = "8:_DE582AB80DEEC75FB43D40F5073C7506"
-        "OwnerKey" = "8:_UNDEFINED"
-        "MsmSig" = "8:_UNDEFINED"
-        }
-        "Entry"
-        {
-        "MsmKey" = "8:_DE582AB80DEEC75FB43D40F5073C7506"
         "OwnerKey" = "8:_E26B435BF5A4497EB35028CDF800662D"
         "MsmSig" = "8:_UNDEFINED"
         }
@@ -515,6 +509,12 @@
         {
         "MsmKey" = "8:_UNDEFINED"
         "OwnerKey" = "8:_BBE94145547EBE865D5CA63E523386D8"
+        "MsmSig" = "8:_UNDEFINED"
+        }
+        "Entry"
+        {
+        "MsmKey" = "8:_UNDEFINED"
+        "OwnerKey" = "8:_DE582AB80DEEC75FB43D40F5073C7506"
         "MsmSig" = "8:_UNDEFINED"
         }
         "Entry"
@@ -1492,6 +1492,11 @@
             "AssemblyAsmDisplayName" = "8:System.Data.SqlServerCe, Version=4.0.0.0, Culture=neutral, PublicKeyToken=89845dcd8080cc91, processorArchitecture=MSIL"
                 "ScatterAssemblies"
                 {
+                    "_DE582AB80DEEC75FB43D40F5073C7506"
+                    {
+                    "Name" = "8:System.Data.SqlServerCe.dll"
+                    "Attributes" = "3:512"
+                    }
                 }
             "SourcePath" = "8:System.Data.SqlServerCe.dll"
             "TargetName" = "8:"
@@ -1680,15 +1685,15 @@
         {
         "Name" = "8:Microsoft Visual Studio"
         "ProductName" = "8:FSTrAk"
-        "ProductCode" = "8:{56428A11-939C-4AF6-BDF1-08D0F408988E}"
-        "PackageCode" = "8:{B363C9AC-A14C-4A11-832D-AF4B2ECE1FC9}"
+        "ProductCode" = "8:{11EAF7A7-8E67-4F4D-9803-AEE3D8357E00}"
+        "PackageCode" = "8:{E19FABC9-FAAF-4A5F-8698-2660831DF3D8}"
         "UpgradeCode" = "8:{D8205431-4139-4E48-95BB-B33EC233C960}"
         "AspNetVersion" = "8:2.0.50727.0"
         "RestartWWWService" = "11:FALSE"
         "RemovePreviousVersions" = "11:TRUE"
         "DetectNewerInstalledVersion" = "11:TRUE"
         "InstallAllUsers" = "11:FALSE"
-        "ProductVersion" = "8:1.0.1"
+        "ProductVersion" = "8:1.0.2"
         "Manufacturer" = "8:FSTrAk"
         "ARPHELPTELEPHONE" = "8:"
         "ARPHELPLINK" = "8:"
@@ -2186,7 +2191,7 @@
                             "ContextData" = "8:1;True=1;False=0"
                             "Attributes" = "3:0"
                             "Setting" = "3:0"
-                            "Value" = "3:0"
+                            "Value" = "3:1"
                             "DefaultValue" = "3:1"
                             "UsePlugInResources" = "11:TRUE"
                             }
@@ -2258,7 +2263,7 @@
             }
             "{5259A561-127C-4D43-A0A1-72F10C7B3BF8}:_E26B435BF5A4497EB35028CDF800662D"
             {
-            "SourcePath" = "8:..\\FSTRaK\\obj\\x64\\Debug\\FSTRaK.exe"
+            "SourcePath" = "8:..\\FSTRaK\\obj\\x64\\Release\\FSTRaK.exe"
             "TargetName" = "8:"
             "Tag" = "8:"
             "Folder" = "8:_26CFFA3E4E6A4BE18B31D33970E8B9B7"
