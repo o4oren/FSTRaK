@@ -4,6 +4,7 @@ using System;
 using System.IO;
 using System.Windows;
 using System.Windows.Input;
+using FSTRaK.DataTypes;
 
 namespace FSTRaK.Views
 {
@@ -37,6 +38,12 @@ namespace FSTRaK.Views
 
             var bingApiKey = Properties.Settings.Default.BingApiKey;
             MapControl.BingMapsTileLayer.ApiKey = bingApiKey;
+
+            if (Properties.Settings.Default.IsStartMinimized)
+            {
+                WindowState = WindowState.Minimized;
+            }
+
         }
 
         private void ButtonClick_CloseApplication (object sender, RoutedEventArgs e) 
@@ -56,7 +63,7 @@ namespace FSTRaK.Views
 
         protected override void OnStateChanged(EventArgs e)
         {
-            if (WindowState == System.Windows.WindowState.Minimized)
+            if (Properties.Settings.Default.IsMinimizeToTray && WindowState == WindowState.Minimized)
                 this.Hide();
 
             base.OnStateChanged(e);

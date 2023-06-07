@@ -105,6 +105,32 @@ namespace FSTRaK.ViewModels
             }
         }
 
+        private bool _isStartMinimized;
+
+        public bool IsStartMinimized
+        {
+            get => _isStartMinimized;
+            set
+            {
+                _isStartMinimized = value;
+                Properties.Settings.Default.IsStartMinimized = _isStartMinimized;
+                OnPropertyChanged();
+            }
+        }
+
+        private bool _isMinimizeToTray;
+
+        public bool IsMinimizeToTray
+        {
+            get => _isMinimizeToTray;
+            set
+            {
+                _isMinimizeToTray = value;
+                Properties.Settings.Default.IsMinimizeToTray = _isMinimizeToTray;
+                OnPropertyChanged();
+            }
+        }
+
         public SettingsViewModel() : base()
         {
             var mapProviders = new ResourceDictionary();
@@ -113,8 +139,8 @@ namespace FSTRaK.ViewModels
 
             foreach (DictionaryEntry provider in mapProviders)
             {
-                if ((typeof(MapTileLayerBase).IsAssignableFrom(provider.Value.GetType()))
-                    || (typeof(WmsImageLayer).IsAssignableFrom(provider.Value.GetType())))
+                if (provider.Value is MapTileLayerBase
+                    || provider.Value is WmsImageLayer)
                 {
                     layers.Add(provider.Key.ToString());
                 }
@@ -129,7 +155,8 @@ namespace FSTRaK.ViewModels
             IsAlwaysOnTop = Properties.Settings.Default.IsAlwaysOnTop;
             IsSaveOnlyCompleteFlights = Properties.Settings.Default.IsSaveOnlyCompleteFlights;
             Units = (Units)Properties.Settings.Default.Units;
-
+            IsStartMinimized = Properties.Settings.Default.IsStartMinimized;
+            IsMinimizeToTray = Properties.Settings.Default.IsMinimizeToTray;
         }
     }
 }
