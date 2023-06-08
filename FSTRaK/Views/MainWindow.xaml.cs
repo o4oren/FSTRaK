@@ -39,7 +39,15 @@ namespace FSTRaK.Views
                 _notifyIcon.Visible = true;
 
                 _notifyIcon.ContextMenuStrip = new ContextMenuStrip();
-                _notifyIcon.ContextMenuStrip.Items.Add("Close FSTrAk", null, (s, args) => CloseMainWindow());
+                _notifyIcon.ContextMenuStrip.Items.Add("Show FSTrAk", null, (s, args) =>
+                {
+                    this.Show();
+                    WindowState = WindowState.Normal;
+                });
+                _notifyIcon.ContextMenuStrip.Items.Add(new ToolStripSeparator());
+
+                _notifyIcon.ContextMenuStrip.Items.Add("Quit", null, (s, args) => CloseMainWindow());
+
 
                 _notifyIcon.DoubleClick +=
                     delegate (object s, EventArgs args)
