@@ -64,7 +64,7 @@ namespace FSTRaK.Models
                 {
                     _departureAirportDetails = new Airport
                     {
-                        Icao = DepartureAirport
+                        icao = DepartureAirport
                     };
                 }
                 return _departureAirportDetails;
@@ -90,7 +90,7 @@ namespace FSTRaK.Models
                 {
                     _arrivalAirportDetails = new Airport
                     {
-                        Icao = ArrivalAirport
+                        icao = ArrivalAirport
                     };
                 }
                 return _arrivalAirportDetails;

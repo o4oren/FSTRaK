@@ -27,6 +27,7 @@ namespace FSTRaK.Models
             Log.Information($"{AirportsDictionary.Count} airports loaded.");
         }
 
+
         public static AirportResolver Instance
         {
             get

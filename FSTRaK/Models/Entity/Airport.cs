@@ -7,22 +7,22 @@ namespace FSTRaK.Models.Entity
 {
     internal class Airport
     {
-        public string Icao { set; get; }
-        public string Iata { set; get; }
-        public string Name { set; get; }
-        public string City { set; get; }
-        public string State { set; get; }
-        public string Country { set; get; }
+        public string icao { set; get; }
+        public string iata { set; get; }
+        public string name { set; get; }
+        public string city { set; get; }
+        public string state { set; get; }
+        public string country { set; get; }
 
-        public int Elevation { set; get; }
-        public double Lat { set; get; }
-        public double Lon { set; get; }
-        public string Tz { set; get; }
+        public int elevation { set; get; }
+        public double lat { set; get; }
+        public double lon { set; get; }
+        public string tz { set; get; }
 
         public string CountryName {  
             get
             {
-                var cultureInfo = new CultureInfo(Country.ToLower());
+                var cultureInfo = new CultureInfo(country.ToLower());
                 var ri = new RegionInfo(cultureInfo.Name);
                 return ri.EnglishName;
             }
@@ -30,15 +30,15 @@ namespace FSTRaK.Models.Entity
 
         public override string ToString()
         {
-            if(string.IsNullOrEmpty(Name)) {
-                return Icao;
+            if(string.IsNullOrEmpty(name)) {
+                return icao;
             }
             StringBuilder sb = new StringBuilder();
-            sb.Append(City);
-            if (Country == "US")
-                sb.Append(", ").Append($"{State}, USA");
+            sb.Append(city);
+            if (country == "US")
+                sb.Append(", ").Append($"{state}, USA");
             else sb.Append(", ").Append(CountryName);
-            sb.Append($" ({Icao})");
+            sb.Append($" ({icao})");
             return sb.ToString();
         }
     }
