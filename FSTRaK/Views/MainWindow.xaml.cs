@@ -21,27 +21,6 @@ namespace FSTRaK.Views
 
             // Add to tray
             _notifyIcon = new System.Windows.Forms.NotifyIcon();
-            var iconStream = Application.GetResourceStream(new Uri("pack://application:,,,/Resources/Images/FSTrAk.ico"))?.Stream;
-            if (iconStream != null)
-            {
-                _notifyIcon.Icon = new System.Drawing.Icon(iconStream);
-                _notifyIcon.Text = "FSTrAk";
-                _notifyIcon.Visible = true;
-                _notifyIcon.DoubleClick +=
-                    delegate (object sender, EventArgs args)
-                    {
-                        this.Show();
-                        this.WindowState = WindowState.Normal;
-                    };
-            }
-
-            _flightManager.PropertyChanged += (sender, args) =>
-            {
-                if (args.PropertyName.Equals(nameof(_flightManager.State)))
-                {
-                    _notifyIcon.Text = $"FSTrAk\n{_flightManager.State.Name}";
-                }
-            };
         }
 
         private void OnLoad(object sender, RoutedEventArgs e)
@@ -51,6 +30,44 @@ namespace FSTRaK.Views
             var bingApiKey = Properties.Settings.Default.BingApiKey;
             MapControl.BingMapsTileLayer.ApiKey = bingApiKey;
 
+            // Tray icon
+            var iconStream = Application.GetResourceStream(new Uri(@"pack://application:,,,/Resources/Images/FSTrAk.ico"))?.Stream;
+            if (iconStream != null)
+            {
+                _notifyIcon.Icon = new System.Drawing.Icon(iconStream);
+                _notifyIcon.Text = "FSTrAk";
+                _notifyIcon.Visible = true;
+
+                _notifyIcon.ContextMenuStrip = new ContextMenuStrip();
+                _notifyIcon.ContextMenuStrip.Items.Add("Show FSTrAk", null, (s, args) =>
+                {
+                    this.Show();
+                    WindowState = WindowState.Normal;
+                });
+                _notifyIcon.ContextMenuStrip.Items.Add(new ToolStripSeparator());
+
+                _notifyIcon.ContextMenuStrip.Items.Add("Quit", null, (s, args) => CloseMainWindow());
+
+
+                _notifyIcon.DoubleClick +=
+                    delegate (object s, EventArgs args)
+                    {
+                        this.Show();
+                        this.WindowState = WindowState.Normal;
+                    };
+            }
+
+
+            _flightManager.PropertyChanged += (s, args) =>
+            {
+                if (args.PropertyName.Equals(nameof(_flightManager.State)))
+                {
+                    _notifyIcon.Text = $"FSTrAk\n{_flightManager.State.Name}";
+                }
+            };
+
+
+
             if (Properties.Settings.Default.IsStartMinimized)
             {
                 WindowState = WindowState.Minimized;
@@ -59,7 +76,18 @@ namespace FSTRaK.Views
         }
 
         private void ButtonClick_CloseApplication (object sender, RoutedEventArgs e) 
-        { 
+        {
+            if (Properties.Settings.Default.IsMinimizeToTray)
+                this.Hide();
+            else
+            {
+                CloseMainWindow();
+            }
+        }
+
+        private void CloseMainWindow()
+        {
+            _notifyIcon.Dispose();
             Close();
         }
 
@@ -75,9 +103,7 @@ namespace FSTRaK.Views
 
         protected override void OnStateChanged(EventArgs e)
         {
-            if (Properties.Settings.Default.IsMinimizeToTray && WindowState == WindowState.Minimized)
-                this.Hide();
-
+            // consider minimize to tray
             base.OnStateChanged(e);
         }
 
@@ -86,7 +112,6 @@ namespace FSTRaK.Views
         {
             var window = (Window)sender;
             window.Topmost = Properties.Settings.Default.IsAlwaysOnTop;
-
         }
 
     }
