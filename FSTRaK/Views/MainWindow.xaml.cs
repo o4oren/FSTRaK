@@ -42,7 +42,6 @@ namespace FSTRaK.Views
                     _notifyIcon.Text = $"FSTrAk\n{_flightManager.State.Name}";
                 }
             };
-
         }
 
         private void OnLoad(object sender, RoutedEventArgs e)
