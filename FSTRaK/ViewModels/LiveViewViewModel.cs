@@ -8,12 +8,14 @@ using System.ComponentModel;
 using System.Linq;
 using System.Text;
 using System.Windows;
+using FSTRaK.Models.FlightManager.State;
+using FSTRaK.Utils;
 
 namespace FSTRaK.ViewModels
 {
     internal class LiveViewViewModel : BaseViewModel
     {
-        private FlightManager _flightManager = FlightManager.Instance;
+        private readonly FlightManager _flightManager = FlightManager.Instance;
 
         public RelayCommand CenterOnAirplaneCommand { get; private set; }
         public RelayCommand StopCenterOnAirplaneCommand { get; private set; }
@@ -32,7 +34,7 @@ namespace FSTRaK.ViewModels
 
         public bool IsShowAirplane
         {
-            get { return _isShowAirplane; }
+            get => _isShowAirplane;
             set { _isShowAirplane = value; OnPropertyChanged(); }
         }
 
@@ -40,22 +42,39 @@ namespace FSTRaK.ViewModels
 
         public bool IsCenterOnAirplane
         {
-            get { return _isCenterOnAirplane; }
+            get => _isCenterOnAirplane;
             set
             {
                 if (value != _isCenterOnAirplane)
-                    _isCenterOnAirplane = value; OnPropertyChanged();
+                {
+                    _isCenterOnAirplane = value; 
+                    OnPropertyChanged();
+                }
+            }
+        }
+
+        private string _airplaneIcon = "";
+
+        public string AirplaneIcon
+        {
+            get => _airplaneIcon;
+            set
+            {
+                if (value != _airplaneIcon)
+                {
+                    _airplaneIcon = value; 
+                    OnPropertyChanged();
+                }
             }
         }
 
         private double _zoomLevel = 13;
         public double ZoomLevel
         {
-            get { return _zoomLevel; }
+            get => _zoomLevel;
             set
             {
-                if (value != _zoomLevel)
-                    _zoomLevel = value;
+                _zoomLevel = value;
                 OnPropertyChanged();
             }
         }
@@ -63,10 +82,10 @@ namespace FSTRaK.ViewModels
         private Location _mapCenter = new Location(51, 0);
         public Location MapCenter
         {
-            get { return _mapCenter; }
+            get => _mapCenter;
             set
             {
-                if (_mapCenter != value)
+                if (!_mapCenter.Equals(value))
                 {
                     _mapCenter = value;
                     OnPropertyChanged();
@@ -118,10 +137,7 @@ namespace FSTRaK.ViewModels
 
         public string State
         {
-            get
-            {
-                return _state;
-            }
+            get => _state;
             private set
             {
                 if (_state != value)
@@ -211,6 +227,13 @@ namespace FSTRaK.ViewModels
                     }
 
 
+                    if (ActiveFlight?.Aircraft != null)
+                    {
+                        AirplaneIcon = ResourceUtils.GetAircraftIcon(ActiveFlight.Aircraft);
+                    }
+
+
+
                     OnPropertyChanged(nameof(_flightManager.ActiveFlight));
                     OnPropertyChanged(nameof(Location));
                     break;
@@ -225,7 +248,7 @@ namespace FSTRaK.ViewModels
 
                 case nameof(_flightManager.State):
                     // View related state change updates
-                    IsShowAirplane = _flightManager.State is SimNotInFlightState ? false : true;
+                    IsShowAirplane = !(_flightManager.State is SimNotInFlightState);
 
                     if (_flightManager.State is FlightStartedState || _flightManager.State is SimNotInFlightState)
                     {
@@ -240,10 +263,8 @@ namespace FSTRaK.ViewModels
                     }
                     else if (_flightManager.State is FlightStartedState)
                     {
-
                         ZoomLevel = 13;
                         IsCenterOnAirplane = true;
-                        
                     }
 
                     State = _flightManager.State.Name;

@@ -3,6 +3,7 @@ using Serilog;
 using System;
 using System.ComponentModel;
 using System.Runtime.CompilerServices;
+using FSTRaK.Models.FlightManager.State;
 
 namespace FSTRaK.Models.FlightManager
 {
@@ -12,8 +13,8 @@ namespace FSTRaK.Models.FlightManager
     /// </summary>
     internal sealed class FlightManager : INotifyPropertyChanged
     {
-        private static readonly object _lock = new object();
-        private static FlightManager instance = null;
+        private static readonly object Lock = new object();
+        private static FlightManager _instance = null;
         private FlightManager() { }
 
         public event PropertyChangedEventHandler PropertyChanged;
@@ -22,13 +23,9 @@ namespace FSTRaK.Models.FlightManager
         {
             get
             {
-                lock (_lock)
+                lock (Lock)
                 {
-                    if (instance == null)
-                    {
-                        instance = new FlightManager();
-                    }
-                    return instance;
+                    return _instance ?? (_instance = new FlightManager());
                 }
             }
         }
@@ -45,7 +42,7 @@ namespace FSTRaK.Models.FlightManager
         private Flight _activeFlight;
         public Flight ActiveFlight
         {
-            get { return _activeFlight; }
+            get => _activeFlight;
             set
             {
                 if (value != _activeFlight)
@@ -59,7 +56,7 @@ namespace FSTRaK.Models.FlightManager
         private FlightParams _currentFlightParams;
         public FlightParams CurrentFlightParams
         {
-            get { return _currentFlightParams; }
+            get => _currentFlightParams;
             set
             {
                 _currentFlightParams = value;
@@ -69,7 +66,7 @@ namespace FSTRaK.Models.FlightManager
 
         private AbstractState _state;
         internal AbstractState State { 
-            get { return _state; }
+            get => _state;
             set
             {
                 _state = value;
@@ -79,7 +76,8 @@ namespace FSTRaK.Models.FlightManager
         }
 
         private bool _simConnectInFlight = false;
-        public bool SimConnectInFlight { get { return _simConnectInFlight; } set { if( _simConnectInFlight == value ) return; _simConnectInFlight = value; OnPropertyChanged(); } }
+        public bool SimConnectInFlight { get => _simConnectInFlight;
+            set { if( _simConnectInFlight == value ) return; _simConnectInFlight = value; OnPropertyChanged(); } }
 
         private NearestAirportRequestType _nearestAirportRequestType = NearestAirportRequestType.Departure;
 
@@ -107,7 +105,7 @@ namespace FSTRaK.Models.FlightManager
                         var fp = new FlightParams();
                         fp.IndicatedAirspeed = data.IndicatedAirpeed;
                         fp.GroundSpeed = data.GroundVelocity;
-                        fp.VeticalSpeed = data.VerticalSpeed;
+                        fp.VerticalSpeed = data.VerticalSpeed;
                         fp.Heading = data.TrueHeading;
                         fp.IsOnGround = Convert.ToBoolean(data.SimOnGround);
                         fp.Latitude = data.Latitude;

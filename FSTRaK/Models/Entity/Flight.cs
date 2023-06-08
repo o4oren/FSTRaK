@@ -12,7 +12,8 @@ namespace FSTRaK.Models
 {
     internal class Flight : BaseModel
     {
-        public int ID { get; set; }
+        [Column("ID")]
+        public int Id { get; set; }
         public virtual Aircraft Aircraft { get; set; }
 
         [Index(nameof(DepartureAirport))]
@@ -30,11 +31,11 @@ namespace FSTRaK.Models
         [NotMapped]
         public TimeSpan FlightTime
         {
-            get { return TimeSpan.FromTicks(FlightTimeMilis); }
-            set { FlightTimeMilis = value.Ticks; }
+            get => TimeSpan.FromTicks(FlightTimeMilis);
+            set => FlightTimeMilis = value.Ticks;
         }
 
-        public double FlightDistanceNM { get; set; }
+        public double FlightDistanceNm { get; set; }
 
         public double TotalFuelUsed { get; set; }
 
@@ -43,7 +44,9 @@ namespace FSTRaK.Models
 
         public string ScoreDetails { get; set; }
 
-        public ObservableCollection<BaseFlightEvent> FlightEvents { get; private set; }
+        public ObservableCollection<BaseFlightEvent> FlightEvents { get; }
+
+        private Airport _departureAirportDetails;
 
         [NotMapped] public Airport DepartureAirportDetails 
         {
@@ -51,32 +54,46 @@ namespace FSTRaK.Models
             {
                 try
                 {
+                    if (_departureAirportDetails != null)
+                        return _departureAirportDetails;
+
                     var airport = AirportResolver.Instance.AirportsDictionary[DepartureAirport];
-                    return airport;
+                    _departureAirportDetails = airport;
                 }
                 catch (Exception)
                 {
-                    return new Airport
+                    _departureAirportDetails = new Airport
                     {
-                        icao = DepartureAirport
+                        Icao = DepartureAirport
                     };
                 }
-
+                return _departureAirportDetails;
             }
         }
 
+
+        private Airport _arrivalAirportDetails;
         [NotMapped]
         public Airport ArrivalAirportDetails
         {
             get
             {
-                var airport = AirportResolver.Instance.AirportsDictionary[ArrivalAirport];
-                if (airport == null)
-                    airport = new Airport
+                try
+                {
+                    if (_arrivalAirportDetails != null)
+                        return _arrivalAirportDetails;
+
+                    var airport = AirportResolver.Instance.AirportsDictionary[ArrivalAirport];
+                    _arrivalAirportDetails = airport;
+                }
+                catch (Exception)
+                {
+                    _arrivalAirportDetails = new Airport
                     {
-                        icao = ArrivalAirport
+                        Icao = ArrivalAirport
                     };
-                return airport;
+                }
+                return _arrivalAirportDetails;
             }
         }
 
@@ -101,9 +118,16 @@ namespace FSTRaK.Models
 
             sb.AppendLine($"Start Time: {this.StartTime}")
             .AppendLine($"End Time: {this.EndTime}")
-            .AppendLine($"Block Time: {this.FlightTime}")
-            .AppendLine($"Fuel Used: {TotalFuelUsed:F1}")
-            .AppendLine($"Flown Distance: {FlightDistanceNM:F0} NM");
+            .AppendLine($"Block Time: {this.FlightTime}");
+
+            if (Properties.Settings.Default.Units == (int)Units.Metric)
+                sb.AppendLine($"Fuel Used: {(TotalFuelUsed * Consts.LbsToKgs):F1} Kg");
+            else
+                sb.AppendLine($"Fuel Used: {TotalFuelUsed:F1} Lbs");
+
+
+
+            sb.AppendLine($"Flown Distance: {FlightDistanceNm:F0} NM");
 
             var landingEvent = (LandingEvent)this.FlightEvents.FirstOrDefault(e => e is LandingEvent);
             if (landingEvent != null)
@@ -111,10 +135,8 @@ namespace FSTRaK.Models
                 sb.AppendLine($"Lnading VS: {landingEvent.VerticalSpeed:F0} ft/m");
             }
 
-            
-            sb.AppendLine($"Score: {this.Score}")
-            .ToString();
 
+            sb.Append($"Score: {this.Score}");
             return sb.ToString();
         }
 
@@ -124,7 +146,7 @@ namespace FSTRaK.Models
         public void UpdateScore()
         {
             var scoringEvents = GetScoringEvents();
-            Score = 100 - scoringEvents.Sum(e => e.ScoreDelta);
+            Score = MathUtils.Clamp(100 + scoringEvents.Sum(e => e.ScoreDelta), 0, 110);
         }
 
         private List<ScoringEvent> GetScoringEvents()
@@ -144,9 +166,9 @@ namespace FSTRaK.Models
             {
                 if(se.ScoreDelta != 0)
                 {
-                    if(se is LandingEvent)
+                    if(se is LandingEvent @event)
                     {
-                        builder.AppendLine($"{((LandingEvent)se).LandingRate} {se.EventName} {se.ScoreDelta} Points");
+                        builder.AppendLine($"{@event.LandingRate} {se.EventName} {se.ScoreDelta} Points");
                     }
                     else
                     {

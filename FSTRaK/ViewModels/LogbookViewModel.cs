@@ -11,6 +11,7 @@ using System.Linq;
 using System.Threading;
 using System.Threading.Tasks;
 using System.Timers;
+using FSTRaK.Models.FlightManager.State;
 
 namespace FSTRaK.ViewModels
 {
@@ -25,7 +26,7 @@ namespace FSTRaK.ViewModels
         private FlightDetailsViewModel _flightDetailsViewModel;
 
         public FlightDetailsViewModel FlightDetailsViewModel { 
-            get { return _flightDetailsViewModel; }
+            get => _flightDetailsViewModel;
             private set 
             { 
                 _flightDetailsViewModel = value;
@@ -70,9 +71,9 @@ namespace FSTRaK.ViewModels
                         try
                         {
                             await LoadFlights(500);
-                            var latestId = logbookContext.Flights.Max(f => f.ID);
+                            var latestId = logbookContext.Flights.Max(f => f.Id);
                             SelectedFlight = logbookContext.Flights
-                            .Where(f => f.ID == latestId)
+                            .Where(f => f.Id == latestId)
                             .Include(f => f.Aircraft)
                             .Include(f => f.FlightEvents)
                             .SingleOrDefault();
@@ -125,7 +126,7 @@ namespace FSTRaK.ViewModels
         private string _searchText;
         public string SearchText 
         { 
-            get { return _searchText; }
+            get => _searchText;
             set
             {
                 _typingTimer.Stop();
@@ -162,7 +163,7 @@ namespace FSTRaK.ViewModels
                     }
                     catch (Exception ex)
                     {
-                        Log.Error(ex, "Unhandled error occured!");
+                        Log.Error(ex, "Unhandled error occurred!");
                     }
                 }
             });

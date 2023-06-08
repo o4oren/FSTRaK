@@ -14,16 +14,9 @@ namespace FSTRaK
 
         event EventHandler ICommand.CanExecuteChanged
         {
-            add
-            {
-                CommandManager.RequerySuggested += value;
-                
-            }
+            add => CommandManager.RequerySuggested += value;
 
-            remove
-            {
-                CommandManager.RequerySuggested -= value; 
-            }
+            remove => CommandManager.RequerySuggested -= value;
         }
 
         public RelayCommand(Action<object> execute, Func<object, bool> canExecute = null)

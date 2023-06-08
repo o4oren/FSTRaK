@@ -12,6 +12,22 @@ namespace FSTRaK.Views
         public LiveView()
         {
             InitializeComponent();
+
+        }
+
+        private void OnLoaded(object sender, RoutedEventArgs re)
+        {
+            var geometry = Application.Current.Resources[((LiveViewViewModel)DataContext).AirplaneIcon];
+            AirplaneGeometry.Data = (System.Windows.Media.Geometry)geometry;
+            
+            ((LiveViewViewModel)DataContext).PropertyChanged += ((o, e) =>
+            {
+                if (DataContext != null && e.PropertyName == "AirplaneIcon")
+                {
+                    geometry = Application.Current.Resources[((LiveViewViewModel)DataContext).AirplaneIcon];
+                    AirplaneGeometry.Data = (System.Windows.Media.Geometry)geometry;
+                }
+            });
         }
     }
 }

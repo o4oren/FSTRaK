@@ -3,10 +3,13 @@ using FSTRaK.Models.Entity;
 using Serilog;
 using Serilog.Exceptions;
 using System;
+using System.IO;
 using System.Threading;
 using System.Threading.Tasks;
 using System.Windows;
 using System.Windows.Threading;
+using FSTRaK.Utils;
+using Microsoft.Win32;
 
 namespace FSTRaK
 {
@@ -17,18 +20,17 @@ namespace FSTRaK
     {
         private static Mutex _mutex = null;
 
-
-
-        const string appName = "FSTrAk";
+        const string AppName = "FSTrAk";
 
         protected override void OnStartup(StartupEventArgs e)
         {
-            _mutex = new Mutex(true, appName, out var createdNew);
+            _mutex = new Mutex(true, AppName, out var createdNew);
 
             if (!createdNew)
             {
                 MessageBox.Show("An instance of FSTrAk is already running...", "FSTrAk");
                 Application.Current.Shutdown();
+
             }
 
             base.OnStartup(e);
@@ -36,34 +38,57 @@ namespace FSTRaK
 
 
     void OnApplicationStart(object sender, StartupEventArgs args)
-        {
-            Log.Logger = new LoggerConfiguration()
-            .Enrich.WithExceptionDetails()
-            .MinimumLevel.Information()
+    {
+        var logPath = Path.Combine(PathUtil.GetApplicationLocalDataPath(), "log.txt");
+
+        Log.Logger = new LoggerConfiguration()
+        .Enrich.WithExceptionDetails()
+        .MinimumLevel.Information()
 #if DEBUG
-            .MinimumLevel.Debug()
+        .MinimumLevel.Debug()
 #endif
-            .WriteTo.Trace()
-            .WriteTo.File("log.txt")
-            .CreateLogger();
+        .WriteTo.Trace()
+        .WriteTo.File(logPath)
+        .CreateLogger();
 
-            Task.Run(() =>
+
+        Task.Run(() =>
+        {
+            using (var logbookContext = new LogbookContext())
             {
-                using (var logbookContext = new LogbookContext())
+                try
                 {
-                    try
-                    {
-                        logbookContext.Aircraft.Find(1);
-                    }
-                    catch (Exception ex)
-                    {
-                        Log.Error(ex, ex.Message);
-                    }
+                    logbookContext.Aircraft.Find(1);
                 }
-            });
+                catch (Exception ex)
+                {
+                    Log.Error(ex, ex.Message);
+                }
+            }
+        });
 
-            var airportResolder = AirportResolver.Instance;
-        }
+        Task.Run(() =>
+        {
+
+            if (FSTRaK.Properties.Settings.Default.IsRunAutomatically)
+            {
+                // Start up with windows login
+                RegistryKey rkStartUp = Registry.CurrentUser;
+                var applicationLocation = System.Reflection.Assembly.GetExecutingAssembly().Location;
+
+                var startupPathSubKey = rkStartUp.OpenSubKey(@"Software\Microsoft\Windows\CurrentVersion\Run", true);
+
+
+                AppDomain.CurrentDomain.SetData("DataDirectory", PathUtil.GetApplicationLocalDataPath());
+                if (startupPathSubKey?.GetValue("FSTrAk") == null)
+                {
+                    startupPathSubKey?.SetValue("FSTrAk", applicationLocation, RegistryValueKind.ExpandString);
+                }
+            }
+        });
+
+        var airportResolver = AirportResolver.Instance;
+    }
   
 
         void OnApplicationExit(object sender, ExitEventArgs e)
@@ -78,7 +103,7 @@ namespace FSTRaK
 
         void App_DispatcherUnhandledException(object sender, DispatcherUnhandledExceptionEventArgs e)
         {
-            Log.Error(e.Exception, "Unhandled error occured!");
+            Log.Error(e.Exception, "Unhandled error occurred!");
             // Prevent default unhandled exception processing
             e.Handled = true;
         }

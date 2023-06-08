@@ -1,24 +1,24 @@
 ﻿
 using FSTRaK.DataTypes;
 
-namespace FSTRaK.Models.FlightManager
+namespace FSTRaK.Models.FlightManager.State
 {
     internal class CrashedState : AbstractState
     {
-        public override string Name { get; set; }
-        public override bool IsMovementState { get; set; }
+        public sealed override string Name { get; set; }
+        public sealed override bool IsMovementState { get; set; }
 
 
-        public CrashedState(FlightManager Context) : base(Context)
+        public CrashedState(FlightManager context) : base(context)
         {
             IsMovementState = false;
             Name = "Crashed";
-            Context.RequestNearestAirports(DataTypes.NearestAirportRequestType.CrashedNear);
+            context.RequestNearestAirports(DataTypes.NearestAirportRequestType.CrashedNear);
         }
-        public override void ProcessFlightData(AircraftFlightData Data)
+        public override void ProcessFlightData(AircraftFlightData data)
         {
             var ce = new CrashEvent();
-            AddFlightEvent(Data, ce);
+            AddFlightEvent(data, ce);
 
             Context.State = new FlightEndedState(Context);
         }

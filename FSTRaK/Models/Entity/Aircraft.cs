@@ -8,7 +8,8 @@ namespace FSTRaK.Models
 {
     internal class Aircraft : BaseModel
     {
-        public int ID { get; set; }
+        [Column("ID")]
+        public int Id { get; set; }
 
         [Index(nameof(Title), IsUnique = true)]
         public string Title { get; set; } 
@@ -45,7 +46,7 @@ namespace FSTRaK.Models
             .AppendLine($"{this.Manufacturer} {this.AircraftType}")
             .AppendLine(this.TailNumber);
             if (this.Airline != string.Empty)
-                builder.AppendLine(this.Airline);
+                builder.Append(this.Airline);
             return builder.ToString();
         }
 

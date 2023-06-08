@@ -1,33 +1,33 @@
 ﻿
 using FSTRaK.DataTypes;
 
-namespace FSTRaK.Models.FlightManager
+namespace FSTRaK.Models.FlightManager.State
 {
     internal class TaxiOutState : AbstractState
     {
-        public override string Name { get; set; }
-        public override bool IsMovementState { get; set; }
+        public sealed override string Name { get; set; }
+        public sealed override bool IsMovementState { get; set; }
 
         
-        public TaxiOutState(FlightManager Context) : base(Context)
+        public TaxiOutState(FlightManager context) : base(context)
         {
-            this._eventInterval = 10000;
+            this.EventInterval = 10000;
             this.Name = "Taxi Out";
             this.IsMovementState = true;
         }
-        public override void ProcessFlightData(AircraftFlightData Data)
+        public override void ProcessFlightData(AircraftFlightData data)
         {
-            if ((Data.GroundVelocity > 40 && Data.MinThrottlePosition() > 75) || Data.SimOnGround != 1)
+            if ((data.GroundVelocity > 40 && data.MinThrottlePosition() > 75) || data.SimOnGround != 1)
             {
                 Context.State = new TakeoffRollState(Context);
                 return;
             }
 
             // Add event if stopwatch is not started, check if interval has elapsed otherwise
-            if(!_stopwatch.IsRunning || _stopwatch.ElapsedMilliseconds > _eventInterval)
+            if(!Stopwatch.IsRunning || Stopwatch.ElapsedMilliseconds > EventInterval)
             {
-                AddFlightEvent(Data, new BaseFlightEvent());
-                _stopwatch.Restart();
+                AddFlightEvent(data, new BaseFlightEvent());
+                Stopwatch.Restart();
             }
         }
     }

@@ -1,23 +1,20 @@
-﻿
-
+﻿using System;
 using FSTRaK.DataTypes;
-using System;
-using System.Windows.Markup;
 
-namespace FSTRaK.Models.FlightManager
+namespace FSTRaK.Models.FlightManager.State
 {
     internal class LandedState : AbstractState
     {
-        public override string Name { get; set; }
-        public override bool IsMovementState { get; set; }
-        public LandedState(FlightManager Context, AircraftFlightData LandingData) : base(Context)
+        public sealed override string Name { get; set; }
+        public sealed override bool IsMovementState { get; set; }
+        public LandedState(FlightManager context, AircraftFlightData landingData) : base(context)
         {
-            this._eventInterval = 5000;
+            this.EventInterval = 5000;
             this.Name = "Landed";
             this.IsMovementState = true;
-            Context.RequestNearestAirports(DataTypes.NearestAirportRequestType.Arrival);
+            context.RequestNearestAirports(DataTypes.NearestAirportRequestType.Arrival);
 
-            ProcessLandingData(LandingData);
+            ProcessLandingData(landingData);
 
         }
 
@@ -31,23 +28,27 @@ namespace FSTRaK.Models.FlightManager
             if (landingData.VerticalSpeed < -500)
             {
                 le.LandingRate = LandingRate.Hard;
-                le.ScoreDelta = -25;
+                le.ScoreDelta = -35;
             }
             else if (landingData.VerticalSpeed < -350)
             {
-                le.LandingRate = LandingRate.Aceeptable;
+                le.LandingRate = LandingRate.Fair;
                 le.ScoreDelta = -10;
             }
-            else if (landingData.VerticalSpeed < -275)
+            else if (landingData.VerticalSpeed < -190)
             {
                 le.LandingRate = LandingRate.Good;
             }
-            else if (landingData.VerticalSpeed < -175)
-            {
+            else if (landingData.VerticalSpeed < -165)
+            {   
                 le.LandingRate = LandingRate.Perfect;
-                le.ScoreDelta = 10;
+                le.ScoreDelta = +10;
             }
-            else if (landingData.VerticalSpeed < -125)
+            else if (landingData.VerticalSpeed < -135)
+            {
+                le.LandingRate = LandingRate.Good;
+            }
+            else if (landingData.VerticalSpeed < -101)
             {
                 le.LandingRate = LandingRate.Soft;
                 le.ScoreDelta = -10;
@@ -59,30 +60,30 @@ namespace FSTRaK.Models.FlightManager
             AddFlightEvent(landingData, le);
         }
 
-        public override void ProcessFlightData(AircraftFlightData Data)
+        public override void ProcessFlightData(AircraftFlightData data)
         {
-            if (!Convert.ToBoolean(Data.SimOnGround))
+            if (!Convert.ToBoolean(data.SimOnGround))
             {
                 Context.State = new FlightState(Context);
                 return;
             }
 
-            if (Data.GroundVelocity < 35 && Data.MaxThorttlePosition() < 50)
+            if (data.GroundVelocity < 35 && data.MaxThorttlePosition() < 50)
             {
                 var ti = new TaxiInEvent()
                 {
-                    FuelWeightLbs = Data.FuelWeightLbs
+                    FuelWeightLbs = data.FuelWeightLbs
                 };
-                AddFlightEvent(Data, ti);
+                AddFlightEvent(data, ti);
                 Context.State = new TaxiInState(Context);
                 return;
             }
 
             // Add event if stopwatch is not started, check if interval has elapsed otherwise
-            if (!_stopwatch.IsRunning || _stopwatch.ElapsedMilliseconds > _eventInterval)
+            if (!Stopwatch.IsRunning || Stopwatch.ElapsedMilliseconds > EventInterval)
             {
-                AddFlightEvent(Data, new BaseFlightEvent());
-                _stopwatch.Restart();
+                AddFlightEvent(data, new BaseFlightEvent());
+                Stopwatch.Restart();
             }
         }
     }

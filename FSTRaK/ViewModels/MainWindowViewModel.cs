@@ -19,7 +19,7 @@ namespace FSTRaK.ViewModels
 
         public object ActiveView
         {
-            get { return _activeView; }
+            get => _activeView;
             set
             {
                 _activeView = value;

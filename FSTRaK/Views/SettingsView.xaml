@@ -8,7 +8,7 @@
              xmlns:dataTypes="clr-namespace:FSTRaK.DataTypes;assembly=FSTrAK"
              xmlns:System="clr-namespace:System;assembly=mscorlib"
              d:DataContext="{d:DesignInstance Type=viewmodels:SettingsViewModel}"
-             d:DesignHeight="450" d:DesignWidth="800"
+             d:DesignHeight="600" d:DesignWidth="800"
              Loaded="OnLoaded"
              >
 
@@ -30,7 +30,13 @@
 
         <StackPanel Orientation="Horizontal" Margin="10" Visibility="{Binding IsShowBingApiKeyField, Converter={StaticResource BoolToVis}}">
             <Label  Style="{StaticResource FSTrAkLabel}" Width="200">Bing API Key</Label>
-            <TextBox FontFamily="{StaticResource Slopes}" Foreground="{StaticResource TextColor}" FontSize="20" Text="{Binding BingApiKey}" TextWrapping="Wrap" Height="100" Width="200"/>
+            <TextBox FontFamily="{StaticResource Slopes}" Foreground="{StaticResource TextColor}" FontSize="20" Text="{Binding BingApiKey}" TextWrapping="Wrap" Height="100" Width="200">
+                <TextBox.ToolTip>
+                    Bing map require an API Key. 
+                    Please see the instructions at 
+                    https://learn.microsoft.com/en-us/bingmaps/getting-started/bing-maps-dev-center-help/getting-a-bing-maps-key
+            </TextBox.ToolTip>
+            </TextBox>
         </StackPanel>
         <StackPanel Orientation="Horizontal" Margin="10">
             <Label Style="{StaticResource FSTrAkLabel}" Width="200">Units</Label>
@@ -38,12 +44,24 @@
                       ItemsSource="{Binding Source={StaticResource dataFromEnum}}" SelectedItem="{Binding Units}"/>
         </StackPanel>
         <StackPanel Orientation="Horizontal" Margin="10">
-            <Label  Style="{StaticResource FSTrAkLabel}" Width="200">Always on Top</Label>
-            <CheckBox Style="{StaticResource SettingsCheckbox}" FontFamily="{StaticResource Slopes}" FontSize="20" VerticalAlignment="Center" IsChecked="{Binding IsAlwaysOnTop, Mode=TwoWay}"/>
-        </StackPanel>
-        <StackPanel Orientation="Horizontal" Margin="10">
             <Label  Style="{StaticResource FSTrAkLabel}" Width="200">Complete Flights Only</Label>
             <CheckBox Style="{StaticResource SettingsCheckbox}" FontFamily="{StaticResource Slopes}" FontSize="20" VerticalAlignment="Center" IsChecked="{Binding IsSaveOnlyCompleteFlights, Mode=TwoWay}"/>
+        </StackPanel>
+        <StackPanel Orientation="Horizontal" Margin="10">
+            <Label  Style="{StaticResource FSTrAkLabel}" Width="200">Start Automatically</Label>
+            <CheckBox Style="{StaticResource SettingsCheckbox}" FontFamily="{StaticResource Slopes}" FontSize="20" VerticalAlignment="Center" IsChecked="{Binding IsRunAutomatically, Mode=TwoWay}"/>
+        </StackPanel>
+        <StackPanel Orientation="Horizontal" Margin="10">
+            <Label  Style="{StaticResource FSTrAkLabel}" Width="200">Start Minimized</Label>
+            <CheckBox Style="{StaticResource SettingsCheckbox}" FontFamily="{StaticResource Slopes}" FontSize="20" VerticalAlignment="Center" IsChecked="{Binding IsStartMinimized, Mode=TwoWay}"/>
+        </StackPanel>
+        <StackPanel Orientation="Horizontal" Margin="10">
+            <Label  Style="{StaticResource FSTrAkLabel}" Width="200">Minimize to Tray</Label>
+            <CheckBox Style="{StaticResource SettingsCheckbox}" FontFamily="{StaticResource Slopes}" FontSize="20" VerticalAlignment="Center" IsChecked="{Binding IsMinimizeToTray, Mode=TwoWay}"/>
+        </StackPanel>
+        <StackPanel Orientation="Horizontal" Margin="10">
+            <Label  Style="{StaticResource FSTrAkLabel}" Width="200">Always on Top</Label>
+            <CheckBox Style="{StaticResource SettingsCheckbox}" FontFamily="{StaticResource Slopes}" FontSize="20" VerticalAlignment="Center" IsChecked="{Binding IsAlwaysOnTop, Mode=TwoWay}"/>
         </StackPanel>
     </StackPanel>
 </UserControl>

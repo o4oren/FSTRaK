@@ -130,5 +130,41 @@ namespace FSTRaK.Properties {
                 this["Height"] = value;
             }
         }
+        
+        [global::System.Configuration.UserScopedSettingAttribute()]
+        [global::System.Diagnostics.DebuggerNonUserCodeAttribute()]
+        [global::System.Configuration.DefaultSettingValueAttribute("False")]
+        public bool IsStartMinimized {
+            get {
+                return ((bool)(this["IsStartMinimized"]));
+            }
+            set {
+                this["IsStartMinimized"] = value;
+            }
+        }
+        
+        [global::System.Configuration.UserScopedSettingAttribute()]
+        [global::System.Diagnostics.DebuggerNonUserCodeAttribute()]
+        [global::System.Configuration.DefaultSettingValueAttribute("False")]
+        public bool IsMinimizeToTray {
+            get {
+                return ((bool)(this["IsMinimizeToTray"]));
+            }
+            set {
+                this["IsMinimizeToTray"] = value;
+            }
+        }
+        
+        [global::System.Configuration.UserScopedSettingAttribute()]
+        [global::System.Diagnostics.DebuggerNonUserCodeAttribute()]
+        [global::System.Configuration.DefaultSettingValueAttribute("True")]
+        public bool IsRunAutomatically {
+            get {
+                return ((bool)(this["IsRunAutomatically"]));
+            }
+            set {
+                this["IsRunAutomatically"] = value;
+            }
+        }
     }
 }

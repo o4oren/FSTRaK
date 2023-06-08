@@ -7,7 +7,8 @@
     <Color x:Key="PrimaryMidDark">#6176A8</Color>
     <Color x:Key="PrimaryDark">#003884</Color>
 
-    
+    <SolidColorBrush x:Key="MenuItemSelectionFill" Color="{StaticResource PrimaryBright}"/>
+
 
     <Color x:Key="ContentAreaColorLight">#FFC5CBF9</Color>
     <Color x:Key="ContentAreaColorDark">#FF7381F9</Color>
@@ -50,6 +51,11 @@
 
     <Color x:Key="NavButtonFrameColor">#FF3843C4</Color>
 
+    <SolidColorBrush x:Key="PrimaryLightBrush" Color="{DynamicResource PrimaryBright}"/>
+    <SolidColorBrush x:Key="PrimaryMedumBrush" Color="{DynamicResource PrimaryMid}"/>
+    <SolidColorBrush x:Key="PrimaryDarkBrush" Color="{DynamicResource PrimaryDark}"/>
+
+
     <SolidColorBrush x:Key="MainWindowBackground" Color="{DynamicResource PrimaryBright}"/>
     <SolidColorBrush x:Key="TopBarBackground" Color="{DynamicResource PrimaryMid}"/>
 
@@ -57,6 +63,10 @@
     <SolidColorBrush x:Key="UnselectedTextColor" Color="{DynamicResource PrimaryMidDark}"/>
     <SolidColorBrush x:Key="BrightTextColor" Color="{DynamicResource PrimaryBright}"/>
     <SolidColorBrush x:Key="MidBorderBrush" Color="{DynamicResource PrimaryMid}"/>
+
+    <SolidColorBrush x:Key="BorderLightColorBrush" Color="{DynamicResource BorderLightColor}"/>
+    <SolidColorBrush x:Key="BorderMidColorBrush" Color="{DynamicResource BorderMediumColor}"/>
+    
 
     <Color x:Key="CloseButtonColor">Red</Color>
     <Color x:Key="CloseButtonColorHover">#cc1b1b</Color>
@@ -115,6 +125,33 @@
                     Offset="0.6" />
                 <GradientStop Color="#F1F0ED"
                     Offset="1" />
+            </GradientStopCollection>
+        </LinearGradientBrush.GradientStops>
+    </LinearGradientBrush>
+
+    <LinearGradientBrush x:Key="SilverGradientOneSide"
+                         StartPoint="0,0"
+                         EndPoint="0,1">
+        <LinearGradientBrush.GradientStops>
+            <GradientStopCollection>
+                <GradientStop Color="#F1F0ED"
+                              Offset="0" />
+                <GradientStop Color="#8E8D8D"
+                              Offset="1" />
+            </GradientStopCollection>
+        </LinearGradientBrush.GradientStops>
+    </LinearGradientBrush>
+
+
+    <LinearGradientBrush x:Key="SilverGradientSecondSide"
+                         StartPoint="1,0"
+                         EndPoint="1,1">
+        <LinearGradientBrush.GradientStops>
+            <GradientStopCollection>
+                <GradientStop Color="#F1F0ED"
+                              Offset="0" />
+                <GradientStop Color="#8E8D8D"
+                              Offset="1" />
             </GradientStopCollection>
         </LinearGradientBrush.GradientStops>
     </LinearGradientBrush>
@@ -679,4 +716,175 @@
         </Setter>
     </Style>
 
+    <Style TargetType="{x:Type ContextMenu}">
+        <Setter Property="SnapsToDevicePixels"
+                Value="True" />
+        <Setter Property="OverridesDefaultStyle"
+                Value="True" />
+        <Setter Property="Grid.IsSharedSizeScope"
+                Value="true" />
+        <Setter Property="HasDropShadow"
+                Value="True" />
+        <Setter Property="Template">
+            <Setter.Value>
+                <ControlTemplate TargetType="{x:Type ContextMenu}">
+                    <Border x:Name="Border"
+                            Background="White"
+                            BorderThickness="1"
+                            Padding="10"
+                            CornerRadius="5"
+                            BorderBrush="{StaticResource SilverGradient}"
+                            >
+                        <StackPanel IsItemsHost="True"
+                                    KeyboardNavigation.DirectionalNavigation="Cycle" />
+                    </Border>
+                </ControlTemplate>
+            </Setter.Value>
+        </Setter>
+    </Style>
+    <Style TargetType="{x:Type MenuItem}">
+        <Setter Property="Background" Value="White" />
+        <Setter Property="FontFamily" Value="{StaticResource Slopes}" />
+        <Setter Property="FontSize" Value="18" />
+        <Setter Property="Foreground" Value="{StaticResource TextColor}" />
+        <Setter Property="Template">
+            <Setter.Value>
+                <ControlTemplate TargetType="{x:Type MenuItem}">
+                    <Border x:Name="Bd" Padding="17,5,17,5" BorderBrush="Transparent" BorderThickness="1" Background="White" SnapsToDevicePixels="True" CornerRadius="2">
+                        <ContentPresenter x:Name="ContentPresenter"  Content="{TemplateBinding Header}"  ContentSource="Header" Margin="{TemplateBinding Padding}" RecognizesAccessKey="True" SnapsToDevicePixels="{TemplateBinding SnapsToDevicePixels}" Uid="ContentPresenter_33"/>
+                    </Border>
+                    <ControlTemplate.Triggers>
+                        <Trigger Property="IsHighlighted" Value="True">
+                            <Setter Property="Background" TargetName="Bd" Value="{StaticResource BrightTextColor}"/>
+                        </Trigger>
+                    </ControlTemplate.Triggers>
+                </ControlTemplate>
+            </Setter.Value>
+        </Setter>
+    </Style>
+
+    
+    <Style x:Key="ScrollBarThumb"
+       TargetType="{x:Type Thumb}">
+        <Setter Property="SnapsToDevicePixels"
+          Value="True" />
+        <Setter Property="OverridesDefaultStyle"
+          Value="true" />
+        <Setter Property="IsTabStop"
+          Value="false" />
+        <Setter Property="Focusable"
+          Value="false" />
+        <Setter Property="Template">
+            <Setter.Value>
+                <ControlTemplate TargetType="{x:Type Thumb}">
+                    <Border CornerRadius="5"
+                Background="{TemplateBinding Background}"
+                BorderBrush="{TemplateBinding BorderBrush}"
+                BorderThickness="1" />
+                </ControlTemplate>
+            </Setter.Value>
+        </Setter>
+    </Style>
+
+    <ControlTemplate x:Key="VerticalScrollBar"
+                 TargetType="{x:Type ScrollBar}">
+        <Grid>
+            <Grid.RowDefinitions>
+                <RowDefinition Height="0.00001*" />
+            </Grid.RowDefinitions>
+            <Border Grid.RowSpan="1"
+            CornerRadius="2"
+            Background="#F0F0F0" />
+            <Track x:Name="PART_Track"
+           IsDirectionReversed="true">
+                <Track.Thumb>
+                    <Thumb Style="{StaticResource ScrollBarThumb}"
+                           Background="{StaticResource BorderMidColorBrush}"
+
+               Margin="1,0,1,0">
+                    </Thumb>
+                </Track.Thumb>
+
+            </Track>
+        </Grid>
+    </ControlTemplate>
+
+    <ControlTemplate x:Key="HorizontalScrollBar"
+                 TargetType="{x:Type ScrollBar}">
+        <Grid>
+            <Grid.ColumnDefinitions>
+                <ColumnDefinition Width="0.00001*" />
+            </Grid.ColumnDefinitions>
+            <Border Grid.ColumnSpan="3"
+            CornerRadius="2"
+            Background="#F0F0F0" />
+
+            <Track x:Name="PART_Track"
+           IsDirectionReversed="False">
+                <Track.Thumb>
+                    <Thumb Style="{StaticResource ScrollBarThumb}"
+               Margin="0,1,0,1"
+               Background="{StaticResource BorderMidColorBrush}"
+               >
+
+
+                    </Thumb>
+                </Track.Thumb>
+            </Track>
+        </Grid>
+    </ControlTemplate>
+
+    <Style x:Key="{x:Type ScrollBar}"
+       TargetType="{x:Type ScrollBar}">
+        <Setter Property="SnapsToDevicePixels"
+          Value="True" />
+        <Setter Property="OverridesDefaultStyle"
+          Value="true" />
+        <Style.Triggers>
+            <Trigger Property="Orientation"
+             Value="Horizontal">
+                <Setter Property="Width"
+              Value="Auto" />
+                <Setter Property="Height"
+              Value="12" />
+                <Setter Property="Template"
+              Value="{StaticResource HorizontalScrollBar}" />
+            </Trigger>
+            <Trigger Property="Orientation"
+             Value="Vertical">
+                <Setter Property="Width"
+              Value="12" />
+                <Setter Property="Height"
+              Value="Auto" />
+                <Setter Property="Template"
+              Value="{StaticResource VerticalScrollBar}" />
+            </Trigger>
+        </Style.Triggers>
+    </Style>
+
+    <Style x:Key="{x:Type ToolTip}"
+           TargetType="ToolTip">
+        <Setter Property="OverridesDefaultStyle"
+                Value="true" />
+        <Setter Property="HasDropShadow"
+                Value="True" />
+        <Setter Property="Foreground" Value="{StaticResource BrightTextColor}"></Setter>
+        <Setter Property="MaxWidth" Value="500" />
+
+        <Setter Property="Template">
+            <Setter.Value>
+                <ControlTemplate TargetType="ToolTip">
+                    <Border Name="Border"
+                            BorderThickness="1"
+                            Width="{TemplateBinding Width}"
+                            Height="{TemplateBinding Height}"
+                            BorderBrush="{StaticResource SilverGradient}"
+                            Background="{StaticResource PrimaryDarkBrush}"
+                            >
+                        <TextBlock Text="{TemplateBinding Content}" TextWrapping="Wrap" Padding="10"/>
+                    </Border>
+                </ControlTemplate>
+            </Setter.Value>
+        </Setter>
+    </Style>
 </ResourceDictionary>

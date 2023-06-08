@@ -3,9 +3,10 @@
     public enum LandingRate
     {
         Soft,
-        Aceeptable,
+        Fair,
         Good,
         Perfect,
-        Hard
+        Hard,
+        NotSet
     }
 }

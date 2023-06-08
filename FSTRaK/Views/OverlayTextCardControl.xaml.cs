@@ -15,26 +15,23 @@ namespace FSTRaK.Views
             InitializeComponent();
         }
 
-        
+        public string Header
+        {
+            get => (string)GetValue(HeaderProperty);
+            set => SetValue(HeaderProperty, value);
+        }
 
-    public string Header
-    {
-        get { return (string)GetValue(HeaderProperty); }
-        set { SetValue(HeaderProperty, value); }
-    }
-
-    public static readonly DependencyProperty HeaderProperty =
-        DependencyProperty.Register("Header", typeof(string), typeof(OverlayTextCardControl), new PropertyMetadata(default(string)));
+        public static readonly DependencyProperty HeaderProperty =
+            DependencyProperty.Register("Header", typeof(string), typeof(OverlayTextCardControl), new PropertyMetadata(default(string)));
 
 
-    public string Text
-    {
-        get { return (string)GetValue(TextProperty); }
-        set { SetValue(TextProperty, value); }
-    }
+        public string Text
+        {
+            get => (string)GetValue(TextProperty);
+            set => SetValue(TextProperty, value);
+        }
 
-    public static readonly DependencyProperty TextProperty =
-        DependencyProperty.Register("Text", typeof(string), typeof(OverlayTextCardControl), new PropertyMetadata(default(string)));
-
-    }   
+        public static readonly DependencyProperty TextProperty =
+            DependencyProperty.Register("Text", typeof(string), typeof(OverlayTextCardControl), new PropertyMetadata(default(string)));
+        }
 }

@@ -7,6 +7,7 @@ using Serilog;
 using System;
 using System.Collections.Generic;
 using System.Collections.ObjectModel;
+using System.Drawing;
 using System.Linq;
 using System.Windows;
 
@@ -22,7 +23,7 @@ namespace FSTRaK.ViewModels
                 if (_flight == value) return;
                 _flight = value;
                 FlightPath = new ObservableCollection<Location>(_flight.FlightEvents
-                    .OrderBy(e => e.ID)
+                    .OrderBy(e => e.Id)
                     .Select(e => new Location(e.Latitude, e.Longitude)));
 
                 double minLon = Double.MaxValue, minLat = Double.MaxValue, maxLon = Double.MinValue, maxLat = Double.MinValue;
@@ -70,12 +71,14 @@ namespace FSTRaK.ViewModels
             foreach (var e in markerEvents)
             {
                 var pin = new FlightEventPushpin();
-                if(e is ScoringEvent @event)
+                if (e is ScoringEvent @event)
                 {
-                    if (@event.ScoreDelta < -15)
+                    if (@event.ScoreDelta > 0)
+                        pin.Color = "#FFC5CBF9";
+                    if (@event.ScoreDelta <= -20)
                         pin.Color = "Red";
                     else if (@event.ScoreDelta < 0)
-                        pin.Color = "Yellow";
+                        pin.Color = "#DE970B";
 
 
                 }
@@ -228,13 +231,13 @@ namespace FSTRaK.ViewModels
             }
         }
 
-        private string scoreboardText;
+        private string _scoreboardText;
 
         public string ScoreboardText 
         { 
-            get => scoreboardText;
+            get => _scoreboardText;
             set {
-                scoreboardText = value;
+                _scoreboardText = value;
                 OnPropertyChanged();
             }
         }

@@ -8,6 +8,9 @@ using MapControl;
 using System.Linq;
 using Serilog;
 using FSTRaK.DataTypes;
+using FSTRaK.Utils;
+using Microsoft.Win32;
+using System;
 
 namespace FSTRaK.ViewModels
 {
@@ -24,10 +27,7 @@ namespace FSTRaK.ViewModels
         private string _selectedMapProvider = "OpenStreetMap";
         public string SelectedMapProvider
         {
-            get
-            {
-                return _selectedMapProvider;
-            }
+            get => _selectedMapProvider;
             set
             {
                 if (value != null && value != _selectedMapProvider)
@@ -50,10 +50,7 @@ namespace FSTRaK.ViewModels
         private string _bingApiKey = "";
         public string BingApiKey
         {
-            get
-            {
-                return _bingApiKey;
-            }
+            get => _bingApiKey;
             set
             {
                 _bingApiKey = value;
@@ -66,10 +63,7 @@ namespace FSTRaK.ViewModels
         private Units _units;
         public Units Units
         {
-            get
-            {
-                return _units;
-            }
+            get => _units;
             set
             {
                 _units = value;
@@ -81,10 +75,7 @@ namespace FSTRaK.ViewModels
         private bool _isShowBingApiKeyField = false;
         public bool IsShowBingApiKeyField
         {
-            get
-            {
-                return _isShowBingApiKeyField;
-            }
+            get => _isShowBingApiKeyField;
             private set
             {
                 _isShowBingApiKeyField = value;
@@ -95,10 +86,7 @@ namespace FSTRaK.ViewModels
         private bool _isAlwaysOnTop;
         public bool IsAlwaysOnTop
         {
-            get
-            {
-                return _isAlwaysOnTop;
-            }
+            get => _isAlwaysOnTop;
             set
             {
                 _isAlwaysOnTop = value;
@@ -111,14 +99,74 @@ namespace FSTRaK.ViewModels
 
         public bool IsSaveOnlyCompleteFlights
         {
-            get
-            {
-                return _isSaveOnlyCompleteFlights;
-            }
+            get => _isSaveOnlyCompleteFlights;
             set
             {
                 _isSaveOnlyCompleteFlights = value;
                 Properties.Settings.Default.IsSaveOnlyCompleteFlights = _isSaveOnlyCompleteFlights;
+                OnPropertyChanged();
+            }
+        }
+
+        private bool _isStartMinimized;
+
+        public bool IsStartMinimized
+        {
+            get => _isStartMinimized;
+            set
+            {
+                _isStartMinimized = value;
+                Properties.Settings.Default.IsStartMinimized = _isStartMinimized;
+                OnPropertyChanged();
+            }
+        }
+
+        private bool _isMinimizeToTray;
+
+        public bool IsMinimizeToTray
+        {
+            get => _isMinimizeToTray;
+            set
+            {
+                _isMinimizeToTray = value;
+                Properties.Settings.Default.IsMinimizeToTray = _isMinimizeToTray;
+                OnPropertyChanged();
+            }
+        }
+
+        private bool _isRunAutomatically;
+        public bool IsRunAutomatically
+        {
+            get => _isRunAutomatically;
+            set
+            {
+                _isRunAutomatically = value;
+                Properties.Settings.Default.IsMinimizeToTray = _isRunAutomatically;
+
+
+
+#if DEBUG
+                return; // prevent debug builds from registering for auto startup
+#endif
+                // Set startup as needed
+                RegistryKey rkStartUp = Registry.CurrentUser;
+                var applicationLocation = System.Reflection.Assembly.GetExecutingAssembly().Location;
+
+                var startupPathSubKey = rkStartUp.OpenSubKey(@"Software\Microsoft\Windows\CurrentVersion\Run", true);
+
+
+                AppDomain.CurrentDomain.SetData("DataDirectory", PathUtil.GetApplicationLocalDataPath());
+
+                if (_isRunAutomatically && startupPathSubKey?.GetValue("FSTrAk") == null)
+                {
+                    startupPathSubKey?.SetValue("FSTrAk", applicationLocation, RegistryValueKind.ExpandString);
+                }
+
+                if (!_isRunAutomatically && startupPathSubKey?.GetValue("FSTrAk") != null)
+                {
+                    startupPathSubKey?.DeleteValue("FSTrAk");
+                }
+
                 OnPropertyChanged();
             }
         }
@@ -131,8 +179,8 @@ namespace FSTRaK.ViewModels
 
             foreach (DictionaryEntry provider in mapProviders)
             {
-                if ((typeof(MapTileLayerBase).IsAssignableFrom(provider.Value.GetType()))
-                    || (typeof(WmsImageLayer).IsAssignableFrom(provider.Value.GetType())))
+                if (provider.Value is MapTileLayerBase
+                    || provider.Value is WmsImageLayer)
                 {
                     layers.Add(provider.Key.ToString());
                 }
@@ -147,7 +195,9 @@ namespace FSTRaK.ViewModels
             IsAlwaysOnTop = Properties.Settings.Default.IsAlwaysOnTop;
             IsSaveOnlyCompleteFlights = Properties.Settings.Default.IsSaveOnlyCompleteFlights;
             Units = (Units)Properties.Settings.Default.Units;
-
+            IsStartMinimized = Properties.Settings.Default.IsStartMinimized;
+            IsMinimizeToTray = Properties.Settings.Default.IsMinimizeToTray;
+            IsRunAutomatically = Properties.Settings.Default.IsRunAutomatically;
         }
     }
 }

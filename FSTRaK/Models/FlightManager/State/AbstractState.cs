@@ -1,12 +1,8 @@
-﻿
-
-using FSTRaK.DataTypes;
-using Serilog;
-using System;
+﻿using System;
 using System.Diagnostics;
-using System.Linq;
+using FSTRaK.DataTypes;
 
-namespace FSTRaK.Models.FlightManager
+namespace FSTRaK.Models.FlightManager.State
 {
     internal abstract class AbstractState : IFlightManagerState
     {
@@ -14,14 +10,14 @@ namespace FSTRaK.Models.FlightManager
         public abstract string Name { get; set; }
 
         protected FlightManager Context;
-        protected Stopwatch _stopwatch = new Stopwatch();
-        protected int _eventInterval = 5000;
+        protected Stopwatch Stopwatch = new Stopwatch();
+        protected int EventInterval = 5000;
 
         public abstract bool IsMovementState { get; set; }
 
-        public AbstractState(FlightManager Context)
+        protected AbstractState(FlightManager context)
         {
-            this.Context = Context;
+            this.Context = context;
         }
 
         /// <summary>
@@ -32,8 +28,8 @@ namespace FSTRaK.Models.FlightManager
         /// 3. Check for special conditions at the beginning of the method.
         /// 4. Don't forget to handle exit from flight.
         /// </summary>
-        /// <param name="Data"></param>
-        public abstract void ProcessFlightData(AircraftFlightData Data);
+        /// <param name="data"></param>
+        public abstract void ProcessFlightData(AircraftFlightData data);
 
 
         /// <summary>

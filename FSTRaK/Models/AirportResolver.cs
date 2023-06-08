@@ -1,19 +1,15 @@
 ﻿using FSTRaK.Models.Entity;
 using Serilog;
-using System;
 using System.Collections.Generic;
 using System.IO;
-using System.Linq;
-using System.Text;
 using System.Text.Json;
-using System.Threading.Tasks;
 
 namespace FSTRaK.Models
 {
     internal class AirportResolver
     {
-        private static readonly object _lock = new object();
-        private static AirportResolver instance = null;
+        private static readonly object Lock = new object();
+        private static AirportResolver _instance = null;
 
         public Dictionary<string, Airport> AirportsDictionary;
 
@@ -35,13 +31,13 @@ namespace FSTRaK.Models
         {
             get
             {
-                lock (_lock)
+                lock (Lock)
                 {
-                    if (instance == null)
+                    if (_instance == null)
                     {
-                        instance = new AirportResolver();
+                        _instance = new AirportResolver();
                     }
-                    return instance;
+                    return _instance;
                 }
             }
         }
