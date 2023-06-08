@@ -31,12 +31,6 @@ namespace FSTRaK
                 MessageBox.Show("An instance of FSTrAk is already running...", "FSTrAk");
                 Application.Current.Shutdown();
 
-
-
-
-
-
-
             }
 
             base.OnStartup(e);

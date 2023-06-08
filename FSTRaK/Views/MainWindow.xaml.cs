@@ -1,7 +1,9 @@
 ﻿using FSTRaK.Models.FlightManager;
 using System;
 using System.Windows;
+using System.Windows.Forms;
 using System.Windows.Input;
+using Application = System.Windows.Application;
 
 namespace FSTRaK.Views
 {
@@ -11,22 +13,36 @@ namespace FSTRaK.Views
     public partial class MainWindow : Window
     {
         private readonly FlightManager _flightManager;
+        private readonly NotifyIcon _notifyIcon;
         public MainWindow()
         {
             _flightManager = FlightManager.Instance;
             InitializeComponent();
 
             // Add to tray
-            var icon = new System.Windows.Forms.NotifyIcon();
-            var iconStream = Application.GetResourceStream(new Uri("pack://application:,,,/Resources/Images/FSTrAk.ico")).Stream;
-            icon.Icon = new System.Drawing.Icon(iconStream);
-            icon.Visible = true;
-            icon.DoubleClick +=
-                delegate (object sender, EventArgs args)
+            _notifyIcon = new System.Windows.Forms.NotifyIcon();
+            var iconStream = Application.GetResourceStream(new Uri("pack://application:,,,/Resources/Images/FSTrAk.ico"))?.Stream;
+            if (iconStream != null)
+            {
+                _notifyIcon.Icon = new System.Drawing.Icon(iconStream);
+                _notifyIcon.Text = "FSTrAk";
+                _notifyIcon.Visible = true;
+                _notifyIcon.DoubleClick +=
+                    delegate (object sender, EventArgs args)
+                    {
+                        this.Show();
+                        this.WindowState = WindowState.Normal;
+                    };
+            }
+
+            _flightManager.PropertyChanged += (sender, args) =>
+            {
+                if (args.PropertyName.Equals(nameof(_flightManager.State)))
                 {
-                    this.Show();
-                    this.WindowState = WindowState.Normal;
-                };
+                    _notifyIcon.Text = $"FSTrAk\n{_flightManager.State.Name}";
+                }
+            };
+
         }
 
         private void OnLoad(object sender, RoutedEventArgs e)
