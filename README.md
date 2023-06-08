@@ -1,4 +1,4 @@
-<img src="https://github.com/o4oren/FSTRaK/assets/23486326/3730f175-ab8c-47b3-9aad-bedbbefc2897" width="800" height="600">
+<img src="https://github.com/o4oren/FSTRaK/assets/23486326/3730f175-ab8c-47b3-9aad-bedbbefc2897" width="640" height="480">
 
 # FSTRaK
 
