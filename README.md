@@ -1,4 +1,4 @@
-![FSTrAk](https://github.com/o4oren/FSTRaK/assets/23486326/a9a34510-940e-40c9-8697-5fcd24499a0c)
+![FSTrAk](https://github.com/o4oren/FSTRaK/assets/23486326/3730f175-ab8c-47b3-9aad-bedbbefc2897)
 
 
 # FSTRaK
