@@ -63,6 +63,5 @@
             <Label  Style="{StaticResource FSTrAkLabel}" Width="200">Always on Top</Label>
             <CheckBox Style="{StaticResource SettingsCheckbox}" FontFamily="{StaticResource Slopes}" FontSize="20" VerticalAlignment="Center" IsChecked="{Binding IsAlwaysOnTop, Mode=TwoWay}"/>
         </StackPanel>
-
     </StackPanel>
 </UserControl>
