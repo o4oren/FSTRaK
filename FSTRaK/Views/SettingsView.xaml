@@ -23,13 +23,13 @@
 
     <StackPanel Margin="10">
         <StackPanel Orientation="Horizontal" Margin="10">
-            <Label Style="{StaticResource FSTrAkLabel}" Width="200">Map tiles Provider</Label>
+            <Label Style="{StaticResource FSTrAkLabel}" Width="250">Map tiles Provider</Label>
             <ComboBox FontFamily="{StaticResource Slopes}" Foreground="{StaticResource TextColor}" FontSize="24" Width="200"
                       ItemsSource="{Binding MapProviders}" SelectedItem="{Binding SelectedMapProvider}"/>
         </StackPanel>
 
         <StackPanel Orientation="Horizontal" Margin="10" Visibility="{Binding IsShowBingApiKeyField, Converter={StaticResource BoolToVis}}">
-            <Label  Style="{StaticResource FSTrAkLabel}" Width="200">Bing API Key</Label>
+            <Label  Style="{StaticResource FSTrAkLabel}" Width="250">Bing API Key</Label>
             <TextBox FontFamily="{StaticResource Slopes}" Foreground="{StaticResource TextColor}" FontSize="20" Text="{Binding BingApiKey}" TextWrapping="Wrap" Height="100" Width="200">
                 <TextBox.ToolTip>
                     Bing map require an API Key. 
@@ -39,28 +39,28 @@
             </TextBox>
         </StackPanel>
         <StackPanel Orientation="Horizontal" Margin="10">
-            <Label Style="{StaticResource FSTrAkLabel}" Width="200">Units</Label>
+            <Label Style="{StaticResource FSTrAkLabel}" Width="250">Units</Label>
             <ComboBox FontFamily="{StaticResource Slopes}" Foreground="{StaticResource TextColor}" FontSize="24" Width="200"
                       ItemsSource="{Binding Source={StaticResource dataFromEnum}}" SelectedItem="{Binding Units}"/>
         </StackPanel>
         <StackPanel Orientation="Horizontal" Margin="10">
-            <Label  Style="{StaticResource FSTrAkLabel}" Width="200">Complete Flights Only</Label>
+            <Label  Style="{StaticResource FSTrAkLabel}" Width="250">Complete flights only</Label>
             <CheckBox Style="{StaticResource SettingsCheckbox}" FontFamily="{StaticResource Slopes}" FontSize="20" VerticalAlignment="Center" IsChecked="{Binding IsSaveOnlyCompleteFlights, Mode=TwoWay}"/>
         </StackPanel>
         <StackPanel Orientation="Horizontal" Margin="10">
-            <Label  Style="{StaticResource FSTrAkLabel}" Width="200">Start Automatically</Label>
+            <Label  Style="{StaticResource FSTrAkLabel}" Width="250">Launch FSTrAk on login</Label>
             <CheckBox Style="{StaticResource SettingsCheckbox}" FontFamily="{StaticResource Slopes}" FontSize="20" VerticalAlignment="Center" IsChecked="{Binding IsRunAutomatically, Mode=TwoWay}"/>
         </StackPanel>
         <StackPanel Orientation="Horizontal" Margin="10">
-            <Label  Style="{StaticResource FSTrAkLabel}" Width="200">Start Minimized</Label>
+            <Label  Style="{StaticResource FSTrAkLabel}" Width="250">launch FSTrAk minimized</Label>
             <CheckBox Style="{StaticResource SettingsCheckbox}" FontFamily="{StaticResource Slopes}" FontSize="20" VerticalAlignment="Center" IsChecked="{Binding IsStartMinimized, Mode=TwoWay}"/>
         </StackPanel>
         <StackPanel Orientation="Horizontal" Margin="10">
-            <Label  Style="{StaticResource FSTrAkLabel}" Width="200">Minimize to Tray</Label>
+            <Label  Style="{StaticResource FSTrAkLabel}" Width="250">Minimize to Tray on Close</Label>
             <CheckBox Style="{StaticResource SettingsCheckbox}" FontFamily="{StaticResource Slopes}" FontSize="20" VerticalAlignment="Center" IsChecked="{Binding IsMinimizeToTray, Mode=TwoWay}"/>
         </StackPanel>
         <StackPanel Orientation="Horizontal" Margin="10">
-            <Label  Style="{StaticResource FSTrAkLabel}" Width="200">Always on Top</Label>
+            <Label  Style="{StaticResource FSTrAkLabel}" Width="250">Always on top</Label>
             <CheckBox Style="{StaticResource SettingsCheckbox}" FontFamily="{StaticResource Slopes}" FontSize="20" VerticalAlignment="Center" IsChecked="{Binding IsAlwaysOnTop, Mode=TwoWay}"/>
         </StackPanel>
     </StackPanel>
