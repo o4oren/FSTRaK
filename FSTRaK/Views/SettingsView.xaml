@@ -48,6 +48,10 @@
             <CheckBox Style="{StaticResource SettingsCheckbox}" FontFamily="{StaticResource Slopes}" FontSize="20" VerticalAlignment="Center" IsChecked="{Binding IsSaveOnlyCompleteFlights, Mode=TwoWay}"/>
         </StackPanel>
         <StackPanel Orientation="Horizontal" Margin="10">
+            <Label  Style="{StaticResource FSTrAkLabel}" Width="200">Start Automatically</Label>
+            <CheckBox Style="{StaticResource SettingsCheckbox}" FontFamily="{StaticResource Slopes}" FontSize="20" VerticalAlignment="Center" IsChecked="{Binding IsRunAutomatically, Mode=TwoWay}"/>
+        </StackPanel>
+        <StackPanel Orientation="Horizontal" Margin="10">
             <Label  Style="{StaticResource FSTrAkLabel}" Width="200">Start Minimized</Label>
             <CheckBox Style="{StaticResource SettingsCheckbox}" FontFamily="{StaticResource Slopes}" FontSize="20" VerticalAlignment="Center" IsChecked="{Binding IsStartMinimized, Mode=TwoWay}"/>
         </StackPanel>

@@ -9,6 +9,7 @@ using System.Threading.Tasks;
 using System.Windows;
 using System.Windows.Threading;
 using FSTRaK.Utils;
+using Microsoft.Win32;
 
 namespace FSTRaK
 {
@@ -29,6 +30,13 @@ namespace FSTRaK
             {
                 MessageBox.Show("An instance of FSTrAk is already running...", "FSTrAk");
                 Application.Current.Shutdown();
+
+
+
+
+
+
+
             }
 
             base.OnStartup(e);
@@ -37,38 +45,56 @@ namespace FSTRaK
 
     void OnApplicationStart(object sender, StartupEventArgs args)
     {
-        AppDomain.CurrentDomain.SetData("DataDirectory", PathUtil.GetApplicationLocalDataPath());
+        var logPath = Path.Combine(PathUtil.GetApplicationLocalDataPath(), "log.txt");
 
-            var logPath = Path.Combine(PathUtil.GetApplicationLocalDataPath(), "log.txt");
-
-            Log.Logger = new LoggerConfiguration()
-            .Enrich.WithExceptionDetails()
-            .MinimumLevel.Information()
+        Log.Logger = new LoggerConfiguration()
+        .Enrich.WithExceptionDetails()
+        .MinimumLevel.Information()
 #if DEBUG
-            .MinimumLevel.Debug()
+        .MinimumLevel.Debug()
 #endif
-            .WriteTo.Trace()
-            .WriteTo.File(logPath)
-            .CreateLogger();
+        .WriteTo.Trace()
+        .WriteTo.File(logPath)
+        .CreateLogger();
 
 
-            Task.Run(() =>
+        Task.Run(() =>
+        {
+            using (var logbookContext = new LogbookContext())
             {
-                using (var logbookContext = new LogbookContext())
+                try
                 {
-                    try
-                    {
-                        logbookContext.Aircraft.Find(1);
-                    }
-                    catch (Exception ex)
-                    {
-                        Log.Error(ex, ex.Message);
-                    }
+                    logbookContext.Aircraft.Find(1);
                 }
-            });
+                catch (Exception ex)
+                {
+                    Log.Error(ex, ex.Message);
+                }
+            }
+        });
 
-            var airportResolver = AirportResolver.Instance;
-        }
+        Task.Run(() =>
+        {
+
+            if (FSTRaK.Properties.Settings.Default.IsRunAutomatically)
+            {
+                // Start up with windows login
+                RegistryKey rkStartUp = Registry.CurrentUser;
+                var applicationLocation = System.Reflection.Assembly.GetExecutingAssembly().Location;
+
+                var startupPathSubKey = rkStartUp.OpenSubKey(@"Software\Microsoft\Windows\CurrentVersion\Run", true);
+
+
+                AppDomain.CurrentDomain.SetData("DataDirectory", PathUtil.GetApplicationLocalDataPath());
+                if (startupPathSubKey?.GetValue("FSTrAk") == null)
+                {
+                    startupPathSubKey?.SetValue("FSTrAk", applicationLocation, RegistryValueKind.ExpandString);
+                }
+            }
+        });
+
+        var airportResolver = AirportResolver.Instance;
+    }
   
 
         void OnApplicationExit(object sender, ExitEventArgs e)

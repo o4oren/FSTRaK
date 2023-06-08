@@ -154,5 +154,17 @@ namespace FSTRaK.Properties {
                 this["IsMinimizeToTray"] = value;
             }
         }
+        
+        [global::System.Configuration.UserScopedSettingAttribute()]
+        [global::System.Diagnostics.DebuggerNonUserCodeAttribute()]
+        [global::System.Configuration.DefaultSettingValueAttribute("True")]
+        public bool IsRunAutomatically {
+            get {
+                return ((bool)(this["IsRunAutomatically"]));
+            }
+            set {
+                this["IsRunAutomatically"] = value;
+            }
+        }
     }
 }

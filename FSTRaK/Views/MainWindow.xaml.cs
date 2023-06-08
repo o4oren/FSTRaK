@@ -1,10 +1,7 @@
 ﻿using FSTRaK.Models.FlightManager;
-using Serilog;
 using System;
-using System.IO;
 using System.Windows;
 using System.Windows.Input;
-using FSTRaK.DataTypes;
 
 namespace FSTRaK.Views
 {

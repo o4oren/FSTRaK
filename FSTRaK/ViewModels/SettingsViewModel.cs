@@ -8,6 +8,9 @@ using MapControl;
 using System.Linq;
 using Serilog;
 using FSTRaK.DataTypes;
+using FSTRaK.Utils;
+using Microsoft.Win32;
+using System;
 
 namespace FSTRaK.ViewModels
 {
@@ -131,6 +134,43 @@ namespace FSTRaK.ViewModels
             }
         }
 
+        private bool _isRunAutomatically;
+        public bool IsRunAutomatically
+        {
+            get => _isRunAutomatically;
+            set
+            {
+                _isRunAutomatically = value;
+                Properties.Settings.Default.IsMinimizeToTray = _isRunAutomatically;
+
+
+
+#if DEBUG
+                return; // prevent debug builds from registering for auto startup
+#endif
+                // Set startup as needed
+                RegistryKey rkStartUp = Registry.CurrentUser;
+                var applicationLocation = System.Reflection.Assembly.GetExecutingAssembly().Location;
+
+                var startupPathSubKey = rkStartUp.OpenSubKey(@"Software\Microsoft\Windows\CurrentVersion\Run", true);
+
+
+                AppDomain.CurrentDomain.SetData("DataDirectory", PathUtil.GetApplicationLocalDataPath());
+
+                if (_isRunAutomatically && startupPathSubKey?.GetValue("FSTrAk") == null)
+                {
+                    startupPathSubKey?.SetValue("FSTrAk", applicationLocation, RegistryValueKind.ExpandString);
+                }
+
+                if (!_isRunAutomatically && startupPathSubKey?.GetValue("FSTrAk") != null)
+                {
+                    startupPathSubKey?.DeleteValue("FSTrAk");
+                }
+
+                OnPropertyChanged();
+            }
+        }
+
         public SettingsViewModel() : base()
         {
             var mapProviders = new ResourceDictionary();
@@ -157,6 +197,7 @@ namespace FSTRaK.ViewModels
             Units = (Units)Properties.Settings.Default.Units;
             IsStartMinimized = Properties.Settings.Default.IsStartMinimized;
             IsMinimizeToTray = Properties.Settings.Default.IsMinimizeToTray;
+            IsRunAutomatically = Properties.Settings.Default.IsRunAutomatically;
         }
     }
 }
