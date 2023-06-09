@@ -7,6 +7,19 @@ FSTrAk is a modern flight tracker and logbook for MSFS (and possibly FSX/P3D, al
 It aims to be a no frills, install and let it run experience - as it requires no manual intervention.
 FSTrAk monitors your simulator silently, and will detect when a flight is started, track it on a map, and persist it to a local database when it is complete.
 
+##Features
+* Automatic silent start up.
+* Automatic flight tracking (hands-free experience).
+* Option (default) to save only complete flights - i.e. flight ended in parking states, with engines off and parking breaks, after having flown.
+* Different map providers.
+* Flight analysis and scoring.
+* Live flight tracking with a moving map.
+
+## Roadmap
+- [ ] Simbrief integration (fetch passengers, planned vs actual fuel and time, planned vs actual route).
+- [ ] Statistics (On time, passengers flown, best/worst landings, average faps, average score)
+- [ ] Vastsim integration (display live traffic and atc on the map).
+
 <img width="1012" alt="Untitled" src="https://github.com/o4oren/FSTRaK/assets/23486326/e6047bcc-df6a-4235-ac85-da6de6de8cd5">
 
 ![Live Tracking](https://github.com/o4oren/FSTRaK/assets/23486326/fdf91d52-2cb3-4aab-874d-d22d42660b7c)
