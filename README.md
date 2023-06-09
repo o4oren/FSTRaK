@@ -20,8 +20,11 @@ FSTrAk monitors your simulator silently, and will detect when a flight is starte
 - [ ] Statistics (On time, passengers flown, best/worst landings, average faps, average score)
 - [ ] Vastsim integration (display live traffic and atc on the map).
 
-<img width="1024" alt="Untitled" src="https://github.com/o4oren/FSTRaK/assets/23486326/e6047bcc-df6a-4235-ac85-da6de6de8cd5">
+####Flight Analysis
+<img width="1024" alt="Flight Analysis" src="https://github.com/o4oren/FSTRaK/assets/23486326/e6047bcc-df6a-4235-ac85-da6de6de8cd5">
 
+#### Live Tracking with Bing Hybrid map
 <img width="1024" alt="Live Tracking" src="https://github.com/o4oren/FSTRaK/assets/23486326/e07f130f-0432-4da7-a657-36d95a61b9fb">
 
+#### Scoring events in flight analysis
 <img width="1024" alt="Scoring" src="https://github.com/o4oren/FSTRaK/assets/23486326/d2b9b210-a637-4a31-a872-b391323f85fe">
