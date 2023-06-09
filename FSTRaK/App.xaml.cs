@@ -50,8 +50,9 @@ namespace FSTRaK
         .WriteTo.File(logPath)
         .CreateLogger();
 
+        AppDomain.CurrentDomain.SetData("DataDirectory", PathUtil.GetApplicationLocalDataPath());
 
-        Task.Run(() =>
+            Task.Run(() =>
         {
             using (var logbookContext = new LogbookContext())
             {
@@ -68,7 +69,6 @@ namespace FSTRaK
 
         Task.Run(() =>
         {
-
             if (FSTRaK.Properties.Settings.Default.IsStartAutomatically)
             {
                 // Start up with windows login
@@ -78,7 +78,6 @@ namespace FSTRaK
                 var startupPathSubKey = rkStartUp.OpenSubKey(@"Software\Microsoft\Windows\CurrentVersion\Run", true);
 
 
-                AppDomain.CurrentDomain.SetData("DataDirectory", PathUtil.GetApplicationLocalDataPath());
                 if (startupPathSubKey?.GetValue("FSTrAk") == null)
                 {
                     startupPathSubKey?.SetValue("FSTrAk", applicationLocation, RegistryValueKind.ExpandString);
