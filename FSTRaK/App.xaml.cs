@@ -69,7 +69,7 @@ namespace FSTRaK
         Task.Run(() =>
         {
 
-            if (FSTRaK.Properties.Settings.Default.IsRunAutomatically)
+            if (FSTRaK.Properties.Settings.Default.IsStartAutomatically)
             {
                 // Start up with windows login
                 RegistryKey rkStartUp = Registry.CurrentUser;
