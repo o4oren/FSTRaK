@@ -9,7 +9,7 @@ using System.Windows;
 [assembly: AssemblyTitle("FSTRaK")]
 [assembly: AssemblyDescription("")]
 [assembly: AssemblyConfiguration("")]
-[assembly: AssemblyCompany("")]
+[assembly: AssemblyCompany("Oren Geva")]
 [assembly: AssemblyProduct("FSTRaK")]
 [assembly: AssemblyCopyright("Copyright ©  2023")]
 [assembly: AssemblyTrademark("")]
