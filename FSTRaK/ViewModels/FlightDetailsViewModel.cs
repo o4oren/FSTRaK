@@ -79,8 +79,6 @@ namespace FSTRaK.ViewModels
                         pin.Color = "Red";
                     else if (@event.ScoreDelta < 0)
                         pin.Color = "#DE970B";
-
-
                 }
                 pin.Text = e.ToString();
                 pin.Location = $"{e.Latitude},{e.Longitude}";
@@ -110,7 +108,6 @@ namespace FSTRaK.ViewModels
             get => _markerList;
             set
             {
-                
                 _markerList = value;
                 OnPropertyChanged();
             }
