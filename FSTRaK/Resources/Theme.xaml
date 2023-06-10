@@ -129,6 +129,21 @@
         </LinearGradientBrush.GradientStops>
     </LinearGradientBrush>
 
+    <LinearGradientBrush x:Key="GoldGradient"
+                         StartPoint="0,0"
+                         EndPoint="1,1">
+        <LinearGradientBrush.GradientStops>
+            <GradientStopCollection>
+                <GradientStop Color="#C7A320"
+                              Offset="0" />
+                <GradientStop Color="#FFF599"
+                              Offset="0.5" />
+                <GradientStop Color="#D1AC23"
+                              Offset="1" />
+            </GradientStopCollection>
+        </LinearGradientBrush.GradientStops>
+    </LinearGradientBrush>
+
     <LinearGradientBrush x:Key="SilverGradientOneSide"
                          StartPoint="0,0"
                          EndPoint="0,1">

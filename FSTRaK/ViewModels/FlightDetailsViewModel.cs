@@ -74,7 +74,7 @@ namespace FSTRaK.ViewModels
                 if (e is ScoringEvent @event)
                 {
                     if (@event.ScoreDelta > 0)
-                        pin.Color = "#FFC5CBF9";
+                        pin.Color = "#82A0BC";
                     if (@event.ScoreDelta <= -20)
                         pin.Color = "Red";
                     else if (@event.ScoreDelta < 0)
@@ -247,7 +247,7 @@ namespace FSTRaK.ViewModels
             public string Location { get; set; }
             public string Text { get; set; } = string.Empty;
 
-            public string Color { get; set; } = "Green";
+                        public string Color { get; set; } = "Green";
 
         }
     }
