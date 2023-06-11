@@ -49,7 +49,7 @@
         </StackPanel>
         <StackPanel Orientation="Horizontal" Margin="10">
             <Label  Style="{StaticResource FSTrAkLabel}" Width="250">Launch FSTrAk on login</Label>
-            <CheckBox Style="{StaticResource SettingsCheckbox}" FontFamily="{StaticResource Slopes}" FontSize="20" VerticalAlignment="Center" IsChecked="{Binding IsRunAutomatically, Mode=TwoWay}"/>
+            <CheckBox Style="{StaticResource SettingsCheckbox}" FontFamily="{StaticResource Slopes}" FontSize="20" VerticalAlignment="Center" IsChecked="{Binding IsStartAutomatically, Mode=TwoWay}"/>
         </StackPanel>
         <StackPanel Orientation="Horizontal" Margin="10">
             <Label  Style="{StaticResource FSTrAkLabel}" Width="250">launch FSTrAk minimized</Label>

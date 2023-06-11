@@ -7,6 +7,7 @@ using System.Collections.ObjectModel;
 using System.ComponentModel.DataAnnotations.Schema;
 using System.Linq;
 using System.Text;
+using Serilog;
 
 namespace FSTRaK.Models
 {
@@ -62,6 +63,8 @@ namespace FSTRaK.Models
                 }
                 catch (Exception)
                 {
+                    Log.Error($"Can't resolve {DepartureAirport}");
+
                     _departureAirportDetails = new Airport
                     {
                         icao = DepartureAirport
@@ -88,6 +91,7 @@ namespace FSTRaK.Models
                 }
                 catch (Exception)
                 {
+                    Log.Error($"Can't resolve {ArrivalAirport}");
                     _arrivalAirportDetails = new Airport
                     {
                         icao = ArrivalAirport

@@ -134,14 +134,14 @@ namespace FSTRaK.ViewModels
             }
         }
 
-        private bool _isRunAutomatically;
-        public bool IsRunAutomatically
+        private bool _isStartAutomatically;
+        public bool IsStartAutomatically
         {
-            get => _isRunAutomatically;
+            get => _isStartAutomatically;
             set
             {
-                _isRunAutomatically = value;
-                Properties.Settings.Default.IsMinimizeToTray = _isRunAutomatically;
+                _isStartAutomatically = value;
+                Properties.Settings.Default.IsStartAutomatically = _isStartAutomatically;
 
 
 
@@ -157,12 +157,12 @@ namespace FSTRaK.ViewModels
 
                 AppDomain.CurrentDomain.SetData("DataDirectory", PathUtil.GetApplicationLocalDataPath());
 
-                if (_isRunAutomatically && startupPathSubKey?.GetValue("FSTrAk") == null)
+                if (_isStartAutomatically && startupPathSubKey?.GetValue("FSTrAk") == null)
                 {
                     startupPathSubKey?.SetValue("FSTrAk", applicationLocation, RegistryValueKind.ExpandString);
                 }
 
-                if (!_isRunAutomatically && startupPathSubKey?.GetValue("FSTrAk") != null)
+                if (!_isStartAutomatically && startupPathSubKey?.GetValue("FSTrAk") != null)
                 {
                     startupPathSubKey?.DeleteValue("FSTrAk");
                 }
@@ -197,7 +197,7 @@ namespace FSTRaK.ViewModels
             Units = (Units)Properties.Settings.Default.Units;
             IsStartMinimized = Properties.Settings.Default.IsStartMinimized;
             IsMinimizeToTray = Properties.Settings.Default.IsMinimizeToTray;
-            IsRunAutomatically = Properties.Settings.Default.IsRunAutomatically;
+            IsStartAutomatically = Properties.Settings.Default.IsStartAutomatically;
         }
     }
 }

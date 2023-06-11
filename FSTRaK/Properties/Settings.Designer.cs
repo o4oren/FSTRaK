@@ -145,7 +145,7 @@ namespace FSTRaK.Properties {
         
         [global::System.Configuration.UserScopedSettingAttribute()]
         [global::System.Diagnostics.DebuggerNonUserCodeAttribute()]
-        [global::System.Configuration.DefaultSettingValueAttribute("False")]
+        [global::System.Configuration.DefaultSettingValueAttribute("True")]
         public bool IsMinimizeToTray {
             get {
                 return ((bool)(this["IsMinimizeToTray"]));
@@ -158,12 +158,12 @@ namespace FSTRaK.Properties {
         [global::System.Configuration.UserScopedSettingAttribute()]
         [global::System.Diagnostics.DebuggerNonUserCodeAttribute()]
         [global::System.Configuration.DefaultSettingValueAttribute("True")]
-        public bool IsRunAutomatically {
+        public bool IsStartAutomatically {
             get {
-                return ((bool)(this["IsRunAutomatically"]));
+                return ((bool)(this["IsStartAutomatically"]));
             }
             set {
-                this["IsRunAutomatically"] = value;
+                this["IsStartAutomatically"] = value;
             }
         }
     }
