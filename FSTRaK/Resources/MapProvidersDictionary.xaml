@@ -4,11 +4,11 @@
     xmlns:map="clr-namespace:MapControl;assembly=MapControl.WPF"
     >
     <map:WebMercatorProjection x:Key="WebMercatorProjection"/>
-    <map:MapTileLayer 
-        x:Key="OpenStreetMap" 
-        TileSource="https://tile.openstreetmap.org/{z}/{x}/{y}.png"
+    <map:MapTileLayer
+        x:Key="OpenStreetMap"
+        TileSource="https://a.tile.openstreetmap.org/{z}/{x}/{y}.png"
         SourceName="OpenStreetMap"
-        Description="Maps © [OpenStreetMap Contributors](http://www.openstreetmap.org/copyright)"
+        Description="© [OpenStreetMap contributors](http://www.openstreetmap.org/copyright)"
         UpdateWhileViewportChanging="true"
         x:Shared="false"/>
     <map:MapTileLayer
@@ -62,13 +62,6 @@
         CapabilitiesUri="https://sgx.geodatenzentrum.de/wmts_topplus_open/1.0.0/WMTSCapabilities.xml"
         SourceName="TopPlusOpen"
         Description="© [BKG](https://gdz.bkg.bund.de/index.php/default/webdienste/topplus-produkte/wmts-topplusopen-wmts-topplus-open.html)"
-        UpdateWhileViewportChanging="true"
-        x:Shared="false"/>
-    <map:WmsImageLayer
-        x:Key="OpenStreetMapWMS"
-        ServiceUri="http://ows.terrestris.de/osm/service"
-        Description="© [terrestris GmbH &amp; Co. KG](http://ows.terrestris.de/) © [OpenStreetMap contributors](http://www.openstreetmap.org/copyright)"
-        RelativeImageSize="1.2"
         UpdateWhileViewportChanging="true"
         x:Shared="false"/>
 </ResourceDictionary>

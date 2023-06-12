@@ -3,6 +3,8 @@
       xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
       xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006" 
       xmlns:d="http://schemas.microsoft.com/expression/blend/2008" 
+      xmlns:utils="clr-namespace:FSTRaK.Utils"
+
              xmlns:viewmodels="clr-namespace:FSTRaK.ViewModels" 
              xmlns:views="clr-namespace:FSTRaK.Views" 
              xmlns:map="clr-namespace:MapControl;assembly=MapControl.WPF"  
@@ -49,7 +51,7 @@
                  MapProjection="{StaticResource WebMercatorProjection}"
                  Margin="10,10,10,10"
                          >
-                    <map:MapScale Opacity="0.5" HorizontalAlignment="Right" VerticalAlignment="Bottom" Margin="5" />
+                    <map:MapScale Opacity="0.5" HorizontalAlignment="Center" VerticalAlignment="Bottom" Margin="5" />
                     <!-- map:MapGraticule Opacity="0.5"/ -->
                     <map:MapPolyline 
                         Locations="{Binding FlightPath}" 
@@ -59,7 +61,8 @@
                         />
                 <map:MapItemsControl ItemsSource="{Binding MarkerList}" ItemContainerStyle="{StaticResource PushpinItemStyle}"/>
 
-                    
+                <TextBlock   FontSize="10" HorizontalAlignment="Right" VerticalAlignment="Bottom" Margin="5" 
+                             utils:HyperlinkText.InlinesSource="{Binding MapProvider.Description}" />
             </map:Map>
                 <StackPanel Orientation="Horizontal" Margin="10">
                 <StackPanel HorizontalAlignment="left" Visibility="{Binding IsShowFlightDetails, Converter={StaticResource BoolToVis}}">
@@ -86,7 +89,7 @@
                               Content="{StaticResource Scoreboard}">
                 </ToggleButton>
             </StackPanel>
-            <Grid Margin="10" HorizontalAlignment="Center" VerticalAlignment="Bottom" Visibility="{Binding IsShowAltSpeedCharts, Converter={StaticResource BoolToVis}}">
+            <Grid Margin="10 10 10 25" HorizontalAlignment="Center" VerticalAlignment="Bottom" Visibility="{Binding IsShowAltSpeedCharts, Converter={StaticResource BoolToVis}}">
                 <Border x:Name="ToggleButtonBorder" BorderThickness="0" Background="Black" Opacity="0.7" CornerRadius="5" Margin="10">
                 </Border>
                 <WpfPlot x:Name="AltSpeedChart" Margin="10"/>

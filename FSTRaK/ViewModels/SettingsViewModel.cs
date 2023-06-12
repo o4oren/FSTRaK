@@ -1,12 +1,10 @@
 ﻿
 
 using System.Collections;
-using System.Runtime.CompilerServices;
 using System.Windows;
 using System.Collections.ObjectModel;
 using MapControl;
 using System.Linq;
-using Serilog;
 using FSTRaK.DataTypes;
 using FSTRaK.Utils;
 using Microsoft.Win32;

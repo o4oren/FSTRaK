@@ -5,8 +5,6 @@
              xmlns:d="http://schemas.microsoft.com/expression/blend/2008" 
              xmlns:map="clr-namespace:MapControl;assembly=MapControl.WPF"
              xmlns:utils="clr-namespace:FSTRaK.Utils"
-
-             
              xmlns:viewmodels="clr-namespace:FSTRaK.ViewModels" xmlns:b="http://schemas.microsoft.com/xaml/behaviors" xmlns:views="clr-namespace:FSTRaK.Views"
              d:DataContext="{d:DesignInstance Type=viewmodels:LiveViewViewModel}"
              mc:Ignorable="d" 
@@ -52,10 +50,7 @@
             </map:MapItem>
             <map:MapScale Opacity="0.5" HorizontalAlignment="Center" VerticalAlignment="Bottom" Margin="5" />
             <TextBlock   FontSize="10" HorizontalAlignment="Right" VerticalAlignment="Bottom" Margin="5" 
-                         utils:HyperlinkText.InlinesSource="{Binding MapProvider.Description}">
-
-            </TextBlock>
-
+                         utils:HyperlinkText.InlinesSource="{Binding MapProvider.Description}" />
             <!-- map:MapGraticule Opacity="0.5"/ -->
             <map:MapPolyline Locations="{Binding FlightPath}" Stroke="Red" StrokeThickness="2" StrokeLineJoin="round"/>
             <map:MapPolyline Locations="{Binding LastSegmentLine}" Stroke="Red" StrokeThickness="2" Visibility="{Binding Path=IsShowAirplane, Converter={StaticResource BoolToVis}}"/>

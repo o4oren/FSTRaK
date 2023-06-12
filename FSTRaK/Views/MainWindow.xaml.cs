@@ -1,4 +1,5 @@
 ﻿using FSTRaK.Models.FlightManager;
+using MapControl;
 using System;
 using System.Windows;
 using System.Windows.Forms;
@@ -29,6 +30,9 @@ namespace FSTRaK.Views
 
             var bingApiKey = Properties.Settings.Default.BingApiKey;
             MapControl.BingMapsTileLayer.ApiKey = bingApiKey;
+
+            // Set the user-agent, to support OSM
+            ImageLoader.HttpClient.DefaultRequestHeaders.Add("User-Agent", "FSTrAk - Flight Simulator logbook and tracker");
 
             // Tray icon
             var iconStream = Application.GetResourceStream(new Uri(@"pack://application:,,,/Resources/Images/FSTrAk.ico"))?.Stream;
