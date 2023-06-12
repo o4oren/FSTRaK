@@ -29,12 +29,6 @@ namespace FSTRaK.Views
         {
             _flightManager.Initialize();
 
-            // Initialize MapControl global settings
-            var bingApiKey = Properties.Settings.Default.BingApiKey;
-            MapControl.BingMapsTileLayer.ApiKey = bingApiKey;
-            ImageLoader.HttpClient.DefaultRequestHeaders.Add("User-Agent", "FSTrAk - Flight Simulator logbook and tracker");
-            TileImageLoader.Cache = new SQLiteCache(TileImageLoader.DefaultCacheFolder);
-
             // Tray icon
             var iconStream = Application.GetResourceStream(new Uri(@"pack://application:,,,/Resources/Images/FSTrAk.ico"))?.Stream;
             if (iconStream != null)
@@ -70,6 +64,12 @@ namespace FSTRaK.Views
                     _notifyIcon.Text = $"FSTrAk\n{_flightManager.State.Name}";
                 }
             };
+
+            // Initialize MapControl global settings
+            var bingApiKey = Properties.Settings.Default.BingApiKey;
+            BingMapsTileLayer.ApiKey = bingApiKey;
+            ImageLoader.HttpClient.DefaultRequestHeaders.Add("User-Agent", "FSTrAk - Flight Simulator logbook and tracker");
+            TileImageLoader.Cache = new SQLiteCache(TileImageLoader.DefaultCacheFolder);
 
 
 

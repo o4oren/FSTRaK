@@ -269,6 +269,8 @@
     <None Include="App.config" />
   </ItemGroup>
   <ItemGroup>
+    <Content Include="lib\x64\SQLite.Interop.dll" />
+    <Content Include="lib\x86\SQLite.Interop.dll" />
     <Content Include="System.Buffers.dll">
       <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
     </Content>
