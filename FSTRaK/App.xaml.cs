@@ -47,7 +47,7 @@ namespace FSTRaK
         .MinimumLevel.Debug()
 #endif
         .WriteTo.Trace()
-        .WriteTo.File(logPath)
+        .WriteTo.File(logPath, rollingInterval: RollingInterval.Day, retainedFileCountLimit: 5)
         .CreateLogger();
 
         AppDomain.CurrentDomain.SetData("DataDirectory", PathUtil.GetApplicationLocalDataPath());
@@ -86,6 +86,7 @@ namespace FSTRaK
         });
 
         var airportResolver = AirportResolver.Instance;
+        Log.Information("FSTrAk Started.");
     }
   
 

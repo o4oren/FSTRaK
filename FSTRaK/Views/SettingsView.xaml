@@ -24,8 +24,12 @@
     <StackPanel Margin="10">
         <StackPanel Orientation="Horizontal" Margin="10">
             <Label Style="{StaticResource FSTrAkLabel}" Width="250">Map tiles Provider</Label>
-            <ComboBox FontFamily="{StaticResource Slopes}" Foreground="{StaticResource TextColor}" FontSize="24" Width="200"
-                      ItemsSource="{Binding MapProviders}" SelectedItem="{Binding SelectedMapProvider}"/>
+            <ComboBox FontFamily="{StaticResource Slopes}" 
+                      Foreground="{StaticResource TextColor}" 
+                      FontSize="24" 
+                      Width="200"
+                      ItemsSource="{Binding MapProviders}"
+                      SelectedItem="{Binding SelectedMapProvider}"/>
         </StackPanel>
 
         <StackPanel Orientation="Horizontal" Margin="10" Visibility="{Binding IsShowBingApiKeyField, Converter={StaticResource BoolToVis}}">

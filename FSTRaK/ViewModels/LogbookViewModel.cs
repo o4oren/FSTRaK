@@ -152,6 +152,7 @@ namespace FSTRaK.ViewModels
                     {
                         var flights = logbookContext.Flights
                         .Select(f => f)
+                        .OrderByDescending(f => f.Id)
                         .Include(f => f.Aircraft)
                         .Include(f => f.FlightEvents);
 
@@ -186,6 +187,7 @@ namespace FSTRaK.ViewModels
                             || f.Aircraft.Title.ToLower().Contains(SearchText.ToLower())
                             || f.Aircraft.Model.ToLower().Contains(SearchText.ToLower())
                             )
+                        .OrderByDescending(f => f.Id)
                         .Include(f => f.Aircraft)
                         .Include(f => f.FlightEvents);
 

@@ -26,7 +26,7 @@ namespace FSTRaK
         private SimConnect _simconnect = null;
 
         private HwndSource _gHs;
-        Timer _connectionTimer;
+        private Timer _connectionTimer;
         private IntPtr _lHwnd;
 
         private bool _isConnected = false;
@@ -154,11 +154,7 @@ namespace FSTRaK
             {
                 lock (Lock)
                 {
-                    if (_instance == null)
-                    {
-                        _instance = new SimConnectService();
-                    }
-                    return _instance;
+                    return _instance ?? (_instance = new SimConnectService());
                 }
             }
         }
@@ -198,7 +194,7 @@ namespace FSTRaK
         {
             try
             {
-                Log.Information("Trying to connect to the simulator...");
+                Log.Debug("Trying to connect to the simulator...");
                 _simconnect = new SimConnect("FSTrAk", _lHwnd, WmUserSimconnect, null, 0);
                 if (_simconnect != null)
                 {
@@ -349,20 +345,20 @@ namespace FSTRaK
 
         private void simconnect_OnRecvQuit(SimConnect sender, SIMCONNECT_RECV data)
         {
-            Log.Information("Sim connection closed!");
+            Log.Information("Connection to the simulator is closed!");
             Close();
             IsConnected = false;
             _connectionTimer.Start();
         }
 
-        void simconnect_OnRecvOpen(SimConnect sender, SIMCONNECT_RECV_OPEN data)
+        private void simconnect_OnRecvOpen(SimConnect sender, SIMCONNECT_RECV_OPEN data)
         {
-            Log.Information("Sim connection success!");
+            Log.Information("Connected to flight simulator!");
             _connectionTimer.Stop();
             IsConnected = true;
         }
 
-        void simconnect_OnRecvException(SimConnect sender, SIMCONNECT_RECV_EXCEPTION data)
+        private void simconnect_OnRecvException(SimConnect sender, SIMCONNECT_RECV_EXCEPTION data)
         {
             Log.Error($"Simconnect excpetion {data.dwException}");
         }
