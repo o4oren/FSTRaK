@@ -4,10 +4,25 @@
     xmlns:map="clr-namespace:MapControl;assembly=MapControl.WPF"
     >
     <map:WebMercatorProjection x:Key="WebMercatorProjection"/>
-    <map:MapTileLayer x:Key="OpenStreetMap" SourceName="OpenStreetMap"
+    <map:MapTileLayer 
+        x:Key="OpenStreetMap" 
+        TileSource="https://tile.openstreetmap.org/{z}/{x}/{y}.png"
+        SourceName="OpenStreetMap"
         Description="Maps © [OpenStreetMap Contributors](http://www.openstreetmap.org/copyright)"
-        TileSource="https://{s}.tile.openstreetmap.fr/osmfr/{z}/{x}/{y}.png"
-        MaxZoomLevel="19" 
+        UpdateWhileViewportChanging="true"
+        x:Shared="false"/>
+    <map:MapTileLayer
+        x:Key="OpenStreetMapGerman"
+        TileSource="https://{s}.tile.openstreetmap.de/{z}/{x}/{y}.png"
+        SourceName="OpenStreetMap German"
+        Description="© [OpenStreetMap contributors](http://www.openstreetmap.org/copyright)"
+        UpdateWhileViewportChanging="true"
+        x:Shared="false"/>
+    <map:MapTileLayer
+        x:Key="OpenStreetMapFrench"
+        TileSource="http://{s}.tile.openstreetmap.fr/osmfr/{z}/{x}/{y}.png"
+        SourceName="OpenStreetMap French"
+        Description="© [OpenStreetMap France](https://www.openstreetmap.fr/mentions-legales/) © [OpenStreetMap contributors](http://www.openstreetmap.org/copyright)"
         UpdateWhileViewportChanging="true"
         x:Shared="false"/>
     <map:BingMapsTileLayer

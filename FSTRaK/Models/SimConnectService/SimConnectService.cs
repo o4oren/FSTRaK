@@ -26,7 +26,7 @@ namespace FSTRaK
         private SimConnect _simconnect = null;
 
         private HwndSource _gHs;
-        Timer _connectionTimer;
+        private Timer _connectionTimer;
         private IntPtr _lHwnd;
 
         private bool _isConnected = false;
@@ -351,14 +351,14 @@ namespace FSTRaK
             _connectionTimer.Start();
         }
 
-        void simconnect_OnRecvOpen(SimConnect sender, SIMCONNECT_RECV_OPEN data)
+        private void simconnect_OnRecvOpen(SimConnect sender, SIMCONNECT_RECV_OPEN data)
         {
             Log.Information("Connected to flight simulator!");
             _connectionTimer.Stop();
             IsConnected = true;
         }
 
-        void simconnect_OnRecvException(SimConnect sender, SIMCONNECT_RECV_EXCEPTION data)
+        private void simconnect_OnRecvException(SimConnect sender, SIMCONNECT_RECV_EXCEPTION data)
         {
             Log.Error($"Simconnect excpetion {data.dwException}");
         }
