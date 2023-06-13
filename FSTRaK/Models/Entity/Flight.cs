@@ -43,8 +43,6 @@ namespace FSTRaK.Models
         public FlightOutcome FlightOutcome { get; set; }
         public double Score { get; set; }
 
-        public string ScoreDetails { get; set; }
-
         public ObservableCollection<BaseFlightEvent> FlightEvents { get; }
 
         private Airport _departureAirportDetails;
