@@ -898,4 +898,11 @@
             </Setter.Value>
         </Setter>
     </Style>
+    <Style x:Key="MapAttribution"
+           TargetType="TextBlock">
+        <Setter Property="Background" Value="{StaticResource BrightTextColor}"></Setter>
+        <Setter Property="Opacity" Value="0.7" />
+        <Setter Property="FontSize" Value="30" />
+
+    </Style>
 </ResourceDictionary>

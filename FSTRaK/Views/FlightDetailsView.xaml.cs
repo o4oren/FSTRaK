@@ -21,7 +21,7 @@ namespace FSTRaK.Views
         public FlightDetailsView()
         {
             InitializeComponent();
-            logbookMap.AnimationDuration = new TimeSpan(0, 0, 0, 0, 600);
+            LogbookMap.AnimationDuration = new TimeSpan(0, 0, 0, 0, 600);
         }
 
         private void OnLoaded(object s, RoutedEventArgs e)
@@ -124,13 +124,13 @@ namespace FSTRaK.Views
 
         public void ZoomToBounds(BoundingBox boundingBox)
         {
-            var rect = logbookMap.MapProjection.BoundingBoxToMapRect(boundingBox);
-            var scale = Math.Min(logbookMap.ActualWidth / rect.Width, logbookMap.ActualHeight / rect.Height);
+            var rect = LogbookMap.MapProjection.BoundingBoxToMapRect(boundingBox);
+            var scale = Math.Min(LogbookMap.ActualWidth / rect.Width, LogbookMap.ActualHeight / rect.Height);
             var zoomLevel = ViewTransform.ScaleToZoomLevel(scale);
             // Set new view
-            logbookMap.TargetZoomLevel = Math.Floor(Math.Min(16, zoomLevel) - 1);
-            logbookMap.TargetCenter = logbookMap.MapProjection.MapToLocation(rect.Center);
-            logbookMap.TargetHeading = 0d;
+            LogbookMap.TargetZoomLevel = Math.Floor(Math.Min(16, zoomLevel) - 1);
+            LogbookMap.TargetCenter = LogbookMap.MapProjection.MapToLocation(rect.Center);
+            LogbookMap.TargetHeading = 0d;
         }
 
     }

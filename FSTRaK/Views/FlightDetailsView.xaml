@@ -44,7 +44,7 @@
 
             <Grid Grid.Row="1" HorizontalAlignment="Stretch" VerticalAlignment="Stretch">
 
-                <map:Map x:Name="logbookMap" 
+                <map:Map x:Name="LogbookMap" 
                  MapLayer="{Binding MapProvider}" 
                  ZoomLevel="3" 
                  Center="51,0"
@@ -60,8 +60,7 @@
                         Visibility="{Binding IsShowPath, Converter={StaticResource BoolToVis}}"
                         />
                 <map:MapItemsControl ItemsSource="{Binding MarkerList}" ItemContainerStyle="{StaticResource PushpinItemStyle}"/>
-
-                <TextBlock   FontSize="10" HorizontalAlignment="Right" VerticalAlignment="Bottom" Margin="5" 
+                <TextBlock   FontSize="12" HorizontalAlignment="Right" VerticalAlignment="Bottom" Margin="5" Style="{StaticResource MapAttribution}"
                              utils:HyperlinkText.InlinesSource="{Binding MapProvider.Description}" />
             </map:Map>
                 <StackPanel Orientation="Horizontal" Margin="10">
@@ -89,7 +88,7 @@
                               Content="{StaticResource Scoreboard}">
                 </ToggleButton>
             </StackPanel>
-            <Grid Margin="10 10 10 25" HorizontalAlignment="Center" VerticalAlignment="Bottom" Visibility="{Binding IsShowAltSpeedCharts, Converter={StaticResource BoolToVis}}">
+            <Grid Margin="10 10 10 10" HorizontalAlignment="Center" VerticalAlignment="Bottom" Visibility="{Binding IsShowAltSpeedCharts, Converter={StaticResource BoolToVis}}">
                 <Border x:Name="ToggleButtonBorder" BorderThickness="0" Background="Black" Opacity="0.7" CornerRadius="5" Margin="10">
                 </Border>
                 <WpfPlot x:Name="AltSpeedChart" Margin="10"/>

@@ -49,7 +49,7 @@
                 </map:MapItem.RenderTransform>
             </map:MapItem>
             <map:MapScale Opacity="0.5" HorizontalAlignment="Center" VerticalAlignment="Bottom" Margin="5" />
-            <TextBlock   FontSize="10" HorizontalAlignment="Right" VerticalAlignment="Bottom" Margin="5" 
+            <TextBlock   FontSize="12" HorizontalAlignment="Right" VerticalAlignment="Bottom" Margin="5" Style="{StaticResource MapAttribution}"
                          utils:HyperlinkText.InlinesSource="{Binding MapProvider.Description}" />
             <!-- map:MapGraticule Opacity="0.5"/ -->
             <map:MapPolyline Locations="{Binding FlightPath}" Stroke="Red" StrokeThickness="2" StrokeLineJoin="round"/>
