@@ -76,7 +76,7 @@ namespace FSTRaK.ViewModels
                 if (airport.country == "US")
                 {
                     sb.Append($", {airport.state}");
-                    sb.Append(", USA");
+                    sb.Append(", USA ");
                 }
                 else
                 {
