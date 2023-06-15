@@ -147,8 +147,7 @@
                 </ListView.ItemTemplate>
             </ListView>
             <ContentControl Grid.Column="1" Grid.RowSpan="2" Content="{Binding FlightDetailsViewModel}" Margin="0"
-                     HorizontalContentAlignment="Stretch" VerticalContentAlignment="Stretch">
-        </ContentControl>
+                     HorizontalContentAlignment="Stretch" VerticalContentAlignment="Stretch" />
     </Grid>
 
 </UserControl>

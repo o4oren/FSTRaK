@@ -107,38 +107,15 @@ namespace FSTRaK.Models
         public override string ToString()
         {
             var sb = new StringBuilder();
-            sb.AppendLine($"Departed From: {this.DepartureAirportDetails}");
-
-            if (this.FlightOutcome == FlightOutcome.Crashed)
-            {
-                sb.AppendLine(($"Crashed Near {this.ArrivalAirportDetails}"));
-            }
-            else
-            {
-                sb.AppendLine(($"Arrived At: {this.ArrivalAirportDetails}"));
-            }
-
-            sb.AppendLine($"Start Time: {this.StartTime}")
-            .AppendLine($"End Time: {this.EndTime}")
-            .AppendLine($"Block Time: {this.FlightTime}");
-
-            if (Properties.Settings.Default.Units == (int)Units.Metric)
-                sb.AppendLine($"Fuel Used: {(TotalFuelUsed * Consts.LbsToKgs):F1} Kg");
-            else
-                sb.AppendLine($"Fuel Used: {TotalFuelUsed:F1} Lbs");
-
-
-
-            sb.AppendLine($"Flown Distance: {FlightDistanceNm:F0} NM");
-
-            var landingEvent = (LandingEvent)this.FlightEvents.FirstOrDefault(e => e is LandingEvent);
-            if (landingEvent != null)
-            {
-                sb.AppendLine($"Lnading VS: {landingEvent.VerticalSpeed:F0} ft/m");
-            }
-
-
-            sb.Append($"Score: {this.Score}");
+            sb.AppendLine($"{this.FlightOutcome}")
+                .AppendLine($"Departed From: {this.DepartureAirportDetails}")
+                .AppendLine(($"Arrived At: {this.ArrivalAirportDetails}"))
+                .AppendLine($"Start Time: {this.StartTime}")
+                .AppendLine($"End Time: {this.EndTime}")
+                .AppendLine($"Block Time: {this.FlightTime}")
+                .AppendLine($"Fuel Used: {TotalFuelUsed:F1} Lbs")
+                .AppendLine($"Flown Distance: {FlightDistanceNm:F0} NM")
+                .Append($"Score: {this.Score}");
             return sb.ToString();
         }
 

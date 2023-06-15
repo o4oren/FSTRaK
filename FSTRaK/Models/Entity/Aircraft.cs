@@ -29,7 +29,7 @@ namespace FSTRaK.Models
 
         public override bool Equals(Object obj)
         {
-            if ((obj == null) || !this.GetType().Equals(obj.GetType()))
+            if ((obj == null) || this.GetType() != obj.GetType())
             {
                 return false;
             }

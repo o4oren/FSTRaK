@@ -154,9 +154,13 @@
     <Compile Include="Utils\MathUtils.cs" />
     <Compile Include="Utils\PathUtil.cs" />
     <Compile Include="Utils\ResourceUtils.cs" />
+    <Compile Include="ViewModels\FlightDetailsParamsViewModel.cs" />
     <Compile Include="ViewModels\FlightDetailsViewModel.cs" />
     <Compile Include="ViewModels\LogbookViewModel.cs" />
     <Compile Include="ViewModels\SettingsViewModel.cs" />
+    <Compile Include="Views\FlightDetailsParamsView.xaml.cs">
+      <DependentUpon>FlightDetailsParamsView.xaml</DependentUpon>
+    </Compile>
     <Compile Include="Views\LiveView.xaml.cs">
       <DependentUpon>LiveView.xaml</DependentUpon>
     </Compile>
@@ -193,6 +197,10 @@
       <SubType>Designer</SubType>
     </Page>
     <Page Include="Resources\ButtonsTheme.xaml">
+      <SubType>Designer</SubType>
+      <Generator>MSBuild:Compile</Generator>
+    </Page>
+    <Page Include="Views\FlightDetailsParamsView.xaml">
       <SubType>Designer</SubType>
       <Generator>MSBuild:Compile</Generator>
     </Page>
