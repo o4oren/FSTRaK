@@ -8,7 +8,7 @@ using System.Threading.Tasks;
 
 namespace FSTRaK.Models
 {
-    internal abstract class BaseModel : INotifyPropertyChanged
+    public abstract class BaseModel : INotifyPropertyChanged
     {
         public event PropertyChangedEventHandler PropertyChanged;
 

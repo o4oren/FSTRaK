@@ -579,69 +579,6 @@
     </Style>
     
     
-    <!-- Flights Listbox. -->
-    <Style x:Key="{x:Type ListBox}"
-       TargetType="ListBox">
-        <Setter Property="SnapsToDevicePixels"
-          Value="true" />
-        <Setter Property="OverridesDefaultStyle"
-          Value="true" />
-        <Setter Property="ScrollViewer.HorizontalScrollBarVisibility"
-          Value="Auto" />
-        <Setter Property="ScrollViewer.VerticalScrollBarVisibility"
-          Value="Auto" />
-        <Setter Property="ScrollViewer.CanContentScroll"
-          Value="true" />
-        <Setter Property="MinWidth"
-          Value="120" />
-        <Setter Property="MinHeight"
-          Value="95" />
-        <Setter Property="Template">
-            <Setter.Value>
-                <ControlTemplate TargetType="ListBox">
-                    <Border Name="Border"
-                BorderThickness="1"
-                CornerRadius="2">
-                        <Border.Background>
-                            <SolidColorBrush Color="{StaticResource ControlLightColor}" />
-                        </Border.Background>
-                        <Border.BorderBrush>
-                            <SolidColorBrush Color="{StaticResource BorderMediumColor}" />
-                        </Border.BorderBrush>
-                        <ScrollViewer Margin="0"
-                        Focusable="false">
-                            <StackPanel Margin="2"
-                        IsItemsHost="True" />
-                        </ScrollViewer>
-                    </Border>
-                    <ControlTemplate.Triggers>
-                        <Trigger Property="IsEnabled"
-                   Value="false">
-                            <Setter TargetName="Border"
-                    Property="Background">
-                                <Setter.Value>
-                                    <SolidColorBrush Color="{StaticResource DisabledControlLightColor}" />
-                                </Setter.Value>
-                            </Setter>
-                            <Setter TargetName="Border"
-                    Property="BorderBrush">
-                                <Setter.Value>
-                                    <SolidColorBrush Color="{DynamicResource DisabledBorderLightColor}" />
-                                </Setter.Value>
-
-                            </Setter>
-                        </Trigger>
-                        <Trigger Property="IsGrouping"
-                   Value="true">
-                            <Setter Property="ScrollViewer.CanContentScroll"
-                    Value="false" />
-                        </Trigger>
-                    </ControlTemplate.Triggers>
-                </ControlTemplate>
-            </Setter.Value>
-        </Setter>
-    </Style>
-
     <Style x:Key="{x:Type ListBoxItem}"
        TargetType="ListBoxItem">
         <Setter Property="SnapsToDevicePixels"
@@ -897,5 +834,12 @@
                 </ControlTemplate>
             </Setter.Value>
         </Setter>
+    </Style>
+    <Style x:Key="MapAttribution"
+           TargetType="TextBlock">
+        <Setter Property="Background" Value="{StaticResource BrightTextColor}"></Setter>
+        <Setter Property="Opacity" Value="0.7" />
+        <Setter Property="FontSize" Value="30" />
+
     </Style>
 </ResourceDictionary>

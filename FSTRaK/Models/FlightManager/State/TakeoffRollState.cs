@@ -14,7 +14,7 @@ namespace FSTRaK.Models.FlightManager.State
             this.Name = "Takeoff Roll";
             this.IsMovementState = true;
         }
-        public override void ProcessFlightData(AircraftFlightData data)
+        public override void ProcessFlightData(FlightData data)
         {
 
             if (!Convert.ToBoolean(data.SimOnGround))

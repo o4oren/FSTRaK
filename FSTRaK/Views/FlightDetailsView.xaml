@@ -39,12 +39,16 @@
                 </Trigger>
             </Style.Triggers>
         </Style>
+
+        <DataTemplate DataType="{x:Type viewmodels:FlightDetailsParamsViewModel}" >
+            <views:FlightDetailsParamsView/>
+        </DataTemplate>
     </UserControl.Resources>
         <Grid Margin="0,0,0,0">
 
             <Grid Grid.Row="1" HorizontalAlignment="Stretch" VerticalAlignment="Stretch">
 
-                <map:Map x:Name="logbookMap" 
+                <map:Map x:Name="LogbookMap" 
                  MapLayer="{Binding MapProvider}" 
                  ZoomLevel="3" 
                  Center="51,0"
@@ -60,36 +64,31 @@
                         Visibility="{Binding IsShowPath, Converter={StaticResource BoolToVis}}"
                         />
                 <map:MapItemsControl ItemsSource="{Binding MarkerList}" ItemContainerStyle="{StaticResource PushpinItemStyle}"/>
-
-                <TextBlock   FontSize="10" HorizontalAlignment="Right" VerticalAlignment="Bottom" Margin="5" 
+                <TextBlock   FontSize="12" HorizontalAlignment="Right" VerticalAlignment="Bottom" Margin="5" Style="{StaticResource MapAttribution}"
                              utils:HyperlinkText.InlinesSource="{Binding MapProvider.Description}" />
             </map:Map>
                 <StackPanel Orientation="Horizontal" Margin="10">
                 <StackPanel HorizontalAlignment="left" Visibility="{Binding IsShowFlightDetails, Converter={StaticResource BoolToVis}}">
-                    <views:OverlayTextCardControl Header="Aircraft:" Text="{Binding Flight.Aircraft}" Visibility="Visible"/>
-                    <views:OverlayTextCardControl Header="Flight Details:" Text="{Binding Flight}" Visibility="Visible"/>
+                    <ContentControl Content="{Binding FlightDetailsParamsViewModel}" Margin="0"
+                                    HorizontalContentAlignment="Stretch" VerticalContentAlignment="Stretch"/>
                     <views:OverlayTextCardControl Header="Scoreboard:" Text="{Binding ScoreboardText}" Visibility="{Binding IsShowScoreboard, Converter={StaticResource BoolToVis}}"/>
                 </StackPanel>
                 </StackPanel>
                 <StackPanel Margin="10" HorizontalAlignment="Right">
                     <ToggleButton Style="{StaticResource MapToggleButton}" 
                               IsChecked="{Binding IsShowPath, Mode=TwoWay}" 
-                              Content="{StaticResource PathButton}">
-                    </ToggleButton>
+                              Content="{StaticResource PathButton}"/>
                     <ToggleButton Style="{StaticResource MapToggleButton}" 
                               IsChecked="{Binding IsShowFlightDetails, Mode=TwoWay}" 
-                              Content="{StaticResource detailsButton}">
-                    </ToggleButton>
+                              Content="{StaticResource detailsButton}"/>
+                    <ToggleButton Style="{StaticResource MapToggleButton}" 
+                                  IsChecked="{Binding IsShowScoreboard, Mode=TwoWay}" 
+                                  Content="{StaticResource Scoreboard}"/>
                 <ToggleButton Style="{StaticResource MapToggleButton}" 
                               IsChecked="{Binding IsShowAltSpeedCharts, Mode=TwoWay}" 
-                              Content="{StaticResource chartsButton}">
-                </ToggleButton>
-                <ToggleButton Style="{StaticResource MapToggleButton}" 
-                              IsChecked="{Binding IsShowScoreboard, Mode=TwoWay}" 
-                              Content="{StaticResource Scoreboard}">
-                </ToggleButton>
+                              Content="{StaticResource chartsButton}"/>
             </StackPanel>
-            <Grid Margin="10 10 10 25" HorizontalAlignment="Center" VerticalAlignment="Bottom" Visibility="{Binding IsShowAltSpeedCharts, Converter={StaticResource BoolToVis}}">
+            <Grid Margin="10 10 10 10" HorizontalAlignment="Center" VerticalAlignment="Bottom" Visibility="{Binding IsShowAltSpeedCharts, Converter={StaticResource BoolToVis}}">
                 <Border x:Name="ToggleButtonBorder" BorderThickness="0" Background="Black" Opacity="0.7" CornerRadius="5" Margin="10">
                 </Border>
                 <WpfPlot x:Name="AltSpeedChart" Margin="10"/>

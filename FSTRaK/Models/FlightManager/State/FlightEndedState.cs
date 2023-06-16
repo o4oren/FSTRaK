@@ -23,7 +23,7 @@ namespace FSTRaK.Models.FlightManager.State
             Log.Information($"Flight ended at {DateTime.Now}");
         }
 
-        public override void ProcessFlightData(AircraftFlightData data)
+        public override void ProcessFlightData(FlightData data)
         {
             if(!_isEnded)
             {
