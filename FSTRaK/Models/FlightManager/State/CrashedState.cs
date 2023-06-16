@@ -15,7 +15,7 @@ namespace FSTRaK.Models.FlightManager.State
             Name = "Crashed";
             context.RequestNearestAirports(DataTypes.NearestAirportRequestType.CrashedNear);
         }
-        public override void ProcessFlightData(AircraftFlightData data)
+        public override void ProcessFlightData(FlightData data)
         {
             var ce = new CrashEvent();
             AddFlightEvent(data, ce);

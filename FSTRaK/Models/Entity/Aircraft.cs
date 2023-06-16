@@ -6,7 +6,7 @@ using System.Text;
 
 namespace FSTRaK.Models
 {
-    internal class Aircraft : BaseModel
+    public class Aircraft : BaseModel
     {
         [Column("ID")]
         public int Id { get; set; }

@@ -1,7 +1,6 @@
 ﻿using System;
 using System.Diagnostics;
 using FSTRaK.DataTypes;
-using Serilog;
 
 namespace FSTRaK.Models.FlightManager.State
 {
@@ -30,7 +29,7 @@ namespace FSTRaK.Models.FlightManager.State
         /// 4. Don't forget to handle exit from flight.
         /// </summary>
         /// <param name="data"></param>
-        public abstract void ProcessFlightData(AircraftFlightData data);
+        public abstract void ProcessFlightData(FlightData data);
 
 
         /// <summary>
@@ -49,7 +48,7 @@ namespace FSTRaK.Models.FlightManager.State
         /// </summary>
         /// <param name="data"></param>
         /// <param name="fe"></param>
-        protected void AddFlightEvent(AircraftFlightData data, BaseFlightEvent fe)
+        protected void AddFlightEvent(FlightData data, BaseFlightEvent fe)
         {
             var time = CalculateSimTime(data);
             fe.Altitude = data.Altitude;
@@ -57,19 +56,19 @@ namespace FSTRaK.Models.FlightManager.State
             fe.Latitude = data.Latitude;
             fe.Longitude = data.Longitude;
             fe.TrueHeading = data.TrueHeading;
-            fe.IndicatedAirspeed = data.IndicatedAirpeed;
+            fe.IndicatedAirspeed = data.IndicatedAirspeed;
             fe.GroundSpeed = data.GroundVelocity;
             fe.Time = time;
             Context.ActiveFlight.FlightEvents.Add(fe);
         }
 
-        protected void AddFlightEvent(AircraftFlightData data)
+        protected void AddFlightEvent(FlightData data)
         {
             var fe = new BaseFlightEvent();
             AddFlightEvent(data, fe);
         }
 
-            protected static DateTime CalculateSimTime(AircraftFlightData data)
+            protected static DateTime CalculateSimTime(FlightData data)
         {
             var day = new DateTime(data.zuluYear, data.zuluMonth, data.zuluDay, 0, 0, 0, 0, System.DateTimeKind.Utc);
             var time = day.AddSeconds(data.zuluTime);

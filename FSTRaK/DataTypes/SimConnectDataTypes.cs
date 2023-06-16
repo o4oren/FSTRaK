@@ -2,6 +2,7 @@
 using System.Collections.Generic;
 using System.Linq;
 using System.Runtime.InteropServices;
+using FSTRaK.Models;
 
 namespace FSTRaK.DataTypes
 {
@@ -60,14 +61,15 @@ namespace FSTRaK.DataTypes
     {
         FlightDataRequest,
         NearbyAirportsRequest,
-        FlightLoaded
+        FlightLoaded,
+        AircraftLoaded,
+        AircraftDataRequest
     }
 
     public enum DataDefinitions
     {
-        FlightMetaData,
+        AircraftData,
         FlightData,
-        NearbyAirports
     }
 
     public enum Events
@@ -79,12 +81,8 @@ namespace FSTRaK.DataTypes
     }
 
     [StructLayout(LayoutKind.Sequential, CharSet = CharSet.Ansi, Pack = 1)]
-    public struct AircraftFlightData
+    public struct AircraftData
     {
-        public int zuluYear;
-        public int zuluMonth;
-        public int zuluDay;
-        public int zuluTime;
         [MarshalAs(UnmanagedType.ByValTStr, SizeConst = 256)]
         public string title;
         [MarshalAs(UnmanagedType.ByValTStr, SizeConst = 256)]
@@ -100,7 +98,15 @@ namespace FSTRaK.DataTypes
 
         public EngineType EngineType;
         public int NumberOfEngines;
+    }
 
+    [StructLayout(LayoutKind.Sequential, CharSet = CharSet.Ansi, Pack = 1)]
+    public struct FlightData
+    {
+        public int zuluYear;
+        public int zuluMonth;
+        public int zuluDay;
+        public int zuluTime;
 
         public int SimOnGround;
         public double Latitude;
@@ -108,7 +114,7 @@ namespace FSTRaK.DataTypes
         public double TrueHeading;
         public double Altitude;
         public double TrueAirspeed;
-        public double IndicatedAirpeed;
+        public double IndicatedAirspeed;
         public double GroundVelocity;
         public double GroundAltitude;
         public double PlaneAltAboveGround;
@@ -117,7 +123,7 @@ namespace FSTRaK.DataTypes
         public CameraState CameraState;
         public int FlapSpeedExceeded;
         public int GearSpeedExceeded;
-        public int Overspeed;
+        public int OverSpeed;
         public int StallWarning;
         public double FlapPosition;
         public double FuelWeightLbs;
@@ -147,12 +153,12 @@ namespace FSTRaK.DataTypes
             return new double[] { Throttle1Position, Throttle2Position, Throttle3Position, Throttle3Position }.Max();
         }
 
-        public double MinThrottlePosition()
+        public double MinThrottlePosition(int numberOfEngines)
         {
             var thorttlePositionArray = new List<double>( new double[] { Throttle1Position, Throttle1Position, Throttle2Position, Throttle3Position });
-            if (NumberOfEngines == 0)
+            if (numberOfEngines == 0)
                 return 0;
-            return thorttlePositionArray.GetRange(0,NumberOfEngines).Min();
+            return thorttlePositionArray.GetRange(0, numberOfEngines).Min();
         }
 
     }

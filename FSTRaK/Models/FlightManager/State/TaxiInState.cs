@@ -15,9 +15,9 @@ namespace FSTRaK.Models.FlightManager.State
             this.Name = "Taxi In";
             this.IsMovementState = true;
         }
-        public override void ProcessFlightData(AircraftFlightData data)
+        public override void ProcessFlightData(FlightData data)
         {
-            if ((data.GroundVelocity > 40 && data.MinThrottlePosition() > 75) || data.SimOnGround != 1)
+            if ((data.GroundVelocity > 40 && data.MinThrottlePosition(Context.ActiveFlight.Aircraft.NumberOfEngines) > 75) || data.SimOnGround != 1)
             {
                 Context.State = new TakeoffRollState(Context);
                 return;
@@ -25,7 +25,7 @@ namespace FSTRaK.Models.FlightManager.State
 
             //Parking brakes, engines off - end flight
             if (data.GroundVelocity < 2 && 
-                (data.ParkingBrakesSet == 1 || data.Category.Equals("Helicopter")) && 
+                (data.ParkingBrakesSet == 1 || Context.ActiveFlight.Aircraft.Category.Equals("Helicopter")) && 
                 data.MaxEngineRpmPct() < 5)
             {
                 var pe = new ParkingEvent
