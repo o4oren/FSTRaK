@@ -7,7 +7,7 @@ namespace FSTRaK.Models.FlightManager.State
     {
         public sealed override string Name { get; set; }
         public sealed override bool IsMovementState { get; set; }
-        public LandedState(FlightManager context, AircraftFlightData landingData) : base(context)
+        public LandedState(FlightManager context, FlightData landingData) : base(context)
         {
             this.EventInterval = 5000;
             this.Name = "Landed";
@@ -18,7 +18,7 @@ namespace FSTRaK.Models.FlightManager.State
 
         }
 
-        private void ProcessLandingData(AircraftFlightData landingData)
+        private void ProcessLandingData(FlightData landingData)
         {
             var le = new LandingEvent()
             {
@@ -60,7 +60,7 @@ namespace FSTRaK.Models.FlightManager.State
             AddFlightEvent(landingData, le);
         }
 
-        public override void ProcessFlightData(AircraftFlightData data)
+        public override void ProcessFlightData(FlightData data)
         {
             if (!Convert.ToBoolean(data.SimOnGround))
             {

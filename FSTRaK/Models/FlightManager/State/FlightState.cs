@@ -13,7 +13,7 @@ namespace FSTRaK.Models.FlightManager.State
             this.Name = "In flight";
             this.IsMovementState = true;
         }
-        public override void ProcessFlightData(AircraftFlightData data)
+        public override void ProcessFlightData(FlightData data)
         {
             if (data.SimOnGround == 1)
             {
@@ -21,15 +21,15 @@ namespace FSTRaK.Models.FlightManager.State
                 return;
             }
 
-            if (data.IndicatedAirpeed < 150)
+            if (data.IndicatedAirspeed < 150)
             {
                 EventInterval = 6000;
             }
-            else if (data.IndicatedAirpeed > 150 && data.IndicatedAirpeed < 250)
+            else if (data.IndicatedAirspeed > 150 && data.IndicatedAirspeed < 250)
             {
                 EventInterval = 10000;
             }
-            else if (data.IndicatedAirpeed > 250 || data.Altitude > 10000)
+            else if (data.IndicatedAirspeed > 250 || data.Altitude > 10000)
             {
                 EventInterval = 20000;
             }
@@ -45,9 +45,9 @@ namespace FSTRaK.Models.FlightManager.State
             }
         }
 
-        private BaseFlightEvent CheckEnvelopeExceedingEvents(AircraftFlightData data)
+        private BaseFlightEvent CheckEnvelopeExceedingEvents(FlightData data)
         {
-            if(data.Overspeed == 1)
+            if(data.OverSpeed == 1)
             {
                 return new OverspeedEvent();
             }

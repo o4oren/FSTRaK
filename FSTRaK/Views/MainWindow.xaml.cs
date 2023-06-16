@@ -38,6 +38,9 @@ namespace FSTRaK.Views
                 _notifyIcon.Visible = true;
 
                 _notifyIcon.ContextMenuStrip = new ContextMenuStrip();
+
+                _notifyIcon.ContextMenuStrip.ShowImageMargin = false;
+
                 _notifyIcon.ContextMenuStrip.Items.Add("Show FSTrAk", null, (s, args) =>
                 {
                     this.Show();

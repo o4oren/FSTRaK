@@ -42,7 +42,7 @@ namespace FSTRaK.ViewModels
 
                 ScoreboardText = _flight.GetScoreDetails();
 
-                FlightParams = _flight.ToString();
+                FlightDetailsParamsViewModel = new FlightDetailsParamsViewModel(_flight);
 
                 GeneratePushpins();
 
@@ -50,6 +50,23 @@ namespace FSTRaK.ViewModels
                 OnPropertyChanged(nameof(FlightPath));
                 OnPropertyChanged(nameof(AltSpeedGroundAltDictionary));
             } 
+        }
+
+        private FlightDetailsParamsViewModel _flightDetailsParamsViewModel;
+        public FlightDetailsParamsViewModel FlightDetailsParamsViewModel
+        {
+            get
+            {
+                return _flightDetailsParamsViewModel;
+            }
+            private set
+            {
+                if (value != _flightDetailsParamsViewModel)
+                {
+                    _flightDetailsParamsViewModel = value;
+                    OnPropertyChanged();
+                }
+            }
         }
 
         private void GeneratePushpins()
@@ -87,19 +104,6 @@ namespace FSTRaK.ViewModels
         }
 
         public ObservableCollection<Location> FlightPath { get; private set; }
-
-
-        private string _flightParams;
-            
-        public string FlightParams
-        {
-            get => _flightParams;
-            private set 
-            {
-                _flightParams = value; 
-                OnPropertyChanged();
-            }
-        }
 
         private ObservableCollection<FlightEventPushpin> _markerList = new ObservableCollection<FlightEventPushpin>();
 
@@ -153,10 +157,8 @@ namespace FSTRaK.ViewModels
                 units = "Kg";
 
                 return $"{totalFuelUsed:F2} {units}";
-
             }
         }
-
 
         public MapTileLayerBase MapProvider
         {
@@ -170,7 +172,6 @@ namespace FSTRaK.ViewModels
                 }
                 return Application.Current.Resources["OpenStreetMap"] as MapTileLayerBase;
             }
-
         }
 
         private BoundingBox _viewPort;
@@ -243,9 +244,7 @@ namespace FSTRaK.ViewModels
         {
             public string Location { get; set; }
             public string Text { get; set; } = string.Empty;
-
                         public string Color { get; set; } = "Green";
-
         }
     }
 }

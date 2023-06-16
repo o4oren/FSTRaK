@@ -79,6 +79,7 @@
                  />
         <ListView Width="280" VerticalAlignment="Stretch"
                       Grid.Row="1" Grid.Column="0"
+                      Margin="0 0  0 10"
                       ItemsSource="{Binding Flights}" 
                   ItemContainerStyle="{StaticResource ListViewItemStyle}"
             IsSynchronizedWithCurrentItem="True" 
@@ -87,8 +88,21 @@
                       ScrollViewer.CanContentScroll="False"
                       ScrollViewer.HorizontalScrollBarVisibility="Disabled"
             >
-                <ListView.ContextMenu>
-                    <ContextMenu>
+            <ListView.Template>
+                <ControlTemplate>
+                    <Border CornerRadius="0 0 0 5" 
+                            BorderThickness="1" 
+                            BorderBrush="{StaticResource BorderMidColorBrush}"
+                            Background="white"
+                    >
+                        <ScrollViewer>
+                            <ItemsPresenter></ItemsPresenter>
+                        </ScrollViewer>
+                    </Border>
+                </ControlTemplate>
+            </ListView.Template>
+            <ListView.ContextMenu>
+                <ContextMenu>
                         <MenuItem Header="Delete Flight" Command="{Binding DeleteFlightCommand}"></MenuItem>
                 </ContextMenu>
                 </ListView.ContextMenu>
@@ -107,14 +121,14 @@
                                 <RowDefinition />
                                 <RowDefinition />
                             </Grid.RowDefinitions>
-                            <TextBlock Grid.Column="0" HorizontalAlignment="Left" FontFamily="{StaticResource Slopes}" FontSize="20" Foreground="{StaticResource TextColor}">
+                            <TextBlock Grid.Row="0" Grid.Column="0" HorizontalAlignment="Left" FontFamily="{StaticResource Slopes}" FontSize="20" Foreground="{StaticResource TextColor}">
                                 <Run Text="{Binding DepartureAirport, Mode=OneTime}"/>
                             </TextBlock>
                             <TextBlock Grid.Column="0" Grid.Row="1" HorizontalAlignment="Left" FontFamily="{StaticResource Slopes}" FontSize="16" Foreground="{StaticResource TextColor}">
                                 <Run Text="{Binding StartTime, Mode=OneTime}"/>
                             </TextBlock>
 
-                            <ContentControl Grid.Column="1" VerticalAlignment="Center">
+                            <ContentControl Grid.Row="0" Grid.Column="1" VerticalAlignment="Center">
                                 <ContentControl.RenderTransform>
                                     <TranslateTransform X="32" Y="-8" />
                                 </ContentControl.RenderTransform>
@@ -126,7 +140,7 @@
                                 </Path>
                             </ContentControl>
 
-                            <TextBlock Grid.Column="2" HorizontalAlignment="Left" FontFamily="{StaticResource Slopes}" FontSize="20" Foreground="{StaticResource TextColor}">
+                            <TextBlock Grid.Row="0" Grid.Column="2" HorizontalAlignment="Left" FontFamily="{StaticResource Slopes}" FontSize="20" Foreground="{StaticResource TextColor}">
                                 <Run Text="{Binding ArrivalAirport, Mode=OneTime}"/>
                             </TextBlock>
                             <TextBlock Grid.Column="2" Grid.Row="1" HorizontalAlignment="Left" FontFamily="{StaticResource Slopes}" FontSize="16" Foreground="{StaticResource TextColor}">
@@ -136,7 +150,7 @@
 
                         <TextBlock
                             FontFamily="{StaticResource Slopes}" FontSize="20" Foreground="{StaticResource TextColor}">
-                            <Run Text="{Binding FlightDistanceNm}"/> NM / <Run Text="{Binding FlightTime}"/>
+                            <Run Text="{Binding FlightDistanceNm, StringFormat=N2}"/> NM / <Run Text="{Binding FlightTime}"/>
                             <LineBreak />
                             <Run Text="{Binding Path=Aircraft.Manufacturer}"/> <Run Text="{Binding Path=Aircraft.AircraftType}"/>, <Run Text="{Binding Path=Aircraft.TailNumber}"/>
                             <LineBreak />
@@ -146,9 +160,8 @@
                     </DataTemplate>
                 </ListView.ItemTemplate>
             </ListView>
-            <ContentControl Grid.Column="1" Grid.RowSpan="2" Content="{Binding FlightDetailsViewModel}" Margin="0"
-                     HorizontalContentAlignment="Stretch" VerticalContentAlignment="Stretch">
-        </ContentControl>
+            <ContentControl Grid.Row="0" Grid.Column="1" Grid.RowSpan="2" Content="{Binding FlightDetailsViewModel}" Margin="0"
+                     HorizontalContentAlignment="Stretch" VerticalContentAlignment="Stretch" />
     </Grid>
 
 </UserControl>

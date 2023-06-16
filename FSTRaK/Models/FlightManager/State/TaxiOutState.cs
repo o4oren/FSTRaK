@@ -15,9 +15,9 @@ namespace FSTRaK.Models.FlightManager.State
             this.Name = "Taxi Out";
             this.IsMovementState = true;
         }
-        public override void ProcessFlightData(AircraftFlightData data)
+        public override void ProcessFlightData(FlightData data)
         {
-            if ((data.GroundVelocity > 40 && data.MinThrottlePosition() > 75) || data.SimOnGround != 1)
+            if ((data.GroundVelocity > 40 && data.MinThrottlePosition(Context.ActiveFlight.Aircraft.NumberOfEngines) > 75) || data.SimOnGround != 1)
             {
                 Context.State = new TakeoffRollState(Context);
                 return;

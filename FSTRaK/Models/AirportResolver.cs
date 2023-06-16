@@ -27,6 +27,21 @@ namespace FSTRaK.Models
             Log.Information($"{AirportsDictionary.Count} airports loaded.");
         }
 
+        public Airport GetAirportByIcaoCode(string code)
+        {
+            try
+            {
+                return AirportsDictionary[code];
+            }
+            catch
+            {
+                return new Airport()
+                {
+                    icao = code
+                };
+            }
+        }
+
 
         public static AirportResolver Instance
         {
