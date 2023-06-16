@@ -70,6 +70,13 @@ namespace FSTRaK.ViewModels
         private string GetAirportText(Airport airport)
         {
             StringBuilder sb = new StringBuilder();
+            sb.Append(airport.icao);
+            if (!string.IsNullOrWhiteSpace(airport.iata))
+                sb.AppendLine($"/{airport.iata}");
+            else sb.Append("\n");
+
+            if (!string.IsNullOrEmpty(airport.name))
+                sb.Append($"{airport.name}, ");
             if (!string.IsNullOrEmpty(airport.city))
             {
                 sb.Append(airport.city);
@@ -80,10 +87,9 @@ namespace FSTRaK.ViewModels
                 }
                 else
                 {
-                    sb.Append($", {airport.CountryName} ");
+                    sb.Append($", {airport.CountryName}");
                 }
             }
-            sb.Append($"({airport.icao})");
             return sb.ToString();
         }
     }
