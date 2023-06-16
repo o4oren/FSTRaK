@@ -1,6 +1,7 @@
 ﻿using System;
 using System.Diagnostics;
 using FSTRaK.DataTypes;
+using Serilog;
 
 namespace FSTRaK.Models.FlightManager.State
 {

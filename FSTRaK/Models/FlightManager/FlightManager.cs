@@ -70,7 +70,7 @@ namespace FSTRaK.Models.FlightManager
             set
             {
                 _state = value;
-                Log.Information($"State changed - {DateTime.Now} - {value.Name}");
+                Log.Information($"State changed - {value.Name}");
                 OnPropertyChanged();
             }
         }

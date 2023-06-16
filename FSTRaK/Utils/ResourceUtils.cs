@@ -38,6 +38,8 @@ namespace FSTRaK.Utils
 
         public static string GetAircraftIcon(Aircraft aircraft)
         {
+            if (aircraft.Category.Equals("Helicopter"))
+                return "Helicopter";
             // Match on type first
             if (B737IconCandidates.Any(aircraft.AircraftType.Contains))
                 return "B737";

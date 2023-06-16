@@ -5,6 +5,7 @@ using System.IO;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
+using System.Windows.Markup;
 using FSTRaK.DataTypes;
 using FSTRaK.Models.Entity;
 using Serilog;
@@ -36,21 +37,19 @@ namespace FSTRaK.Models.FlightManager.State
             // This should only happen once per flight
             if (!_isStarted)
             {
-                using (var logbookContext = new LogbookContext())
-                {
-                    var flight = logbookContext.Flights.Create();
-                    Context.ActiveFlight = flight;
+                using var logbookContext = new LogbookContext();
+                var flight = logbookContext.Flights.Create();
+                Context.ActiveFlight = flight;
 
-                    SetAircraftAsynchronously(flight, data);
+                SetAircraftAsynchronously(flight, data);
 
-                    Context.RequestNearestAirports(NearestAirportRequestType.Departure);
-                    _isStarted = true;
-                    Log.Information("Flight started!");
-                }  
-
+                Context.RequestNearestAirports(NearestAirportRequestType.Departure);
+                _isStarted = true;
+                logbookContext.Dispose();
+                Log.Information("Flight started!");
             }
             
-            if (data.CameraState == (int)CameraState.Cockpit && Context.ActiveFlight.FlightEvents.Count == 0)
+            if (IsCameraLive(data.CameraState) && Context.ActiveFlight.FlightEvents.Count == 0)
             {
                 _prevFuelQuantity = data.FuelWeightLbs;
                 _flightStartedEvent.FuelWeightLbs = data.FuelWeightLbs;
@@ -71,7 +70,7 @@ namespace FSTRaK.Models.FlightManager.State
             }
 
             // Compare the location to determine movement ONLY after out of the "ready to fly" screen
-            if (data.CameraState == (int)CameraState.Cockpit && 
+            if ( IsCameraLive(data.CameraState) &&
                 (Math.Abs(data.Latitude - Context.CurrentFlightParams.Latitude) > 0.0000001 || Math.Abs(data.Longitude - Context.CurrentFlightParams.Longitude) > 0.0000001) && data.GroundVelocity > 1)
             {
                 var to = new TaxiOutEvent
@@ -109,6 +108,7 @@ namespace FSTRaK.Models.FlightManager.State
                             aircraft.TailNumber = data.AtcId;
                             aircraft.NumberOfEngines = data.NumberOfEngines;
                             aircraft.EngineType = data.EngineType;
+                            aircraft.Category = data.Category;
                         
 
                             EnrichAircraftDataFromFile(aircraft);
@@ -174,6 +174,13 @@ namespace FSTRaK.Models.FlightManager.State
             }
 
         }
+
+        private bool IsCameraLive(CameraState currentCameraState)
+        {
+            return currentCameraState is CameraState.Cockpit or CameraState.Drone or CameraState.External
+                or CameraState.Drone;
+        }
+
     }
 }
 

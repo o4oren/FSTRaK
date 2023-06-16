@@ -19,12 +19,12 @@ namespace FSTRaK.DataTypes
         GamePlay = 8,
         Showcase = 9,
         DroneAircraft = 10,
-        Waiting = 11,
+        Waiting = 11,       // Loading flight
         WorldMap = 12,
         HangarRtc = 13, 
         HangarCustom = 14,
-        MenuRtc = 15,
-        InGameRtc = 16,
+        MenuRtc = 15,       // Main menu
+        InGameRtc = 16,     // "Ready to fly"
         Replay = 17,
         DroneTopDown = 19,
         Hangar = 21,
@@ -95,6 +95,8 @@ namespace FSTRaK.DataTypes
         public string atcType;
         [MarshalAs(UnmanagedType.ByValTStr, SizeConst = 32)]
         public string AtcId;
+        [MarshalAs(UnmanagedType.ByValTStr, SizeConst = 128)]
+        public string Category;
 
         public EngineType EngineType;
         public int NumberOfEngines;
@@ -112,7 +114,7 @@ namespace FSTRaK.DataTypes
         public double PlaneAltAboveGround;
         public double PlaneAltAboveGroundMinusCg;
         public double VerticalSpeed;
-        public int CameraState;
+        public CameraState CameraState;
         public int FlapSpeedExceeded;
         public int GearSpeedExceeded;
         public int Overspeed;
