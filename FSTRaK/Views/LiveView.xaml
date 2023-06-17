@@ -54,12 +54,12 @@
             <!-- map:MapGraticule Opacity="0.5"/ -->
             <map:MapPolyline Locations="{Binding FlightPath}" Stroke="Red" StrokeThickness="2" StrokeLineJoin="round"/>
             <map:MapPolyline Locations="{Binding LastSegmentLine}" Stroke="Red" StrokeThickness="2" Visibility="{Binding Path=IsShowAirplane, Converter={StaticResource BoolToVis}}"/>
-            <map:MapTileLayer
-                TileSource="https://api.tiles.openaip.net/api/data/openaip/{z}/{x}/{y}.png?apiKey=f52da1d75a0c7c9baf7085f6e6314a1d"
+            <!-- map:MapTileLayer
+                TileSource="https://api.tiles.openaip.net/api/data/openaip/{z}/{x}/{y}.png?apiKey=[API KEY]"
                 SourceName="OpenAIP"
                 Description="© [OpenAIP](https://www.openaip.net)"
                 UpdateWhileViewportChanging="true"
-            />
+            /-->
         </map:Map>
 
 
