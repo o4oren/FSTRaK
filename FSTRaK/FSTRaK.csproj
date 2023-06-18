@@ -154,6 +154,8 @@
     <Compile Include="Utils\MathUtils.cs" />
     <Compile Include="Utils\PathUtil.cs" />
     <Compile Include="Utils\ResourceUtils.cs" />
+    <Compile Include="Utils\SkyVectorMapTileLayer.cs" />
+    <Compile Include="Utils\SkyVectorTileSource.cs" />
     <Compile Include="ViewModels\FlightDetailsParamsViewModel.cs" />
     <Compile Include="ViewModels\FlightDetailsViewModel.cs" />
     <Compile Include="ViewModels\LogbookViewModel.cs" />

@@ -2,12 +2,12 @@
 
 using FSTRaK.DataTypes;
 using FSTRaK.Models;
+using FSTRaK.Utils;
 using MapControl;
 using Serilog;
 using System;
 using System.Collections.Generic;
 using System.Collections.ObjectModel;
-using System.Drawing;
 using System.Linq;
 using System.Windows;
 
@@ -168,8 +168,17 @@ namespace FSTRaK.ViewModels
                 var resource = Application.Current.Resources[resoueceKey] as MapTileLayerBase;
                 if (resource != null)
                 {
+                    if (resource.SourceName.StartsWith("SkyVector"))
+                    {
+                        resource.TileSource = new SkyVectorTileSource
+                        {
+                            UriTemplate = resource.TileSource.UriTemplate,
+                        };
+                    }
+
                     return resource;
                 }
+
                 return Application.Current.Resources["OpenStreetMap"] as MapTileLayerBase;
             }
         }
