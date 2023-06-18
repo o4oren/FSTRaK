@@ -5,6 +5,7 @@ using System.Text;
 using System.Threading.Tasks;
 using System.Windows.Forms;
 using MapControl;
+using Serilog;
 
 namespace FSTRaK.Utils
 {
@@ -12,6 +13,7 @@ namespace FSTRaK.Utils
     {
         public SkyVectorMapTileLayer() : base()
         {
+            
             TileSource = new SkyVectorTileSource();
         }
     }

@@ -64,7 +64,7 @@
         Description="© [BKG](https://gdz.bkg.bund.de/index.php/default/webdienste/topplus-produkte/wmts-topplusopen-wmts-topplus-open.html)"
         UpdateWhileViewportChanging="true"
         x:Shared="false"/>
-    <map:MapTileLayer
+    <utils:SkyVectorMapTileLayer
         x:Key="SkyVectorVfr"
         TileSource="https://t.skyvector.com/V7pMh4xRihflnr61/301/2306/{z}/{x}/{y}.jpg"
         SourceName="SkyVectorVfr"
@@ -73,7 +73,7 @@
         MaxZoomLevel="11"
         UpdateWhileViewportChanging="true"
         x:Shared="false"/>
-    <map:MapTileLayer
+    <utils:SkyVectorMapTileLayer
         x:Key="SkyVectorIfrHigh"
         TileSource="https://t.skyvector.com/V7pMh4xRihflnr61/304/2306/{z}/{x}/{y}.jpg"
         SourceName="SkyVectorIfrH"
@@ -82,7 +82,7 @@
         MaxZoomLevel="11"
         UpdateWhileViewportChanging="true"
         x:Shared="false"/>
-    <map:MapTileLayer
+    <utils:SkyVectorMapTileLayer
         x:Key="SkyVectorIfrLow"
         TileSource="https://t.skyvector.com/V7pMh4xRihflnr61/302/2306/{z}/{x}/{y}.jpg"
         SourceName="SkyVectorIfrL"

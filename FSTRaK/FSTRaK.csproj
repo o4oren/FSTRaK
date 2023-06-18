@@ -151,6 +151,7 @@
     <Compile Include="Models\FlightManager\State\TaxiOutState.cs" />
     <Compile Include="RelayCommand.cs" />
     <Compile Include="Utils\HyperlinkText.cs" />
+    <Compile Include="Utils\MapProviderResolver.cs" />
     <Compile Include="Utils\MathUtils.cs" />
     <Compile Include="Utils\PathUtil.cs" />
     <Compile Include="Utils\ResourceUtils.cs" />
