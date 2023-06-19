@@ -25,7 +25,6 @@ namespace FSTRaK.Utils
             if (m.Groups.Count > 0)
             {
                  var chartTypeString = m.Groups[1].Value;
-                 Log.Information("AF chart " + chartTypeString);
                  var chartTypeNumber = int.Parse(chartTypeString);
                  newZoomLevel = 23 + 301 - chartTypeNumber - (2 * zoomLevel);
             }
