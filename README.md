@@ -31,3 +31,6 @@ FSTrAk monitors your simulator silently, and will detect when a flight is starte
 
 #### SkyVector VFR map tiles
 <img width="1024" alt="SkyVector" src="https://github.com/o4oren/FSTRaK/assets/23486326/54ae3f96-a6a8-4845-a5c6-94472a1826d4">
+
+#### Analyzing route over SkyVector IFR map tiles
+<img width="1024" alt="ifr" src="https://github.com/o4oren/FSTRaK/assets/23486326/3a44c195-8086-48ba-b9bb-2021fd6459f8">
