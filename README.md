@@ -27,7 +27,7 @@ FSTrAk monitors your simulator silently, and will detect when a flight is starte
 <img width="1024" alt="Live Tracking" src="https://github.com/o4oren/FSTRaK/assets/23486326/e07f130f-0432-4da7-a657-36d95a61b9fb">
 
 #### Scoring events in flight analysis, with Bing Hybrid map
-<img width="1024" alt="Scoring" src="https://github.com/o4oren/FSTRaK/assets/23486326/d2b9b210-a637-4a31-a872-b391323f85fe">
+<img width="1330" alt="Scoring" src="https://github.com/o4oren/FSTRaK/assets/23486326/0242d88c-c1c1-4b58-8150-28da3c01f1d9">
 
 #### SkyVector VFR map tiles
-<img width="1272" alt="skyvector" src="https://github.com/o4oren/FSTRaK/assets/23486326/54ae3f96-a6a8-4845-a5c6-94472a1826d4">
+<img width="1024" alt="SkyVector" src="https://github.com/o4oren/FSTRaK/assets/23486326/54ae3f96-a6a8-4845-a5c6-94472a1826d4">
