@@ -2,12 +2,12 @@
 
 using FSTRaK.DataTypes;
 using FSTRaK.Models;
+using FSTRaK.Utils;
 using MapControl;
 using Serilog;
 using System;
 using System.Collections.Generic;
 using System.Collections.ObjectModel;
-using System.Drawing;
 using System.Linq;
 using System.Windows;
 
@@ -16,8 +16,9 @@ namespace FSTRaK.ViewModels
     internal class FlightDetailsViewModel : BaseViewModel
     {
         private Flight _flight;
-        public Flight Flight { 
-            get => _flight;
+        public Flight Flight
+        {
+            get { return _flight; }
             set
             {
                 if (_flight == value) return;
@@ -49,7 +50,7 @@ namespace FSTRaK.ViewModels
                 OnPropertyChanged();
                 OnPropertyChanged(nameof(FlightPath));
                 OnPropertyChanged(nameof(AltSpeedGroundAltDictionary));
-            } 
+            }
         }
 
         private FlightDetailsParamsViewModel _flightDetailsParamsViewModel;
@@ -109,7 +110,7 @@ namespace FSTRaK.ViewModels
 
         public ObservableCollection<FlightEventPushpin> MarkerList
         {
-            get => _markerList;
+            get { return _markerList; }
             set
             {
                 _markerList = value;
@@ -162,21 +163,13 @@ namespace FSTRaK.ViewModels
 
         public MapTileLayerBase MapProvider
         {
-            get
-            {
-                var resoueceKey = Properties.Settings.Default.MapTileProvider;
-                var resource = Application.Current.Resources[resoueceKey] as MapTileLayerBase;
-                if (resource != null)
-                {
-                    return resource;
-                }
-                return Application.Current.Resources["OpenStreetMap"] as MapTileLayerBase;
-            }
+            get { return MapProviderResolver.GetMapProvider(); }
         }
 
         private BoundingBox _viewPort;
-        public BoundingBox ViewPort { 
-            get => _viewPort;
+        public BoundingBox ViewPort
+        {
+            get { return _viewPort; }
             set
             {
                 if (_viewPort != value) 
@@ -188,7 +181,9 @@ namespace FSTRaK.ViewModels
         }
 
         private bool _isShowPath = true;
-        public bool IsShowPath { get => _isShowPath;
+        public bool IsShowPath
+        {
+            get { return _isShowPath; }
             set
             {
                 _isShowPath = value;
@@ -199,7 +194,7 @@ namespace FSTRaK.ViewModels
         private bool _isShowFlightDetails = true;
         public bool IsShowFlightDetails
         {
-            get => _isShowFlightDetails;
+            get { return _isShowFlightDetails; }
             set
             {
                 _isShowFlightDetails = value;
@@ -210,7 +205,7 @@ namespace FSTRaK.ViewModels
         private bool _isShowAltSpeedCharts = false;
         public bool IsShowAltSpeedCharts
         {
-            get => _isShowAltSpeedCharts;
+            get { return _isShowAltSpeedCharts; }
             set
             {
                 _isShowAltSpeedCharts = value;
@@ -221,7 +216,7 @@ namespace FSTRaK.ViewModels
         private bool _isShowScoreboard = false;
         public bool IsShowScoreboard
         {
-            get => _isShowScoreboard;
+            get { return _isShowScoreboard; }
             set
             {
                 _isShowScoreboard = value;
@@ -231,9 +226,9 @@ namespace FSTRaK.ViewModels
 
         private string _scoreboardText;
 
-        public string ScoreboardText 
-        { 
-            get => _scoreboardText;
+        public string ScoreboardText
+        {
+            get { return _scoreboardText; }
             set {
                 _scoreboardText = value;
                 OnPropertyChanged();
