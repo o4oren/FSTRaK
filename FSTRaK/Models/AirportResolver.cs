@@ -20,10 +20,20 @@ namespace FSTRaK.Models
 
         private async void LoadAirportsJson()
         {
-            var openStream = File.OpenRead(@".\Resources\\Data\\airports.json");
-            AirportsDictionary =
-                await JsonSerializer.DeserializeAsync<Dictionary<string, Airport>>(openStream);
-            openStream.Close();
+            var strExeFilePath = System.Reflection.Assembly.GetExecutingAssembly().Location; // This was needed because using the resource directly caused it to point to c:\windows\system32 when starting with windows.
+            var strWorkPath = System.IO.Path.GetDirectoryName(strExeFilePath);
+
+            if (strWorkPath != null)
+            {
+                var airportsJsonPath = Path.Combine(strWorkPath, "Resources", "Data", "airports.json");
+                Log.Information(airportsJsonPath);
+
+                var openStream = File.OpenRead(airportsJsonPath);
+                AirportsDictionary =
+                    await JsonSerializer.DeserializeAsync<Dictionary<string, Airport>>(openStream);
+                openStream.Close();
+            }
+
             Log.Information($"{AirportsDictionary.Count} airports loaded.");
         }
 

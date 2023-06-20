@@ -15,7 +15,7 @@
                 <ResourceDictionary Source="Resources/Theme.xaml" />
                 <ResourceDictionary Source="Resources/Images.xaml" />
                 <ResourceDictionary Source="Resources/MapProvidersDictionary.xaml"/>
-                <ResourceDictionary Source="../Resources/AircraftIconsDictionary.xaml"/>
+                <ResourceDictionary Source="Resources/AircraftIconsDictionary.xaml"/>
             </ResourceDictionary.MergedDictionaries>
             <BooleanToVisibilityConverter x:Key="BoolToVis" />
         </ResourceDictionary>

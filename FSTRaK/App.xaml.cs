@@ -10,6 +10,7 @@ using System.Windows;
 using System.Windows.Threading;
 using FSTRaK.Utils;
 using Microsoft.Win32;
+using System.Diagnostics;
 
 namespace FSTRaK
 {
@@ -49,8 +50,11 @@ namespace FSTRaK
         .WriteTo.Trace()
         .WriteTo.File(logPath, rollingInterval: RollingInterval.Day, retainedFileCountLimit: 5)
         .CreateLogger();
-
         AppDomain.CurrentDomain.SetData("DataDirectory", PathUtil.GetApplicationLocalDataPath());
+
+        var assembly = System.Reflection.Assembly.GetExecutingAssembly();
+        FileVersionInfo fvi = FileVersionInfo.GetVersionInfo(assembly.Location);
+        Log.Information($"FSTrAk {fvi.ProductVersion} Started.");
 
             Task.Run(() =>
         {
@@ -86,7 +90,7 @@ namespace FSTRaK
         });
 
         var airportResolver = AirportResolver.Instance;
-        Log.Information("FSTrAk Started.");
+
     }
   
 

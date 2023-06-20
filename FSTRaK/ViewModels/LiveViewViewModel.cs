@@ -175,17 +175,7 @@ namespace FSTRaK.ViewModels
 
         public MapTileLayerBase MapProvider
         {
-            get
-            {
-                var resoueceKey = Properties.Settings.Default.MapTileProvider;
-                var resource = Application.Current.Resources[resoueceKey] as MapTileLayerBase;
-                if (resource != null)
-                {
-                    return resource;
-                }
-                return Application.Current.Resources["OpenStreetMap"] as MapTileLayerBase;
-            }
-            private set{}
+            get { return MapProviderResolver.GetMapProvider(); }
         }
 
 

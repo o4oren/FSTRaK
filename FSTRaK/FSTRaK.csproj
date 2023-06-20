@@ -151,9 +151,12 @@
     <Compile Include="Models\FlightManager\State\TaxiOutState.cs" />
     <Compile Include="RelayCommand.cs" />
     <Compile Include="Utils\HyperlinkText.cs" />
+    <Compile Include="Utils\MapProviderResolver.cs" />
     <Compile Include="Utils\MathUtils.cs" />
     <Compile Include="Utils\PathUtil.cs" />
     <Compile Include="Utils\ResourceUtils.cs" />
+    <Compile Include="Utils\SkyVectorMapTileLayer.cs" />
+    <Compile Include="Utils\SkyVectorTileSource.cs" />
     <Compile Include="ViewModels\FlightDetailsParamsViewModel.cs" />
     <Compile Include="ViewModels\FlightDetailsViewModel.cs" />
     <Compile Include="ViewModels\LogbookViewModel.cs" />
