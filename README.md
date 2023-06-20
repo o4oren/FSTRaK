@@ -8,7 +8,7 @@ It aims to be a no frills, install and let it run experience - as it requires no
 FSTrAk monitors your simulator silently, and will detect when a flight is started, track it on a map, and persist it to a local database when it is complete.
 
 ## Features
-* Automatic silent start up.
+* Automatic silent start-up.
 * Automatic flight tracking (hands-free experience).
 * Option (default) to save only complete flights - i.e. flight ended in parking states, with engines off and parking breaks, after having flown.
 * Different map providers.
@@ -28,3 +28,6 @@ FSTrAk monitors your simulator silently, and will detect when a flight is starte
 
 #### Scoring events in flight analysis, with Bing Hybrid map
 <img width="1024" alt="Scoring" src="https://github.com/o4oren/FSTRaK/assets/23486326/d2b9b210-a637-4a31-a872-b391323f85fe">
+
+#### SkyVector VFR map tiles
+<img width="1272" alt="skyvector" src="https://github.com/o4oren/FSTRaK/assets/23486326/54ae3f96-a6a8-4845-a5c6-94472a1826d4">
