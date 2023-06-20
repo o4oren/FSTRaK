@@ -12,28 +12,28 @@
         UpdateWhileViewportChanging="true"
         x:Shared="false"/>
     <map:MapTileLayer
-        x:Key="OpenStreetMapGerman"
+        x:Key="OpenStreetMap German"
         TileSource="https://{s}.tile.openstreetmap.de/{z}/{x}/{y}.png"
         SourceName="OpenStreetMap German"
         Description="© [OpenStreetMap contributors](http://www.openstreetmap.org/copyright)"
         UpdateWhileViewportChanging="true"
         x:Shared="false"/>
     <map:MapTileLayer
-        x:Key="OpenStreetMapFrench"
+        x:Key="OpenStreetMap French"
         TileSource="http://{s}.tile.openstreetmap.fr/osmfr/{z}/{x}/{y}.png"
         SourceName="OpenStreetMap French"
         Description="© [OpenStreetMap France](https://www.openstreetmap.fr/mentions-legales/) © [OpenStreetMap contributors](http://www.openstreetmap.org/copyright)"
         UpdateWhileViewportChanging="true"
         x:Shared="false"/>
     <map:BingMapsTileLayer
-        x:Key="BingMapsRoad"
+        x:Key="Bing Maps Road"
         Mode="Road"
         SourceName="Bing Maps Road"
         Description="© [Microsoft](http://www.bing.com/maps/)"
         UpdateWhileViewportChanging="true"
         x:Shared="false"/>
     <map:BingMapsTileLayer
-        x:Key="BingMapsAerial"
+        x:Key="Bing Maps Aerial"
         Mode="Aerial"
         SourceName="Bing Maps Aerial"
         Description="© [Microsoft](http://www.bing.com/maps/)"
@@ -42,7 +42,7 @@
         UpdateWhileViewportChanging="true"
         x:Shared="false"/>
     <map:BingMapsTileLayer
-        x:Key="BingMapsHybrid"
+        x:Key="Bing Maps Hybrid"
         Mode="AerialWithLabels"
         SourceName="Bing Maps Hybrid"
         Description="© [Microsoft](http://www.bing.com/maps/)"
@@ -58,14 +58,14 @@
         UpdateWhileViewportChanging="true"
         x:Shared="false"/>
     <map:WmtsTileLayer
-        x:Key="TopPlusOpenWMTS"
+        x:Key="TopPlus Open WMTS"
         CapabilitiesUri="https://sgx.geodatenzentrum.de/wmts_topplus_open/1.0.0/WMTSCapabilities.xml"
         SourceName="TopPlusOpen"
         Description="© [BKG](https://gdz.bkg.bund.de/index.php/default/webdienste/topplus-produkte/wmts-topplusopen-wmts-topplus-open.html)"
         UpdateWhileViewportChanging="true"
         x:Shared="false"/>
     <utils:SkyVectorMapTileLayer
-        x:Key="SkyVectorVfr"
+        x:Key="SkyVector VFR"
         TileSource="https://t.skyvector.com/V7pMh4xRihflnr61/301/2306/{z}/{x}/{y}.jpg"
         SourceName="SkyVectorVfr"
         Description="© [SkyVector](http://www.skyvector.com)"
@@ -74,7 +74,7 @@
         UpdateWhileViewportChanging="true"
         x:Shared="false"/>
     <utils:SkyVectorMapTileLayer
-        x:Key="SkyVectorIfrHigh"
+        x:Key="SkyVector IFR High"
         TileSource="https://t.skyvector.com/V7pMh4xRihflnr61/304/2306/{z}/{x}/{y}.jpg"
         SourceName="SkyVectorIfrH"
         Description="© [SkyVector](http://www.skyvector.com)"
@@ -83,7 +83,7 @@
         UpdateWhileViewportChanging="true"
         x:Shared="false"/>
     <utils:SkyVectorMapTileLayer
-        x:Key="SkyVectorIfrLow"
+        x:Key="SkyVector IFR Low"
         TileSource="https://t.skyvector.com/V7pMh4xRihflnr61/302/2306/{z}/{x}/{y}.jpg"
         SourceName="SkyVectorIfrL"
         Description="© [SkyVector](http://www.skyvector.com)"
