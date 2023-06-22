@@ -10,10 +10,9 @@ namespace FSTRaK.Models.Entity
 {
     internal class LogbookContext : DbContext
     {
-
-        public LogbookContext() : base("FSTrAkCompactDatabase")
+        public LogbookContext() : base("FSTrAkSqliteDatabase")
         {
-            Database.SetInitializer(new MigrateDatabaseToLatestVersion<LogbookContext, Migrations.Configuration>());
+            Database.SetInitializer(new MigrateDatabaseToLatestVersion<LogbookContext, Migrations.Configuration>(true));
             this.Database.Log = Log.Debug;
         }
 
