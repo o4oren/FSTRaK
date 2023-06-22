@@ -1,4 +1,5 @@
 ﻿using FSTRaK.Models.FlightManager;
+using FSTRaK.Utils;
 using MapControl;
 using MapControl.Caching;
 using System;
@@ -72,7 +73,7 @@ namespace FSTRaK.Views
             var bingApiKey = Properties.Settings.Default.BingApiKey;
             BingMapsTileLayer.ApiKey = bingApiKey;
             ImageLoader.HttpClient.DefaultRequestHeaders.Add("User-Agent", "FSTrAk - Flight Simulator logbook and tracker");
-            TileImageLoader.Cache = new SQLiteCache(TileImageLoader.DefaultCacheFolder);
+            TileImageLoader.Cache = new SQLiteCache(PathUtil.GetApplicationLocalDataPath());
 
 
 
