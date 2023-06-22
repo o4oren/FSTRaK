@@ -71,6 +71,8 @@ namespace FSTRaK.ViewModels
                         try
                         {
                             await LoadFlights(500);
+                            if (logbookContext.Flights == null)
+                                return;
                             var latestId = logbookContext.Flights.Max(f => f.Id);
                             SelectedFlight = logbookContext.Flights
                             .Where(f => f.Id == latestId)
