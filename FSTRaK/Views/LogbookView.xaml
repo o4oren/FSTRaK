@@ -121,10 +121,10 @@
                                 <RowDefinition />
                                 <RowDefinition />
                             </Grid.RowDefinitions>
-                            <TextBlock Grid.Row="0" Grid.Column="0" HorizontalAlignment="Left" FontFamily="{StaticResource Slopes}" FontSize="20" Foreground="{StaticResource TextColor}">
+                            <TextBlock Grid.Row="0" Grid.Column="0" HorizontalAlignment="Left" FontFamily="{DynamicResource Slopes}" FontSize="20" Foreground="{StaticResource TextColor}">
                                 <Run Text="{Binding DepartureAirport, Mode=OneTime}"/>
                             </TextBlock>
-                            <TextBlock Grid.Column="0" Grid.Row="1" HorizontalAlignment="Left" FontFamily="{StaticResource Slopes}" FontSize="16" Foreground="{StaticResource TextColor}">
+                            <TextBlock Grid.Column="0" Grid.Row="1" HorizontalAlignment="Left" FontFamily="{DynamicResource Slopes}" FontSize="16" Foreground="{StaticResource TextColor}">
                                 <Run Text="{Binding StartTime, Mode=OneTime}"/>
                             </TextBlock>
 
@@ -140,16 +140,16 @@
                                 </Path>
                             </ContentControl>
 
-                            <TextBlock Grid.Row="0" Grid.Column="2" HorizontalAlignment="Left" FontFamily="{StaticResource Slopes}" FontSize="20" Foreground="{StaticResource TextColor}">
+                            <TextBlock Grid.Row="0" Grid.Column="2" HorizontalAlignment="Left" FontFamily="{DynamicResource Slopes}" FontSize="20" Foreground="{StaticResource TextColor}">
                                 <Run Text="{Binding ArrivalAirport, Mode=OneTime}"/>
                             </TextBlock>
-                            <TextBlock Grid.Column="2" Grid.Row="1" HorizontalAlignment="Left" FontFamily="{StaticResource Slopes}" FontSize="16" Foreground="{StaticResource TextColor}">
+                            <TextBlock Grid.Column="2" Grid.Row="1" HorizontalAlignment="Left" FontFamily="{DynamicResource Slopes}" FontSize="16" Foreground="{StaticResource TextColor}">
                                 <Run Text="{Binding EndTime, Mode=OneTime}"/>
                             </TextBlock>
                         </Grid>
 
                         <TextBlock
-                            FontFamily="{StaticResource Slopes}" FontSize="20" Foreground="{StaticResource TextColor}">
+                            FontFamily="{DynamicResource Slopes}" FontSize="20" Foreground="{StaticResource TextColor}">
                             <Run Text="{Binding FlightDistanceNm, StringFormat=N2}"/> NM / <Run Text="{Binding FlightTime}"/>
                             <LineBreak />
                             <Run Text="{Binding Path=Aircraft.Manufacturer}"/> <Run Text="{Binding Path=Aircraft.AircraftType}"/>, <Run Text="{Binding Path=Aircraft.TailNumber}"/>
