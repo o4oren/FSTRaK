@@ -9,7 +9,7 @@
              d:DataContext="{d:DesignInstance Type=viewModels:FlightDetailsParamsViewModel}"
              d:DesignHeight="450" d:DesignWidth="800">
     <StackPanel>
-        <local:OverlayTextCardControl Header="Aircraft:" Text="{Binding Aircraft}" Visibility="Visible"/>
+        <local:OverlayTextCardControl Header="Aircraft" Text="{Binding Aircraft}" Visibility="Visible"/>
 
         <Grid 
             Margin="5"
