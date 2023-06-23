@@ -26,7 +26,7 @@
                         <map:MapItem Location="{Binding Location}">
                             <Canvas Width="50" Height="80">
                                 <Path Data="M 0,0 L 50,0 50,50 25,80 0,50 0,0" Fill="{Binding Color}" Stroke="Wheat" StrokeThickness="2" Width="50"/>
-                                <TextBlock FontSize="14" Foreground="White" Margin="5" TextAlignment="Center" FontFamily="{StaticResource Slopes}" Text="{Binding Text}"/>
+                                <TextBlock FontSize="14" Foreground="White" Margin="5" TextAlignment="Center" FontFamily="{DynamicResource Slopes}" Text="{Binding Text}"/>
                             </Canvas>
                         </map:MapItem>
                     </ControlTemplate>

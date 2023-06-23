@@ -57,7 +57,7 @@
                     <Canvas Width="128" Height="47" >
                         <StaticResource ResourceKey="logo"/>
                     </Canvas>
-                    <Label FontSize="30" FontWeight="Bold" Foreground="{StaticResource TextColor}" FontFamily="{StaticResource Slopes}" HorizontalAlignment="Center" VerticalAlignment="Center">FSTrAk</Label>
+                    <Label FontSize="30" FontWeight="Bold" Foreground="{StaticResource TextColor}" FontFamily="{DynamicResource Slopes}" HorizontalAlignment="Center" VerticalAlignment="Center">FSTrAk</Label>
 
                 </StackPanel>
             </Border>

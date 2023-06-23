@@ -75,13 +75,10 @@ namespace FSTRaK.Views
             ImageLoader.HttpClient.DefaultRequestHeaders.Add("User-Agent", "FSTrAk - Flight Simulator logbook and tracker");
             TileImageLoader.Cache = new SQLiteCache(PathUtil.GetApplicationLocalDataPath());
 
-
-
             if (Properties.Settings.Default.IsStartMinimized)
             {
                 WindowState = WindowState.Minimized;
             }
-
         }
 
         private void ButtonClick_CloseApplication (object sender, RoutedEventArgs e) 

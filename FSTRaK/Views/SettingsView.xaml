@@ -21,51 +21,67 @@
             </ObjectDataProvider>
     </UserControl.Resources>
 
-    <StackPanel Margin="10">
-        <StackPanel Orientation="Horizontal" Margin="10">
-            <Label Style="{StaticResource FSTrAkLabel}" Width="250">Map tiles Provider</Label>
-            <ComboBox FontFamily="{StaticResource Slopes}" 
+    <StackPanel Orientation="Horizontal">
+        <StackPanel Margin="10">
+            <StackPanel Orientation="Horizontal" Margin="10">
+                <Label Style="{StaticResource FSTrAkLabel}" Width="250">Map tiles Provider</Label>
+                <ComboBox FontFamily="{DynamicResource Slopes}" 
                       Foreground="{StaticResource TextColor}" 
                       FontSize="24" 
                       Width="200"
                       ItemsSource="{Binding MapProviders}"
                       SelectedItem="{Binding SelectedMapProvider}"/>
-        </StackPanel>
+            </StackPanel>
 
-        <StackPanel Orientation="Horizontal" Margin="10" Visibility="{Binding IsShowBingApiKeyField, Converter={StaticResource BoolToVis}}">
-            <Label  Style="{StaticResource FSTrAkLabel}" Width="250">Bing API Key</Label>
-            <TextBox FontFamily="{StaticResource Slopes}" Foreground="{StaticResource TextColor}" FontSize="20" Text="{Binding BingApiKey}" TextWrapping="Wrap" Height="100" Width="200">
-                <TextBox.ToolTip>
-                    Bing map require an API Key. 
+            <StackPanel Orientation="Horizontal" Margin="10" Visibility="{Binding IsShowBingApiKeyField, Converter={StaticResource BoolToVis}}">
+                <Label  Style="{StaticResource FSTrAkLabel}" Width="250">Bing API Key</Label>
+                <TextBox FontFamily="{DynamicResource Slopes}" Foreground="{StaticResource TextColor}" FontSize="20" Text="{Binding BingApiKey}" TextWrapping="Wrap" Height="100" Width="200">
+                    <TextBox.ToolTip>
+                        Bing map require an API Key. 
                     Please see the instructions at 
                     https://learn.microsoft.com/en-us/bingmaps/getting-started/bing-maps-dev-center-help/getting-a-bing-maps-key
-            </TextBox.ToolTip>
-            </TextBox>
-        </StackPanel>
-        <StackPanel Orientation="Horizontal" Margin="10">
-            <Label Style="{StaticResource FSTrAkLabel}" Width="250">Units</Label>
-            <ComboBox FontFamily="{StaticResource Slopes}" Foreground="{StaticResource TextColor}" FontSize="24" Width="200"
+                    </TextBox.ToolTip>
+                </TextBox>
+            </StackPanel>
+            <StackPanel Orientation="Horizontal" Margin="10">
+                <Label Style="{StaticResource FSTrAkLabel}" Width="250">Units</Label>
+                <ComboBox FontFamily="{DynamicResource Slopes}" Foreground="{StaticResource TextColor}" FontSize="24" Width="200"
                       ItemsSource="{Binding Source={StaticResource dataFromEnum}}" SelectedItem="{Binding Units}"/>
+            </StackPanel>
+            <StackPanel Orientation="Horizontal" Margin="10">
+                <Label  Style="{StaticResource FSTrAkLabel}" Width="250">Complete flights only</Label>
+                <CheckBox Style="{StaticResource SettingsCheckbox}" FontFamily="{DynamicResource Slopes}" FontSize="20" VerticalAlignment="Center" IsChecked="{Binding IsSaveOnlyCompleteFlights, Mode=TwoWay}"/>
+            </StackPanel>
+            <StackPanel Orientation="Horizontal" Margin="10">
+                <Label  Style="{StaticResource FSTrAkLabel}" Width="250">Launch FSTrAk on login</Label>
+                <CheckBox Style="{StaticResource SettingsCheckbox}" FontFamily="{DynamicResource Slopes}" FontSize="20" VerticalAlignment="Center" IsChecked="{Binding IsStartAutomatically, Mode=TwoWay}"/>
+            </StackPanel>
+            <StackPanel Orientation="Horizontal" Margin="10">
+                <Label  Style="{StaticResource FSTrAkLabel}" Width="250">launch FSTrAk minimized</Label>
+                <CheckBox Style="{StaticResource SettingsCheckbox}" FontFamily="{DynamicResource Slopes}" FontSize="20" VerticalAlignment="Center" IsChecked="{Binding IsStartMinimized, Mode=TwoWay}"/>
+            </StackPanel>
+            <StackPanel Orientation="Horizontal" Margin="10">
+                <Label  Style="{StaticResource FSTrAkLabel}" Width="250">Minimize to Tray on Close</Label>
+                <CheckBox Style="{StaticResource SettingsCheckbox}" FontFamily="{DynamicResource Slopes}" FontSize="20" VerticalAlignment="Center" IsChecked="{Binding IsMinimizeToTray, Mode=TwoWay}"/>
+            </StackPanel>
+            <StackPanel Orientation="Horizontal" Margin="10">
+                <Label  Style="{StaticResource FSTrAkLabel}" Width="250">Always on top</Label>
+                <CheckBox Style="{StaticResource SettingsCheckbox}" FontFamily="{DynamicResource Slopes}" FontSize="20" VerticalAlignment="Center" IsChecked="{Binding IsAlwaysOnTop, Mode=TwoWay}"/>
+            </StackPanel>
+
+
         </StackPanel>
-        <StackPanel Orientation="Horizontal" Margin="10">
-            <Label  Style="{StaticResource FSTrAkLabel}" Width="250">Complete flights only</Label>
-            <CheckBox Style="{StaticResource SettingsCheckbox}" FontFamily="{StaticResource Slopes}" FontSize="20" VerticalAlignment="Center" IsChecked="{Binding IsSaveOnlyCompleteFlights, Mode=TwoWay}"/>
-        </StackPanel>
-        <StackPanel Orientation="Horizontal" Margin="10">
-            <Label  Style="{StaticResource FSTrAkLabel}" Width="250">Launch FSTrAk on login</Label>
-            <CheckBox Style="{StaticResource SettingsCheckbox}" FontFamily="{StaticResource Slopes}" FontSize="20" VerticalAlignment="Center" IsChecked="{Binding IsStartAutomatically, Mode=TwoWay}"/>
-        </StackPanel>
-        <StackPanel Orientation="Horizontal" Margin="10">
-            <Label  Style="{StaticResource FSTrAkLabel}" Width="250">launch FSTrAk minimized</Label>
-            <CheckBox Style="{StaticResource SettingsCheckbox}" FontFamily="{StaticResource Slopes}" FontSize="20" VerticalAlignment="Center" IsChecked="{Binding IsStartMinimized, Mode=TwoWay}"/>
-        </StackPanel>
-        <StackPanel Orientation="Horizontal" Margin="10">
-            <Label  Style="{StaticResource FSTrAkLabel}" Width="250">Minimize to Tray on Close</Label>
-            <CheckBox Style="{StaticResource SettingsCheckbox}" FontFamily="{StaticResource Slopes}" FontSize="20" VerticalAlignment="Center" IsChecked="{Binding IsMinimizeToTray, Mode=TwoWay}"/>
-        </StackPanel>
-        <StackPanel Orientation="Horizontal" Margin="10">
-            <Label  Style="{StaticResource FSTrAkLabel}" Width="250">Always on top</Label>
-            <CheckBox Style="{StaticResource SettingsCheckbox}" FontFamily="{StaticResource Slopes}" FontSize="20" VerticalAlignment="Center" IsChecked="{Binding IsAlwaysOnTop, Mode=TwoWay}"/>
+        <StackPanel Margin="10">
+            <StackPanel Orientation="Horizontal" Margin="10">
+                <Label Style="{StaticResource FSTrAkLabel}" Width="250">Font</Label>
+                <ComboBox FontFamily="{DynamicResource Slopes}" 
+                          Foreground="{StaticResource TextColor}" 
+                          FontSize="24" 
+                          Width="200"
+                          ItemsSource="{Binding Fonts}"
+                          SelectedItem="{Binding FontName}"/>
+            </StackPanel>
         </StackPanel>
     </StackPanel>
+ 
 </UserControl>

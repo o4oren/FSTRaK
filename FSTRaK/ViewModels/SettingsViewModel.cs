@@ -169,6 +169,25 @@ namespace FSTRaK.ViewModels
             }
         }
 
+
+
+        public ObservableCollection<string> Fonts { get; set; } = new ObservableCollection<string>(new []{"Slopes", "Arial"});
+        private string _fontName = "Slopes";
+        public string FontName
+        {
+            get => _fontName;
+            set
+            {
+                if (value != null && value != _fontName)
+                {
+                    _fontName = value;
+                    FontUtil.SetFont(_fontName);
+                    Properties.Settings.Default.FontName = _fontName;
+                    OnPropertyChanged();
+                }
+            }
+        }
+
         public SettingsViewModel() : base()
         {
             var mapProviders = new ResourceDictionary();
@@ -196,6 +215,7 @@ namespace FSTRaK.ViewModels
             IsStartMinimized = Properties.Settings.Default.IsStartMinimized;
             IsMinimizeToTray = Properties.Settings.Default.IsMinimizeToTray;
             IsStartAutomatically = Properties.Settings.Default.IsStartAutomatically;
+            FontName = Properties.Settings.Default.FontName;
         }
     }
 }
