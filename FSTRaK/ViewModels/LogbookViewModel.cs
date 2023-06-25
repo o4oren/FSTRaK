@@ -11,7 +11,9 @@ using System.Linq;
 using System.Threading;
 using System.Threading.Tasks;
 using System.Timers;
+using FSTRaK;
 using FSTRaK.Models.FlightManager.State;
+using FSTRaK.ViewModels;
 
 namespace FSTRaK.ViewModels
 {
@@ -82,6 +84,18 @@ namespace FSTRaK.ViewModels
             } 
         }
 
+        private EditAircraftViewModel _editAircraftViewModel;
+        public EditAircraftViewModel EditAircraftViewModel
+        {
+            get => _editAircraftViewModel;
+            set {
+            if (value != null && _editAircraftViewModel != value) {
+                _editAircraftViewModel = value;
+                OnPropertyChanged();
+            }
+            }
+        }
+
         public LogbookViewModel() 
         {
             Flights = new ObservableCollection<Flight>();
@@ -142,18 +156,15 @@ namespace FSTRaK.ViewModels
 
             });
 
-            OpenEditAircraftPopupCommand = new RelayCommand(o => { 
-                Task.Run(() =>
-                {
-                    ShowEditAircraftPopup = true;
-                });
+            OpenEditAircraftPopupCommand = new RelayCommand(o =>
+            {
+                EditAircraftViewModel = new EditAircraftViewModel(SelectedFlight.Aircraft);
+                ShowEditAircraftPopup = true;
+
             });
 
             OpenAddCommentPopupCommand = new RelayCommand(o => {
-                Task.Run(() =>
-                {
-                    ShowAddCommentPopup = true;
-                });
+                ShowAddCommentPopup = true;
             });
 
             _typingTimer.Elapsed += _typingTimer_Elapsed;

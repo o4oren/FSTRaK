@@ -21,6 +21,7 @@
                 <views:FlightDetailsView/>
             </DataTemplate>
 
+
             <Style x:Key="ListViewItemStyle" TargetType="ListViewItem">
                 <Setter Property="Template">
                     <Setter.Value>
@@ -167,12 +168,10 @@
             IsOpen="{Binding ShowEditAircraftPopup}"
             PlacementTarget="{Binding ElementName=MainWindowView}"
             Placement="Center"
-            >
-            <Border BorderThickness="1">
-                <TextBlock Background="LightBlue" Foreground="Blue" Padding="30">
-                    Edit aircraft
-                </TextBlock>
-            </Border>
+        >
+            <views:EditAircraftPopupView 
+                DataContext="{Binding EditAircraftViewModel}"
+            />
         </Popup>
         <Popup 
             Name="ShowAddCommentPopup" 
