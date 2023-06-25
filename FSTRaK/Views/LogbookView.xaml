@@ -103,11 +103,13 @@
             </ListView.Template>
             <ListView.ContextMenu>
                 <ContextMenu>
-                        <MenuItem Header="Delete Flight" Command="{Binding DeleteFlightCommand}"></MenuItem>
+                    <MenuItem Header="Add Comment" Command="{Binding OpenAddCommentPopupCommand}"></MenuItem>
+                    <MenuItem Header="Edit Aircraft" Command="{Binding OpenEditAircraftPopupCommand}"></MenuItem>
+                    <MenuItem Header="Delete Flight" Command="{Binding DeleteFlightCommand}"></MenuItem>
                 </ContextMenu>
-                </ListView.ContextMenu>
+            </ListView.ContextMenu>
 
-                <ListView.ItemTemplate>
+            <ListView.ItemTemplate>
                     <DataTemplate>
                         <StackPanel>
                         <Grid HorizontalAlignment="Stretch">
@@ -160,7 +162,31 @@
                     </DataTemplate>
                 </ListView.ItemTemplate>
             </ListView>
-            <ContentControl Grid.Row="0" Grid.Column="1" Grid.RowSpan="2" Content="{Binding FlightDetailsViewModel}" Margin="0"
+        <Popup 
+            Name="EditAircraftPopup" 
+            IsOpen="{Binding ShowEditAircraftPopup}"
+            PlacementTarget="{Binding ElementName=MainWindowView}"
+            Placement="Center"
+            >
+            <Border BorderThickness="1">
+                <TextBlock Background="LightBlue" Foreground="Blue" Padding="30">
+                    Edit aircraft
+                </TextBlock>
+            </Border>
+        </Popup>
+        <Popup 
+            Name="ShowAddCommentPopup" 
+            IsOpen="{Binding ShowAddCommentPopup}"
+            PlacementTarget="{Binding ElementName=MainWindowView}"
+            Placement="Center"
+        >
+            <Border BorderThickness="1">
+                <TextBlock Background="LightSalmon" Foreground="red" Padding="30">
+                    Add comment
+                </TextBlock>
+            </Border>
+        </Popup>
+        <ContentControl Grid.Row="0" Grid.Column="1" Grid.RowSpan="2" Content="{Binding FlightDetailsViewModel}" Margin="0"
                      HorizontalContentAlignment="Stretch" VerticalContentAlignment="Stretch" />
     </Grid>
 

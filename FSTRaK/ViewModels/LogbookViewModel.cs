@@ -22,6 +22,8 @@ namespace FSTRaK.ViewModels
         private System.Timers.Timer _typingTimer;
         public RelayCommand OnLoogbookLoadedCommand { get; set; }
         public RelayCommand DeleteFlightCommand { get; set; }
+        public RelayCommand OpenAddCommentPopupCommand { get; set; }
+        public RelayCommand OpenEditAircraftPopupCommand { get; set; }
 
         private FlightDetailsViewModel _flightDetailsViewModel;
 
@@ -32,6 +34,30 @@ namespace FSTRaK.ViewModels
                 _flightDetailsViewModel = value;
                 OnPropertyChanged();
             } 
+        }
+
+        private bool _showEditAircraftPopup = false;
+
+        public bool ShowEditAircraftPopup
+        {
+            get => _showEditAircraftPopup;
+            set
+            {
+                _showEditAircraftPopup = value;
+                OnPropertyChanged();
+            }
+        }
+
+        private bool _showAddCommentPopup = false;
+
+        public bool ShowAddCommentPopup
+        {
+            get => _showAddCommentPopup;
+            set
+            {
+                _showAddCommentPopup = value;
+                OnPropertyChanged();
+            }
         }
 
         public ObservableCollection<Flight> Flights { get; set; }
@@ -114,6 +140,20 @@ namespace FSTRaK.ViewModels
                     }
                 });
 
+            });
+
+            OpenEditAircraftPopupCommand = new RelayCommand(o => { 
+                Task.Run(() =>
+                {
+                    ShowEditAircraftPopup = true;
+                });
+            });
+
+            OpenAddCommentPopupCommand = new RelayCommand(o => {
+                Task.Run(() =>
+                {
+                    ShowAddCommentPopup = true;
+                });
             });
 
             _typingTimer.Elapsed += _typingTimer_Elapsed;
