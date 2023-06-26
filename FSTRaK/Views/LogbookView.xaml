@@ -104,7 +104,7 @@
             </ListView.Template>
             <ListView.ContextMenu>
                 <ContextMenu>
-                    <MenuItem Header="Add Comment" Command="{Binding OpenAddCommentPopupCommand}"></MenuItem>
+                    <MenuItem Header="Add/Edit Comment" Command="{Binding OpenAddCommentPopupCommand}"></MenuItem>
                     <MenuItem Header="Edit Aircraft" Command="{Binding OpenEditAircraftPopupCommand}"></MenuItem>
                     <MenuItem Header="Delete Flight" Command="{Binding DeleteFlightCommand}"></MenuItem>
                 </ContextMenu>
@@ -168,18 +168,10 @@
                 x:Name="EditAircraftPopupView"
                 DataContext="{Binding EditAircraftViewModel}"
             />
-        <Popup 
-            Name="ShowAddCommentPopup" 
-            IsOpen="{Binding ShowAddCommentPopup}"
-            PlacementTarget="{Binding ElementName=MainWindowView}"
-            Placement="Center"
-        >
-            <Border BorderThickness="1">
-                <TextBlock Background="LightSalmon" Foreground="red" Padding="30">
-                    Add comment
-                </TextBlock>
-            </Border>
-        </Popup>
+            <views:AddCommentPopupView
+                x:Name="AddCommentPopupView"
+                DataContext="{Binding AddCommentViewModel}"
+            />
         <ContentControl Grid.Row="0" Grid.Column="1" Grid.RowSpan="2" Content="{Binding FlightDetailsViewModel}" Margin="0"
                      HorizontalContentAlignment="Stretch" VerticalContentAlignment="Stretch" />
     </Grid>

@@ -158,11 +158,15 @@
     <Compile Include="Utils\ResourceUtils.cs" />
     <Compile Include="Utils\SkyVectorMapTileLayer.cs" />
     <Compile Include="Utils\SkyVectorTileSource.cs" />
+    <Compile Include="ViewModels\AddCommentViewModel.cs" />
     <Compile Include="ViewModels\EditAircraftViewModel.cs" />
     <Compile Include="ViewModels\FlightDetailsParamsViewModel.cs" />
     <Compile Include="ViewModels\FlightDetailsViewModel.cs" />
     <Compile Include="ViewModels\LogbookViewModel.cs" />
     <Compile Include="ViewModels\SettingsViewModel.cs" />
+    <Compile Include="Views\AddCommentPopupView.xaml.cs">
+      <DependentUpon>AddCommentPopupView.xaml</DependentUpon>
+    </Compile>
     <Compile Include="Views\EditAircraftPopupView.xaml.cs">
       <DependentUpon>EditAircraftPopupView.xaml</DependentUpon>
     </Compile>
@@ -207,6 +211,10 @@
     <Page Include="Resources\ButtonsTheme.xaml">
       <SubType>Designer</SubType>
       <Generator>MSBuild:Compile</Generator>
+    </Page>
+    <Page Include="Views\AddCommentPopupView.xaml">
+      <Generator>MSBuild:Compile</Generator>
+      <SubType>Designer</SubType>
     </Page>
     <Page Include="Views\EditAircraftPopupView.xaml">
       <SubType>Designer</SubType>

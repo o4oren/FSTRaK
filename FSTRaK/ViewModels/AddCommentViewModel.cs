@@ -11,18 +11,19 @@ using FSTRaK.Models.Entity;
 using System.Collections.ObjectModel;
 using System.Windows.Media.Media3D;
 using System.Data.Entity;
+using System.Runtime.Remoting.Contexts;
 
 namespace FSTRaK.ViewModels
 {
-    internal class EditAircraftViewModel : BaseViewModel
+    internal class AddCommentViewModel : BaseViewModel
     {
-        private Aircraft _aircraft;
-        public Aircraft Aircraft
+        private Flight _flight;
+        public Flight Flight
         {
-            get => _aircraft;
+            get => _flight;
             set
             {
-                _aircraft = value;
+                _flight = value;
                 OnPropertyChanged();
             }
         }
@@ -49,15 +50,15 @@ namespace FSTRaK.ViewModels
             }
         }
 
-        public RelayCommand UpdateAircraft { get; }
+        public RelayCommand AddComment { get; }
         public RelayCommand ClosePopup { get; }
 
 
-        public EditAircraftViewModel(Aircraft aircraft) : base()
+        public AddCommentViewModel(Flight flight) : base()
         {
-            Aircraft = aircraft;
+            Flight = flight;
 
-            UpdateAircraft = new RelayCommand(o =>
+            AddComment = new RelayCommand(o =>
             {
                 Task.Run(() =>
                 {
@@ -65,7 +66,7 @@ namespace FSTRaK.ViewModels
                     {
                         try
                         {
-                            logbookContext.Entry(aircraft).State = EntityState.Modified;
+                            logbookContext.Entry(flight).State = EntityState.Modified;
                             logbookContext.SaveChanges();
                         }
                         catch (Exception ex)

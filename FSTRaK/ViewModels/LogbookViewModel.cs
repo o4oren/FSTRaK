@@ -86,6 +86,20 @@ namespace FSTRaK.ViewModels
             }
         }
 
+        private AddCommentViewModel _addCommentViewModel;
+        public AddCommentViewModel AddCommentViewModel
+        {
+            get => _addCommentViewModel;
+            set
+            {
+                if (value != null && _addCommentViewModel != value)
+                {
+                    _addCommentViewModel = value;
+                    OnPropertyChanged();
+                }
+            }
+        }
+
         public LogbookViewModel() 
         {
             Flights = new ObservableCollection<Flight>();
@@ -162,7 +176,16 @@ namespace FSTRaK.ViewModels
             });
 
             OpenAddCommentPopupCommand = new RelayCommand(o => {
-                ShowAddCommentPopup = true;
+                var addCommentViewModel = new AddCommentViewModel(SelectedFlight)
+                {
+                    IsShow = true
+                };
+                addCommentViewModel.PropertyChanged += (sender, args) =>
+                {
+                    if (addCommentViewModel.WasUpdated)
+                        LoadFlights();
+                };
+                AddCommentViewModel = addCommentViewModel;
             });
 
             _typingTimer.Elapsed += _typingTimer_Elapsed;

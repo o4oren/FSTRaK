@@ -38,6 +38,9 @@ namespace FSTRaK.ViewModels
 
         public double Score { get; set; }
 
+        public string Comment { get; set; }
+
+
         public FlightDetailsParamsViewModel(Flight flight) : base()
         {
             Aircraft = flight.Aircraft;
@@ -54,6 +57,8 @@ namespace FSTRaK.ViewModels
             Score = flight.Score;
             ArrivedOrCrashedText = flight.FlightOutcome == FlightOutcome.Crashed ? "Crashed near: " : "Arrived at: ";
             FuelUnit = Properties.Settings.Default.Units == (int)Units.Imperial ? "Lbs" : "Kg";
+            Comment = flight.Comment;
+
         }
 
         private double CalculateLandingVs(Flight flight)

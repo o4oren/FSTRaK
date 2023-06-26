@@ -99,6 +99,9 @@ namespace FSTRaK.Models
             }
         }
 
+        public string Comment { get; set; }
+
+
         public Flight()
         {
             this.FlightEvents = new ObservableCollection<BaseFlightEvent>();
