@@ -163,16 +163,11 @@
                     </DataTemplate>
                 </ListView.ItemTemplate>
             </ListView>
-        <Popup 
-            Name="EditAircraftPopup" 
-            IsOpen="{Binding ShowEditAircraftPopup}"
-            PlacementTarget="{Binding ElementName=MainWindowView}"
-            Placement="Center"
-        >
-            <views:EditAircraftPopupView 
+
+            <views:EditAircraftPopupView
+                x:Name="EditAircraftPopupView"
                 DataContext="{Binding EditAircraftViewModel}"
             />
-        </Popup>
         <Popup 
             Name="ShowAddCommentPopup" 
             IsOpen="{Binding ShowAddCommentPopup}"

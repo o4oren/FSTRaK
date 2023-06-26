@@ -26,7 +26,8 @@ namespace FSTRaK.ViewModels
         public RelayCommand DeleteFlightCommand { get; set; }
         public RelayCommand OpenAddCommentPopupCommand { get; set; }
         public RelayCommand OpenEditAircraftPopupCommand { get; set; }
-
+        public RelayCommand CloseEditAircraftPopupCommand { get; set; }
+        
         private FlightDetailsViewModel _flightDetailsViewModel;
 
         public FlightDetailsViewModel FlightDetailsViewModel { 
@@ -158,9 +159,10 @@ namespace FSTRaK.ViewModels
 
             OpenEditAircraftPopupCommand = new RelayCommand(o =>
             {
-                EditAircraftViewModel = new EditAircraftViewModel(SelectedFlight.Aircraft);
-                ShowEditAircraftPopup = true;
-
+                EditAircraftViewModel = new EditAircraftViewModel(SelectedFlight.Aircraft)
+                {
+                    IsShow = true
+                };
             });
 
             OpenAddCommentPopupCommand = new RelayCommand(o => {
@@ -209,7 +211,7 @@ namespace FSTRaK.ViewModels
                         .Include(f => f.Aircraft)
                         .Include(f => f.FlightEvents);
 
-                        App.Current.Dispatcher.Invoke((Action)delegate
+                        System.Windows.Application.Current.Dispatcher.Invoke((Action)delegate
                         {
                             Flights = new ObservableCollection<Flight>(flights);
                             OnPropertyChanged(nameof(Flights));

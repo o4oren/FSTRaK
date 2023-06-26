@@ -6,19 +6,67 @@
              xmlns:local="clr-namespace:FSTRaK.Views"
              xmlns:viewModels="clr-namespace:FSTRaK.ViewModels"
              mc:Ignorable="d" 
+             Style="{DynamicResource GlobalFont}"
              d:DataContext="{d:DesignInstance Type=viewModels:EditAircraftViewModel}"
              d:DesignHeight="450" d:DesignWidth="800">
-    <Border 
-        BorderBrush="{StaticResource BorderMidColorBrush}"
-        Background="{StaticResource PrimaryLightBrush}"
-        Padding="10"
-        >
-        <StackPanel>
-            <TextBlock>
-                <Run Text="{Binding Aircraft.Title, Mode=TwoWay}"></Run>
-            </TextBlock>
-            <Button Command="{Binding UpdateAircraft}">Click</Button>
-        </StackPanel>
+    <Popup 
+        Name="EditAircraftPopup" 
+        IsOpen="{Binding IsShow}"
+        PlacementTarget="{Binding ElementName=MainWindowView}"
+        Placement="Center"
+    >
+            <Border 
+            BorderBrush="{StaticResource BorderMidColorBrush}"
+            Background="{StaticResource PrimaryLightBrush}"
+            Padding="10"
+            >
+                <Grid>
+                    <Grid.Resources>
+                        <Style TargetType="{x:Type TextBlock}">
+                            <Setter Property="Margin" Value="5" />
+                        </Style>
+                        <Style TargetType="{x:Type TextBox}">
+                            <Setter Property="Margin" Value="5" />
+                            <Setter Property="Foreground" Value="{StaticResource TextColor}" />
+                        </Style>
+                    </Grid.Resources>
+                    <Grid.ColumnDefinitions>
+                        <ColumnDefinition />
+                        <ColumnDefinition />
+                    <ColumnDefinition />
 
-    </Border>
+                </Grid.ColumnDefinitions>
+                    <Grid.RowDefinitions>
+                        <RowDefinition />
+                        <RowDefinition />
+                        <RowDefinition />
+                        <RowDefinition />
+                        <RowDefinition />
+                        <RowDefinition />
+                        <RowDefinition />
+                    </Grid.RowDefinitions>
+
+                    <TextBlock Grid.Column="0" Grid.Row="0">Title</TextBlock>
+                    <TextBlock Grid.Column="1" Grid.Row="0" Text="{Binding Aircraft.Title, Mode=TwoWay}" />
+
+                    <TextBlock Grid.Column="0" Grid.Row="1">Manufacturer</TextBlock>
+                    <TextBox Grid.Column="1" Grid.Row="1" Text="{Binding Aircraft.Manufacturer, Mode=TwoWay}" />
+
+                    <TextBlock Grid.Column="0" Grid.Row="2">Type</TextBlock>
+                    <TextBox Grid.Column="1" Grid.Row="2" Text="{Binding Aircraft.AircraftType, Mode=TwoWay}" />
+
+                    <TextBlock Grid.Column="0" Grid.Row="3">Model</TextBlock>
+                    <TextBox Grid.Column="1" Grid.Row="3" Text="{Binding Aircraft.Model, Mode=TwoWay}" />
+
+                    <TextBlock Grid.Column="0" Grid.Row="4">Airline</TextBlock>
+                    <TextBox Grid.Column="1" Grid.Row="4" Text="{Binding Aircraft.Airline, Mode=TwoWay}" />
+
+                    <TextBlock Grid.Column="0" Grid.Row="5">Tail number</TextBlock>
+                    <TextBox Grid.Column="1" Grid.Row="5" Text="{Binding Aircraft.TailNumber, Mode=TwoWay}" />
+                    <Button Grid.Column="0" Grid.Row="6" Command="{Binding UpdateAircraft}" Width="100">Save</Button>
+                    <Button Grid.Column="1" Grid.Row="6" Command="{Binding ClosePopup}" Width="100">Close</Button>
+                </Grid>
+
+        </Border>
+    </Popup>
 </UserControl>

@@ -7,6 +7,9 @@ using System.Threading.Tasks;
 using System.Windows;
 using FSTRaK.Models;
 using Serilog;
+using FSTRaK.Models.Entity;
+using System.Collections.ObjectModel;
+using System.Windows.Media.Media3D;
 
 namespace FSTRaK.ViewModels
 {
@@ -23,15 +26,60 @@ namespace FSTRaK.ViewModels
             }
         }
 
+        private bool _isShow = true;
+        public bool IsShow
+        {
+            get => _isShow;
+            set
+            {
+                _isShow = value;
+                OnPropertyChanged();
+            }
+        }
+
         public RelayCommand UpdateAircraft { get; }
+        public RelayCommand ClosePopup { get; }
+
 
         public EditAircraftViewModel(Aircraft aircraft) : base()
         {
             Aircraft = aircraft;
+
             UpdateAircraft = new RelayCommand(o =>
             {
-                Log.Debug(Aircraft.ToString());
-                Log.Debug("Clicked!!!!");
+                Task.Run(() =>
+                {
+                    using (var logbookContext = new LogbookContext())
+                    {
+                        try
+                        {
+                            var dbAircraft = logbookContext.Aircraft.FirstOrDefault(a => a.Id == aircraft.Id);
+                            if (dbAircraft != null)
+                            {
+                                dbAircraft.AircraftType = aircraft.AircraftType;
+                                dbAircraft.Model = aircraft.Model;
+                                dbAircraft.Airline = aircraft.Airline;
+                                dbAircraft.Manufacturer = aircraft.Manufacturer;
+                                dbAircraft.TailNumber = aircraft.Manufacturer;
+                                logbookContext.SaveChanges();
+                            }
+                        }
+                        catch (Exception ex)
+                        {
+                            Log.Debug(ex, ex.Message);
+                        }
+                        Application.Current.Dispatcher.Invoke((Action)delegate
+                        {
+                            IsShow = false;
+                        });
+                    }
+                });
+            });
+
+
+            ClosePopup = new RelayCommand(o =>
+            {
+                IsShow = false;
             });
         }
 
