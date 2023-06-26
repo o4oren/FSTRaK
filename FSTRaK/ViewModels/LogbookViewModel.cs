@@ -11,7 +11,9 @@ using System.Linq;
 using System.Threading;
 using System.Threading.Tasks;
 using System.Timers;
+using FSTRaK;
 using FSTRaK.Models.FlightManager.State;
+using FSTRaK.ViewModels;
 
 namespace FSTRaK.ViewModels
 {
@@ -22,7 +24,10 @@ namespace FSTRaK.ViewModels
         private System.Timers.Timer _typingTimer;
         public RelayCommand OnLoogbookLoadedCommand { get; set; }
         public RelayCommand DeleteFlightCommand { get; set; }
-
+        public RelayCommand OpenAddCommentPopupCommand { get; set; }
+        public RelayCommand OpenEditAircraftPopupCommand { get; set; }
+        public RelayCommand CloseEditAircraftPopupCommand { get; set; }
+        
         private FlightDetailsViewModel _flightDetailsViewModel;
 
         public FlightDetailsViewModel FlightDetailsViewModel { 
@@ -32,6 +37,18 @@ namespace FSTRaK.ViewModels
                 _flightDetailsViewModel = value;
                 OnPropertyChanged();
             } 
+        }
+
+        private bool _showAddCommentPopup = false;
+
+        public bool ShowAddCommentPopup
+        {
+            get => _showAddCommentPopup;
+            set
+            {
+                _showAddCommentPopup = value;
+                OnPropertyChanged();
+            }
         }
 
         public ObservableCollection<Flight> Flights { get; set; }
@@ -54,6 +71,33 @@ namespace FSTRaK.ViewModels
                     OnPropertyChanged(nameof(SelectedFlight));
                 }
             } 
+        }
+
+        private EditAircraftViewModel _editAircraftViewModel;
+        public EditAircraftViewModel EditAircraftViewModel
+        {
+            get => _editAircraftViewModel;
+            set {
+            if (value != null && _editAircraftViewModel != value) 
+            {
+                _editAircraftViewModel = value;
+                OnPropertyChanged();
+            }
+            }
+        }
+
+        private AddCommentViewModel _addCommentViewModel;
+        public AddCommentViewModel AddCommentViewModel
+        {
+            get => _addCommentViewModel;
+            set
+            {
+                if (value != null && _addCommentViewModel != value)
+                {
+                    _addCommentViewModel = value;
+                    OnPropertyChanged();
+                }
+            }
         }
 
         public LogbookViewModel() 
@@ -116,6 +160,34 @@ namespace FSTRaK.ViewModels
 
             });
 
+            OpenEditAircraftPopupCommand = new RelayCommand(o =>
+            {
+                
+                var editAircraftViewModel = new EditAircraftViewModel(SelectedFlight.Aircraft)
+                {
+                    IsShow = true
+                };
+                editAircraftViewModel.PropertyChanged += (sender, args) =>
+                {
+                    if(editAircraftViewModel.WasUpdated)
+                        LoadFlights();
+                };
+                EditAircraftViewModel = editAircraftViewModel;
+            });
+
+            OpenAddCommentPopupCommand = new RelayCommand(o => {
+                var addCommentViewModel = new AddCommentViewModel(SelectedFlight)
+                {
+                    IsShow = true
+                };
+                addCommentViewModel.PropertyChanged += (sender, args) =>
+                {
+                    if (addCommentViewModel.WasUpdated)
+                        LoadFlights();
+                };
+                AddCommentViewModel = addCommentViewModel;
+            });
+
             _typingTimer.Elapsed += _typingTimer_Elapsed;
         }
 
@@ -158,7 +230,7 @@ namespace FSTRaK.ViewModels
                         .Include(f => f.Aircraft)
                         .Include(f => f.FlightEvents);
 
-                        App.Current.Dispatcher.Invoke((Action)delegate
+                        System.Windows.Application.Current.Dispatcher.Invoke((Action)delegate
                         {
                             Flights = new ObservableCollection<Flight>(flights);
                             OnPropertyChanged(nameof(Flights));
@@ -188,7 +260,9 @@ namespace FSTRaK.ViewModels
                             || f.ArrivalAirport.ToLower().Equals(SearchText.ToLower())
                             || f.Aircraft.Title.ToLower().Contains(SearchText.ToLower())
                             || f.Aircraft.Model.ToLower().Contains(SearchText.ToLower())
-                            )
+                            || f.Aircraft.Airline.ToLower().StartsWith(SearchText.ToLower())
+                            || f.Aircraft.TailNumber.ToLower().StartsWith(SearchText.ToLower())
+                        )
                         .OrderByDescending(f => f.Id)
                         .Include(f => f.Aircraft)
                         .Include(f => f.FlightEvents);

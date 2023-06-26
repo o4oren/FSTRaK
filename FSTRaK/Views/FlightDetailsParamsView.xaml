@@ -46,6 +46,7 @@
                 Text="{Binding ElementName=OverlayTextCard, Path=Text}"
                 HorizontalAlignment="Left"
                 VerticalAlignment="Center"
+                MaxWidth="300"
             >
                 <Run Text="Departed from: "/><Run Text="{Binding DepartureAirportText}"/> 
                 <LineBreak />
@@ -69,7 +70,12 @@
                 <LineBreak/>
 
                 <Run Text="Score: "/><Run Text="{Binding Score}"/>
+                
+                <LineBreak/>
 
+                <Run Text="Comment: "/>
+                <LineBreak />
+                <Run Text="{Binding Comment}"/>
 
             </TextBlock>
             </Grid>

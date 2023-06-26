@@ -6,6 +6,7 @@
     <system:String x:Key="ThemeFontName">Slopes</system:String>
 
 
+
     <!--Pallete-->
     <Color x:Key="PrimaryBright">#F2F5F8</Color>
     <Color x:Key="PrimaryMid">#D7E0EA</Color>
@@ -193,9 +194,56 @@
             </GradientStopCollection>
         </LinearGradientBrush.GradientStops>
     </LinearGradientBrush>
-    
+
+
+
+
 
     <!--Styles and templates.-->
+
+    <Style x:Key="GlobalFont" TargetType="{x:Type Control}">
+        <Setter Property="FontFamily"
+                Value="{DynamicResource Slopes}" />
+        <Setter Property="FontSize"
+                Value="22" />
+        <Setter Property="Foreground"
+                Value="{StaticResource PrimaryDarkBrush}" />
+    </Style>
+
+    <Style TargetType="{x:Type Button}">
+        <Setter Property="BorderBrush"
+                Value="{DynamicResource SilverGradient}" />
+        <Setter Property="Padding"
+                Value="10" />
+        <Setter Property="Foreground"
+                Value="{StaticResource PrimaryDarkBrush}" />
+        <Setter Property="Template">
+            <Setter.Value>
+                <ControlTemplate TargetType="Button">
+                    <Border x:Name="border"  BorderBrush="{DynamicResource SilverGradient}" BorderThickness="1" 
+                            Background="{TemplateBinding Background}"
+                            CornerRadius="2"
+                            Padding="5"
+                            Margin="5"
+                            >
+                        <ContentPresenter HorizontalAlignment="Center"/>
+                    </Border>
+
+                    <ControlTemplate.Triggers>
+                        <Trigger Property="IsMouseOver" Value="True">
+                            <Setter TargetName="border" Property="BorderBrush" Value="{StaticResource SilverGradientOneSide}" />
+                            <Setter Property="Foreground" Value="{StaticResource UnselectedTextColor}" />
+                        </Trigger>
+                        <Trigger Property="IsPressed" Value="True">
+                            <Setter TargetName="border" Property="BorderBrush" Value="{StaticResource SilverGradientSecondSide}" />
+                            <Setter Property="Background" Value="{StaticResource BorderMidColorBrush}" />
+                            <Setter Property="Foreground" Value="{StaticResource PrimaryLightBrush}" />
+                        </Trigger>
+                    </ControlTemplate.Triggers>
+                </ControlTemplate>
+            </Setter.Value>
+        </Setter>
+    </Style>
 
     <Style TargetType="{x:Type CheckBox}" x:Key="SettingsCheckbox">
         <Setter Property="Template">

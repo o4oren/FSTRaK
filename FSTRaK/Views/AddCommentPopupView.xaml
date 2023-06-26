@@ -1,0 +1,57 @@
+﻿<UserControl x:Class="FSTRaK.Views.AddCommentPopupView"
+             xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+             xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+             xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006" 
+             xmlns:d="http://schemas.microsoft.com/expression/blend/2008" 
+             xmlns:viewModels="clr-namespace:FSTRaK.ViewModels"
+             mc:Ignorable="d" 
+             Style="{DynamicResource GlobalFont}"
+             d:DataContext="{d:DesignInstance Type=viewModels:AddCommentViewModel}"
+             d:DesignHeight="450" d:DesignWidth="800">
+    <Popup 
+        Name="AddCommentPopup" 
+        IsOpen="{Binding IsShow}"
+        Placement="MousePoint"
+        
+    >
+            <Border 
+            BorderBrush="{StaticResource BorderMidColorBrush}"
+            Background="{StaticResource PrimaryLightBrush}"
+            BorderThickness="1"
+            Padding="10"
+            >
+                <Grid>
+                    <Grid.Resources>
+                        <Style>
+                            <Style.TargetType>
+                                <x:Type TypeName="TextBlock" />
+                            </Style.TargetType>
+                            <Setter Property="Margin" Value="5" />
+                        </Style>
+                        <Style TargetType="{x:Type TextBox}">
+                            <Setter Property="Margin" Value="5" />
+                            <Setter Property="Foreground" Value="{StaticResource TextColor}" />
+                        </Style>
+                    </Grid.Resources>
+                    <Grid.ColumnDefinitions>
+                        <ColumnDefinition />
+                        <ColumnDefinition />
+                        <ColumnDefinition />
+                    <ColumnDefinition />
+
+                </Grid.ColumnDefinitions>
+                    <Grid.RowDefinitions>
+                        <RowDefinition />
+                        <RowDefinition />
+                        <RowDefinition />
+                    </Grid.RowDefinitions>
+
+                    <TextBlock Grid.Column="0" Grid.Row="0">Comment</TextBlock>
+                    <TextBox Grid.Column="0" Grid.Row="1" Grid.ColumnSpan="3" TextWrapping="WrapWithOverflow"  MinLines="5" Width="300" MaxLength="180" Text="{Binding Flight.Comment, Mode=TwoWay}" />
+                    <Button Grid.Column="0" Grid.Row="2" Command="{Binding AddComment}" Width="100">Save</Button>
+                    <Button Grid.Column="1" Grid.Row="2" Command="{Binding ClosePopup}" Width="100">Close</Button>
+                </Grid>
+
+        </Border>
+    </Popup>
+</UserControl>

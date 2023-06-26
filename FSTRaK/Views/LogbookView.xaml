@@ -21,6 +21,7 @@
                 <views:FlightDetailsView/>
             </DataTemplate>
 
+
             <Style x:Key="ListViewItemStyle" TargetType="ListViewItem">
                 <Setter Property="Template">
                     <Setter.Value>
@@ -103,11 +104,13 @@
             </ListView.Template>
             <ListView.ContextMenu>
                 <ContextMenu>
-                        <MenuItem Header="Delete Flight" Command="{Binding DeleteFlightCommand}"></MenuItem>
+                    <MenuItem Header="Add/Edit Comment" Command="{Binding OpenAddCommentPopupCommand}"></MenuItem>
+                    <MenuItem Header="Edit Aircraft" Command="{Binding OpenEditAircraftPopupCommand}"></MenuItem>
+                    <MenuItem Header="Delete Flight" Command="{Binding DeleteFlightCommand}"></MenuItem>
                 </ContextMenu>
-                </ListView.ContextMenu>
+            </ListView.ContextMenu>
 
-                <ListView.ItemTemplate>
+            <ListView.ItemTemplate>
                     <DataTemplate>
                         <StackPanel>
                         <Grid HorizontalAlignment="Stretch">
@@ -160,7 +163,16 @@
                     </DataTemplate>
                 </ListView.ItemTemplate>
             </ListView>
-            <ContentControl Grid.Row="0" Grid.Column="1" Grid.RowSpan="2" Content="{Binding FlightDetailsViewModel}" Margin="0"
+
+            <views:EditAircraftPopupView
+                x:Name="EditAircraftPopupView"
+                DataContext="{Binding EditAircraftViewModel}"
+            />
+            <views:AddCommentPopupView
+                x:Name="AddCommentPopupView"
+                DataContext="{Binding AddCommentViewModel}"
+            />
+        <ContentControl Grid.Row="0" Grid.Column="1" Grid.RowSpan="2" Content="{Binding FlightDetailsViewModel}" Margin="0"
                      HorizontalContentAlignment="Stretch" VerticalContentAlignment="Stretch" />
     </Grid>
 
