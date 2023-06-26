@@ -26,6 +26,17 @@ namespace FSTRaK.ViewModels
             }
         }
 
+        private bool _wasUpdated = false;
+        public bool WasUpdated
+        {
+            get => _wasUpdated;
+            set
+            {
+                _wasUpdated = value;
+                OnPropertyChanged();
+            }
+        }
+
         private bool _isShow = true;
         public bool IsShow
         {
@@ -60,7 +71,7 @@ namespace FSTRaK.ViewModels
                                 dbAircraft.Model = aircraft.Model;
                                 dbAircraft.Airline = aircraft.Airline;
                                 dbAircraft.Manufacturer = aircraft.Manufacturer;
-                                dbAircraft.TailNumber = aircraft.Manufacturer;
+                                dbAircraft.TailNumber = aircraft.TailNumber;
                                 logbookContext.SaveChanges();
                             }
                         }
@@ -70,6 +81,7 @@ namespace FSTRaK.ViewModels
                         }
                         Application.Current.Dispatcher.Invoke((Action)delegate
                         {
+                            WasUpdated = true;
                             IsShow = false;
                         });
                     }

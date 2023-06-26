@@ -3,7 +3,6 @@
              xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
              xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006" 
              xmlns:d="http://schemas.microsoft.com/expression/blend/2008" 
-             xmlns:local="clr-namespace:FSTRaK.Views"
              xmlns:viewModels="clr-namespace:FSTRaK.ViewModels"
              mc:Ignorable="d" 
              Style="{DynamicResource GlobalFont}"
@@ -12,8 +11,8 @@
     <Popup 
         Name="EditAircraftPopup" 
         IsOpen="{Binding IsShow}"
-        PlacementTarget="{Binding ElementName=MainWindowView}"
-        Placement="Center"
+        PlacementTarget="{Binding ElementName=EditAircraftPopup}"
+        Placement="MousePoint"
     >
             <Border 
             BorderBrush="{StaticResource BorderMidColorBrush}"
@@ -22,7 +21,10 @@
             >
                 <Grid>
                     <Grid.Resources>
-                        <Style TargetType="{x:Type TextBlock}">
+                        <Style>
+                            <Style.TargetType>
+                                <x:Type TypeName="TextBlock" />
+                            </Style.TargetType>
                             <Setter Property="Margin" Value="5" />
                         </Style>
                         <Style TargetType="{x:Type TextBox}">

@@ -39,18 +39,6 @@ namespace FSTRaK.ViewModels
             } 
         }
 
-        private bool _showEditAircraftPopup = false;
-
-        public bool ShowEditAircraftPopup
-        {
-            get => _showEditAircraftPopup;
-            set
-            {
-                _showEditAircraftPopup = value;
-                OnPropertyChanged();
-            }
-        }
-
         private bool _showAddCommentPopup = false;
 
         public bool ShowAddCommentPopup
@@ -90,7 +78,8 @@ namespace FSTRaK.ViewModels
         {
             get => _editAircraftViewModel;
             set {
-            if (value != null && _editAircraftViewModel != value) {
+            if (value != null && _editAircraftViewModel != value) 
+            {
                 _editAircraftViewModel = value;
                 OnPropertyChanged();
             }
@@ -159,10 +148,17 @@ namespace FSTRaK.ViewModels
 
             OpenEditAircraftPopupCommand = new RelayCommand(o =>
             {
-                EditAircraftViewModel = new EditAircraftViewModel(SelectedFlight.Aircraft)
+                
+                var editAircraftViewModel = new EditAircraftViewModel(SelectedFlight.Aircraft)
                 {
                     IsShow = true
                 };
+                editAircraftViewModel.PropertyChanged += (sender, args) =>
+                {
+                    if(editAircraftViewModel.WasUpdated)
+                        LoadFlights();
+                };
+                EditAircraftViewModel = editAircraftViewModel;
             });
 
             OpenAddCommentPopupCommand = new RelayCommand(o => {
@@ -241,7 +237,9 @@ namespace FSTRaK.ViewModels
                             || f.ArrivalAirport.ToLower().Equals(SearchText.ToLower())
                             || f.Aircraft.Title.ToLower().Contains(SearchText.ToLower())
                             || f.Aircraft.Model.ToLower().Contains(SearchText.ToLower())
-                            )
+                            || f.Aircraft.Airline.ToLower().StartsWith(SearchText.ToLower())
+                            || f.Aircraft.TailNumber.ToLower().StartsWith(SearchText.ToLower())
+                        )
                         .OrderByDescending(f => f.Id)
                         .Include(f => f.Aircraft)
                         .Include(f => f.FlightEvents);
