@@ -261,10 +261,11 @@ namespace FSTRaK.Models.FlightManager
                         }
                     }
                 }
+                Log.Information($"Enriched aircraft data from {filename}");
             }
             catch (Exception ex)
             {
-                Log.Error("Could not enrich aircraft from file.", ex.Message);
+                Log.Error("Could not enrich aircraft from file.", ex);
             }
         }
 

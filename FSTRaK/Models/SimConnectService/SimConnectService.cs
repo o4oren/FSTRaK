@@ -361,12 +361,13 @@ internal sealed class SimConnectService : INotifyPropertyChanged
         {
             LoadedFlight = data.szString;
             Log.Debug(LoadedFlight);
-        }
-        if (data.dwRequestID == (uint)Requests.AircraftLoaded)
-        {
-            LoadedAircraft = data.szString;
-            Log.Debug(LoadedAircraft);
-        }
+        } 
+// Disabled because this is returning with a partial path (starting from 'Simbojects')
+//        if (data.dwRequestID == (uint)Requests.AircraftLoaded)
+//        {
+//            LoadedAircraft = data.szString;
+//           Log.Debug(LoadedAircraft);
+//        }
     }
 
     private void Simconnect_OnRecvFilename(SimConnect sender, SIMCONNECT_RECV_EVENT_FILENAME data)
