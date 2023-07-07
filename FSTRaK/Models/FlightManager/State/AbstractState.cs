@@ -24,7 +24,7 @@ namespace FSTRaK.Models.FlightManager.State
         /// This method must be implemented by inheriting class.
         /// Recommendations:
         /// 1. Handle one time operations in the constructor.
-        /// 2. Use StopWatch for timed insrations of state into the db.
+        /// 2. Use StopWatch for timed insertions of state into the db.
         /// 3. Check for special conditions at the beginning of the method.
         /// 4. Don't forget to handle exit from flight.
         /// </summary>
@@ -44,7 +44,7 @@ namespace FSTRaK.Models.FlightManager.State
         }
 
         /// <summary>
-        /// Recieves flight data and an instance of FlightEvent. Adds the flight event to the active flight if the stopwatch is off, or if the update interval has passed.
+        /// Receives flight data and an instance of FlightEvent. Adds the flight event to the active flight if the stopwatch is off, or if the update interval has passed.
         /// </summary>
         /// <param name="data"></param>
         /// <param name="fe"></param>
