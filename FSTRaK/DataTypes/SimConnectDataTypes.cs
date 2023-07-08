@@ -148,17 +148,17 @@ namespace FSTRaK.DataTypes
             return new double[] { Engine1MaxRpmPct, Engine2MaxRpmPct, Engine3MaxRpmPct, Engine4MaxRpmPct}.Max();
         }
 
-        public double MaxThorttlePosition()
+        public double MaxThrottlePosition()
         {
             return new double[] { Throttle1Position, Throttle2Position, Throttle3Position, Throttle3Position }.Max();
         }
 
         public double MinThrottlePosition(int numberOfEngines)
         {
-            var thorttlePositionArray = new List<double>( new double[] { Throttle1Position, Throttle1Position, Throttle2Position, Throttle3Position });
+            var throttlePositionArray = new List<double>( new double[] { Throttle1Position, Throttle1Position, Throttle2Position, Throttle3Position });
             if (numberOfEngines == 0)
                 return 0;
-            return thorttlePositionArray.GetRange(0, numberOfEngines).Min();
+            return throttlePositionArray.GetRange(0, numberOfEngines).Min();
         }
 
     }

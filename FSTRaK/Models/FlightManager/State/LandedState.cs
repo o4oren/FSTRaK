@@ -68,7 +68,7 @@ namespace FSTRaK.Models.FlightManager.State
                 return;
             }
 
-            if (data.GroundVelocity < 35 && data.MaxThorttlePosition() < 50)
+            if (data.GroundVelocity < 35 && data.MaxThrottlePosition() < 50)
             {
                 var ti = new TaxiInEvent()
                 {
