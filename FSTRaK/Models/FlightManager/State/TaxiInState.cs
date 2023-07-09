@@ -1,5 +1,6 @@
 ﻿
 using FSTRaK.DataTypes;
+using Serilog;
 
 namespace FSTRaK.Models.FlightManager.State
 {
@@ -33,6 +34,7 @@ namespace FSTRaK.Models.FlightManager.State
                     FlapsPosition = data.FlapPosition,
                     FuelWeightLbs = data.FuelWeightLbs
                 };
+                Log.Information($"Parked! Flaps: {pe.FlapsPosition}, with {pe.FuelWeightLbs} Lbs of fuel.");
 
                 AddFlightEvent(data, pe);
                 Context.State = new FlightEndedState(Context);

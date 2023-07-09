@@ -23,6 +23,10 @@ namespace FSTRaK.Models.Entity
         protected override void OnModelCreating(DbModelBuilder modelBuilder)
         {
             modelBuilder.Conventions.Remove<PluralizingTableNameConvention>();
+            modelBuilder.Entity<Flight>()
+                .HasMany(e => e.FlightEvents)
+                .WithRequired(e => e.Flight)
+                .HasForeignKey(e => e.FlightId);
         }
     }
 }
