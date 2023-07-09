@@ -77,6 +77,8 @@ namespace FSTRaK.Models.FlightManager.State
                     FuelWeightLbs = data.FuelWeightLbs
                 };
                 AddFlightEvent(data, to);
+                Log.Information($"Taxi out! with {to.FuelWeightLbs} Lbs of fuel.");
+
                 Context.State = new TaxiOutState(Context);
             }
         }
