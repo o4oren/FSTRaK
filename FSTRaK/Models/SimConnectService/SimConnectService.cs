@@ -471,6 +471,8 @@ internal sealed class SimConnectService : INotifyPropertyChanged
 
             foreach (var a in data.rgData.Cast<SIMCONNECT_DATA_FACILITY_AIRPORT>())
             {
+                if(a.Icao.Length < 3 || a.Icao.Length > 4)
+                    continue;
                 var airportCoord = new GeoCoordinate(a.Latitude, a.Longitude);
                 var distance = airportCoord.GetDistanceTo(myCoordinates);
                 if (distance < NearestAirportDistance)

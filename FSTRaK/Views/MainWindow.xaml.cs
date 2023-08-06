@@ -78,6 +78,8 @@ namespace FSTRaK.Views
             if (Properties.Settings.Default.IsStartMinimized)
             {
                 WindowState = WindowState.Minimized;
+                if (Properties.Settings.Default.IsMinimizeToTray)
+                    this.Hide();
             }
         }
 
