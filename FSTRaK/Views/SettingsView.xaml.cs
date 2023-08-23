@@ -17,7 +17,7 @@ namespace FSTRaK.Views
 
         public void OnLoaded(object s, RoutedEventArgs e)
         {
-            ((SettingsViewModel)DataContext).OnLoaded();
+            ((SettingsViewModel)DataContext).SettingsView_OnLoaded();
         }
     }
 }

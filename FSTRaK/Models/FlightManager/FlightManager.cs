@@ -18,13 +18,12 @@ namespace FSTRaK.Models.FlightManager
     /// FlightManager is the domain model managing the flight. It's responsibilities are to subscribe to the Simconnect service events, 
     /// manage the flight state, expose the model data to realtime map view and persist the flight when they end.
     /// </summary>
-    internal sealed class FlightManager : INotifyPropertyChanged
+    internal sealed class FlightManager : BaseModel
     {
         private static readonly object Lock = new();
         private static FlightManager _instance = null;
         private FlightManager() { }
 
-        public event PropertyChangedEventHandler PropertyChanged;
         private SimConnectService _simConnectService;
         public static FlightManager Instance
         {
@@ -70,7 +69,7 @@ namespace FSTRaK.Models.FlightManager
         }
 
         private AbstractState _state;
-        internal AbstractState State { 
+        public AbstractState State { 
             get => _state;
             set
             {
@@ -166,13 +165,13 @@ namespace FSTRaK.Models.FlightManager
             return _simConnectService.LoadedAircraft;
         }
 
-        internal void RequestNearestAirports(NearestAirportRequestType nearestAirportRequestType)
+        public void RequestNearestAirports(NearestAirportRequestType nearestAirportRequestType)
         {
             _nearestAirportRequestType = nearestAirportRequestType;
             _simConnectService.RequestNearestAirport();
         }
 
-        internal void RequestLoadedAircraft()
+        public void RequestLoadedAircraft()
         {
             _simConnectService.RequestLoadedAircraft();
         }
@@ -261,10 +260,11 @@ namespace FSTRaK.Models.FlightManager
                         }
                     }
                 }
+                Log.Information($"Enriched aircraft data from {filename}");
             }
             catch (Exception ex)
             {
-                Log.Error("Could not enrich aircraft from file.", ex.Message);
+                Log.Error("Could not enrich aircraft from file.", ex);
             }
         }
 
@@ -273,9 +273,5 @@ namespace FSTRaK.Models.FlightManager
             _simConnectService?.Close();
         }
 
-        private void OnPropertyChanged([CallerMemberName] string name = null)
-        {
-            PropertyChanged?.Invoke(this, new PropertyChangedEventArgs(name));
-        }
     }
 }

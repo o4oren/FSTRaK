@@ -10,7 +10,7 @@
              d:DataContext="{d:DesignInstance Type=viewmodels:SettingsViewModel}"
              d:DesignHeight="600" d:DesignWidth="800"
              Loaded="OnLoaded"
-             >
+>
 
     <UserControl.Resources>
             <ObjectDataProvider x:Key="dataFromEnum" MethodName="GetValues"

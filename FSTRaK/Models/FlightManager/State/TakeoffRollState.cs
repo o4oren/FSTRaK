@@ -1,5 +1,6 @@
 ﻿using System;
 using FSTRaK.DataTypes;
+using Serilog;
 
 namespace FSTRaK.Models.FlightManager.State
 {
@@ -21,6 +22,8 @@ namespace FSTRaK.Models.FlightManager.State
             {
                 var to = new TakeoffEvent() { FlapsPosition = data.FlapPosition, FuelWeightLbs = data.FuelWeightLbs };
                 AddFlightEvent(data, to);
+                Log.Information($"Take off! Flaps: {to.FlapsPosition}, with {to.FuelWeightLbs} Lbs of fuel.");
+
                 Context.State = new FlightState(Context);
                 return;
             }

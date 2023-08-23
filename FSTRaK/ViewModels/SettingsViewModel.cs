@@ -9,19 +9,14 @@ using FSTRaK.DataTypes;
 using FSTRaK.Utils;
 using Microsoft.Win32;
 using System;
+using Serilog;
 
 namespace FSTRaK.ViewModels
 {
 
     internal class SettingsViewModel : BaseViewModel
     {
-        public enum UnitsEnum
-        {
-            Imperial,
-            Metric
-        }
-
-        public ObservableCollection<string> MapProviders { get; set; } = new ObservableCollection<string>();
+        public ObservableCollection<string> MapProviders { get; set; }
         private string _selectedMapProvider = "OpenStreetMap";
         public string SelectedMapProvider
         {
@@ -41,7 +36,6 @@ namespace FSTRaK.ViewModels
 
                 }
                 OnPropertyChanged();
-
             }
         }
 
@@ -205,7 +199,7 @@ namespace FSTRaK.ViewModels
             MapProviders = new ObservableCollection<string>(layers.OrderBy(l => l));
         }
 
-        public void OnLoaded()
+        public void SettingsView_OnLoaded()
         {
             SelectedMapProvider = Properties.Settings.Default.MapTileProvider;
             BingApiKey = Properties.Settings.Default.BingApiKey;
@@ -216,6 +210,12 @@ namespace FSTRaK.ViewModels
             IsMinimizeToTray = Properties.Settings.Default.IsMinimizeToTray;
             IsStartAutomatically = Properties.Settings.Default.IsStartAutomatically;
             FontName = Properties.Settings.Default.FontName;
+        }
+
+        ~SettingsViewModel()
+        {
+            Log.Debug("haha!");
+            Properties.Settings.Default.Save();
         }
     }
 }

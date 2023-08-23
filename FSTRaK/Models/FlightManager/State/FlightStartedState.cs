@@ -59,7 +59,7 @@ namespace FSTRaK.Models.FlightManager.State
             // Update start event's fuel quantity if it was a large change (because that indicates the user set up fuel). Small changes can be attributed to APU running.
             if(_fuelingStopwatch.ElapsedMilliseconds > 1000)
             {
-                if(_prevFuelQuantity > data.FuelWeightLbs + 15 || _prevFuelQuantity < data.FuelWeightLbs)
+                if(_prevFuelQuantity > data.FuelWeightLbs + 5 || _prevFuelQuantity + 30 < data.FuelWeightLbs)
                 {
                     _flightStartedEvent.FuelWeightLbs = data.FuelWeightLbs;
                     
@@ -77,6 +77,8 @@ namespace FSTRaK.Models.FlightManager.State
                     FuelWeightLbs = data.FuelWeightLbs
                 };
                 AddFlightEvent(data, to);
+                Log.Information($"Taxi out! with {to.FuelWeightLbs} Lbs of fuel.");
+
                 Context.State = new TaxiOutState(Context);
             }
         }

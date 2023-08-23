@@ -1,5 +1,6 @@
 ﻿using System;
 using FSTRaK.DataTypes;
+using Serilog;
 
 namespace FSTRaK.Models.FlightManager.State
 {
@@ -55,6 +56,7 @@ namespace FSTRaK.Models.FlightManager.State
             }
 
             // TODO future handling of pitch
+            Log.Information($"Parked! Flaps: {le.FlapsPosition}, with {le.FuelWeightLbs} Lbs of fuel.");
 
 
             AddFlightEvent(landingData, le);
@@ -68,7 +70,7 @@ namespace FSTRaK.Models.FlightManager.State
                 return;
             }
 
-            if (data.GroundVelocity < 35 && data.MaxThorttlePosition() < 50)
+            if (data.GroundVelocity < 35 && data.MaxThrottlePosition() < 50)
             {
                 var ti = new TaxiInEvent()
                 {

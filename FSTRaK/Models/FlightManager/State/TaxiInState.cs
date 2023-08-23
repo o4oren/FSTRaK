@@ -1,5 +1,6 @@
 ﻿
 using FSTRaK.DataTypes;
+using Serilog;
 
 namespace FSTRaK.Models.FlightManager.State
 {
@@ -23,16 +24,17 @@ namespace FSTRaK.Models.FlightManager.State
                 return;
             }
 
-            //Parking brakes, engines off - end flight
-            if (data.GroundVelocity < 2 && 
-                (data.ParkingBrakesSet == 1 || Context.ActiveFlight.Aircraft.Category.Equals("Helicopter")) && 
-                data.MaxEngineRpmPct() < 5)
+            //engines off and no movement or parking brakes - or helicopter and a higher max rpm (because it takes long to spool down) - end flight
+            if ((data.GroundVelocity < 2 && data.ParkingBrakesSet == 1 && data.MaxEngineRpmPct() < 5)
+                || (data.GroundVelocity < 2 && data.MaxEngineRpmPct() < 2)
+                || Context.ActiveFlight.Aircraft.Category.Equals("Helicopter") && data.MaxEngineRpmPct() < 15)
             {
                 var pe = new ParkingEvent
                 {
                     FlapsPosition = data.FlapPosition,
                     FuelWeightLbs = data.FuelWeightLbs
                 };
+                Log.Information($"Parked! Flaps: {pe.FlapsPosition}, with {pe.FuelWeightLbs} Lbs of fuel.");
 
                 AddFlightEvent(data, pe);
                 Context.State = new FlightEndedState(Context);
