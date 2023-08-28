@@ -92,7 +92,7 @@ namespace FSTRaK
         // Set font according to settings
         FontUtil.SetFont(FSTRaK.Properties.Settings.Default.FontName);
 
-            var airportResolver = AirportResolver.Instance;
+        var _ = AirportResolver.Instance;
 
     }
   

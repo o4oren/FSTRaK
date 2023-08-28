@@ -214,7 +214,6 @@ namespace FSTRaK.ViewModels
 
         ~SettingsViewModel()
         {
-            Log.Debug("haha!");
             Properties.Settings.Default.Save();
         }
     }
