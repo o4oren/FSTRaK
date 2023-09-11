@@ -1,4 +1,7 @@
 ﻿using FSTRaK.Views;
+using System.ComponentModel;
+using System.Runtime.CompilerServices;
+using Serilog;
 
 namespace FSTRaK.ViewModels
 {
@@ -29,6 +32,37 @@ namespace FSTRaK.ViewModels
                 _activeView = value;
                 OnPropertyChanged();
             }
+        }
+
+        public double Height { 
+            get => Properties.Settings.Default.Height;
+            set
+            {
+                if(value > 449)
+                    Properties.Settings.Default.Height = value;
+            }
+        }
+
+
+        public double Width
+        {
+            get => Properties.Settings.Default.Width;
+            set
+            {
+                if(value > 599)
+                    Properties.Settings.Default.Width = value;
+            }
+        }
+
+        public double Left
+        {
+            get => Properties.Settings.Default.Left;
+            set => Properties.Settings.Default.Left = value;
+        }
+        public double Top
+        {
+            get => Properties.Settings.Default.Top;
+            set => Properties.Settings.Default.Top = value;
         }
 
         public MainWindowViewModel()
