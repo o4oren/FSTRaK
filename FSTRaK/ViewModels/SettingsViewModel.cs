@@ -216,7 +216,6 @@ namespace FSTRaK.ViewModels
 
         public void SaveSettings()
         {
-            Log.Information("Settings saved!");
             Properties.Settings.Default.Save();
         }
     }
