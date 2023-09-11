@@ -22,6 +22,10 @@ namespace FSTRaK.ViewModels
             get => _activeView;
             set
             {
+                if (_settingsViewModel != null && _activeView == _settingsViewModel && value != _settingsViewModel)
+                {
+                    _settingsViewModel.SaveSettings(); // Save settings when navigating away from the settings page
+                }
                 _activeView = value;
                 OnPropertyChanged();
             }
