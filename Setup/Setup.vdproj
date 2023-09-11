@@ -177,12 +177,6 @@
         }
         "Entry"
         {
-        "MsmKey" = "8:_683594FCD2A35F24A45A1BE544611AEB"
-        "OwnerKey" = "8:_A4D70056C78A158E7D851A2AC02B3CBB"
-        "MsmSig" = "8:_UNDEFINED"
-        }
-        "Entry"
-        {
         "MsmKey" = "8:_7C9B6DCC0FD39A25A15C4834E931EF0C"
         "OwnerKey" = "8:_1D7CA2210B6C44B08C0DE9A32527DC09"
         "MsmSig" = "8:_UNDEFINED"
@@ -322,18 +316,6 @@
         "Entry"
         {
         "MsmKey" = "8:_CA7940E10ECA91AF9FE58021F29CE6BF"
-        "OwnerKey" = "8:_A4D70056C78A158E7D851A2AC02B3CBB"
-        "MsmSig" = "8:_UNDEFINED"
-        }
-        "Entry"
-        {
-        "MsmKey" = "8:_CA7940E10ECA91AF9FE58021F29CE6BF"
-        "OwnerKey" = "8:_318822C294B84FE5A29EBD7EBDAA1CF3"
-        "MsmSig" = "8:_UNDEFINED"
-        }
-        "Entry"
-        {
-        "MsmKey" = "8:_CA7940E10ECA91AF9FE58021F29CE6BF"
         "OwnerKey" = "8:_F38511C177B3374C46C8DB2547447A6F"
         "MsmSig" = "8:_UNDEFINED"
         }
@@ -383,18 +365,6 @@
         {
         "MsmKey" = "8:_FAAC18DC887E2F600C7770F8E850D028"
         "OwnerKey" = "8:_8581586A4FC4400494EBCD574550E0A0"
-        "MsmSig" = "8:_UNDEFINED"
-        }
-        "Entry"
-        {
-        "MsmKey" = "8:_FAAC18DC887E2F600C7770F8E850D028"
-        "OwnerKey" = "8:_8FB48EC106A444373D9BAFE704BB9A44"
-        "MsmSig" = "8:_UNDEFINED"
-        }
-        "Entry"
-        {
-        "MsmKey" = "8:_FAAC18DC887E2F600C7770F8E850D028"
-        "OwnerKey" = "8:_7C9B6DCC0FD39A25A15C4834E931EF0C"
         "MsmSig" = "8:_UNDEFINED"
         }
         "Entry"
@@ -1801,15 +1771,15 @@
         {
         "Name" = "8:Microsoft Visual Studio"
         "ProductName" = "8:FSTrAk"
-        "ProductCode" = "8:{1D3FE010-EAD2-4457-B66F-8C06389CC781}"
-        "PackageCode" = "8:{EC6FD121-07ED-4E1C-80D9-BA7DE0F999CA}"
+        "ProductCode" = "8:{D2B136C6-FAA9-45C2-A60B-79B98D0C3266}"
+        "PackageCode" = "8:{1DCAA2A2-C002-4FC7-8BC9-B77A0EC3E7F9}"
         "UpgradeCode" = "8:{DFB8349E-B81D-4481-9F4C-14C136E2FBD4}"
         "AspNetVersion" = "8:2.0.50727.0"
         "RestartWWWService" = "11:FALSE"
         "RemovePreviousVersions" = "11:TRUE"
         "DetectNewerInstalledVersion" = "11:TRUE"
         "InstallAllUsers" = "11:TRUE"
-        "ProductVersion" = "8:1.4.1"
+        "ProductVersion" = "8:1.5.0"
         "Manufacturer" = "8:FSTrAk"
         "ARPHELPTELEPHONE" = "8:"
         "ARPHELPLINK" = "8:"
@@ -2379,7 +2349,7 @@
             }
             "{5259A561-127C-4D43-A0A1-72F10C7B3BF8}:_8581586A4FC4400494EBCD574550E0A0"
             {
-            "SourcePath" = "8:"
+            "SourcePath" = "8:..\\FSTRaK\\obj\\x64\\Debug\\FSTRaK.exe"
             "TargetName" = "8:"
             "Tag" = "8:"
             "Folder" = "8:_26CFFA3E4E6A4BE18B31D33970E8B9B7"
