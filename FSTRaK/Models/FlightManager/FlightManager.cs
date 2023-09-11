@@ -68,8 +68,8 @@ namespace FSTRaK.Models.FlightManager
             }
         }
 
-        private AbstractState _state;
-        public AbstractState State { 
+        private IFlightManagerState _state;
+        public IFlightManagerState State { 
             get => _state;
             set
             {

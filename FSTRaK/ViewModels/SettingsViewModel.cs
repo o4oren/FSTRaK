@@ -184,8 +184,10 @@ namespace FSTRaK.ViewModels
 
         public SettingsViewModel() : base()
         {
-            var mapProviders = new ResourceDictionary();
-            mapProviders.Source = new System.Uri("pack://application:,,,/Resources/MapProvidersDictionary.xaml", uriKind: System.UriKind.Absolute);
+            var mapProviders = new ResourceDictionary
+            {
+                Source = new System.Uri("pack://application:,,,/Resources/MapProvidersDictionary.xaml", uriKind: System.UriKind.Absolute)
+            };
             var layers = new ObservableCollection<string>();
 
             foreach (DictionaryEntry provider in mapProviders)
@@ -212,9 +214,8 @@ namespace FSTRaK.ViewModels
             FontName = Properties.Settings.Default.FontName;
         }
 
-        ~SettingsViewModel()
+        public void SaveSettings()
         {
-            Log.Debug("haha!");
             Properties.Settings.Default.Save();
         }
     }

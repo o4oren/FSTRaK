@@ -109,13 +109,6 @@ namespace FSTRaK.Views
             DragMove();
         }
 
-        protected override void OnStateChanged(EventArgs e)
-        {
-            // consider minimize to tray
-            base.OnStateChanged(e);
-        }
-
-
         private void Window_Deactivated(object sender, EventArgs e)
         {
             var window = (Window)sender;

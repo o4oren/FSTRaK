@@ -14,10 +14,10 @@
         AllowsTransparency="true"
         ResizeMode="CanResizeWithGrip"
         Deactivated="Window_Deactivated"
-        Height="{Binding Source={x:Static p:Settings.Default}, Path=Height, Mode=TwoWay}"
-        Width="{Binding Source={x:Static p:Settings.Default}, Path=Width, Mode=TwoWay}"
-        Left="{Binding Source={x:Static p:Settings.Default}, Path=Left, Mode=TwoWay}"
-        Top="{Binding Source={x:Static p:Settings.Default}, Path=Top, Mode=TwoWay}"
+        Height="{Binding Height, Mode=TwoWay}"
+        Width="{Binding Width, Mode=TwoWay}"
+        Left="{Binding Left, Mode=TwoWay}"
+        Top="{Binding Top, Mode=TwoWay}"
         Title="FSTRaK"
     >
     <Window.DataContext>

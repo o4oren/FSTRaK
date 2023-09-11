@@ -58,41 +58,39 @@ namespace FSTRaK
 
             Task.Run(() =>
         {
-            using (var logbookContext = new LogbookContext())
+            using var logbookContext = new LogbookContext();
+            try
             {
-                try
-                {
-                    logbookContext.Aircraft.Find(1);
-                }
-                catch (Exception ex)
-                {
-                    Log.Error(ex, ex.Message);
-                }
+                logbookContext.Aircraft.Find(1);
+            }
+            catch (Exception ex)
+            {
+                Log.Error(ex, ex.Message);
             }
         });
 
-        Task.Run(() =>
-        {
-            if (FSTRaK.Properties.Settings.Default.IsStartAutomatically)
-            {
-                // Start up with windows login
-                RegistryKey rkStartUp = Registry.CurrentUser;
-                var applicationLocation = System.Reflection.Assembly.GetExecutingAssembly().Location;
-
-                var startupPathSubKey = rkStartUp.OpenSubKey(@"Software\Microsoft\Windows\CurrentVersion\Run", true);
-
-
-                if (startupPathSubKey?.GetValue("FSTrAk") == null)
-                {
-                    startupPathSubKey?.SetValue("FSTrAk", applicationLocation, RegistryValueKind.ExpandString);
-                }
-            }
-        });
+//        Task.Run(() =>
+//        {
+//            if (FSTRaK.Properties.Settings.Default.IsStartAutomatically)
+//            {
+//                // Start up with windows login
+//                RegistryKey rkStartUp = Registry.CurrentUser;
+//                var applicationLocation = System.Reflection.Assembly.GetExecutingAssembly().Location;
+//
+//                var startupPathSubKey = rkStartUp.OpenSubKey(@"Software\Microsoft\Windows\CurrentVersion\Run", true);
+//
+//
+//                if (startupPathSubKey?.GetValue("FSTrAk") == null)
+//                {
+//                    startupPathSubKey?.SetValue("FSTrAk", applicationLocation, RegistryValueKind.ExpandString);
+//                }
+//            }
+//        });
 
         // Set font according to settings
         FontUtil.SetFont(FSTRaK.Properties.Settings.Default.FontName);
 
-            var airportResolver = AirportResolver.Instance;
+        var _ = AirportResolver.Instance;
 
     }
   
