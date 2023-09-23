@@ -14,6 +14,8 @@ namespace FSTRaK.Models.Entity
         {
             Database.SetInitializer(new MigrateDatabaseToLatestVersion<LogbookContext, Migrations.Configuration>(true));
             this.Database.Log = Log.Debug;
+            this.Configuration.LazyLoadingEnabled = true;
+            this.Configuration.ProxyCreationEnabled = true;
         }
 
         public DbSet<Flight> Flights { get; set; }

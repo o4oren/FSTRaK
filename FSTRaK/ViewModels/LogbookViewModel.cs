@@ -14,6 +14,7 @@ using System.Timers;
 using FSTRaK;
 using FSTRaK.Models.FlightManager.State;
 using FSTRaK.ViewModels;
+using System.Runtime.Remoting.Contexts;
 
 namespace FSTRaK.ViewModels
 {
@@ -60,15 +61,28 @@ namespace FSTRaK.ViewModels
                 {
                     return new Flight();
                 }
+
                 return _selectedFlight;
             } 
             set 
             {
                 if(value != null && _selectedFlight != value)
                 {
-                    _selectedFlight = value;
-                    _flightDetailsViewModel.Flight = _selectedFlight;
-                    OnPropertyChanged(nameof(SelectedFlight));
+                    using (var logbookContext = new LogbookContext())
+                    {
+                        try
+                        {
+                            logbookContext.Flights.Attach(value);
+                            logbookContext.Entry(value).Collection(f => f.FlightEvents).Load();
+                            _selectedFlight = value;
+                            _flightDetailsViewModel.Flight = _selectedFlight;
+                            OnPropertyChanged(nameof(SelectedFlight));
+                        }
+                        catch (Exception ex)
+                        {
+                            Log.Error(ex, "Exception fetching Flights!");
+                        }
+                    }
                 }
             } 
         }
@@ -121,7 +135,6 @@ namespace FSTRaK.ViewModels
                             SelectedFlight = logbookContext.Flights
                             .Where(f => f.Id == latestId)
                             .Include(f => f.Aircraft)
-                            .Include(f => f.FlightEvents)
                             .SingleOrDefault();
                         }
                         catch (Exception ex)
@@ -225,10 +238,9 @@ namespace FSTRaK.ViewModels
                     try
                     {
                         var flights = logbookContext.Flights
-                        .Select(f => f)
-                        .OrderByDescending(f => f.Id)
-                        .Include(f => f.Aircraft)
-                        .Include(f => f.FlightEvents);
+                            .Select(f => f)
+                            .OrderByDescending(f => f.Id)
+                            .Include(f => f.Aircraft);
 
                         System.Windows.Application.Current.Dispatcher.Invoke((Action)delegate
                         {
