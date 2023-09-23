@@ -59,5 +59,15 @@ namespace FSTRaK.Properties {
                 resourceCulture = value;
             }
         }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to FSTrAk
+        ///{0}.
+        /// </summary>
+        internal static string MainWindow_OnLoad_ {
+            get {
+                return ResourceManager.GetString("MainWindow_OnLoad_", resourceCulture);
+            }
+        }
     }
 }
