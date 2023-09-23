@@ -64,25 +64,21 @@ namespace FSTRaK.ViewModels
 
                 return _selectedFlight;
             } 
-            set 
+            set
             {
-                if(value != null && _selectedFlight != value)
+                if (value == null || _selectedFlight == value) return;
+                using var logbookContext = new LogbookContext();
+                try
                 {
-                    using (var logbookContext = new LogbookContext())
-                    {
-                        try
-                        {
-                            logbookContext.Flights.Attach(value);
-                            logbookContext.Entry(value).Collection(f => f.FlightEvents).Load();
-                            _selectedFlight = value;
-                            _flightDetailsViewModel.Flight = _selectedFlight;
-                            OnPropertyChanged(nameof(SelectedFlight));
-                        }
-                        catch (Exception ex)
-                        {
-                            Log.Error(ex, "Exception fetching Flights!");
-                        }
-                    }
+                    logbookContext.Flights.Attach(value);
+                    logbookContext.Entry(value).Collection(f => f.FlightEvents).Load();
+                    _selectedFlight = value;
+                    _flightDetailsViewModel.Flight = _selectedFlight;
+                    OnPropertyChanged(nameof(SelectedFlight));
+                }
+                catch (Exception ex)
+                {
+                    Log.Error(ex, "Exception fetching Flights!");
                 }
             } 
         }
