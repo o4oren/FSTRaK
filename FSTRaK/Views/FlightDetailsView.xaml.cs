@@ -128,7 +128,7 @@ namespace FSTRaK.Views
             var scale = Math.Min(LogbookMap.ActualWidth / rect.Width, LogbookMap.ActualHeight / rect.Height);
             var zoomLevel = ViewTransform.ScaleToZoomLevel(scale);
             // Set new view
-            LogbookMap.TargetZoomLevel = Math.Floor(Math.Min(16, zoomLevel) - 1);
+            LogbookMap.TargetZoomLevel = Math.Floor(Math.Min(16, zoomLevel) - 0.5);
             LogbookMap.TargetCenter = LogbookMap.MapProjection.MapToLocation(rect.Center);
             LogbookMap.TargetHeading = 0d;
         }

@@ -38,7 +38,7 @@ namespace FSTRaK.ViewModels
                 });
 
                 var boundingBox = new BoundingBox(minLat, minLon, maxLat, maxLon);
-                Log.Debug($"{boundingBox.Center} {boundingBox.Width}");
+                Log.Debug($"Zoom to {boundingBox.Center} {boundingBox.Width}");
                 ViewPort = boundingBox;
 
                 ScoreboardText = _flight.GetScoreDetails();

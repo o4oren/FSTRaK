@@ -67,11 +67,14 @@ namespace FSTRaK.ViewModels
             set
             {
                 if (value == null || _selectedFlight == value) return;
-                using var logbookContext = new LogbookContext();
                 try
                 {
-                    logbookContext.Flights.Attach(value);
-                    logbookContext.Entry(value).Collection(f => f.FlightEvents).Load();
+                    if (value.FlightEvents.Count == 0)
+                    {
+                        using var logbookContext = new LogbookContext();
+                        logbookContext.Flights.Attach(value);
+                        logbookContext.Entry(value).Collection(f => f.FlightEvents).Load();
+                    }
                     _selectedFlight = value;
                     _flightDetailsViewModel.Flight = _selectedFlight;
                     OnPropertyChanged(nameof(SelectedFlight));
