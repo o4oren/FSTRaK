@@ -29,6 +29,7 @@ namespace FSTRaK.Models.Entity
                 .HasMany(e => e.FlightEvents)
                 .WithRequired(e => e.Flight)
                 .HasForeignKey(e => e.FlightId);
+
         }
     }
 }

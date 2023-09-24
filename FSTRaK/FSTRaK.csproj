@@ -335,7 +335,7 @@
       <Version>1.1.39</Version>
     </PackageReference>
     <PackageReference Include="ScottPlot.WPF">
-      <Version>4.1.64</Version>
+      <Version>4.1.67</Version>
     </PackageReference>
     <PackageReference Include="Serilog">
       <Version>3.0.1</Version>

@@ -98,6 +98,7 @@ namespace FSTRaK.DataTypes
 
         public EngineType EngineType;
         public int NumberOfEngines;
+        public double EmptyWeightLbs;
     }
 
     [StructLayout(LayoutKind.Sequential, CharSet = CharSet.Ansi, Pack = 1)]
@@ -127,6 +128,7 @@ namespace FSTRaK.DataTypes
         public int StallWarning;
         public double FlapPosition;
         public double FuelWeightLbs;
+        public double TotalWeightLbs;
         public int ParkingBrakesSet;
 
         public double Engine1MaxRpmPct;

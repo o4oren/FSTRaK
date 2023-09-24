@@ -4,10 +4,15 @@ using FSTRaK.Utils;
 using System;
 using System.Collections.Generic;
 using System.Collections.ObjectModel;
+using System.ComponentModel.DataAnnotations;
 using System.ComponentModel.DataAnnotations.Schema;
 using System.Linq;
 using System.Text;
 using Serilog;
+using System.ComponentModel;
+using System.Windows.Controls;
+using System.Windows.Media;
+using System.Xml.Linq;
 
 namespace FSTRaK.Models
 {
@@ -37,8 +42,9 @@ namespace FSTRaK.Models
         }
 
         public double FlightDistanceNm { get; set; }
-
         public double TotalFuelUsed { get; set; }
+
+        // public double TotalPayloadLbs { get; set; }
 
         public FlightOutcome FlightOutcome { get; set; }
         public double Score { get; set; }
