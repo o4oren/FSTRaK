@@ -22,6 +22,8 @@ namespace FSTRaK.Models
         public String TailNumber { get; set; }
         public int NumberOfEngines { get; set; }
         public EngineType EngineType { get; set; }
+
+        public double? EmptyWeightLbs { get; set; }
         public override bool Equals(Object obj)
         {
             if ((obj == null) || this.GetType() != obj.GetType())

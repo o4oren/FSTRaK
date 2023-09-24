@@ -12,7 +12,7 @@ namespace FSTRaK.Models.Entity
     {
         public LogbookContext() : base("FSTrAkSqliteDatabase")
         {
-            Database.SetInitializer(new MigrateDatabaseToLatestVersion<LogbookContext, Migrations.Configuration>(true));
+            Database.SetInitializer(new MigrateDatabaseToLatestVersion<LogbookContext, FSTRaK.Migrations.Configuration>(true));
             this.Database.Log = Log.Debug;
             this.Configuration.LazyLoadingEnabled = true;
             this.Configuration.ProxyCreationEnabled = true;

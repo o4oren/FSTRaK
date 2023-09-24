@@ -189,10 +189,13 @@ namespace FSTRaK.BusinessLogic.FlightManager
                         var aircraft = logbookContext.Aircraft.FirstOrDefault(a => a.Title == aircraftData.title);
                         if (aircraft != null)
                         {
+                            aircraft.EmptyWeightLbs ??= aircraftData.EmptyWeightLbs;
+                            logbookContext.SaveChanges();
                             ActiveFlight.Aircraft = aircraft;
                         }
                         else
                         {
+                            // delete aircraft if it doesn't have empty weight
                             aircraft = logbookContext.Aircraft.Create();
                             aircraft.Title = aircraftData.title;
                             aircraft.Manufacturer = aircraftData.atcType;
@@ -203,7 +206,7 @@ namespace FSTRaK.BusinessLogic.FlightManager
                             aircraft.NumberOfEngines = aircraftData.NumberOfEngines;
                             aircraft.EngineType = aircraftData.EngineType;
                             aircraft.Category = aircraftData.Category;
-
+                            aircraft.EmptyWeightLbs = aircraftData.EmptyWeightLbs;
                             EnrichAircraftDataFromFile(aircraft);
 
                             // Capitalize manufacturer name correctly.

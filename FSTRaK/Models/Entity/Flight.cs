@@ -44,7 +44,7 @@ namespace FSTRaK.Models
         public double FlightDistanceNm { get; set; }
         public double TotalFuelUsed { get; set; }
 
-        // public double TotalPayloadLbs { get; set; }
+        public double? TotalPayloadLbs { get; set; }
 
         public FlightOutcome FlightOutcome { get; set; }
         public double Score { get; set; }
