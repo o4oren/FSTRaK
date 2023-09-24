@@ -11,6 +11,7 @@ using System.Windows.Threading;
 using FSTRaK.Utils;
 using Microsoft.Win32;
 using System.Diagnostics;
+using FSTRaK.BusinessLogic.SimconnectService;
 
 namespace FSTRaK
 {

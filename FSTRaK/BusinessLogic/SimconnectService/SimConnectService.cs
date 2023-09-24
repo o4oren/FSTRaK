@@ -1,7 +1,4 @@
-﻿using FSTRaK.DataTypes;
-using Microsoft.FlightSimulator.SimConnect;
-using Serilog;
-using System;
+﻿using System;
 using System.ComponentModel;
 using System.Device.Location;
 using System.Linq;
@@ -9,8 +6,11 @@ using System.Runtime.CompilerServices;
 using System.Runtime.InteropServices;
 using System.Timers;
 using System.Windows.Interop;
+using FSTRaK.DataTypes;
+using Microsoft.FlightSimulator.SimConnect;
+using Serilog;
 
-namespace FSTRaK;
+namespace FSTRaK.BusinessLogic.SimconnectService;
 
 /// <summary>
 ///    This class is a facade over simconnect and simplifies communication with the simulator for the consumer's 
