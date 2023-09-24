@@ -34,7 +34,13 @@ namespace FSTRaK.ViewModels
 
         public double Distance { get; set; }
 
-        public double? Payload { get; set; }
+        private double? _payload;
+
+        public double? Payload
+        {
+            get => _payload != null ? Properties.Settings.Default.Units == (int)Units.Imperial ? _payload : _payload * Consts.LbsToKgs : null;
+            set => _payload = value;
+        }
 
         public string PayloadUnit { get; set; }
 
