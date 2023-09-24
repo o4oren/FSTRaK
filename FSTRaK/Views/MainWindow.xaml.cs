@@ -1,11 +1,11 @@
-﻿using FSTRaK.Models.FlightManager;
-using FSTRaK.Utils;
+﻿using FSTRaK.Utils;
 using MapControl;
 using MapControl.Caching;
 using System;
 using System.Windows;
 using System.Windows.Forms;
 using System.Windows.Input;
+using FSTRaK.BusinessLogic.FlightManager;
 using Application = System.Windows.Application;
 
 namespace FSTRaK.Views

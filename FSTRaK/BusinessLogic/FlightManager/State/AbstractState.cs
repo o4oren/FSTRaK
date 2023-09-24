@@ -1,21 +1,22 @@
 ﻿using System;
 using System.Diagnostics;
 using FSTRaK.DataTypes;
+using FSTRaK.Models;
 
-namespace FSTRaK.Models.FlightManager.State
+namespace FSTRaK.BusinessLogic.FlightManager.State
 {
     internal abstract class AbstractState : IFlightManagerState
     {
 
         public abstract string Name { get; set; }
 
-        protected FlightManager Context;
+        protected BusinessLogic.FlightManager.FlightManager Context;
         protected Stopwatch Stopwatch = new Stopwatch();
         protected int EventInterval = 5000;
 
         public abstract bool IsMovementState { get; set; }
 
-        protected AbstractState(FlightManager context)
+        protected AbstractState(BusinessLogic.FlightManager.FlightManager context)
         {
             this.Context = context;
         }

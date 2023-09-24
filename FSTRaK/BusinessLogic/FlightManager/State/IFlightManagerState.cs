@@ -1,7 +1,7 @@
 ﻿
 using FSTRaK.DataTypes;
 
-namespace FSTRaK.Models.FlightManager.State
+namespace FSTRaK.BusinessLogic.FlightManager.State
 {
     internal interface IFlightManagerState
     {

@@ -1,8 +1,9 @@
 ﻿using System;
 using FSTRaK.DataTypes;
+using FSTRaK.Models;
 using Serilog;
 
-namespace FSTRaK.Models.FlightManager.State
+namespace FSTRaK.BusinessLogic.FlightManager.State
 {
     internal class TakeoffRollState : AbstractState
     {

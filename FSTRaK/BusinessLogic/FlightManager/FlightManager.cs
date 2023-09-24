@@ -2,16 +2,17 @@
 using Serilog;
 using System;
 using System.ComponentModel;
-using FSTRaK.Models.FlightManager.State;
 using System.IO;
 using System.Text;
 using System.Threading.Tasks;
 using FSTRaK.Models.Entity;
 using System.Linq;
 using System.Globalization;
+using FSTRaK.BusinessLogic.FlightManager.State;
 using FSTRaK.BusinessLogic.SimconnectService;
+using FSTRaK.Models;
 
-namespace FSTRaK.Models.FlightManager
+namespace FSTRaK.BusinessLogic.FlightManager
 {
     /// <summary>
     /// FlightManager is the domain model managing the flight. It's responsibilities are to subscribe to the Simconnect service events, 

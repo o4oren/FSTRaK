@@ -1,14 +1,11 @@
 ﻿using FSTRaK.Models;
-using FSTRaK.Models.FlightManager;
 using MapControl;
-using Serilog;
 using System;
 using System.Collections.ObjectModel;
 using System.ComponentModel;
 using System.Linq;
-using System.Text;
-using System.Windows;
-using FSTRaK.Models.FlightManager.State;
+using FSTRaK.BusinessLogic.FlightManager;
+using FSTRaK.BusinessLogic.FlightManager.State;
 using FSTRaK.Utils;
 
 namespace FSTRaK.ViewModels

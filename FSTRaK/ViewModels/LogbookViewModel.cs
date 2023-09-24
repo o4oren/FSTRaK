@@ -1,7 +1,5 @@
 ﻿using FSTRaK.Models;
 using FSTRaK.Models.Entity;
-using FSTRaK.Models.FlightManager;
-using MapControl;
 using Serilog;
 using System;
 using System.Collections.ObjectModel;
@@ -11,10 +9,9 @@ using System.Linq;
 using System.Threading;
 using System.Threading.Tasks;
 using System.Timers;
-using FSTRaK;
-using FSTRaK.Models.FlightManager.State;
-using FSTRaK.ViewModels;
-using System.Runtime.Remoting.Contexts;
+
+using FSTRaK.BusinessLogic.FlightManager;
+using FSTRaK.BusinessLogic.FlightManager.State;
 
 namespace FSTRaK.ViewModels
 {

@@ -110,6 +110,18 @@
       <Generator>MSBuild:Compile</Generator>
       <SubType>Designer</SubType>
     </ApplicationDefinition>
+    <Compile Include="BusinessLogic\FlightManager\FlightManager.cs" />
+    <Compile Include="BusinessLogic\FlightManager\State\AbstractState.cs" />
+    <Compile Include="BusinessLogic\FlightManager\State\CrashedState.cs" />
+    <Compile Include="BusinessLogic\FlightManager\State\FlightEndedState.cs" />
+    <Compile Include="BusinessLogic\FlightManager\State\FlightStartedState.cs" />
+    <Compile Include="BusinessLogic\FlightManager\State\FlightState.cs" />
+    <Compile Include="BusinessLogic\FlightManager\State\IFlightManagerState.cs" />
+    <Compile Include="BusinessLogic\FlightManager\State\LandedState.cs" />
+    <Compile Include="BusinessLogic\FlightManager\State\SimNotInFlightState.cs" />
+    <Compile Include="BusinessLogic\FlightManager\State\TakeoffRollState.cs" />
+    <Compile Include="BusinessLogic\FlightManager\State\TaxiInState.cs" />
+    <Compile Include="BusinessLogic\FlightManager\State\TaxiOutState.cs" />
     <Compile Include="BusinessLogic\SimconnectService\SimConnectService.cs" />
     <Compile Include="DataTypes\Consts.cs" />
     <Compile Include="DataTypes\LandingRate.cs" />
@@ -135,22 +147,10 @@
     <Compile Include="Models\Entity\FlightEvent\TaxiOutEvent.cs" />
     <Compile Include="Models\Entity\FlightEvent\TakeoffEvent.cs" />
     <Compile Include="Models\Entity\LogbookContext.cs" />
-    <Compile Include="Models\FlightManager\State\AbstractState.cs" />
-    <Compile Include="Models\FlightManager\FlightManager.cs" />
     <Compile Include="Models\Entity\Aircraft.cs" />
     <Compile Include="Models\BaseModel.cs" />
     <Compile Include="Models\Entity\Flight.cs" />
     <Compile Include="Models\Entity\FlightEvent\BaseFlightEvent.cs" />
-    <Compile Include="Models\FlightManager\State\FlightEndedState.cs" />
-    <Compile Include="Models\FlightManager\State\FlightState.cs" />
-    <Compile Include="Models\FlightManager\State\LandedState.cs" />
-    <Compile Include="Models\FlightManager\State\IFlightManagerState.cs" />
-    <Compile Include="Models\FlightManager\State\FlightStartedState.cs" />
-    <Compile Include="Models\FlightManager\State\SimNotInFlightState.cs" />
-    <Compile Include="Models\FlightManager\State\TakeoffRollState.cs" />
-    <Compile Include="Models\FlightManager\State\CrashedState.cs" />
-    <Compile Include="Models\FlightManager\State\TaxiInState.cs" />
-    <Compile Include="Models\FlightManager\State\TaxiOutState.cs" />
     <Compile Include="RelayCommand.cs" />
     <Compile Include="Utils\FontUtil.cs" />
     <Compile Include="Utils\HyperlinkText.cs" />
@@ -395,6 +395,8 @@
       <Install>false</Install>
     </BootstrapperPackage>
   </ItemGroup>
-  <ItemGroup />
+  <ItemGroup>
+    <Folder Include="BusinessLogic\VatsimService\" />
+  </ItemGroup>
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
 </Project>
