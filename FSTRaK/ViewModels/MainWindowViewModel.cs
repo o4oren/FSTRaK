@@ -9,13 +9,15 @@ namespace FSTRaK.ViewModels
     {
         public RelayCommand MapViewCommand { get; set; }
         public RelayCommand LogBookCommand { get; set; }
+        public RelayCommand StatisticsCommand { get; set; }
         public RelayCommand SettingsCommand { get; set; }
 
-
+        
 
         private readonly LiveViewViewModel _liveViewViewModel;
         private readonly SettingsViewModel _settingsViewModel;
         private readonly LogbookViewModel _logbookViewModel;
+        private readonly StatisticsViewModel _statisticsViewModel;
 
         private object _activeView;
 
@@ -70,6 +72,7 @@ namespace FSTRaK.ViewModels
             _liveViewViewModel = new LiveViewViewModel();
             _settingsViewModel = new SettingsViewModel();
             _logbookViewModel = new LogbookViewModel();
+            _statisticsViewModel = new StatisticsViewModel();
 
             ActiveView = _liveViewViewModel;
 
@@ -81,6 +84,11 @@ namespace FSTRaK.ViewModels
             LogBookCommand = new RelayCommand(o =>
             {
                 ActiveView = _logbookViewModel;
+            });
+
+            StatisticsCommand = new RelayCommand(o =>
+            {
+                ActiveView = _statisticsViewModel;
             });
 
             SettingsCommand = new RelayCommand(o =>
