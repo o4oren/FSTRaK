@@ -6,13 +6,32 @@
              xmlns:local="clr-namespace:FSTRaK.Views" xmlns:viewmodels="clr-namespace:FSTRaK.ViewModels" d:DataContext="{d:DesignInstance Type=viewmodels:StatisticsViewModel}"
              mc:Ignorable="d" 
              d:DesignHeight="450" d:DesignWidth="800">
+
     <StackPanel Orientation="Horizontal">
         <StackPanel Margin="10">
-            <StackPanel Orientation="Horizontal" Margin="10" >
-                <Label  Style="{StaticResource FSTrAkLabel}" Width="250">Total Flights:</Label>
-                <Label  Style="{StaticResource FSTrAkLabel}" Width="250" Content="{Binding TotalNumberOfFlights}"/>
+            <TextBlock 
+                Foreground="{StaticResource PrimaryDarkBrush}"
+                FontSize="28"
+                Margin="10"
+                FontFamily="{DynamicResource {StaticResource ThemeFontName}}"
+                TextWrapping="Wrap"
+                Text="{Binding ElementName=OverlayTextCard, Path=Text}"
+                HorizontalAlignment="Left"
+                VerticalAlignment="Center"
+                MaxWidth="300"
+            >
+                <Run Text="Total Flights: "/><Run Text="{Binding TotalNumberOfFlights}"/> 
+                <LineBreak />
+                <Run Text="Total Flight Time: "/><Run Text="{Binding TotalFlightTime}"/><Run Text=" Hours"/>
+                <LineBreak />
+                <Run Text="Average Flight Time: "/><Run Text="{Binding AvgFlightTime}"/><Run Text=" Hours"/>
 
-            </StackPanel>
+                <LineBreak />
+                <Run Text="Total Flight Distance: "/><Run Text="{Binding TotalFlightDistance}"/><Run Text=" NM"/>
+                <LineBreak />
+                <Run Text="Average Flight Distance: "/><Run Text="{Binding AvgFlightDistance}"/><Run Text=" NM"/>
+
+            </TextBlock>
         </StackPanel>
     </StackPanel>
 </UserControl>
