@@ -161,6 +161,7 @@
     <Compile Include="Utils\ResourceUtils.cs" />
     <Compile Include="Utils\SkyVectorMapTileLayer.cs" />
     <Compile Include="Utils\SkyVectorTileSource.cs" />
+    <Compile Include="Utils\UnitsUtil.cs" />
     <Compile Include="ViewModels\AddCommentViewModel.cs" />
     <Compile Include="ViewModels\EditAircraftViewModel.cs" />
     <Compile Include="ViewModels\FlightDetailsParamsViewModel.cs" />

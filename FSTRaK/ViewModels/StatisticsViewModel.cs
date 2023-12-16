@@ -6,8 +6,10 @@ using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 using System.Windows.Forms.VisualStyles;
+using System.Windows.Media.Media3D;
 using FSTRaK.Models;
 using FSTRaK.Models.Entity;
+using FSTRaK.Utils;
 
 namespace FSTRaK.ViewModels
 {
@@ -73,6 +75,51 @@ namespace FSTRaK.ViewModels
             }
         }
 
+        private string _totalFuelUsed;
+        public string TotalFuelUsed
+        {
+            get => _totalFuelUsed;
+            set
+            {
+                _totalFuelUsed = value;
+                OnPropertyChanged();
+            }
+        }
+
+        private string _avgFuelUsed;
+        public string AvgFuelUsed
+        {
+            get => _avgFuelUsed;
+            set
+            {
+                _avgFuelUsed = value;
+                OnPropertyChanged();
+            }
+        }
+
+        private string _totalPayload;
+        public string TotalPayload
+        {
+            get => _totalPayload;
+            set
+            {
+                _totalPayload = value;
+                OnPropertyChanged();
+            }
+        }
+
+        private string _avgPayload;
+        public string AvgPayload
+        {
+            get => _avgPayload;
+            set
+            {
+                _avgPayload = value;
+                OnPropertyChanged();
+            }
+        }
+
+
 
         public StatisticsViewModel()
         {
@@ -97,8 +144,15 @@ namespace FSTRaK.ViewModels
             TotalFlightTime = $"{(int)totalFlightTimeTs.TotalHours}:{totalFlightTimeTs.Minutes}:{totalFlightTimeTs.Seconds}";
             AvgFlightTime = $"{(int)avgFlightTimeTs.TotalHours}:{avgFlightTimeTs.Minutes}:{avgFlightTimeTs.Seconds}";
 
-            TotalFlightDistance = $"{flights.Sum(f => f.FlightDistanceNm).ToString("N1")}";
-            AvgFlightDistance = $"{flights.Average(f => f.FlightDistanceNm).ToString("N1")}";
+            TotalFlightDistance = $"{flights.Sum(f => f.FlightDistanceNm):N1}";
+            AvgFlightDistance = $"{flights.Average(f => f.FlightDistanceNm):N1}";
+
+            TotalFuelUsed = UnitsUtil.GetWeightString(flights.Sum(f => f.TotalFuelUsed));
+            AvgFuelUsed = UnitsUtil.GetWeightString(flights.Average(f => f.TotalFuelUsed));
+
+
+            TotalPayload = UnitsUtil.GetWeightString(flights.Sum(f => f.TotalPayloadLbs));
+            AvgPayload = UnitsUtil.GetWeightString(flights.Average(f => f.TotalPayloadLbs));
 
         }
     }

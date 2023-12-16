@@ -150,14 +150,7 @@ namespace FSTRaK.ViewModels
             get
             {
                 if (_flight == null) return "";
-                var totalFuelUsed = _flight.TotalFuelUsed;
-                var units = "Lbs";
-
-                if (!Properties.Settings.Default.Units.Equals((int)Units.Metric)) return $"{totalFuelUsed:F2} {units}";
-                totalFuelUsed *= DataTypes.Consts.LbsToKgs;
-                units = "Kg";
-
-                return $"{totalFuelUsed:F2} {units}";
+                return UnitsUtil.GetWeightString(_flight.TotalFuelUsed);
             }
         }
 

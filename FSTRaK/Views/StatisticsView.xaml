@@ -31,6 +31,16 @@
                 <LineBreak />
                 <Run Text="Average Flight Distance: "/><Run Text="{Binding AvgFlightDistance}"/><Run Text=" NM"/>
 
+                <LineBreak />
+                <Run Text="Total Fuel Used: "/><Run Text="{Binding TotalFuelUsed}"/>
+                <LineBreak />
+                <Run Text="Average Fuel Used: "/><Run Text="{Binding AvgFuelUsed}"/>
+
+                <LineBreak />
+                <Run Text="Total Payload: "/><Run Text="{Binding TotalPayload}"/>
+                <LineBreak />
+                <Run Text="Average Payload: "/><Run Text="{Binding AvgPayload}"/>
+
             </TextBlock>
         </StackPanel>
     </StackPanel>
