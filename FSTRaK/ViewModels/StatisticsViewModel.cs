@@ -1,13 +1,7 @@
 ﻿using System;
 using System.Collections.Generic;
-using System.Collections.ObjectModel;
 using System.Data.Entity;
 using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
-using System.Windows.Forms.VisualStyles;
-using System.Windows.Media.Media3D;
-using FSTRaK.Models;
 using FSTRaK.Models.Entity;
 using FSTRaK.Utils;
 
@@ -15,7 +9,53 @@ namespace FSTRaK.ViewModels
 {
     internal class StatisticsViewModel : BaseViewModel
     {
-        private ObservableCollection<Flight> _flights;
+        private List<string> _aircraftTypes;
+        public List<string> AircraftTypes
+        {
+            get => _aircraftTypes;
+            set
+            {
+                _aircraftTypes = value;
+                OnPropertyChanged();
+            }
+        }
+
+        private List<string> _airlines;
+        public List<string> Airlines
+        {
+            get => _airlines;
+            set
+            {
+                _airlines = value;
+                OnPropertyChanged();
+            }
+        }
+
+
+        private string _airlineFilter;
+
+        public string AirlineFilter
+        {
+            get => _airlineFilter;
+            set
+            {
+                _airlineFilter = value;
+                UpdateStatistics();
+                OnPropertyChanged();
+            }
+        }
+
+
+        private string _aircraftTypeFilter;
+
+        public string AircraftTypeFilter { get => _aircraftTypeFilter; 
+            set
+            {
+                _aircraftTypeFilter = value;
+                UpdateStatistics();
+                OnPropertyChanged();
+            }
+        }
 
 
         private int _totalNumberOfFlights;
@@ -123,8 +163,20 @@ namespace FSTRaK.ViewModels
 
         public StatisticsViewModel()
         {
+            CreateFilters();
             UpdateStatistics();
+        }
 
+        private void CreateFilters()
+        {
+            using var logbookContext = new LogbookContext();
+            Airlines = logbookContext.Flights.Select(f => f.Aircraft.Airline).Where(at => !at.Trim().Equals(String.Empty)).Distinct().ToList();
+            AircraftTypes = logbookContext.Flights.Select(f => f.Aircraft.AircraftType).Where(at => !at.Trim().Equals(String.Empty)).Distinct().ToList();
+
+            Airlines.Add(string.Empty);
+            AircraftTypes.Add(string.Empty);
+            Airlines.Sort();
+            AircraftTypes.Sort();
         }
 
         private void UpdateStatistics()
@@ -134,8 +186,33 @@ namespace FSTRaK.ViewModels
                 .Select(f => f)
                 .OrderByDescending(f => f.Id)
                 .Include(f => f.Aircraft);
-            
+
+            if (!string.IsNullOrEmpty(AirlineFilter))
+            {
+                flights = flights.Where(f => f.Aircraft.Airline.Equals(AirlineFilter));
+            }
+
+            if (!string.IsNullOrEmpty(AircraftTypeFilter))
+            {
+                flights = flights.Where(f => f.Aircraft.AircraftType.Equals(AircraftTypeFilter));
+            }
+
             TotalNumberOfFlights = flights.Count();
+            if (TotalNumberOfFlights == 0)
+            {
+                TotalFlightTime = "";
+                AvgFlightTime = "";
+
+                TotalFlightDistance = "";
+                AvgFlightDistance = "";
+
+                TotalFuelUsed = "";
+                AvgFuelUsed = "";
+
+                TotalPayload = "";
+                AvgPayload = "";
+                return;
+            }
             
             var totalFlightMilis = flights.Sum(f => f.FlightTimeMilis);
             var averageFlightMilis = flights.Average(f => f.FlightTimeMilis);
@@ -150,10 +227,10 @@ namespace FSTRaK.ViewModels
             TotalFuelUsed = UnitsUtil.GetWeightString(flights.Sum(f => f.TotalFuelUsed));
             AvgFuelUsed = UnitsUtil.GetWeightString(flights.Average(f => f.TotalFuelUsed));
 
-
             TotalPayload = UnitsUtil.GetWeightString(flights.Sum(f => f.TotalPayloadLbs));
             AvgPayload = UnitsUtil.GetWeightString(flights.Average(f => f.TotalPayloadLbs));
 
         }
+
     }
 }

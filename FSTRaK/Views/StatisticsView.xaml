@@ -8,40 +8,62 @@
              d:DesignHeight="450" d:DesignWidth="800">
 
     <StackPanel Orientation="Horizontal">
-        <StackPanel Margin="10">
-            <TextBlock 
-                Foreground="{StaticResource PrimaryDarkBrush}"
-                FontSize="28"
-                Margin="10"
-                FontFamily="{DynamicResource {StaticResource ThemeFontName}}"
-                TextWrapping="Wrap"
-                Text="{Binding ElementName=OverlayTextCard, Path=Text}"
-                HorizontalAlignment="Left"
-                VerticalAlignment="Center"
-                MaxWidth="300"
-            >
-                <Run Text="Total Flights: "/><Run Text="{Binding TotalNumberOfFlights}"/> 
-                <LineBreak />
-                <Run Text="Total Flight Time: "/><Run Text="{Binding TotalFlightTime}"/><Run Text=" Hours"/>
-                <LineBreak />
-                <Run Text="Average Flight Time: "/><Run Text="{Binding AvgFlightTime}"/><Run Text=" Hours"/>
+        <StackPanel>
+            <StackPanel Orientation="Horizontal" Margin="10">
+                <Label Style="{StaticResource FSTrAkLabel}">By Airline</Label>
+                <ComboBox FontFamily="{DynamicResource Slopes}" 
+                          Foreground="{StaticResource TextColor}" 
+                          FontSize="24" 
+                          Width="200"
+                          ItemsSource="{Binding Airlines}"
+                          SelectedItem="{Binding AirlineFilter}"/>
 
-                <LineBreak />
-                <Run Text="Total Flight Distance: "/><Run Text="{Binding TotalFlightDistance}"/><Run Text=" NM"/>
-                <LineBreak />
-                <Run Text="Average Flight Distance: "/><Run Text="{Binding AvgFlightDistance}"/><Run Text=" NM"/>
+                <Label Style="{StaticResource FSTrAkLabel}" Margin="20 0 0 0">By Aircraft Type</Label>
+                <ComboBox FontFamily="{DynamicResource Slopes}" 
+                          Foreground="{StaticResource TextColor}" 
+                          FontSize="24" 
+                          Width="200"
+                          ItemsSource="{Binding AircraftTypes}"
+                          SelectedItem="{Binding AircraftTypeFilter}"/>
+            </StackPanel>
 
-                <LineBreak />
-                <Run Text="Total Fuel Used: "/><Run Text="{Binding TotalFuelUsed}"/>
-                <LineBreak />
-                <Run Text="Average Fuel Used: "/><Run Text="{Binding AvgFuelUsed}"/>
+            <StackPanel Margin="10">
 
-                <LineBreak />
-                <Run Text="Total Payload: "/><Run Text="{Binding TotalPayload}"/>
-                <LineBreak />
-                <Run Text="Average Payload: "/><Run Text="{Binding AvgPayload}"/>
+                <TextBlock 
+                    Foreground="{StaticResource PrimaryDarkBrush}"
+                    FontSize="28"
+                    Margin="10"
+                    FontFamily="{DynamicResource {StaticResource ThemeFontName}}"
+                    TextWrapping="Wrap"
+                    Text="{Binding ElementName=OverlayTextCard, Path=Text}"
+                    HorizontalAlignment="Left"
+                    VerticalAlignment="Center"
+                    MaxWidth="300"
+                >
+                    <Run Text="Total Flights: "/><Run Text="{Binding TotalNumberOfFlights}"/> 
+                    <LineBreak />
+                    <Run Text="Total Flight Time: "/><Run Text="{Binding TotalFlightTime}"/><Run Text=" Hours"/>
+                    <LineBreak />
+                    <Run Text="Average Flight Time: "/><Run Text="{Binding AvgFlightTime}"/><Run Text=" Hours"/>
 
-            </TextBlock>
+                    <LineBreak />
+                    <Run Text="Total Flight Distance: "/><Run Text="{Binding TotalFlightDistance}"/><Run Text=" NM"/>
+                    <LineBreak />
+                    <Run Text="Average Flight Distance: "/><Run Text="{Binding AvgFlightDistance}"/><Run Text=" NM"/>
+
+                    <LineBreak />
+                    <Run Text="Total Fuel Used: "/><Run Text="{Binding TotalFuelUsed}"/>
+                    <LineBreak />
+                    <Run Text="Average Fuel Used: "/><Run Text="{Binding AvgFuelUsed}"/>
+
+                    <LineBreak />
+                    <Run Text="Total Payload: "/><Run Text="{Binding TotalPayload}"/>
+                    <LineBreak />
+                    <Run Text="Average Payload: "/><Run Text="{Binding AvgPayload}"/>
+
+                </TextBlock>
+            </StackPanel>
+
         </StackPanel>
     </StackPanel>
 </UserControl>
