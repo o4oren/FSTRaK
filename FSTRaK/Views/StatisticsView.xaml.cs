@@ -64,8 +64,6 @@ namespace FSTRaK.Views
         }
 
 
-
-
         private void GeneratePie(Dictionary<string, double> data, WpfPlot chart)
         {
             var plt = chart.Plot;
