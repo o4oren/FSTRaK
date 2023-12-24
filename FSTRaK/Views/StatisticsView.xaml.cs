@@ -91,6 +91,8 @@ namespace FSTRaK.Views
             pie.SliceLabelColors = Enumerable.Repeat(ColorTranslator.FromHtml("Black"), pie.SliceFillColors.Length).ToArray();
 
             var legend = chart.Plot.Legend();
+            chart.Configuration.Pan = false;
+            chart.Configuration.Zoom = false;
 
             chart.Refresh();
         }
