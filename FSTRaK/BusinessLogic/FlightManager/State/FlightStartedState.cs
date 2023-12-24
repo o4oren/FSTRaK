@@ -1,16 +1,11 @@
 ﻿using System;
 using System.Diagnostics;
-using System.Globalization;
-using System.IO;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
-using System.Windows.Markup;
 using FSTRaK.DataTypes;
+using FSTRaK.Models;
 using FSTRaK.Models.Entity;
 using Serilog;
 
-namespace FSTRaK.Models.FlightManager.State
+namespace FSTRaK.BusinessLogic.FlightManager.State
 {
     internal class FlightStartedState : AbstractState
     {

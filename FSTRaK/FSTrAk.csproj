@@ -110,6 +110,19 @@
       <Generator>MSBuild:Compile</Generator>
       <SubType>Designer</SubType>
     </ApplicationDefinition>
+    <Compile Include="BusinessLogic\FlightManager\FlightManager.cs" />
+    <Compile Include="BusinessLogic\FlightManager\State\AbstractState.cs" />
+    <Compile Include="BusinessLogic\FlightManager\State\CrashedState.cs" />
+    <Compile Include="BusinessLogic\FlightManager\State\FlightEndedState.cs" />
+    <Compile Include="BusinessLogic\FlightManager\State\FlightStartedState.cs" />
+    <Compile Include="BusinessLogic\FlightManager\State\FlightState.cs" />
+    <Compile Include="BusinessLogic\FlightManager\State\IFlightManagerState.cs" />
+    <Compile Include="BusinessLogic\FlightManager\State\LandedState.cs" />
+    <Compile Include="BusinessLogic\FlightManager\State\SimNotInFlightState.cs" />
+    <Compile Include="BusinessLogic\FlightManager\State\TakeoffRollState.cs" />
+    <Compile Include="BusinessLogic\FlightManager\State\TaxiInState.cs" />
+    <Compile Include="BusinessLogic\FlightManager\State\TaxiOutState.cs" />
+    <Compile Include="BusinessLogic\SimconnectService\SimConnectService.cs" />
     <Compile Include="DataTypes\Consts.cs" />
     <Compile Include="DataTypes\LandingRate.cs" />
     <Compile Include="DataTypes\FlightOutcome.cs" />
@@ -134,37 +147,28 @@
     <Compile Include="Models\Entity\FlightEvent\TaxiOutEvent.cs" />
     <Compile Include="Models\Entity\FlightEvent\TakeoffEvent.cs" />
     <Compile Include="Models\Entity\LogbookContext.cs" />
-    <Compile Include="Models\FlightManager\State\AbstractState.cs" />
-    <Compile Include="Models\FlightManager\FlightManager.cs" />
     <Compile Include="Models\Entity\Aircraft.cs" />
     <Compile Include="Models\BaseModel.cs" />
     <Compile Include="Models\Entity\Flight.cs" />
     <Compile Include="Models\Entity\FlightEvent\BaseFlightEvent.cs" />
-    <Compile Include="Models\FlightManager\State\FlightEndedState.cs" />
-    <Compile Include="Models\FlightManager\State\FlightState.cs" />
-    <Compile Include="Models\FlightManager\State\LandedState.cs" />
-    <Compile Include="Models\FlightManager\State\IFlightManagerState.cs" />
-    <Compile Include="Models\FlightManager\State\FlightStartedState.cs" />
-    <Compile Include="Models\FlightManager\State\SimNotInFlightState.cs" />
-    <Compile Include="Models\FlightManager\State\TakeoffRollState.cs" />
-    <Compile Include="Models\FlightManager\State\CrashedState.cs" />
-    <Compile Include="Models\FlightManager\State\TaxiInState.cs" />
-    <Compile Include="Models\FlightManager\State\TaxiOutState.cs" />
     <Compile Include="RelayCommand.cs" />
     <Compile Include="Utils\FontUtil.cs" />
     <Compile Include="Utils\HyperlinkText.cs" />
     <Compile Include="Utils\MapProviderResolver.cs" />
     <Compile Include="Utils\MathUtils.cs" />
+    <Compile Include="Utils\NullToVisibilityConverter.cs" />
     <Compile Include="Utils\PathUtil.cs" />
     <Compile Include="Utils\ResourceUtils.cs" />
     <Compile Include="Utils\SkyVectorMapTileLayer.cs" />
     <Compile Include="Utils\SkyVectorTileSource.cs" />
+    <Compile Include="Utils\UnitsUtil.cs" />
     <Compile Include="ViewModels\AddCommentViewModel.cs" />
     <Compile Include="ViewModels\EditAircraftViewModel.cs" />
     <Compile Include="ViewModels\FlightDetailsParamsViewModel.cs" />
     <Compile Include="ViewModels\FlightDetailsViewModel.cs" />
     <Compile Include="ViewModels\LogbookViewModel.cs" />
     <Compile Include="ViewModels\SettingsViewModel.cs" />
+    <Compile Include="ViewModels\StatisticsViewModel.cs" />
     <Compile Include="Views\AddCommentPopupView.xaml.cs">
       <DependentUpon>AddCommentPopupView.xaml</DependentUpon>
     </Compile>
@@ -178,7 +182,6 @@
       <DependentUpon>LiveView.xaml</DependentUpon>
     </Compile>
     <Compile Include="ViewModels\LiveViewViewModel.cs" />
-    <Compile Include="Models\SimConnectService\SimConnectService.cs" />
     <Compile Include="ViewModels\BaseViewModel.cs" />
     <Compile Include="ViewModels\MainWindowViewModel.cs" />
     <Compile Include="Views\FlightDetailsView.xaml.cs">
@@ -192,6 +195,9 @@
     </Compile>
     <Compile Include="Views\SettingsView.xaml.cs">
       <DependentUpon>SettingsView.xaml</DependentUpon>
+    </Compile>
+    <Compile Include="Views\StatisticsView.xaml.cs">
+      <DependentUpon>StatisticsView.xaml</DependentUpon>
     </Compile>
     <Page Include="Resources\Images.xaml">
       <Generator>MSBuild:Compile</Generator>
@@ -257,6 +263,10 @@
       <SubType>Designer</SubType>
       <Generator>MSBuild:Compile</Generator>
     </Page>
+    <Page Include="Views\StatisticsView.xaml">
+      <SubType>Designer</SubType>
+      <Generator>MSBuild:Compile</Generator>
+    </Page>
   </ItemGroup>
   <ItemGroup>
     <Compile Include="Properties\AssemblyInfo.cs">
@@ -275,6 +285,7 @@
     <EmbeddedResource Include="Properties\Resources.resx">
       <Generator>ResXFileCodeGenerator</Generator>
       <LastGenOutput>Resources.Designer.cs</LastGenOutput>
+      <SubType>Designer</SubType>
     </EmbeddedResource>
     <None Include="Properties\DataSources\FSTRaK.Models.Aircraft.datasource" />
     <None Include="Properties\DataSources\FSTRaK.Models.BaseModel.datasource" />
@@ -318,6 +329,12 @@
     <Content Include="Resources\Data\airports.json">
       <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
     </Content>
+    <Content Include="Resources\Data\Boundaries.geojson">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </Content>
+    <Content Include="Resources\Data\VATSpy.dat">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </Content>
     <None Include="Resources\Images\FSTrAk-Icon.xcf" />
     <Content Include="Microsoft.FlightSimulator.SimConnect.dll">
       <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
@@ -334,7 +351,7 @@
       <Version>1.1.39</Version>
     </PackageReference>
     <PackageReference Include="ScottPlot.WPF">
-      <Version>4.1.64</Version>
+      <Version>4.1.67</Version>
     </PackageReference>
     <PackageReference Include="Serilog">
       <Version>3.0.1</Version>
@@ -388,6 +405,8 @@
       <Install>false</Install>
     </BootstrapperPackage>
   </ItemGroup>
-  <ItemGroup />
+  <ItemGroup>
+    <Folder Include="BusinessLogic\VatsimService\" />
+  </ItemGroup>
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
 </Project>

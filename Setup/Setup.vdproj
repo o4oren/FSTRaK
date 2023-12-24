@@ -69,6 +69,12 @@
         }
         "Entry"
         {
+        "MsmKey" = "8:_23F5770A252FD33C3C4F09AB4839373B"
+        "OwnerKey" = "8:_8581586A4FC4400494EBCD574550E0A0"
+        "MsmSig" = "8:_UNDEFINED"
+        }
+        "Entry"
+        {
         "MsmKey" = "8:_266EBDDC88A36B4C2101921C3694BE97"
         "OwnerKey" = "8:_8581586A4FC4400494EBCD574550E0A0"
         "MsmSig" = "8:_UNDEFINED"
@@ -76,12 +82,6 @@
         "Entry"
         {
         "MsmKey" = "8:_318822C294B84FE5A29EBD7EBDAA1CF3"
-        "OwnerKey" = "8:_8581586A4FC4400494EBCD574550E0A0"
-        "MsmSig" = "8:_UNDEFINED"
-        }
-        "Entry"
-        {
-        "MsmKey" = "8:_353E79165D1591CCBAB74275C1579D39"
         "OwnerKey" = "8:_8581586A4FC4400494EBCD574550E0A0"
         "MsmSig" = "8:_UNDEFINED"
         }
@@ -117,13 +117,13 @@
         }
         "Entry"
         {
-        "MsmKey" = "8:_61E3620360E337695BA35306B2C8BF59"
-        "OwnerKey" = "8:_353E79165D1591CCBAB74275C1579D39"
+        "MsmKey" = "8:_62D975BF4B2ED795B55CFE4548F1DDC8"
+        "OwnerKey" = "8:_23F5770A252FD33C3C4F09AB4839373B"
         "MsmSig" = "8:_UNDEFINED"
         }
         "Entry"
         {
-        "MsmKey" = "8:_61E3620360E337695BA35306B2C8BF59"
+        "MsmKey" = "8:_62D975BF4B2ED795B55CFE4548F1DDC8"
         "OwnerKey" = "8:_8581586A4FC4400494EBCD574550E0A0"
         "MsmSig" = "8:_UNDEFINED"
         }
@@ -274,7 +274,7 @@
         "Entry"
         {
         "MsmKey" = "8:_A20A7B815135BA20D46268FDB2D8DC5D"
-        "OwnerKey" = "8:_61E3620360E337695BA35306B2C8BF59"
+        "OwnerKey" = "8:_62D975BF4B2ED795B55CFE4548F1DDC8"
         "MsmSig" = "8:_UNDEFINED"
         }
         "Entry"
@@ -532,13 +532,13 @@
         "Entry"
         {
         "MsmKey" = "8:_UNDEFINED"
-        "OwnerKey" = "8:_353E79165D1591CCBAB74275C1579D39"
+        "OwnerKey" = "8:_23F5770A252FD33C3C4F09AB4839373B"
         "MsmSig" = "8:_UNDEFINED"
         }
         "Entry"
         {
         "MsmKey" = "8:_UNDEFINED"
-        "OwnerKey" = "8:_61E3620360E337695BA35306B2C8BF59"
+        "OwnerKey" = "8:_62D975BF4B2ED795B55CFE4548F1DDC8"
         "MsmSig" = "8:_UNDEFINED"
         }
         "Entry"
@@ -857,6 +857,37 @@
             "IsDependency" = "11:TRUE"
             "IsolateTo" = "8:"
             }
+            "{9F6F8455-1EF1-4B85-886A-4223BCC8E7F7}:_23F5770A252FD33C3C4F09AB4839373B"
+            {
+            "AssemblyRegister" = "3:1"
+            "AssemblyIsInGAC" = "11:FALSE"
+            "AssemblyAsmDisplayName" = "8:ScottPlot.WPF, Version=4.1.67.0, Culture=neutral, PublicKeyToken=e53b06131e34a3aa, processorArchitecture=MSIL"
+                "ScatterAssemblies"
+                {
+                    "_23F5770A252FD33C3C4F09AB4839373B"
+                    {
+                    "Name" = "8:ScottPlot.WPF.dll"
+                    "Attributes" = "3:512"
+                    }
+                }
+            "SourcePath" = "8:ScottPlot.WPF.dll"
+            "TargetName" = "8:"
+            "Tag" = "8:"
+            "Folder" = "8:_26CFFA3E4E6A4BE18B31D33970E8B9B7"
+            "Condition" = "8:"
+            "Transitive" = "11:FALSE"
+            "Vital" = "11:TRUE"
+            "ReadOnly" = "11:FALSE"
+            "Hidden" = "11:FALSE"
+            "System" = "11:FALSE"
+            "Permanent" = "11:FALSE"
+            "SharedLegacy" = "11:FALSE"
+            "PackageAs" = "3:1"
+            "Register" = "3:1"
+            "Exclude" = "11:FALSE"
+            "IsDependency" = "11:TRUE"
+            "IsolateTo" = "8:"
+            }
             "{9F6F8455-1EF1-4B85-886A-4223BCC8E7F7}:_266EBDDC88A36B4C2101921C3694BE97"
             {
             "AssemblyRegister" = "3:1"
@@ -902,37 +933,6 @@
                     }
                 }
             "SourcePath" = "8:SQLiteCache.WPF.dll"
-            "TargetName" = "8:"
-            "Tag" = "8:"
-            "Folder" = "8:_26CFFA3E4E6A4BE18B31D33970E8B9B7"
-            "Condition" = "8:"
-            "Transitive" = "11:FALSE"
-            "Vital" = "11:TRUE"
-            "ReadOnly" = "11:FALSE"
-            "Hidden" = "11:FALSE"
-            "System" = "11:FALSE"
-            "Permanent" = "11:FALSE"
-            "SharedLegacy" = "11:FALSE"
-            "PackageAs" = "3:1"
-            "Register" = "3:1"
-            "Exclude" = "11:FALSE"
-            "IsDependency" = "11:TRUE"
-            "IsolateTo" = "8:"
-            }
-            "{9F6F8455-1EF1-4B85-886A-4223BCC8E7F7}:_353E79165D1591CCBAB74275C1579D39"
-            {
-            "AssemblyRegister" = "3:1"
-            "AssemblyIsInGAC" = "11:FALSE"
-            "AssemblyAsmDisplayName" = "8:ScottPlot.WPF, Version=4.1.64.0, Culture=neutral, PublicKeyToken=e53b06131e34a3aa, processorArchitecture=MSIL"
-                "ScatterAssemblies"
-                {
-                    "_353E79165D1591CCBAB74275C1579D39"
-                    {
-                    "Name" = "8:ScottPlot.WPF.dll"
-                    "Attributes" = "3:512"
-                    }
-                }
-            "SourcePath" = "8:ScottPlot.WPF.dll"
             "TargetName" = "8:"
             "Tag" = "8:"
             "Folder" = "8:_26CFFA3E4E6A4BE18B31D33970E8B9B7"
@@ -1001,14 +1001,14 @@
             "IsDependency" = "11:TRUE"
             "IsolateTo" = "8:"
             }
-            "{9F6F8455-1EF1-4B85-886A-4223BCC8E7F7}:_61E3620360E337695BA35306B2C8BF59"
+            "{9F6F8455-1EF1-4B85-886A-4223BCC8E7F7}:_62D975BF4B2ED795B55CFE4548F1DDC8"
             {
             "AssemblyRegister" = "3:1"
             "AssemblyIsInGAC" = "11:FALSE"
-            "AssemblyAsmDisplayName" = "8:ScottPlot, Version=4.1.64.0, Culture=neutral, PublicKeyToken=86698dc10387c39e, processorArchitecture=MSIL"
+            "AssemblyAsmDisplayName" = "8:ScottPlot, Version=4.1.67.0, Culture=neutral, PublicKeyToken=86698dc10387c39e, processorArchitecture=MSIL"
                 "ScatterAssemblies"
                 {
-                    "_61E3620360E337695BA35306B2C8BF59"
+                    "_62D975BF4B2ED795B55CFE4548F1DDC8"
                     {
                     "Name" = "8:ScottPlot.dll"
                     "Attributes" = "3:512"
@@ -1801,15 +1801,15 @@
         {
         "Name" = "8:Microsoft Visual Studio"
         "ProductName" = "8:FSTrAk"
-        "ProductCode" = "8:{1D3FE010-EAD2-4457-B66F-8C06389CC781}"
-        "PackageCode" = "8:{EC6FD121-07ED-4E1C-80D9-BA7DE0F999CA}"
+        "ProductCode" = "8:{6484C354-48FD-44EE-8C96-9EB09D6B241D}"
+        "PackageCode" = "8:{35DD6660-C304-407C-9159-2540A6E0B337}"
         "UpgradeCode" = "8:{DFB8349E-B81D-4481-9F4C-14C136E2FBD4}"
         "AspNetVersion" = "8:2.0.50727.0"
         "RestartWWWService" = "11:FALSE"
         "RemovePreviousVersions" = "11:TRUE"
         "DetectNewerInstalledVersion" = "11:TRUE"
         "InstallAllUsers" = "11:TRUE"
-        "ProductVersion" = "8:1.4.1"
+        "ProductVersion" = "8:1.6.0"
         "Manufacturer" = "8:FSTrAk"
         "ARPHELPTELEPHONE" = "8:"
         "ARPHELPLINK" = "8:"

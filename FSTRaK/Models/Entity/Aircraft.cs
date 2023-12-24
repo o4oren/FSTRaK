@@ -17,11 +17,13 @@ namespace FSTRaK.Models
 
         public String Category { get; set; }
         public String Manufacturer { get; set; }
-        public String Airline { get; set; }
+        public String Airline { get ; set; }
         public String Model { get; set; }
         public String TailNumber { get; set; }
         public int NumberOfEngines { get; set; }
         public EngineType EngineType { get; set; }
+
+        public double? EmptyWeightLbs { get; set; }
         public override bool Equals(Object obj)
         {
             if ((obj == null) || this.GetType() != obj.GetType())

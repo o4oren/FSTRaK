@@ -1,7 +1,5 @@
 ﻿using FSTRaK.Models;
 using FSTRaK.Models.Entity;
-using FSTRaK.Models.FlightManager;
-using MapControl;
 using Serilog;
 using System;
 using System.Collections.ObjectModel;
@@ -11,9 +9,9 @@ using System.Linq;
 using System.Threading;
 using System.Threading.Tasks;
 using System.Timers;
-using FSTRaK;
-using FSTRaK.Models.FlightManager.State;
-using FSTRaK.ViewModels;
+
+using FSTRaK.BusinessLogic.FlightManager;
+using FSTRaK.BusinessLogic.FlightManager.State;
 
 namespace FSTRaK.ViewModels
 {
@@ -60,15 +58,27 @@ namespace FSTRaK.ViewModels
                 {
                     return new Flight();
                 }
+
                 return _selectedFlight;
             } 
-            set 
+            set
             {
-                if(value != null && _selectedFlight != value)
+                if (value == null || _selectedFlight == value) return;
+                try
                 {
+                    if (value.FlightEvents.Count == 0)
+                    {
+                        using var logbookContext = new LogbookContext();
+                        logbookContext.Flights.Attach(value);
+                        logbookContext.Entry(value).Collection(f => f.FlightEvents).Load();
+                    }
                     _selectedFlight = value;
                     _flightDetailsViewModel.Flight = _selectedFlight;
                     OnPropertyChanged(nameof(SelectedFlight));
+                }
+                catch (Exception ex)
+                {
+                    Log.Error(ex, "Exception fetching Flights!");
                 }
             } 
         }
@@ -121,7 +131,6 @@ namespace FSTRaK.ViewModels
                             SelectedFlight = logbookContext.Flights
                             .Where(f => f.Id == latestId)
                             .Include(f => f.Aircraft)
-                            .Include(f => f.FlightEvents)
                             .SingleOrDefault();
                         }
                         catch (Exception ex)
@@ -225,10 +234,9 @@ namespace FSTRaK.ViewModels
                     try
                     {
                         var flights = logbookContext.Flights
-                        .Select(f => f)
-                        .OrderByDescending(f => f.Id)
-                        .Include(f => f.Aircraft)
-                        .Include(f => f.FlightEvents);
+                            .Select(f => f)
+                            .OrderByDescending(f => f.Id)
+                            .Include(f => f.Aircraft);
 
                         System.Windows.Application.Current.Dispatcher.Invoke((Action)delegate
                         {

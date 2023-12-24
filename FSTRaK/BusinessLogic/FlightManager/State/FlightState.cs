@@ -1,7 +1,8 @@
 ﻿using FSTRaK.DataTypes;
+using FSTRaK.Models;
 using FSTRaK.Models.Entity.FlightEvent;
 
-namespace FSTRaK.Models.FlightManager.State
+namespace FSTRaK.BusinessLogic.FlightManager.State
 {
     internal class FlightState : AbstractState
     {

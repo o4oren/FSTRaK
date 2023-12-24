@@ -1,11 +1,11 @@
-﻿using FSTRaK.Models.FlightManager;
-using FSTRaK.Utils;
+﻿using FSTRaK.Utils;
 using MapControl;
 using MapControl.Caching;
 using System;
 using System.Windows;
 using System.Windows.Forms;
 using System.Windows.Input;
+using FSTRaK.BusinessLogic.FlightManager;
 using Application = System.Windows.Application;
 
 namespace FSTRaK.Views
@@ -45,6 +45,7 @@ namespace FSTRaK.Views
                 _notifyIcon.ContextMenuStrip.Items.Add("Show FSTrAk", null, (s, args) =>
                 {
                     this.Show();
+                    this.ShowInTaskbar = true;
                     WindowState = WindowState.Normal;
                 });
                 _notifyIcon.ContextMenuStrip.Items.Add(new ToolStripSeparator());
@@ -56,6 +57,7 @@ namespace FSTRaK.Views
                     delegate (object s, EventArgs args)
                     {
                         this.Show();
+                        this.ShowInTaskbar = true;
                         this.WindowState = WindowState.Normal;
                     };
             }
@@ -79,7 +81,14 @@ namespace FSTRaK.Views
             {
                 WindowState = WindowState.Minimized;
                 if (Properties.Settings.Default.IsMinimizeToTray)
+                {
                     this.Hide();
+                    this.ShowInTaskbar = false;
+                }
+                else
+                {
+                    WindowState = WindowState.Minimized;
+                }
             }
         }
 

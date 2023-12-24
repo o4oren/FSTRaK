@@ -34,6 +34,17 @@ namespace FSTRaK.ViewModels
 
         public double Distance { get; set; }
 
+        private double? _payload;
+
+        public double? Payload
+        {
+            get => _payload != null ? Properties.Settings.Default.Units == (int)Units.Imperial ? _payload : _payload * Consts.LbsToKgs : null;
+            set => _payload = value;
+        }
+
+        public string PayloadUnit { get; set; }
+
+
         public double LandingVerticalSpeed { get; set; }
 
         public double Score { get; set; }
@@ -52,11 +63,13 @@ namespace FSTRaK.ViewModels
             EndTime = flight.EndTime;
             FuelUsed = flight.TotalFuelUsed;
             Distance = flight.FlightDistanceNm;
+            Payload = flight.TotalPayloadLbs;
             BlockTime = flight.FlightTime;
             LandingVerticalSpeed = CalculateLandingVs(flight);
             Score = flight.Score;
             ArrivedOrCrashedText = flight.FlightOutcome == FlightOutcome.Crashed ? "Crashed near: " : "Arrived at: ";
             FuelUnit = Properties.Settings.Default.Units == (int)Units.Imperial ? "Lbs" : "Kg";
+            PayloadUnit = Payload != null ? FuelUnit : "Unknown";
             Comment = flight.Comment;
 
         }

@@ -3,11 +3,12 @@ using System.Collections.ObjectModel;
 using System.Linq;
 using System.Threading.Tasks;
 using FSTRaK.DataTypes;
+using FSTRaK.Models;
 using FSTRaK.Models.Entity;
 using MapControl;
 using Serilog;
 
-namespace FSTRaK.Models.FlightManager.State
+namespace FSTRaK.BusinessLogic.FlightManager.State
 {
     internal class FlightEndedState : AbstractState
     {

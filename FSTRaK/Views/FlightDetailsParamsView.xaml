@@ -63,6 +63,10 @@
                 <Run Text="Total fuel used: "/><Run Text="{Binding FuelUsed, StringFormat=N2}"/> <Run Text="{Binding FuelUnit}"/>
                 <LineBreak/>
 
+
+                <Run Text="Payload: "/><Run Text="{Binding Payload, StringFormat=N2}"/> <Run Text="{Binding PayloadUnit}"/>
+                <LineBreak/>
+
                 <Run Text="Distance flown: "/><Run Text="{Binding Distance, StringFormat=N2}"/> NM
                 <LineBreak/>
 

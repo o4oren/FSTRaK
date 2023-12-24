@@ -1,7 +1,4 @@
-﻿using FSTRaK.DataTypes;
-using Microsoft.FlightSimulator.SimConnect;
-using Serilog;
-using System;
+﻿using System;
 using System.ComponentModel;
 using System.Device.Location;
 using System.Linq;
@@ -9,8 +6,11 @@ using System.Runtime.CompilerServices;
 using System.Runtime.InteropServices;
 using System.Timers;
 using System.Windows.Interop;
+using FSTRaK.DataTypes;
+using Microsoft.FlightSimulator.SimConnect;
+using Serilog;
 
-namespace FSTRaK;
+namespace FSTRaK.BusinessLogic.SimconnectService;
 
 /// <summary>
 ///    This class is a facade over simconnect and simplifies communication with the simulator for the consumer's 
@@ -257,6 +257,8 @@ internal sealed class SimConnectService : INotifyPropertyChanged
             0.0f, SimConnect.SIMCONNECT_UNUSED);
         _simconnect.AddToDataDefinition(DataDefinitions.AircraftData, "NUMBER OF ENGINES", "number",
             SIMCONNECT_DATATYPE.INT32, 0.0f, SimConnect.SIMCONNECT_UNUSED);
+        _simconnect.AddToDataDefinition(DataDefinitions.AircraftData, "EMPTY WEIGHT", "pounds",
+            SIMCONNECT_DATATYPE.FLOAT64, 0.0f, SimConnect.SIMCONNECT_UNUSED);
 
 
 
@@ -310,6 +312,8 @@ internal sealed class SimConnectService : INotifyPropertyChanged
         _simconnect.AddToDataDefinition(DataDefinitions.FlightData, "TRAILING EDGE FLAPS LEFT ANGLE", "degrees",
             SIMCONNECT_DATATYPE.FLOAT64, 0.0f, SimConnect.SIMCONNECT_UNUSED);
         _simconnect.AddToDataDefinition(DataDefinitions.FlightData, "FUEL TOTAL QUANTITY WEIGHT", "pounds",
+            SIMCONNECT_DATATYPE.FLOAT64, 0.0f, SimConnect.SIMCONNECT_UNUSED);
+        _simconnect.AddToDataDefinition(DataDefinitions.FlightData, "TOTAL WEIGHT", "pounds",
             SIMCONNECT_DATATYPE.FLOAT64, 0.0f, SimConnect.SIMCONNECT_UNUSED);
         _simconnect.AddToDataDefinition(DataDefinitions.FlightData, "BRAKE PARKING POSITION", "Bool",
             SIMCONNECT_DATATYPE.INT32, 0.0f, SimConnect.SIMCONNECT_UNUSED);

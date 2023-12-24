@@ -2,17 +2,17 @@
 using Serilog;
 using System;
 using System.ComponentModel;
-using System.Runtime.CompilerServices;
-using FSTRaK.Models.FlightManager.State;
 using System.IO;
-using System.Runtime.Remoting.Contexts;
 using System.Text;
 using System.Threading.Tasks;
 using FSTRaK.Models.Entity;
 using System.Linq;
 using System.Globalization;
+using FSTRaK.BusinessLogic.FlightManager.State;
+using FSTRaK.BusinessLogic.SimconnectService;
+using FSTRaK.Models;
 
-namespace FSTRaK.Models.FlightManager
+namespace FSTRaK.BusinessLogic.FlightManager
 {
     /// <summary>
     /// FlightManager is the domain model managing the flight. It's responsibilities are to subscribe to the Simconnect service events, 
@@ -186,24 +186,27 @@ namespace FSTRaK.Models.FlightManager
                     {
                         var aircraftData = _simConnectService.AircraftData;
                         // If aircraft is already in the db, let's use the existing record.
-                        var aircraft = logbookContext.Aircraft.FirstOrDefault(a => a.Title == aircraftData.title);
+                        var aircraft = logbookContext.Aircraft.FirstOrDefault(a => a.Title.Trim() == aircraftData.title.Trim());
                         if (aircraft != null)
                         {
+                            aircraft.EmptyWeightLbs ??= aircraftData.EmptyWeightLbs;
+                            logbookContext.SaveChanges();
                             ActiveFlight.Aircraft = aircraft;
                         }
                         else
                         {
+                            // delete aircraft if it doesn't have empty weight
                             aircraft = logbookContext.Aircraft.Create();
-                            aircraft.Title = aircraftData.title;
-                            aircraft.Manufacturer = aircraftData.atcType;
-                            aircraft.Model = aircraftData.model;
-                            aircraft.AircraftType = aircraftData.model;
-                            aircraft.Airline = aircraftData.airline;
-                            aircraft.TailNumber = aircraftData.AtcId;
+                            aircraft.Title = aircraftData.title.Trim();
+                            aircraft.Manufacturer = aircraftData.atcType.Trim();
+                            aircraft.Model = aircraftData.model.Trim();
+                            aircraft.AircraftType = aircraftData.model.Trim();
+                            aircraft.Airline = aircraftData.airline.Trim();
+                            aircraft.TailNumber = aircraftData.AtcId.Trim();
                             aircraft.NumberOfEngines = aircraftData.NumberOfEngines;
                             aircraft.EngineType = aircraftData.EngineType;
                             aircraft.Category = aircraftData.Category;
-
+                            aircraft.EmptyWeightLbs = aircraftData.EmptyWeightLbs;
                             EnrichAircraftDataFromFile(aircraft);
 
                             // Capitalize manufacturer name correctly.

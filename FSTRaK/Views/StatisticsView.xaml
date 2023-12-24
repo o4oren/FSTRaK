@@ -1,0 +1,99 @@
+﻿<UserControl x:Class="FSTRaK.Views.StatisticsView"
+             xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+             xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+             xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006" 
+             xmlns:d="http://schemas.microsoft.com/expression/blend/2008" 
+             xmlns:viewmodels="clr-namespace:FSTRaK.ViewModels" d:DataContext="{d:DesignInstance Type=viewmodels:StatisticsViewModel}"
+             mc:Ignorable="d" 
+             d:DesignHeight="450" d:DesignWidth="800"
+             Loaded="OnLoaded"
+             >
+
+    <Grid>
+        <Grid.ColumnDefinitions>
+            <ColumnDefinition Width="2*" />
+            <ColumnDefinition Width="2*" />
+            <ColumnDefinition Width="1*" />
+        </Grid.ColumnDefinitions>
+        <Grid.RowDefinitions>
+            <RowDefinition Height="Auto"/>
+            <RowDefinition Height="Auto" />
+            <RowDefinition />
+        </Grid.RowDefinitions>
+        <StackPanel Orientation="Horizontal" Grid.Column="0" Grid.Row="0" Margin="10">
+            <Label Style="{StaticResource FSTrAkLabel}">By Airline</Label>
+            <ComboBox FontFamily="{DynamicResource Slopes}" 
+                      Foreground="{StaticResource TextColor}" 
+                      FontSize="24" 
+                      Width="200"
+                      ItemsSource="{Binding Airlines}"
+                      SelectedItem="{Binding AirlineFilter}"/>
+        </StackPanel>
+        <StackPanel Orientation="Horizontal" Grid.Column="1" Grid.Row="0" Margin="10">
+            <Label Style="{StaticResource FSTrAkLabel}" Margin="20 0 0 0">By Aircraft Type</Label>
+            <ComboBox FontFamily="{DynamicResource Slopes}" 
+                      Foreground="{StaticResource TextColor}" 
+                      FontSize="24" 
+                      Width="200"
+                      ItemsSource="{Binding AircraftTypes}"
+                      SelectedItem="{Binding AircraftTypeFilter}"/>
+        </StackPanel>
+
+
+
+        <StackPanel Grid.Row="1">
+
+            <StackPanel Margin="10" >
+
+                <TextBlock 
+                    Foreground="{StaticResource PrimaryDarkBrush}"
+                    FontSize="28"
+                    Margin="10"
+                    FontFamily="{DynamicResource {StaticResource ThemeFontName}}"
+                    TextWrapping="Wrap"
+                    Text="{Binding ElementName=OverlayTextCard, Path=Text}"
+                    HorizontalAlignment="Left"
+                    VerticalAlignment="Center"
+                    MaxWidth="300"
+                >
+                    <Run Text="Total Flights: "/><Run Text="{Binding TotalNumberOfFlights}"/> 
+                    <LineBreak />
+                    <Run Text="Total Flight Time: "/><Run Text="{Binding TotalFlightTime}"/><Run Text=" Hours"/>
+                    <LineBreak />
+                    <Run Text="Average Flight Time: "/><Run Text="{Binding AvgFlightTime}"/><Run Text=" Hours"/>
+
+                    <LineBreak />
+                    <Run Text="Total Flight Distance: "/><Run Text="{Binding TotalFlightDistance}"/><Run Text=" NM"/>
+                    <LineBreak />
+                    <Run Text="Average Flight Distance: "/><Run Text="{Binding AvgFlightDistance}"/><Run Text=" NM"/>
+
+                    <LineBreak />
+                    <Run Text="Total Fuel Used: "/><Run Text="{Binding TotalFuelUsed}"/>
+                    <LineBreak />
+                    <Run Text="Average Fuel Used: "/><Run Text="{Binding AvgFuelUsed}"/>
+
+                    <LineBreak />
+                    <Run Text="Total Payload: "/><Run Text="{Binding TotalPayload}"/>
+                    <LineBreak />
+                    <Run Text="Average Payload: "/><Run Text="{Binding AvgPayload}"/>
+
+                </TextBlock>
+            </StackPanel>
+        </StackPanel>
+
+        <Grid Grid.Row="2" Grid.Column="0" Margin="10,10,10,10">
+            <Label Style="{StaticResource FSTrAkLabel}">
+                Top Aircraft
+            </Label>
+            <WpfPlot x:Name="AircraftDistributionChart" Margin="10,39,10,10" Grid.Column="0"/>
+        </Grid>
+
+        <Grid Grid.Row="2" Grid.Column="1" Margin="10,10,10,10">
+            <Label Style="{StaticResource FSTrAkLabel}">
+                Top Airlines
+            </Label>
+            <WpfPlot x:Name="AirlineDistributionChart" Margin="10,39,10,10"  />
+        </Grid>
+
+    </Grid>
+</UserControl>

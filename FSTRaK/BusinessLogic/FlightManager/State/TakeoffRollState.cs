@@ -1,8 +1,9 @@
 ﻿using System;
 using FSTRaK.DataTypes;
+using FSTRaK.Models;
 using Serilog;
 
-namespace FSTRaK.Models.FlightManager.State
+namespace FSTRaK.BusinessLogic.FlightManager.State
 {
     internal class TakeoffRollState : AbstractState
     {
@@ -22,7 +23,9 @@ namespace FSTRaK.Models.FlightManager.State
             {
                 var to = new TakeoffEvent() { FlapsPosition = data.FlapPosition, FuelWeightLbs = data.FuelWeightLbs };
                 AddFlightEvent(data, to);
-                Log.Information($"Take off! Flaps: {to.FlapsPosition}, with {to.FuelWeightLbs} Lbs of fuel.");
+                Context.ActiveFlight.TotalPayloadLbs =
+                    data.TotalWeightLbs - data.FuelWeightLbs - Context.ActiveFlight.Aircraft.EmptyWeightLbs;
+                Log.Information($"Take off! Flaps: {to.FlapsPosition}, with {to.FuelWeightLbs} Lbs of fuel, and {Context.ActiveFlight.TotalPayloadLbs} lbs of payload!");
 
                 Context.State = new FlightState(Context);
                 return;
