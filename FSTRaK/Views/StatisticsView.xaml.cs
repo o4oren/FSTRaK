@@ -35,38 +35,36 @@ namespace FSTRaK.Views
 
         private void OnLoaded(object s, RoutedEventArgs e)
         {
-            ((StatisticsViewModel)DataContext).PropertyChanged += DataModel_OnPropertyChange;
+            ((StatisticsViewModel)DataContext).PropertyChanged += (s, e) =>
+            {
+                if (DataContext == null)
+                    return;
+                switch (e.PropertyName)
+                {
+                    case "AirlineDistribution":
+                        var airlineDistributionDictionary = ((StatisticsViewModel)DataContext).AirlineDistribution;
+
+                        if (airlineDistributionDictionary != null && airlineDistributionDictionary.Any())
+                        {
+                            GeneratePie(airlineDistributionDictionary, AirlineDistributionChart);
+                        }
+                        break;
+
+                    case "AircraftDistribution":
+                        var aircraftDistributionDictionary = ((StatisticsViewModel)DataContext).AircraftDistribution;
+
+                        if (aircraftDistributionDictionary != null && aircraftDistributionDictionary.Any())
+                        {
+                            GeneratePie(aircraftDistributionDictionary, AircraftDistributionChart);
+                        }
+                        break;
+                }
+            };
             ((StatisticsViewModel)DataContext).ViewLoaded();
         }
 
-        private void OnUnLoaded(object s, RoutedEventArgs e)
-        {
-            ((StatisticsViewModel)DataContext).PropertyChanged -= DataModel_OnPropertyChange;
-        }
 
-        private void DataModel_OnPropertyChange(object sender, PropertyChangedEventArgs e)
-        {
-            switch (e.PropertyName)
-            {
-                case "AirlineDistribution":
-                    var airlineDistributionDictionary = ((StatisticsViewModel)DataContext).AirlineDistribution;
 
-                    if (airlineDistributionDictionary != null && airlineDistributionDictionary.Any())
-                    {
-                        GeneratePie(airlineDistributionDictionary, AirlineDistributionChart);
-                    }
-                    break;
-
-                case "AircraftDistribution":
-                    var aircraftDistributionDictionary = ((StatisticsViewModel)DataContext).AircraftDistribution;
-
-                    if (aircraftDistributionDictionary != null && aircraftDistributionDictionary.Any())
-                    {
-                        GeneratePie(aircraftDistributionDictionary, AircraftDistributionChart);
-                    }
-                    break;
-            }
-        }
 
         private void GeneratePie(Dictionary<string, double> data, WpfPlot chart)
         {
