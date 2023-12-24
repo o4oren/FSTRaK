@@ -1,5 +1,7 @@
-﻿using System;
+﻿using FSTRaK.ViewModels;
+using System;
 using System.Collections.Generic;
+using System.ComponentModel;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
@@ -23,6 +25,58 @@ namespace FSTRaK.Views
         public StatisticsView()
         {
             InitializeComponent();
+        }
+
+        private void OnLoaded(object s, RoutedEventArgs e)
+        {
+            ((StatisticsViewModel)DataContext).PropertyChanged += DataModel_OnPropertyChange;
+        }
+
+        private void OnUnLoaded(object s, RoutedEventArgs e)
+        {
+            ((StatisticsViewModel)DataContext).PropertyChanged -= DataModel_OnPropertyChange;
+
+        }
+
+        private void DataModel_OnPropertyChange(object sender, PropertyChangedEventArgs e)
+        {
+            switch (e.PropertyName)
+            {
+                case "AirlineDistribution":
+                    var airlineDistributionDictionary = ((StatisticsViewModel)DataContext).AirlineDistribution;
+
+                    if (airlineDistributionDictionary != null && airlineDistributionDictionary.Any())
+                    {
+                        var plt = AirlineDistributionChart.Plot;
+
+                        double[] values = airlineDistributionDictionary.Values.ToArray();
+                        string[] labels = airlineDistributionDictionary.Keys.ToArray();
+                        var pie = plt.AddPie(values);
+                        pie.SliceLabels = labels;
+                        pie.Explode = false;
+
+                        AirlineDistributionChart.Refresh();
+                    }
+                    break;
+
+                case "AircraftDistribution":
+                    var aircraftDistributionDictionary = ((StatisticsViewModel)DataContext).AircraftDistribution;
+
+                    if (aircraftDistributionDictionary != null && aircraftDistributionDictionary.Any())
+                    {
+                        var plt = AircraftDistributionChart.Plot;
+                        double[] values = aircraftDistributionDictionary.Values.ToArray();
+                        string[] labels = aircraftDistributionDictionary.Keys.ToArray();
+
+                        var pie = plt.AddPie(values);
+                        pie.SliceLabels = labels;
+                        pie.Explode = false;
+                        
+
+                        AircraftDistributionChart.Refresh();
+                    }
+                    break;
+            }
         }
     }
 }

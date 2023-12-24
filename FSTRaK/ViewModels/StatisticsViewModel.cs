@@ -159,6 +159,28 @@ namespace FSTRaK.ViewModels
             }
         }
 
+        private Dictionary<string, double> _aircraftDistribution;
+        public Dictionary<string, double> AircraftDistribution
+        {
+            get => _aircraftDistribution;
+            set
+            {
+                _aircraftDistribution = value;
+                OnPropertyChanged();
+            }
+        }
+
+        private Dictionary<string, double> _airlineDistribution;
+        public Dictionary<string, double> AirlineDistribution
+        {
+            get => _airlineDistribution;
+            set
+            {
+                _airlineDistribution = value;
+                OnPropertyChanged();
+            }
+        }
+
 
 
         public StatisticsViewModel()
@@ -229,6 +251,34 @@ namespace FSTRaK.ViewModels
 
             TotalPayload = UnitsUtil.GetWeightString(flights.Sum(f => f.TotalPayloadLbs));
             AvgPayload = UnitsUtil.GetWeightString(flights.Average(f => f.TotalPayloadLbs));
+
+            var aircraftDistribution = new Dictionary<string, double>();
+            foreach (var f in flights.GroupBy(f => f.Aircraft.AircraftType)
+                         .Select(group => new {
+                             aircraftType = group.Key,
+                             count = group.Count()
+                         })
+                         .OrderBy(x => x.count))
+            {
+                aircraftDistribution.Add(f.aircraftType, f.count);
+            }
+
+            AircraftDistribution = aircraftDistribution;
+
+
+
+            var airlineDistribution = new Dictionary<string, double>();
+            foreach (var f in flights.GroupBy(f => f.Aircraft.Airline)
+                         .Select(group => new {
+                             airline = group.Key,
+                             count = group.Count()
+                         })
+                         .OrderBy(x => x.count))
+            {
+                airlineDistribution.Add(f.airline, f.count);
+            }
+
+            AirlineDistribution = airlineDistribution;
 
         }
 
