@@ -14,6 +14,12 @@ using System.Windows.Media;
 using System.Windows.Media.Imaging;
 using System.Windows.Navigation;
 using System.Windows.Shapes;
+using ScottPlot;
+using ScottPlot.Plottable;
+using FSTRaK.Utils;
+using System.Drawing;
+using static System.Resources.ResXFileRef;
+using Color = System.Drawing.Color;
 
 namespace FSTRaK.Views
 {
@@ -30,12 +36,12 @@ namespace FSTRaK.Views
         private void OnLoaded(object s, RoutedEventArgs e)
         {
             ((StatisticsViewModel)DataContext).PropertyChanged += DataModel_OnPropertyChange;
+            ((StatisticsViewModel)DataContext).ViewLoaded();
         }
 
         private void OnUnLoaded(object s, RoutedEventArgs e)
         {
             ((StatisticsViewModel)DataContext).PropertyChanged -= DataModel_OnPropertyChange;
-
         }
 
         private void DataModel_OnPropertyChange(object sender, PropertyChangedEventArgs e)
@@ -47,15 +53,7 @@ namespace FSTRaK.Views
 
                     if (airlineDistributionDictionary != null && airlineDistributionDictionary.Any())
                     {
-                        var plt = AirlineDistributionChart.Plot;
-
-                        double[] values = airlineDistributionDictionary.Values.ToArray();
-                        string[] labels = airlineDistributionDictionary.Keys.ToArray();
-                        var pie = plt.AddPie(values);
-                        pie.SliceLabels = labels;
-                        pie.Explode = false;
-
-                        AirlineDistributionChart.Refresh();
+                        GeneratePie(airlineDistributionDictionary, AirlineDistributionChart);
                     }
                     break;
 
@@ -64,19 +62,34 @@ namespace FSTRaK.Views
 
                     if (aircraftDistributionDictionary != null && aircraftDistributionDictionary.Any())
                     {
-                        var plt = AircraftDistributionChart.Plot;
-                        double[] values = aircraftDistributionDictionary.Values.ToArray();
-                        string[] labels = aircraftDistributionDictionary.Keys.ToArray();
-
-                        var pie = plt.AddPie(values);
-                        pie.SliceLabels = labels;
-                        pie.Explode = false;
-                        
-
-                        AircraftDistributionChart.Refresh();
+                        GeneratePie(aircraftDistributionDictionary, AircraftDistributionChart);
                     }
                     break;
             }
+        }
+
+        private void GeneratePie(Dictionary<string, double> data, WpfPlot chart)
+        {
+            var plt = chart.Plot;
+            chart.Plot.Style(
+                figureBackground: System.Drawing.Color.Transparent,
+                dataBackground: System.Drawing.Color.Transparent
+            );
+            double[] values = data.Values.ToArray();
+            string[] labels = data.Keys.ToArray();
+            
+
+            var pie = plt.AddPie(values);
+            pie.SliceLabels = labels;
+            pie.Explode = false;
+
+            // pie.ShowPercentages = true;
+            pie.ShowValues = true;
+            pie.ShowLabels = true;
+            //pie.SliceLabelPosition = 0.6;
+            //pie.Size = .7;
+
+            chart.Refresh();
         }
     }
 }

@@ -3,34 +3,48 @@
              xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
              xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006" 
              xmlns:d="http://schemas.microsoft.com/expression/blend/2008" 
-             xmlns:local="clr-namespace:FSTRaK.Views" xmlns:viewmodels="clr-namespace:FSTRaK.ViewModels" d:DataContext="{d:DesignInstance Type=viewmodels:StatisticsViewModel}"
+             xmlns:viewmodels="clr-namespace:FSTRaK.ViewModels" d:DataContext="{d:DesignInstance Type=viewmodels:StatisticsViewModel}"
              mc:Ignorable="d" 
              d:DesignHeight="450" d:DesignWidth="800"
              Loaded="OnLoaded"
              Unloaded="OnUnLoaded"
              >
 
-    <StackPanel Orientation="Horizontal">
-        <StackPanel>
-            <StackPanel Orientation="Horizontal" Margin="10">
-                <Label Style="{StaticResource FSTrAkLabel}">By Airline</Label>
-                <ComboBox FontFamily="{DynamicResource Slopes}" 
-                          Foreground="{StaticResource TextColor}" 
-                          FontSize="24" 
-                          Width="200"
-                          ItemsSource="{Binding Airlines}"
-                          SelectedItem="{Binding AirlineFilter}"/>
+    <Grid>
+        <Grid.ColumnDefinitions>
+            <ColumnDefinition Width="2*" />
+            <ColumnDefinition Width="2*" />
+            <ColumnDefinition Width="1*" />
+        </Grid.ColumnDefinitions>
+        <Grid.RowDefinitions>
+            <RowDefinition Height="Auto"/>
+            <RowDefinition Height="Auto" />
+            <RowDefinition />
+        </Grid.RowDefinitions>
+        <StackPanel Orientation="Horizontal" Grid.Column="0" Grid.Row="0" Margin="10">
+            <Label Style="{StaticResource FSTrAkLabel}">By Airline</Label>
+            <ComboBox FontFamily="{DynamicResource Slopes}" 
+                      Foreground="{StaticResource TextColor}" 
+                      FontSize="24" 
+                      Width="200"
+                      ItemsSource="{Binding Airlines}"
+                      SelectedItem="{Binding AirlineFilter}"/>
+        </StackPanel>
+        <StackPanel Orientation="Horizontal" Grid.Column="1" Grid.Row="0" Margin="10">
+            <Label Style="{StaticResource FSTrAkLabel}" Margin="20 0 0 0">By Aircraft Type</Label>
+            <ComboBox FontFamily="{DynamicResource Slopes}" 
+                      Foreground="{StaticResource TextColor}" 
+                      FontSize="24" 
+                      Width="200"
+                      ItemsSource="{Binding AircraftTypes}"
+                      SelectedItem="{Binding AircraftTypeFilter}"/>
+        </StackPanel>
 
-                <Label Style="{StaticResource FSTrAkLabel}" Margin="20 0 0 0">By Aircraft Type</Label>
-                <ComboBox FontFamily="{DynamicResource Slopes}" 
-                          Foreground="{StaticResource TextColor}" 
-                          FontSize="24" 
-                          Width="200"
-                          ItemsSource="{Binding AircraftTypes}"
-                          SelectedItem="{Binding AircraftTypeFilter}"/>
-            </StackPanel>
 
-            <StackPanel Margin="10">
+
+        <StackPanel Grid.Row="1">
+
+            <StackPanel Margin="10" >
 
                 <TextBlock 
                     Foreground="{StaticResource PrimaryDarkBrush}"
@@ -66,11 +80,10 @@
 
                 </TextBlock>
             </StackPanel>
-            <StackPanel Orientation="Horizontal" Width="620" Height="83">
-                <WpfPlot x:Name="AircraftDistributionChart" Margin="10"/>
-                <WpfPlot x:Name="AirlineDistributionChart" Margin="10"/>
-            </StackPanel>
-
         </StackPanel>
-    </StackPanel>
+
+        <WpfPlot x:Name="AircraftDistributionChart" Margin="10,10,10,10" Grid.Row="2" Grid.Column="0"/>
+        <WpfPlot x:Name="AirlineDistributionChart" Margin="10,10,10,10"  Grid.Row="2" Grid.Column="1"/>
+
+    </Grid>
 </UserControl>

@@ -186,7 +186,7 @@ namespace FSTRaK.BusinessLogic.FlightManager
                     {
                         var aircraftData = _simConnectService.AircraftData;
                         // If aircraft is already in the db, let's use the existing record.
-                        var aircraft = logbookContext.Aircraft.FirstOrDefault(a => a.Title == aircraftData.title);
+                        var aircraft = logbookContext.Aircraft.FirstOrDefault(a => a.Title.Trim() == aircraftData.title.Trim());
                         if (aircraft != null)
                         {
                             aircraft.EmptyWeightLbs ??= aircraftData.EmptyWeightLbs;
@@ -197,12 +197,12 @@ namespace FSTRaK.BusinessLogic.FlightManager
                         {
                             // delete aircraft if it doesn't have empty weight
                             aircraft = logbookContext.Aircraft.Create();
-                            aircraft.Title = aircraftData.title;
-                            aircraft.Manufacturer = aircraftData.atcType;
-                            aircraft.Model = aircraftData.model;
-                            aircraft.AircraftType = aircraftData.model;
-                            aircraft.Airline = aircraftData.airline;
-                            aircraft.TailNumber = aircraftData.AtcId;
+                            aircraft.Title = aircraftData.title.Trim();
+                            aircraft.Manufacturer = aircraftData.atcType.Trim();
+                            aircraft.Model = aircraftData.model.Trim();
+                            aircraft.AircraftType = aircraftData.model.Trim();
+                            aircraft.Airline = aircraftData.airline.Trim();
+                            aircraft.TailNumber = aircraftData.AtcId.Trim();
                             aircraft.NumberOfEngines = aircraftData.NumberOfEngines;
                             aircraft.EngineType = aircraftData.EngineType;
                             aircraft.Category = aircraftData.Category;

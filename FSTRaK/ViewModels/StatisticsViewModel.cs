@@ -186,7 +186,6 @@ namespace FSTRaK.ViewModels
         public StatisticsViewModel()
         {
             CreateFilters();
-            UpdateStatistics();
         }
 
         private void CreateFilters()
@@ -282,5 +281,9 @@ namespace FSTRaK.ViewModels
 
         }
 
+        internal void ViewLoaded()
+        {
+            UpdateStatistics();
+        }
     }
 }
