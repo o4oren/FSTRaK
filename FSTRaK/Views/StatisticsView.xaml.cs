@@ -69,6 +69,7 @@ namespace FSTRaK.Views
         private void GeneratePie(Dictionary<string, double> data, WpfPlot chart)
         {
             var plt = chart.Plot;
+            plt.Clear();
             chart.Plot.Style(
                 figureBackground: System.Drawing.Color.Transparent,
                 dataBackground: System.Drawing.Color.Transparent
@@ -83,9 +84,13 @@ namespace FSTRaK.Views
 
             // pie.ShowPercentages = true;
             pie.ShowValues = true;
-            pie.ShowLabels = true;
-            //pie.SliceLabelPosition = 0.6;
+            // pie.ShowLabels = true;
+            //pie.SliceLabelPosition = 0.5;
             //pie.Size = .7;
+            
+            pie.SliceLabelColors = Enumerable.Repeat(ColorTranslator.FromHtml("Black"), pie.SliceFillColors.Length).ToArray();
+
+            var legend = chart.Plot.Legend();
 
             chart.Refresh();
         }

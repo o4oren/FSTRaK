@@ -81,8 +81,19 @@
             </StackPanel>
         </StackPanel>
 
-        <WpfPlot x:Name="AircraftDistributionChart" Margin="10,10,10,10" Grid.Row="2" Grid.Column="0"/>
-        <WpfPlot x:Name="AirlineDistributionChart" Margin="10,10,10,10"  Grid.Row="2" Grid.Column="1"/>
+        <Grid Grid.Row="2" Grid.Column="0" Margin="10,10,10,10">
+            <Label Style="{StaticResource FSTrAkLabel}">
+                Top Aircraft
+            </Label>
+            <WpfPlot x:Name="AircraftDistributionChart" Margin="10,39,10,10" Grid.Column="0"/>
+        </Grid>
+
+        <Grid Grid.Row="2" Grid.Column="1" Margin="10,10,10,10">
+            <Label Style="{StaticResource FSTrAkLabel}">
+                Top Airlines
+            </Label>
+            <WpfPlot x:Name="AirlineDistributionChart" Margin="10,39,10,10"  />
+        </Grid>
 
     </Grid>
 </UserControl>

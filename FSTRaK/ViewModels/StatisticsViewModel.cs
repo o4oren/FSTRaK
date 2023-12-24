@@ -2,6 +2,7 @@
 using System.Collections.Generic;
 using System.Data.Entity;
 using System.Linq;
+using FSTRaK.Models;
 using FSTRaK.Models.Entity;
 using FSTRaK.Utils;
 
@@ -252,34 +253,76 @@ namespace FSTRaK.ViewModels
             TotalPayload = UnitsUtil.GetWeightString(flights.Sum(f => f.TotalPayloadLbs));
             AvgPayload = UnitsUtil.GetWeightString(flights.Average(f => f.TotalPayloadLbs));
 
-            var aircraftDistribution = new Dictionary<string, double>();
-            foreach (var f in flights.GroupBy(f => f.Aircraft.AircraftType)
-                         .Select(group => new {
-                             aircraftType = group.Key,
-                             count = group.Count()
-                         })
-                         .OrderBy(x => x.count))
-            {
-                aircraftDistribution.Add(f.aircraftType, f.count);
-            }
 
-            AircraftDistribution = aircraftDistribution;
+            AircraftDistribution = CalculateAircraftDistribution(flights);
 
 
+            AirlineDistribution = CalculateAirlineDistribution(flights);
 
+        }
+
+        private static Dictionary<string, double> CalculateAirlineDistribution(IQueryable<Flight> flights)
+        {
             var airlineDistribution = new Dictionary<string, double>();
+            var i = 0;
+            var sum = 0;
             foreach (var f in flights.GroupBy(f => f.Aircraft.Airline)
-                         .Select(group => new {
+                         .Select(group => new
+                         {
                              airline = group.Key,
                              count = group.Count()
                          })
-                         .OrderBy(x => x.count))
+                         .OrderByDescending(x => x.count))
             {
-                airlineDistribution.Add(f.airline, f.count);
+                if (i < 5)
+                {
+                    airlineDistribution.Add(f.airline.Equals(string.Empty) ? "None" : f.airline, f.count);
+                    i++;
+                }
+                else
+                {
+                    sum += f.count;
+                }
             }
 
-            AirlineDistribution = airlineDistribution;
+            if (sum > 0)
+            {
+                airlineDistribution.Add("Other", (double)sum);
+            }
 
+            return airlineDistribution;
+        }
+
+        private static Dictionary<string, double> CalculateAircraftDistribution(IQueryable<Flight> flights)
+        {
+            var i = 0;
+            var sum = 0;
+            var aircraftDistribution = new Dictionary<string, double>();
+            foreach (var f in flights.GroupBy(f => f.Aircraft.AircraftType)
+                         .Select(group => new
+                         {
+                             aircraftType = group.Key,
+                             count = group.Count()
+                         })
+                         .OrderByDescending(x => x.count))
+            {
+                if (i < 5)
+                {
+                    aircraftDistribution.Add(f.aircraftType, f.count);
+                    i++;
+                }
+                else
+                {
+                    sum += f.count;
+                }
+            }
+
+            if (sum > 0)
+            {
+                aircraftDistribution.Add("Other", (double)sum);
+            }
+
+            return aircraftDistribution;
         }
 
         internal void ViewLoaded()
