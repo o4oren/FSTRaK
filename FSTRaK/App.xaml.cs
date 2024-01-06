@@ -104,6 +104,7 @@ namespace FSTRaK
                 smc.Close();
             }
             FSTRaK.Properties.Settings.Default.Save();
+            Log.Information("FSTrAk Exited.");
         }
 
         void App_DispatcherUnhandledException(object sender, DispatcherUnhandledExceptionEventArgs e)

@@ -411,10 +411,15 @@ internal sealed class SimConnectService : INotifyPropertyChanged
 
     private void UpdateInFlightState()
     {
+        Log.Information($"Flight state updated : {LoadedFlight.Equals(MainMenuFlt)}, Pause state: {PauseState}");
         if (!LoadedFlight.Equals(MainMenuFlt) && PauseState != 1)
+        {
             IsInFlight = true;
+        }
         else
+        {
             IsInFlight = false;
+        }
     }
 
     private void simconnect_OnRecvQuit(SimConnect sender, SIMCONNECT_RECV data)
