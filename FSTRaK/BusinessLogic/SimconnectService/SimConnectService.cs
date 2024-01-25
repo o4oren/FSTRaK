@@ -412,13 +412,17 @@ internal sealed class SimConnectService : INotifyPropertyChanged
     private void UpdateInFlightState()
     {
         Log.Information($"Flight state updated : Loaded flight - {LoadedFlight}, Pause state: {PauseState}");
-        if (LoadedFlight.Equals(MainMenuFlt) && PauseState == 1)
+        if (IsInFlight && PauseState == 1)
         {
-            IsInFlight = false;
+            // Do nothing. This is to prevent enabling VR mid flight from ending the flight.
+        }
+        else if (!LoadedFlight.Equals(MainMenuFlt) && PauseState != 1)
+        {
+            IsInFlight = true;
         }
         else
         {
-            IsInFlight = true;
+            IsInFlight = false;
         }
     }
 
