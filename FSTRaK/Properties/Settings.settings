@@ -41,5 +41,8 @@
     <Setting Name="FontName" Type="System.String" Scope="User">
       <Value Profile="(Default)">Slopes</Value>
     </Setting>
+    <Setting Name="VatsimId" Type="System.String" Scope="User">
+      <Value Profile="(Default)" />
+    </Setting>
   </Settings>
 </SettingsFile>

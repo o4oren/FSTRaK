@@ -8,21 +8,31 @@
              xmlns:dataTypes="clr-namespace:FSTRaK.DataTypes;assembly=FSTrAK"
              xmlns:System="clr-namespace:System;assembly=mscorlib"
              d:DataContext="{d:DesignInstance Type=viewmodels:SettingsViewModel}"
-             d:DesignHeight="600" d:DesignWidth="800"
-             Loaded="OnLoaded"
+             d:DesignHeight="600"
+             Loaded="OnLoaded" Width="986"
 >
 
     <UserControl.Resources>
-            <ObjectDataProvider x:Key="dataFromEnum" MethodName="GetValues"
+        <ObjectDataProvider x:Key="dataFromEnum" MethodName="GetValues"
                             ObjectType="{x:Type System:Enum}">
-                    <ObjectDataProvider.MethodParameters>
+            <ObjectDataProvider.MethodParameters>
                 <x:Type TypeName="dataTypes:Units"/>
-                    </ObjectDataProvider.MethodParameters>
-            </ObjectDataProvider>
+            </ObjectDataProvider.MethodParameters>
+        </ObjectDataProvider>
     </UserControl.Resources>
 
     <StackPanel Orientation="Horizontal">
         <StackPanel Margin="10">
+            <StackPanel Orientation="Horizontal" Margin="10">
+                <Label Style="{StaticResource FSTrAkLabel}" Width="250">Font</Label>
+                <ComboBox FontFamily="{DynamicResource Slopes}" 
+                          Foreground="{StaticResource TextColor}" 
+                          FontSize="24" 
+                          Width="200"
+                          ItemsSource="{Binding Fonts}"
+                          SelectedItem="{Binding FontName}"/>
+            </StackPanel>
+
             <StackPanel Orientation="Horizontal" Margin="10">
                 <Label Style="{StaticResource FSTrAkLabel}" Width="250">Map tiles Provider</Label>
                 <ComboBox FontFamily="{DynamicResource Slopes}" 
@@ -73,15 +83,15 @@
         </StackPanel>
         <StackPanel Margin="10">
             <StackPanel Orientation="Horizontal" Margin="10">
-                <Label Style="{StaticResource FSTrAkLabel}" Width="250">Font</Label>
-                <ComboBox FontFamily="{DynamicResource Slopes}" 
+                <Label Style="{StaticResource FSTrAkLabel}" Width="250">VATSIM ID</Label>
+                <TextBox FontFamily="{DynamicResource Slopes}" 
                           Foreground="{StaticResource TextColor}" 
                           FontSize="24" 
                           Width="200"
-                          ItemsSource="{Binding Fonts}"
-                          SelectedItem="{Binding FontName}"/>
-            </StackPanel>
+                          Text="{Binding VatsimId}" Cursor="Arrow" TextAlignment="Center" Padding="0 8 0 0"
+                          />
+             </StackPanel>
         </StackPanel>
     </StackPanel>
- 
+
 </UserControl>
