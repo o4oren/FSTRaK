@@ -6,6 +6,8 @@ using System.ComponentModel;
 using System.Linq;
 using FSTRaK.BusinessLogic.FlightManager;
 using FSTRaK.BusinessLogic.FlightManager.State;
+using FSTRaK.BusinessLogic.VatsimService;
+using FSTRaK.BusinessLogic.VatsimService.VatsimModel;
 using FSTRaK.Utils;
 
 namespace FSTRaK.ViewModels
@@ -13,9 +15,14 @@ namespace FSTRaK.ViewModels
     internal class LiveViewViewModel : BaseViewModel
     {
         private readonly FlightManager _flightManager = FlightManager.Instance;
+        private readonly VatsimService _vatsimService = VatsimService.Instance;
+
 
         public RelayCommand CenterOnAirplaneCommand { get; private set; }
         public RelayCommand StopCenterOnAirplaneCommand { get; private set; }
+        public RelayCommand EnableVatsimItemCommand { get; private set; }
+        public RelayCommand DisableVatsimItemCommand { get; private set; }
+
 
         public Flight ActiveFlight
         {
@@ -45,6 +52,20 @@ namespace FSTRaK.ViewModels
                 if (value != _isCenterOnAirplane)
                 {
                     _isCenterOnAirplane = value; 
+                    OnPropertyChanged();
+                }
+            }
+        }
+
+        private bool _isShowVatsimAircraft;
+        public bool IsShowVatsimAircraft
+        {
+            get => _isShowVatsimAircraft;
+            set
+            {
+                if (value != _isShowVatsimAircraft)
+                {
+                    _isShowVatsimAircraft = value;
                     OnPropertyChanged();
                 }
             }
@@ -145,6 +166,21 @@ namespace FSTRaK.ViewModels
             }
         }
 
+        private VatsimData _vatsimData;
+
+        public VatsimData VatsimData
+        {
+            get => _vatsimData;
+            private set
+            {
+                if (value != _vatsimData)
+                {
+                    _vatsimData = value;
+                    OnPropertyChanged();
+                }
+            }
+        }
+
         public ObservableCollection<Location> FlightPath { get; set; } = new ObservableCollection<Location>();
 
         private ObservableCollection<Location> _lastSegmentLine;
@@ -180,12 +216,29 @@ namespace FSTRaK.ViewModels
 
         public LiveViewViewModel()
         {
-            _flightManager.PropertyChanged += SimconnectManagerUpdate;
+            _flightManager.PropertyChanged += FlightManagerOnPropertyChanged;
+            _vatsimService.PropertyChanged += VatsimServiceOnPropertyChanged;
+
             CenterOnAirplaneCommand = new RelayCommand(o => IsCenterOnAirplane = true);
             StopCenterOnAirplaneCommand = new RelayCommand(o => IsCenterOnAirplane = false);
+            EnableVatsimItemCommand = new RelayCommand(o => _vatsimService.Start());
+            DisableVatsimItemCommand = new RelayCommand(o => _vatsimService.Stop());
+
         }
 
-        private void SimconnectManagerUpdate(object sender, PropertyChangedEventArgs e)
+        private void VatsimServiceOnPropertyChanged(object sender, PropertyChangedEventArgs e)
+        {
+            switch (e.PropertyName)
+            {
+                case nameof(_vatsimService.VatsimData):
+                    VatsimData = _vatsimService.VatsimData;
+                    break;
+                default:
+                    break;
+            }
+        }
+
+        private void FlightManagerOnPropertyChanged(object sender, PropertyChangedEventArgs e)
         {
 
             switch (e.PropertyName)

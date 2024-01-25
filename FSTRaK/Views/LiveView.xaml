@@ -11,7 +11,7 @@
              Loaded="OnLoaded"
              d:DesignHeight="450" d:DesignWidth="800">
     <UserControl.Resources>
-        <ResourceDictionary>
+        <ResourceDictionary x:Name="mainViewResources">
             <ResourceDictionary.MergedDictionaries>
                 <ResourceDictionary Source="../Resources/AircraftIconsDictionary.xaml"/>
                 <ResourceDictionary Source="../Resources/MapProvidersDictionary.xaml"/>
@@ -51,6 +51,8 @@
             <map:MapScale Opacity="0.5" HorizontalAlignment="Center" VerticalAlignment="Bottom" Margin="5" />
             <TextBlock   FontSize="12" HorizontalAlignment="Right" VerticalAlignment="Bottom" Margin="5" Style="{StaticResource MapAttribution}"
                          utils:HyperlinkText.InlinesSource="{Binding MapProvider.Description}" />
+
+            <map:MapOverlay x:Name="vatsimAircraftOverlay"></map:MapOverlay>
             <!-- map:MapGraticule Opacity="0.5"/ -->
             <map:MapPolyline Locations="{Binding FlightPath}" Stroke="Red" StrokeThickness="2" StrokeLineJoin="round"/>
             <map:MapPolyline Locations="{Binding LastSegmentLine}" Stroke="Red" StrokeThickness="2" Visibility="{Binding Path=IsShowAirplane, Converter={StaticResource BoolToVis}}"/>
@@ -80,6 +82,18 @@
                     </b:EventTrigger>
                     <b:EventTrigger EventName="Unchecked">
                         <b:InvokeCommandAction Command="{Binding StopCenterOnAirplaneCommand}"/>
+                    </b:EventTrigger>
+                </b:Interaction.Triggers>
+            </ToggleButton>
+            <ToggleButton Style="{StaticResource MapToggleButton}" 
+                          IsChecked="{Binding IsShowVatsimAircraft}" 
+                          Content="VATSIM">
+                <b:Interaction.Triggers>
+                    <b:EventTrigger EventName="Checked">
+                        <b:InvokeCommandAction Command="{Binding EnableVatsimItemCommand}"/>
+                    </b:EventTrigger>
+                    <b:EventTrigger EventName="Unchecked">
+                        <b:InvokeCommandAction Command="{Binding DisableVatsimItemCommand}"/>
                     </b:EventTrigger>
                 </b:Interaction.Triggers>
             </ToggleButton>

@@ -123,6 +123,9 @@
     <Compile Include="BusinessLogic\FlightManager\State\TaxiInState.cs" />
     <Compile Include="BusinessLogic\FlightManager\State\TaxiOutState.cs" />
     <Compile Include="BusinessLogic\SimconnectService\SimConnectService.cs" />
+    <Compile Include="BusinessLogic\VatsimService\VatsimModel\Pilot.cs" />
+    <Compile Include="BusinessLogic\VatsimService\VatsimModel\VatsimData.cs" />
+    <Compile Include="BusinessLogic\VatsimService\VatsimService.cs" />
     <Compile Include="DataTypes\Consts.cs" />
     <Compile Include="DataTypes\LandingRate.cs" />
     <Compile Include="DataTypes\FlightOutcome.cs" />
@@ -350,6 +353,9 @@
     <PackageReference Include="Microsoft.Xaml.Behaviors.Wpf">
       <Version>1.1.39</Version>
     </PackageReference>
+    <PackageReference Include="Newtonsoft.Json">
+      <Version>13.0.3</Version>
+    </PackageReference>
     <PackageReference Include="ScottPlot.WPF">
       <Version>4.1.67</Version>
     </PackageReference>
@@ -405,8 +411,6 @@
       <Install>false</Install>
     </BootstrapperPackage>
   </ItemGroup>
-  <ItemGroup>
-    <Folder Include="BusinessLogic\VatsimService\" />
-  </ItemGroup>
+  <ItemGroup />
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
 </Project>
