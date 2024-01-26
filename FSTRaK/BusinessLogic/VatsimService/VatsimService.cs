@@ -23,7 +23,6 @@ namespace FSTRaK.BusinessLogic.VatsimService
     {
         private Timer _connectionTimer;
         private const int ConnectionInterval = 20 * 1000;
-
         private VatsimData _vatsimData;
 
         
@@ -41,6 +40,20 @@ namespace FSTRaK.BusinessLogic.VatsimService
             }
         }
 
+        private Dictionary<string, ControlledAirport> _controlledAirports;
+        public Dictionary<string, ControlledAirport> ControlledAirports
+        {
+            get => _controlledAirports;
+            private set
+            {
+                if (value != _controlledAirports)
+                {
+                    _controlledAirports = value;
+                    OnPropertyChanged();
+                }
+            }
+        }
+
         public VatsimStaticData VatsimStaticData
         {
             get;
@@ -50,6 +63,7 @@ namespace FSTRaK.BusinessLogic.VatsimService
         private VatsimService()
         {
             VatsimStaticData = new VatsimStaticData();
+            ControlledAirports = new Dictionary<string, ControlledAirport>();
             _connectionTimer = new Timer(ConnectionInterval);
             _connectionTimer.Elapsed += async (sender, e) => await GetVatsimData();
             _connectionTimer.AutoReset = true;
@@ -172,6 +186,7 @@ namespace FSTRaK.BusinessLogic.VatsimService
                     Application.Current.Dispatcher.Invoke(() =>
                     {
                         VatsimData = JsonConvert.DeserializeObject<VatsimData>(jsonContent);
+                        BuildControlledAirportsList();
                     });
                     
                 }
@@ -186,6 +201,34 @@ namespace FSTRaK.BusinessLogic.VatsimService
             }
         }
 
+        private void BuildControlledAirportsList()
+        {
+            ControlledAirports.Clear();
+            foreach (var controller in VatsimData.controllers)
+            {
+                if (controller.facility == 4)
+                {
+                    // Find airport
+                    var callsignParts = controller.callsign.Split('_');
+                    if (ControlledAirports.ContainsKey(callsignParts[0]))
+                    {
+                        var airport = ControlledAirports[callsignParts[0]];
+                        airport.Controllers.Add(controller);
+                    }
+                    else
+                    {
+                        var airport = VatsimStaticData.Airports.Find(a => a.ICAO.Equals(callsignParts[0]));
+                        if (airport != null)
+                        {
+                            var controlledAirport = new ControlledAirport(airport);
+                            controlledAirport.Controllers.Add(controller);
+                            ControlledAirports.Add(controlledAirport.Airport.ICAO, controlledAirport);
+                        }
+                    }
 
+                }
+            }
+            OnPropertyChanged(nameof(ControlledAirports));
+        }
     }
 }

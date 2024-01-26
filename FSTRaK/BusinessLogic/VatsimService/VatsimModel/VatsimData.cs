@@ -1,7 +1,12 @@
-﻿namespace FSTRaK.BusinessLogic.VatsimService.VatsimModel
+﻿using System.Collections.Generic;
+using System.Windows.Documents;
+using System.Windows.Media.Animation;
+
+namespace FSTRaK.BusinessLogic.VatsimService.VatsimModel
 {
     internal class VatsimData
     {
-        public Pilot[] pilots;
+        public List<Pilot> pilots;
+        public List<Controller> controllers;
     }
 }

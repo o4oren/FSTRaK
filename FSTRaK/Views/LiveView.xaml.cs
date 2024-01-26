@@ -5,6 +5,9 @@ using System.Windows.Media;
 using System.Windows.Shapes;
 using MapControl;
 using System;
+using System.Windows.Media.Imaging;
+using FSTRaK.BusinessLogic.VatsimService.VatsimModel;
+using Microsoft.VisualBasic.Logging;
 
 namespace FSTRaK.Views
 {
@@ -42,16 +45,40 @@ namespace FSTRaK.Views
                         }
                         if (liveViewViewModel.IsShowVatsimAirports)
                         {
-                            DrawAirports();
+                            DrawAirports(liveViewViewModel);
                         }
                     }
                 }
             });
         }
 
-        private void DrawAirports()
+        private void DrawAirports(LiveViewViewModel liveViewViewModel)
         {
-            throw new NotImplementedException();
+            vatsimAirportsOverlay.Children.Clear();
+            foreach (var ca in liveViewViewModel.ControlledAirports)
+            {
+                var controlledAirport = ca.Value;
+                var image = new Image()
+                {
+                    Height = 32,
+                    Width = 32, 
+                    Source = new BitmapImage(new Uri($@"pack://application:,,,/Resources/Images/control-tower.png",
+                        UriKind.Absolute))
+                };
+
+
+                MapItem mi = new MapItem
+                {
+                    Location = new Location(controlledAirport.Airport.Latitude, controlledAirport.Airport.Longitude),
+                    Content = image,
+                    Margin = new Thickness(-16, -16, 0, 0)
+                };
+                ToolTip toolTip = new ToolTip();
+                toolTip.Content = $"{controlledAirport.Controllers[0].name}\n{controlledAirport.Controllers[0].callsign}";
+                mi.ToolTip = toolTip;
+                
+                vatsimAirportsOverlay.Children.Add(mi);
+            }
         }
 
         private void DrawPilots()
@@ -66,7 +93,7 @@ namespace FSTRaK.Views
                 };
                 Path path = new Path
                 {
-                    Stroke = Brushes.LightBlue,
+                    Stroke = Brushes.Transparent,
                     StrokeThickness = 1,
                     Fill = Brushes.Blue,
                     Data = (Geometry)mainViewResources["B737"]
@@ -82,10 +109,10 @@ namespace FSTRaK.Views
                 mi.Margin = new Thickness(-16, -16, 0, 0);
 
                 var rotateTransfom = new RotateTransform(pilot.heading, 16, 16);
-                // var scaleTransfom = new ScaleTransform(xMap.ZoomLevel / 8 , xMap.ZoomLevel / 8 );
+                var scaleTransfom = new ScaleTransform(0.8 , 0.8);
                 var transformGroup = new TransformGroup();
                 transformGroup.Children.Add(rotateTransfom);
-                // transformGroup.Children.Add(scaleTransfom);
+                transformGroup.Children.Add(scaleTransfom);
                 mi.RenderTransform = transformGroup;
                 
                 ToolTip toolTip = new ToolTip();

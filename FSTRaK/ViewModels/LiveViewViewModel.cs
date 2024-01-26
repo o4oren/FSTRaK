@@ -9,6 +9,7 @@ using FSTRaK.BusinessLogic.FlightManager.State;
 using FSTRaK.BusinessLogic.VatsimService;
 using FSTRaK.BusinessLogic.VatsimService.VatsimModel;
 using FSTRaK.Utils;
+using System.Collections.Generic;
 
 namespace FSTRaK.ViewModels
 {
@@ -195,6 +196,15 @@ namespace FSTRaK.ViewModels
             }
         }
 
+        public Dictionary<string, ControlledAirport> ControlledAirports
+        {
+            get => _vatsimService.ControlledAirports;
+            private set
+            {
+
+            }
+        }
+
         public ObservableCollection<Location> FlightPath { get; set; } = new ObservableCollection<Location>();
 
         private ObservableCollection<Location> _lastSegmentLine;
@@ -257,6 +267,9 @@ namespace FSTRaK.ViewModels
             {
                 case nameof(_vatsimService.VatsimData):
                     VatsimData = _vatsimService.VatsimData;
+                    break;
+                case nameof(_vatsimService.ControlledAirports):
+                    OnPropertyChanged(nameof(ControlledAirports));
                     break;
                 default:
                     break;
