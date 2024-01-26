@@ -71,6 +71,20 @@ namespace FSTRaK.ViewModels
             }
         }
 
+        private bool _isShowVatsimAirports;
+        public bool IsShowVatsimAirports
+        {
+            get => _isShowVatsimAirports;
+            set
+            {
+                if (value != _isShowVatsimAirports)
+                {
+                    _isShowVatsimAirports = value;
+                    OnPropertyChanged();
+                }
+            }
+        }
+
         private string _airplaneIcon = "";
 
         public string AirplaneIcon
@@ -221,9 +235,20 @@ namespace FSTRaK.ViewModels
 
             CenterOnAirplaneCommand = new RelayCommand(o => IsCenterOnAirplane = true);
             StopCenterOnAirplaneCommand = new RelayCommand(o => IsCenterOnAirplane = false);
-            EnableVatsimItemCommand = new RelayCommand(o => _vatsimService.Start());
-            DisableVatsimItemCommand = new RelayCommand(o => _vatsimService.Stop());
-
+            EnableVatsimItemCommand = new RelayCommand(o =>
+            {
+                if (IsShowVatsimAircraft || IsShowVatsimAirports)
+                {
+                    _vatsimService.Start();
+                }
+            });
+            DisableVatsimItemCommand = new RelayCommand(o =>
+            {
+                if (!(IsShowVatsimAircraft || IsShowVatsimAirports))
+                {
+                    _vatsimService.Stop();
+                }
+            });
         }
 
         private void VatsimServiceOnPropertyChanged(object sender, PropertyChangedEventArgs e)

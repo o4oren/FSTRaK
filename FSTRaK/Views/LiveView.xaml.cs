@@ -22,20 +22,36 @@ namespace FSTRaK.Views
         {
             var geometry = Application.Current.Resources[((LiveViewViewModel)DataContext).AirplaneIcon];
             AirplaneGeometry.Data = (System.Windows.Media.Geometry)geometry;
-            
+ 
             ((LiveViewViewModel)DataContext).PropertyChanged += ((o, e) =>
             {
-                if (DataContext != null && e.PropertyName == "AirplaneIcon")
+                if(DataContext != null)
                 {
-                    geometry = Application.Current.Resources[((LiveViewViewModel)DataContext).AirplaneIcon];
-                    AirplaneGeometry.Data = (System.Windows.Media.Geometry)geometry;
-                }
+                    var liveViewViewModel = (LiveViewViewModel)DataContext;
+                    if (e.PropertyName == "AirplaneIcon")
+                    {
+                        geometry = Application.Current.Resources[((LiveViewViewModel)DataContext).AirplaneIcon];
+                        AirplaneGeometry.Data = (System.Windows.Media.Geometry)geometry;
+                    }
 
-                else if (DataContext != null && e.PropertyName == "VatsimData")
-                {
-                    DrawPilots();
+                    else if (e.PropertyName == "VatsimData")
+                    {
+                        if (liveViewViewModel.IsShowVatsimAircraft)
+                        {
+                            DrawPilots();
+                        }
+                        if (liveViewViewModel.IsShowVatsimAirports)
+                        {
+                            DrawAirports();
+                        }
+                    }
                 }
             });
+        }
+
+        private void DrawAirports()
+        {
+            throw new NotImplementedException();
         }
 
         private void DrawPilots()

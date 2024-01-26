@@ -125,6 +125,7 @@
     <Compile Include="BusinessLogic\SimconnectService\SimConnectService.cs" />
     <Compile Include="BusinessLogic\VatsimService\VatsimModel\Pilot.cs" />
     <Compile Include="BusinessLogic\VatsimService\VatsimModel\VatsimData.cs" />
+    <Compile Include="BusinessLogic\VatsimService\VatsimModel\VatsimStaticData.cs" />
     <Compile Include="BusinessLogic\VatsimService\VatsimService.cs" />
     <Compile Include="DataTypes\Consts.cs" />
     <Compile Include="DataTypes\LandingRate.cs" />
@@ -314,6 +315,7 @@
   <ItemGroup>
     <Content Include="lib\x64\SQLite.Interop.dll" />
     <Content Include="lib\x86\SQLite.Interop.dll" />
+    <Resource Include="Resources\Images\control-tower.png" />
     <Content Include="System.Buffers.dll">
       <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
     </Content>
