@@ -4,6 +4,7 @@ using System.Windows.Controls;
 using System.Windows.Media;
 using System.Windows.Shapes;
 using MapControl;
+using System;
 
 namespace FSTRaK.Views
 {
@@ -15,7 +16,6 @@ namespace FSTRaK.Views
         public LiveView()
         {
             InitializeComponent();
-
         }
 
         private void OnLoaded(object sender, RoutedEventArgs re)
@@ -33,33 +33,50 @@ namespace FSTRaK.Views
 
                 else if (DataContext != null && e.PropertyName == "VatsimData")
                 {
-                    vatsimAircraftOverlay.Children.Clear();
-                    foreach (var pilot in ((LiveViewViewModel)DataContext).VatsimData.pilots)
-                    {
-                        Canvas c = new Canvas();
-                        Path path = new Path
-                        {
-                            Stroke = Brushes.LightBlue,
-                            StrokeThickness = 1,
-                            Fill = Brushes.Blue,
-                        };
-                        path.Data = (Geometry)mainViewResources["B737"];
-
-                        // Add the Path to the Canvas
-                        c.Children.Add(path);
-                        MapItem mi = new MapItem();
-                        mi.Location = new Location(pilot.latitude, pilot.longitude);
-                        mi.Content = c;
-
-                        var rotateTransfom = new RotateTransform(pilot.heading, 16, 16);
-                        mi.RenderTransform = rotateTransfom;
-
-
-                        // Add the Canvas to the MapControl
-                        vatsimAircraftOverlay.Children.Add(mi);
-                    }
+                    DrawPilots();
                 }
             });
+        }
+
+        private void DrawPilots()
+        {
+            vatsimAircraftOverlay.Children.Clear();
+            foreach (var pilot in ((LiveViewViewModel)DataContext).VatsimData.pilots)
+            {
+                Canvas canvas = new Canvas
+                {
+                    Width = 32,
+                    Height = 32
+                };
+                Path path = new Path
+                {
+                    Stroke = Brushes.LightBlue,
+                    StrokeThickness = 1,
+                    Fill = Brushes.Blue,
+                    Data = (Geometry)mainViewResources["B737"]
+                };
+
+                // Add the Path to the Canvas
+                canvas.Children.Add(path);
+                MapItem mi = new MapItem
+                {
+                    Location = new Location(pilot.latitude, pilot.longitude),
+                    Content = canvas
+                };
+                mi.Margin = new Thickness(-16, -16, 0, 0);
+
+                var rotateTransfom = new RotateTransform(pilot.heading, 16, 16);
+                // var scaleTransfom = new ScaleTransform(xMap.ZoomLevel / 8 , xMap.ZoomLevel / 8 );
+                var transformGroup = new TransformGroup();
+                transformGroup.Children.Add(rotateTransfom);
+                // transformGroup.Children.Add(scaleTransfom);
+                mi.RenderTransform = transformGroup;
+                
+                ToolTip toolTip = new ToolTip();
+                toolTip.Content = $"{pilot.name}";
+                mi.ToolTip = toolTip;
+                vatsimAircraftOverlay.Children.Add(mi);
+            }
         }
     }
 }
