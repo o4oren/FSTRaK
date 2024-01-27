@@ -206,7 +206,7 @@ namespace FSTRaK.BusinessLogic.VatsimService
             ControlledAirports.Clear();
             foreach (var controller in VatsimData.controllers)
             {
-                if (controller.facility == 4)
+                if (controller.facility == 2 || controller.facility == 3 || controller.facility == 4 || controller.facility == 5)
                 {
                     // Find airport
                     var callsignParts = controller.callsign.Split('_');
@@ -225,7 +225,6 @@ namespace FSTRaK.BusinessLogic.VatsimService
                             ControlledAirports.Add(controlledAirport.Airport.ICAO, controlledAirport);
                         }
                     }
-
                 }
             }
             OnPropertyChanged(nameof(ControlledAirports));

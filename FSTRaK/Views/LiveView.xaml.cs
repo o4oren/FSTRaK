@@ -3,12 +3,15 @@ using System.Windows;
 using System.Windows.Controls;
 using System.Windows.Media;
 using System.Windows.Shapes;
-using MapControl;
 using System;
+using System.Collections.Generic;
+using System.Linq;
+using System.Text;
 using System.Windows.Media.Imaging;
 using FSTRaK.BusinessLogic.VatsimService.VatsimModel;
 using Microsoft.VisualBasic.Logging;
 using FSTRaK.Utils;
+using MapControl;
 
 namespace FSTRaK.Views
 {
@@ -58,6 +61,7 @@ namespace FSTRaK.Views
             vatsimAirportsOverlay.Children.Clear();
             foreach (var ca in liveViewViewModel.ControlledAirports)
             {
+                bool isIncludeApp = false;
                 var controlledAirport = ca.Value;
                 var image = new Image()
                 {
@@ -67,7 +71,45 @@ namespace FSTRaK.Views
                         UriKind.Absolute))
                 };
 
+                StringBuilder sb = new StringBuilder();
+                sb.AppendLine($"{controlledAirport.Airport.ICAO} {controlledAirport.Airport.Name} ");
+                foreach (var controller in controlledAirport.Controllers)
+                {
+                    sb.AppendLine($"{controller.callsign} {controller.name} {controller.frequency} {controller.facility}");
+                    if (controller.facility == 5)
+                    {
+                        isIncludeApp = true;
+                    }
+                }
 
+
+                if (isIncludeApp)
+                {
+                    MapPolygon circlePolygon = new MapPolygon
+                    {
+                        Stroke = new System.Windows.Media.SolidColorBrush(System.Windows.Media.Colors.Red),
+                        Fill = new System.Windows.Media.SolidColorBrush(System.Windows.Media.Colors.LightPink),
+                        StrokeThickness = 1,
+                        Opacity = 0.3
+                    };
+
+                    // Calculate vertices for a circle
+                    int numberOfVertices = 80; // Adjust as needed for smoothness
+                    double radius = 80; 
+                    List<Location> locations = new List<Location>();
+                    for (int i = 0; i < numberOfVertices; i++)
+                    {
+                        double angle = (i * 2 * Math.PI) / numberOfVertices;
+                        double latitude = controlledAirport.Airport.Latitude + (radius / 111.32) * Math.Sin(angle); // 1 degree of latitude is approximately 111.32 km
+                        double longitude = controlledAirport.Airport.Longitude + (radius / (111.32 * Math.Cos(47.6097 * (Math.PI / 180)))) * Math.Cos(angle);
+                        locations.Add(new Location(latitude, longitude));
+                       
+                    }
+                    circlePolygon.Locations = locations;
+
+                    vatsimAirportsOverlay.Children.Add(circlePolygon);
+                }
+                
                 MapItem mi = new MapItem
                 {
                     Location = new Location(controlledAirport.Airport.Latitude, controlledAirport.Airport.Longitude),
@@ -75,9 +117,8 @@ namespace FSTRaK.Views
                     Margin = new Thickness(-16, -16, 0, 0)
                 };
                 ToolTip toolTip = new ToolTip();
-                toolTip.Content = $"{controlledAirport.Controllers[0].name}\n{controlledAirport.Controllers[0].callsign}";
+                toolTip.Content = sb.ToString();
                 mi.ToolTip = toolTip;
-                
                 vatsimAirportsOverlay.Children.Add(mi);
             }
         }
@@ -111,15 +152,29 @@ namespace FSTRaK.Views
                 transformGroup.Children.Add(rotateTransform);
                 transformGroup.Children.Add(scaleTransform);
                 mi.RenderTransform = transformGroup;
-                
-                ToolTip toolTip = new ToolTip
-                {
-                    Content = $"{pilot.callsign} {pilot.name}"
-                };
+
+                StringBuilder sb = new StringBuilder();
+                sb.AppendLine($"{pilot.callsign} {pilot.name}");
                 if (pilot.flight_plan != null)
                 {
-                    toolTip.Content = (string)toolTip.Content + "\n" + pilot.flight_plan.aircraft_short;
+                    sb.AppendLine($"Flying from {pilot.flight_plan.departure} to {pilot.flight_plan.arrival}");
+                    sb.AppendLine($"Flying from {pilot.flight_plan.aircraft_short}  {pilot.flight_plan.aircraft}");
                 }
+                sb.AppendLine($"Altitude: {pilot.altitude} ft");
+                sb.AppendLine($"Heading: {pilot.heading}");
+                sb.AppendLine($"Ground Speed: {pilot.groundspeed} Kts");
+
+                if (pilot.flight_plan != null)
+                {
+                    sb.AppendLine($"Flight Plan:\n {pilot.flight_plan.route}");
+                    sb.AppendLine($"Remarks:\n {pilot.flight_plan.remarks}");
+                }
+
+                ToolTip toolTip = new ToolTip
+                {
+                    Content = sb.ToString()
+                };
+
                 mi.ToolTip = toolTip;
                 vatsimAircraftOverlay.Children.Add(mi);
             }
