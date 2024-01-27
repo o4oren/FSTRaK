@@ -320,6 +320,11 @@
     <Content Include="lib\x64\SQLite.Interop.dll" />
     <Content Include="lib\x86\SQLite.Interop.dll" />
     <Resource Include="Resources\Images\control-tower.png" />
+    <Resource Include="Resources\Images\antenna-radar-32.png" />
+    <Resource Include="Resources\Images\radar-32.png" />
+    <Resource Include="Resources\Images\radio-antenna-32.png" />
+    <Resource Include="Resources\Images\tower-32.png" />
+    <Resource Include="Resources\Images\tower-radar-32.png" />
     <Content Include="System.Buffers.dll">
       <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
     </Content>
