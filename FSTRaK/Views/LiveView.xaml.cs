@@ -75,7 +75,10 @@ namespace FSTRaK.Views
                             break;
                         case "IsShowVatsimFirs":
                             if (!liveViewViewModel.IsShowVatsimFirs)
+                            {
+                                vatsimFIRsTextOverlay.Children.Clear();
                                 vatsimFIRsOverlay.Children.Clear();
+                            }
                             break;
                         default:
                             break;
@@ -88,6 +91,7 @@ namespace FSTRaK.Views
         private void DrawFirs(LiveViewViewModel liveViewViewModel)
         {
             vatsimFIRsOverlay.Children.Clear();
+            vatsimFIRsTextOverlay.Children.Clear();
             foreach (var controller in liveViewViewModel.VatsimData.controllers)
             {
                 if (controller.facility == 6)
@@ -98,9 +102,9 @@ namespace FSTRaK.Views
                         // TODO add logic to handle different variations in controller naming
                         
 
-                        var geoJson = VatsimService.Instance.GetFirBoundariesByController(controller);
+                       var geoJsonTuple = VatsimService.Instance.GetFirBoundariesByController(controller);
                         LocationCollection locationCollection = new LocationCollection();
-                        foreach (var geoJsonCoordinate in geoJson.coordinates)
+                        foreach (var geoJsonCoordinate in geoJsonTuple.coordinates)
                         {
                             locationCollection.Add(new Location(geoJsonCoordinate[1], geoJsonCoordinate[0]));
                         }
@@ -113,7 +117,19 @@ namespace FSTRaK.Views
                             Locations = locationCollection
                         };
 
+                        Label label = new Label();
+                        label.Foreground = (Brush)mainViewResources["PrimaryDarkBrush"];
+                        label.FontSize = 16;
+                        
+                        label.Content = controller.callsign.Replace("_", "__");
+                        MapItem item = new MapItem();
+                        item.Location = new Location(geoJsonTuple.labelCoordinates[0], geoJsonTuple.labelCoordinates[1]);
+                        item.Content = label;
+                        item.HorizontalAlignment = HorizontalAlignment.Center;
+                        item.VerticalAlignment = VerticalAlignment.Center;
+
                         vatsimFIRsOverlay.Children.Add(polygon);
+                        vatsimFIRsTextOverlay.Children.Add(item);
                     }
                     catch (Exception ex)
                     {
@@ -236,7 +252,8 @@ namespace FSTRaK.Views
                 {
                     Location = new Location(controlledAirport.Airport.Latitude, controlledAirport.Airport.Longitude),
                     Content = image,
-                    Margin = new Thickness(-16, -16, 0, 0)
+                    HorizontalAlignment = HorizontalAlignment.Center,
+                    VerticalAlignment = VerticalAlignment.Center,
                 };
                 ToolTip toolTip = new ToolTip();
                 toolTip.Content = sb.ToString();
@@ -265,7 +282,8 @@ namespace FSTRaK.Views
                 {
                     Location = new Location(pilot.latitude, pilot.longitude),
                     Content = path,
-                    Margin = new Thickness(-16 * scaleFactor, -16 * scaleFactor, 0, 0)
+                    HorizontalAlignment = HorizontalAlignment.Center,
+                    VerticalAlignment = VerticalAlignment.Center,
                 };
 
                 var rotateTransform = new RotateTransform(pilot.heading, 16, 16);
