@@ -86,6 +86,20 @@ namespace FSTRaK.ViewModels
             }
         }
 
+        private bool _isShowVatsimFirs;
+        public bool IsShowVatsimFirs
+        {
+            get => _isShowVatsimFirs;
+            set
+            {
+                if (value != _isShowVatsimFirs)
+                {
+                    _isShowVatsimFirs = value;
+                    OnPropertyChanged();
+                }
+            }
+        }
+
         private string _airplaneIcon = "";
 
         public string AirplaneIcon
@@ -247,14 +261,14 @@ namespace FSTRaK.ViewModels
             StopCenterOnAirplaneCommand = new RelayCommand(o => IsCenterOnAirplane = false);
             EnableVatsimItemCommand = new RelayCommand(o =>
             {
-                if (IsShowVatsimAircraft || IsShowVatsimAirports)
+                if (IsShowVatsimAircraft || IsShowVatsimAirports || _isShowVatsimFirs)
                 {
                     _vatsimService.Start();
                 }
             });
             DisableVatsimItemCommand = new RelayCommand(o =>
             {
-                if (!(IsShowVatsimAircraft || IsShowVatsimAirports))
+                if (!(IsShowVatsimAircraft || IsShowVatsimAirports || _isShowVatsimFirs))
                 {
                     _vatsimService.Stop();
                 }

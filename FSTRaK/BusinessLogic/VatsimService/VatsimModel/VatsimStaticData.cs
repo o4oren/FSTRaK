@@ -10,6 +10,7 @@ namespace FSTRaK.BusinessLogic.VatsimService.VatsimModel
     internal class VatsimStaticData
     {
         public List<VatsimStaticData.Airport> Airports { get; set; }
+        public List<VatsimStaticData.FIR> FIRs { get; set; }
         public Dictionary<string, VatsimStaticData.Country> Countries { get; set; }
 
 
@@ -17,6 +18,7 @@ namespace FSTRaK.BusinessLogic.VatsimService.VatsimModel
         {
             Countries = new Dictionary<string, Country>();
             Airports = new List<Airport>();
+            FIRs = new List<FIR>();
         }
 
 
@@ -40,16 +42,16 @@ namespace FSTRaK.BusinessLogic.VatsimService.VatsimModel
             public bool IsPseudo { get; set; }
         }
 
-        class FIR
+        public class FIR
         {
             //ICAO|NAME|CALLSIGN PREFIX|FIR BOUNDARY
             public string ICAO { get; set; }
             public string Name { get; set; }
-            public double CallsignPrefix { get; set; }
-            public double Boundary { get; set; }
+            public string CallsignPrefix { get; set; }
+            public string Boundary { get; set; }
         }
 
-        class UIR
+        public class UIR
         {
             //Callsign prefix|NAME|FIRs
             public string CallsignPrefix { get; set; }

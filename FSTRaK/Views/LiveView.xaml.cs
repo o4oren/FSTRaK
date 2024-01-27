@@ -5,9 +5,10 @@ using System.Windows.Media;
 using System.Windows.Shapes;
 using System;
 using System.Collections.Generic;
-using System.Linq;
+using Serilog;
 using System.Text;
 using System.Windows.Media.Imaging;
+using FSTRaK.BusinessLogic.VatsimService;
 using FSTRaK.BusinessLogic.VatsimService.VatsimModel;
 using Microsoft.VisualBasic.Logging;
 using FSTRaK.Utils;
@@ -35,25 +36,86 @@ namespace FSTRaK.Views
                 if(DataContext != null)
                 {
                     var liveViewViewModel = (LiveViewViewModel)DataContext;
-                    if (e.PropertyName == "AirplaneIcon")
-                    {
-                        geometry = Application.Current.Resources[((LiveViewViewModel)DataContext).AirplaneIcon];
-                        AirplaneGeometry.Data = (System.Windows.Media.Geometry)geometry;
-                    }
 
-                    else if (e.PropertyName == "VatsimData")
+                    switch (e.PropertyName)
                     {
-                        if (liveViewViewModel.IsShowVatsimAircraft)
-                        {
-                            DrawPilots();
-                        }
-                        if (liveViewViewModel.IsShowVatsimAirports)
-                        {
-                            DrawAirports(liveViewViewModel);
-                        }
+                        case "AirplaneIcon":
+                            geometry = Application.Current.Resources[((LiveViewViewModel)DataContext).AirplaneIcon];
+                            AirplaneGeometry.Data = (System.Windows.Media.Geometry)geometry;
+                            break;
+                        case "VatsimData":
+                            if (liveViewViewModel.IsShowVatsimAircraft)
+                            {
+                                DrawPilots();
+                            }
+
+                            if (liveViewViewModel.IsShowVatsimAirports)
+                            {
+                                DrawAirports(liveViewViewModel);
+                            }
+                            if (liveViewViewModel.IsShowVatsimFirs)
+                            {
+                                DrawFirs(liveViewViewModel);
+                            }
+                            break;
+                        case "IsShowVatsimAirports":
+                            if(!liveViewViewModel.IsShowVatsimAirports)
+                                vatsimAirportsOverlay.Children.Clear();
+                            break;
+                        case "IsShowVatsimAircraft":
+                            if(!liveViewViewModel.IsShowVatsimAircraft)
+                                vatsimAircraftOverlay.Children.Clear();
+                            break;
+                        case "IsShowVatsimFirs":
+                            if (!liveViewViewModel.IsShowVatsimFirs)
+                                vatsimFIRsOverlay.Children.Clear();
+                            break;
+                        default:
+                            break;
+
                     }
                 }
             });
+        }
+
+        private void DrawFirs(LiveViewViewModel liveViewViewModel)
+        {
+            vatsimFIRsOverlay.Children.Clear();
+            foreach (var controller in liveViewViewModel.VatsimData.controllers)
+            {
+                if (controller.facility == 6)
+                {
+                    try
+                    {
+
+                        // TODO add logic to handle different variations in controller naming
+                        
+
+                        var geoJson = VatsimService.Instance.GetFirBoundariesByController(controller);
+                        LocationCollection locationCollection = new LocationCollection();
+                        foreach (var geoJsonCoordinate in geoJson.coordinates)
+                        {
+                            locationCollection.Add(new Location(geoJsonCoordinate[1], geoJsonCoordinate[0]));
+                        }
+                        
+                        MapPolygon polygon = new MapPolygon
+                        {
+                            Stroke = new System.Windows.Media.SolidColorBrush(System.Windows.Media.Colors.Blue),
+                            Fill = new System.Windows.Media.SolidColorBrush(System.Windows.Media.Colors.LightBlue),
+                            StrokeThickness = 1,
+                            Opacity = 0.3,
+                            Locations = locationCollection
+                        };
+
+                        vatsimFIRsOverlay.Children.Add(polygon);
+                    }
+                    catch (Exception ex)
+                    {
+                        Serilog.Log.Error(ex, ex.Message);
+                    }
+                }
+
+            }
         }
 
         private void DrawAirports(LiveViewViewModel liveViewViewModel)

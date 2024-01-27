@@ -1,21 +1,16 @@
-﻿using FSTRaK.BusinessLogic.SimconnectService;
-using Newtonsoft.Json;
+﻿using Newtonsoft.Json;
 using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Net.Http;
-using System.Text;
-using System.Text.Json.Serialization;
 using System.Threading.Tasks;
 using System.Timers;
 using System.Windows;
 using FSTRaK.BusinessLogic.VatsimService.VatsimModel;
 using FSTRaK.Models;
 using Serilog;
-using MapControl;
 using System.IO;
-using System.Reflection;
-using static FSTRaK.BusinessLogic.VatsimService.VatsimModel.VatsimStaticData;
+
 
 namespace FSTRaK.BusinessLogic.VatsimService
 {
@@ -57,7 +52,13 @@ namespace FSTRaK.BusinessLogic.VatsimService
         public VatsimStaticData VatsimStaticData
         {
             get;
-            set;
+            private set;
+        }
+
+        public GeoJsonFeatureCollection FirBoundaries
+        {
+            get;
+            private set;
         }
 
         private VatsimService()
@@ -68,6 +69,25 @@ namespace FSTRaK.BusinessLogic.VatsimService
             _connectionTimer.Elapsed += async (sender, e) => await GetVatsimData();
             _connectionTimer.AutoReset = true;
             ParseStaticData();
+            ParseBoundariesGeoJson();
+        }
+
+        private void ParseBoundariesGeoJson()
+        {
+            string filePath = $@"{System.AppContext.BaseDirectory}\Resources\Data\Boundaries.geojson";
+
+            try
+            {
+                string jsonContent = File.ReadAllText(filePath);
+
+                GeoJsonFeatureCollection featureCollection = JsonConvert.DeserializeObject<GeoJsonFeatureCollection>(jsonContent);
+                FirBoundaries = featureCollection;
+
+            }
+            catch (Exception ex)
+            {
+                Console.WriteLine($"Error reading or parsing GeoJSON file: {ex.Message}");
+            }
         }
 
         private void ParseStaticData()
@@ -113,6 +133,7 @@ namespace FSTRaK.BusinessLogic.VatsimService
                                 line = reader.ReadLine();
                                 continue;
                             }
+
                             string[] columns = line.Split('|');
 
                             try
@@ -125,18 +146,52 @@ namespace FSTRaK.BusinessLogic.VatsimService
                                     Longitude = Double.Parse(columns[3]),
                                     IATA = columns[4],
                                     FIR = columns[5],
-                                    IsPseudo = Int32.Parse(columns[6].Substring(0,1)) != 0
+                                    IsPseudo = Int32.Parse(columns[6].Substring(0, 1)) != 0
                                 };
                                 VatsimStaticData.Airports.Add(airport);
                             }
                             catch (Exception ex)
                             {
-                                Log.Error(ex, line );
+                                Log.Error(ex, line);
                             }
 
                             line = reader.ReadLine();
 
                         } while (line is not "[FIRs]");
+
+                        if (line is "[FIRs]")
+                        {
+                            line = reader.ReadLine();
+                            do
+                            {
+                                if (line.StartsWith(";") || string.IsNullOrWhiteSpace(line))
+                                {
+                                    line = reader.ReadLine();
+                                    continue;
+                                }
+
+                                string[] columns = line.Split('|');
+
+                                try
+                                {
+                                    var fir = new VatsimStaticData.FIR()
+                                    {
+                                        ICAO = columns[0],
+                                        Name = columns[1],
+                                        CallsignPrefix = columns[2],
+                                        Boundary = columns[3],
+                                    };
+                                    VatsimStaticData.FIRs.Add(fir);
+                                }
+                                catch (Exception ex)
+                                {
+                                    Log.Error(ex, line);
+                                }
+
+                                line = reader.ReadLine();
+
+                            } while (line is not "[UIRs]");
+                        }
                     }
 
 
@@ -228,6 +283,34 @@ namespace FSTRaK.BusinessLogic.VatsimService
                 }
             }
             OnPropertyChanged(nameof(ControlledAirports));
+        }
+
+        public (double[] labelCoordinates, double[][] coordinates) GetFirBoundariesByController(Controller controller)
+        {
+
+            var prefix = controller.callsign.Substring(0, controller.callsign.LastIndexOf('_'));
+            var firBoundary = VatsimStaticData.FIRs.Find(f => f.CallsignPrefix.Equals(prefix));
+            if (firBoundary == null)
+            {
+                firBoundary = VatsimStaticData.FIRs.Find(f => f.CallsignPrefix.Equals(prefix.Split('_')[0]));
+            }
+            if (firBoundary == null)
+            {
+                firBoundary = VatsimStaticData.FIRs.Find(f => f.ICAO.Equals(prefix.Split('_')[0]));
+            }
+
+            if (firBoundary == null)
+            {
+                throw new Exception("No FIR was found for " + controller.callsign);
+            }
+
+            var fir = FirBoundaries.Features.FirstOrDefault(feature => feature.Properties.id.Equals(firBoundary.Boundary));
+            if (fir != null)
+            {
+                return (new double[] { Double.Parse(fir.Properties.label_lat), Double.Parse(fir.Properties.label_lon) }, fir.Geometry.Coordinates[0][0]);
+            }
+
+            throw new Exception("No FIR was found for " + controller.callsign);
         }
     }
 }

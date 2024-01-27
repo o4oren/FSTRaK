@@ -123,6 +123,7 @@
     <Compile Include="BusinessLogic\FlightManager\State\TaxiInState.cs" />
     <Compile Include="BusinessLogic\FlightManager\State\TaxiOutState.cs" />
     <Compile Include="BusinessLogic\SimconnectService\SimConnectService.cs" />
+    <Compile Include="BusinessLogic\VatsimService\VatsimModel\BoundariesGeoJson.cs" />
     <Compile Include="BusinessLogic\VatsimService\VatsimModel\ControlledAirport.cs" />
     <Compile Include="BusinessLogic\VatsimService\VatsimModel\Controller.cs" />
     <Compile Include="BusinessLogic\VatsimService\VatsimModel\FlightPlan.cs" />
