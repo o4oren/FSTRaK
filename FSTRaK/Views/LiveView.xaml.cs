@@ -52,14 +52,18 @@ namespace FSTRaK.Views
                                 DrawPilots();
                             }
 
-                            if (liveViewViewModel.IsShowVatsimAirports)
-                            {
-                                DrawAirports(liveViewViewModel);
-                            }
+
                             if (liveViewViewModel.IsShowVatsimFirs)
                             {
                                 DrawFirs(liveViewViewModel);
                             }
+                            break;
+                        case "ControlledAirports":
+                            if (liveViewViewModel.IsShowVatsimAirports)
+                            {
+                                DrawAirports(liveViewViewModel);
+                            }
+
                             break;
                         case "IsShowVatsimAirports":
                             if (!liveViewViewModel.IsShowVatsimAirports)
@@ -99,16 +103,34 @@ namespace FSTRaK.Views
                     try
                     {
 
-                        // TODO add logic to handle different variations in controller naming
-                        
+                        if (controller.frequency.Equals("199.998"))
+                        {
+                            continue;
+                        }
 
-                       var geoJsonTuple = VatsimService.Instance.GetFirBoundariesByController(controller);
+                        var geoJsonTuple = VatsimService.Instance.GetFirBoundariesByController(controller);
                         LocationCollection locationCollection = new LocationCollection();
                         foreach (var geoJsonCoordinate in geoJsonTuple.coordinates)
                         {
                             locationCollection.Add(new Location(geoJsonCoordinate[1], geoJsonCoordinate[0]));
                         }
-                        
+
+                        foreach (UIElement child in vatsimFIRsTextOverlay.Children)
+                        {
+                            if (child is MapItem)
+                            {
+                                var mapItem = (MapItem)child;
+                                if (mapItem.Location.Latitude == geoJsonTuple.labelCoordinates[0]
+                                    && mapItem.Location.Longitude == geoJsonTuple.labelCoordinates[1]
+                                    && !((Label)mapItem.Content).Content.Equals(controller.callsign))
+                                {
+                                    ((Label)mapItem.Content).Content +=
+                                                               $"\n{controller.callsign.Replace("_", "__")}";
+                                }
+                                continue;
+                            }
+                        }
+
                         MapPolygon polygon = new MapPolygon
                         {
                             Stroke = new System.Windows.Media.SolidColorBrush(System.Windows.Media.Colors.Blue),
@@ -122,12 +144,18 @@ namespace FSTRaK.Views
                         label.FontSize = 16;
                         
                         label.Content = controller.callsign.Replace("_", "__");
+
+                        ToolTip tooltip = new ToolTip();
+                        tooltip.Content =
+                            $"{controller.callsign}\n{controller.name}\n{controller.frequency}\nConnected for: {TimeUtils.GetConnectionsSinceFromTimeString(controller.logon_time)}";
+                        label.ToolTip = tooltip;
+
                         MapItem item = new MapItem();
                         item.Location = new Location(geoJsonTuple.labelCoordinates[0], geoJsonTuple.labelCoordinates[1]);
                         item.Content = label;
                         item.HorizontalAlignment = HorizontalAlignment.Center;
                         item.VerticalAlignment = VerticalAlignment.Center;
-
+                        
                         vatsimFIRsOverlay.Children.Add(polygon);
                         vatsimFIRsTextOverlay.Children.Add(item);
                     }
@@ -163,7 +191,7 @@ namespace FSTRaK.Views
                     DateTime currentTime = DateTime.UtcNow;
                     TimeSpan timeDifference = currentTime - specifiedTime;
 
-                    sb.AppendLine($"{controller.callsign} {controller.name} {controller.frequency} Connected for: {timeDifference.Hours:0#}:{timeDifference.Minutes:0#}:{timeDifference.Seconds:0#}");
+                    sb.AppendLine($"{controller.callsign} {controller.name} {controller.frequency} Connected for: {TimeUtils.GetConnectionsSinceFromTimeString(controller.logon_time)}");
                     if (controller.facility == 5)
                     {
                         isIncludeApp = true;
@@ -221,13 +249,15 @@ namespace FSTRaK.Views
                     Source = imageSource
                 };
 
-
+                var fillbrush = new System.Windows.Media.SolidColorBrush(System.Windows.Media.Colors.LightPink);
+                fillbrush.Opacity = 0.5;
                 if (isIncludeApp)
                 {
                     MapPolygon circlePolygon = new MapPolygon
                     {
                         Stroke = new System.Windows.Media.SolidColorBrush(System.Windows.Media.Colors.Red),
-                        Fill = new System.Windows.Media.SolidColorBrush(System.Windows.Media.Colors.LightPink),
+                        Fill = fillbrush,
+                        
                         StrokeThickness = 2,
                     };
 
@@ -282,9 +312,9 @@ namespace FSTRaK.Views
                 {
                     Location = new Location(pilot.latitude, pilot.longitude),
                     Content = path,
-                    HorizontalAlignment = HorizontalAlignment.Center,
-                    VerticalAlignment = VerticalAlignment.Center,
+                    Margin = new Thickness(-16,-16,0,0)
                 };
+
 
                 var rotateTransform = new RotateTransform(pilot.heading, 16, 16);
                 var scaleTransform = new ScaleTransform(1 * scaleFactor, 1 * scaleFactor);
