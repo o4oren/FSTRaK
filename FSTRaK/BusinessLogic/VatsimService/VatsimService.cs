@@ -310,22 +310,25 @@ namespace FSTRaK.BusinessLogic.VatsimService
         {
 
             var prefix = controller.callsign.Substring(0, controller.callsign.LastIndexOf('_'));
-            var firBoundary = VatsimStaticData.FIRs.Find(f => f.CallsignPrefix.Equals(prefix));
-            if (firBoundary == null)
+            var firBoundary = VatsimStaticData.FIRs.FindAll(f => f.CallsignPrefix.Equals(prefix));
+            if (firBoundary.Count == 0)
             {
-                firBoundary = VatsimStaticData.FIRs.Find(f => f.CallsignPrefix.Equals(prefix.Split('_')[0]));
+                firBoundary = VatsimStaticData.FIRs.FindAll(f => f.CallsignPrefix.Equals(prefix.Split('_')[0]));
             }
-            if (firBoundary == null)
+            if (firBoundary.Count == 0)
             {
-                firBoundary = VatsimStaticData.FIRs.Find(f => f.ICAO.Equals(prefix.Split('_')[0]));
+                firBoundary = VatsimStaticData.FIRs.FindAll(f => f.ICAO.Equals(prefix.Split('_')[0]));
             }
 
-            if (firBoundary == null)
+            if (firBoundary.Count == 0)
             {
                 throw new Exception("No FIR was found for " + controller.callsign);
             }
 
-            var fir = FirBoundaries.Features.FirstOrDefault(feature => feature.Properties.id.Equals(firBoundary.Boundary));
+            string postfix = controller.callsign.Split('_').LastOrDefault();
+            string postFix = postfix is "FSS" ? "1" : "0";
+
+            var fir = FirBoundaries.Features.FirstOrDefault(feature => feature.Properties.id.Equals(firBoundary[0].Boundary) && feature.Properties.oceanic.Equals(postFix));
             if (fir != null)
             {
                 return (new double[] { Double.Parse(fir.Properties.label_lat), Double.Parse(fir.Properties.label_lon) }, fir.Geometry.Coordinates[0][0]);
