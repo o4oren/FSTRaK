@@ -8,6 +8,7 @@ using System;
 using System.Windows.Media.Imaging;
 using FSTRaK.BusinessLogic.VatsimService.VatsimModel;
 using Microsoft.VisualBasic.Logging;
+using FSTRaK.Utils;
 
 namespace FSTRaK.Views
 {
@@ -86,37 +87,40 @@ namespace FSTRaK.Views
             vatsimAircraftOverlay.Children.Clear();
             foreach (var pilot in ((LiveViewViewModel)DataContext).VatsimData.pilots)
             {
-                Canvas canvas = new Canvas
-                {
-                    Width = 32,
-                    Height = 32
-                };
+
+                (string aircraftIcon, double scaleFactor) = pilot.flight_plan != null ? ResourceUtils.GetAircraftIcon(pilot.flight_plan.aircraft_short) : ("B737", 0.75);
+
                 Path path = new Path
                 {
                     Stroke = Brushes.Transparent,
                     StrokeThickness = 1,
                     Fill = Brushes.Blue,
-                    Data = (Geometry)mainViewResources["B737"]
+                    Data = (Geometry)mainViewResources[aircraftIcon]
                 };
 
-                // Add the Path to the Canvas
-                canvas.Children.Add(path);
                 MapItem mi = new MapItem
                 {
                     Location = new Location(pilot.latitude, pilot.longitude),
-                    Content = canvas
+                    Content = path
                 };
-                mi.Margin = new Thickness(-16, -16, 0, 0);
+
+                mi.Margin = new Thickness(-16 * scaleFactor, -16 * scaleFactor, 0, 0);
 
                 var rotateTransfom = new RotateTransform(pilot.heading, 16, 16);
-                var scaleTransfom = new ScaleTransform(0.8 , 0.8);
+                var scaleTransfom = new ScaleTransform(1 * scaleFactor, 1 * scaleFactor);
                 var transformGroup = new TransformGroup();
                 transformGroup.Children.Add(rotateTransfom);
                 transformGroup.Children.Add(scaleTransfom);
                 mi.RenderTransform = transformGroup;
                 
-                ToolTip toolTip = new ToolTip();
-                toolTip.Content = $"{pilot.name}";
+                ToolTip toolTip = new ToolTip
+                {
+                    Content = $"{pilot.callsign} {pilot.name}"
+                };
+                if (pilot.flight_plan != null)
+                {
+                    toolTip.Content = (string)toolTip.Content + "\n" + pilot.flight_plan.aircraft_short;
+                }
                 mi.ToolTip = toolTip;
                 vatsimAircraftOverlay.Children.Add(mi);
             }

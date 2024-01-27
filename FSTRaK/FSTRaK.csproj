@@ -125,6 +125,7 @@
     <Compile Include="BusinessLogic\SimconnectService\SimConnectService.cs" />
     <Compile Include="BusinessLogic\VatsimService\VatsimModel\ControlledAirport.cs" />
     <Compile Include="BusinessLogic\VatsimService\VatsimModel\Controller.cs" />
+    <Compile Include="BusinessLogic\VatsimService\VatsimModel\FlightPlan.cs" />
     <Compile Include="BusinessLogic\VatsimService\VatsimModel\Pilot.cs" />
     <Compile Include="BusinessLogic\VatsimService\VatsimModel\VatsimData.cs" />
     <Compile Include="BusinessLogic\VatsimService\VatsimModel\VatsimStaticData.cs" />
