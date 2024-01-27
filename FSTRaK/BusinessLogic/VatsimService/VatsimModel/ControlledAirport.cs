@@ -10,11 +10,13 @@ namespace FSTRaK.BusinessLogic.VatsimService.VatsimModel
     {
         public VatsimStaticData.Airport Airport { get; private set; }
         public List<Controller> Controllers { get; private set; }
+        public List<Atis> Atis { get; private set; }
 
         public ControlledAirport(VatsimStaticData.Airport airport)
         {
             this.Airport = airport;
             Controllers = new List<Controller>();
+            Atis = new List<Atis>();
         }
     }
 }

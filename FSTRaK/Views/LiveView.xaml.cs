@@ -10,9 +10,12 @@ using System.Text;
 using System.Windows.Media.Imaging;
 using FSTRaK.BusinessLogic.VatsimService;
 using FSTRaK.BusinessLogic.VatsimService.VatsimModel;
+using FSTRaK.DataTypes;
 using Microsoft.VisualBasic.Logging;
 using FSTRaK.Utils;
 using MapControl;
+using ScottPlot.Drawing.Colormaps;
+using ScottPlot.Renderable;
 
 namespace FSTRaK.Views
 {
@@ -59,8 +62,12 @@ namespace FSTRaK.Views
                             }
                             break;
                         case "IsShowVatsimAirports":
-                            if(!liveViewViewModel.IsShowVatsimAirports)
+                            if (!liveViewViewModel.IsShowVatsimAirports)
+                            {
                                 vatsimAirportsOverlay.Children.Clear();
+                                vatsimAppCirclesOverlay.Children.Clear();
+                            }
+
                             break;
                         case "IsShowVatsimAircraft":
                             if(!liveViewViewModel.IsShowVatsimAircraft)
@@ -102,8 +109,7 @@ namespace FSTRaK.Views
                         {
                             Stroke = new System.Windows.Media.SolidColorBrush(System.Windows.Media.Colors.Blue),
                             Fill = new System.Windows.Media.SolidColorBrush(System.Windows.Media.Colors.LightBlue),
-                            StrokeThickness = 1,
-                            Opacity = 0.3,
+                            StrokeThickness = 2,
                             Locations = locationCollection
                         };
 
@@ -121,28 +127,83 @@ namespace FSTRaK.Views
         private void DrawAirports(LiveViewViewModel liveViewViewModel)
         {
             vatsimAirportsOverlay.Children.Clear();
+            vatsimAppCirclesOverlay.Children.Clear();
             foreach (var ca in liveViewViewModel.ControlledAirports)
             {
                 bool isIncludeApp = false;
                 var controlledAirport = ca.Value;
-                var image = new Image()
-                {
-                    Height = 32,
-                    Width = 32, 
-                    Source = new BitmapImage(new Uri($@"pack://application:,,,/Resources/Images/control-tower.png",
-                        UriKind.Absolute))
-                };
+
+                HashSet<int> facilities = new HashSet<int>();
 
                 StringBuilder sb = new StringBuilder();
-                sb.AppendLine($"{controlledAirport.Airport.ICAO} {controlledAirport.Airport.Name} ");
+                sb.AppendLine($"{controlledAirport.Airport.ICAO} {controlledAirport.Airport.Name}");
+                sb.AppendLine();
+                sb.AppendLine("Controllers:");
                 foreach (var controller in controlledAirport.Controllers)
                 {
-                    sb.AppendLine($"{controller.callsign} {controller.name} {controller.frequency} {controller.facility}");
+                    facilities.Add(controller.facility);
+
+                    DateTime specifiedTime = DateTime.Parse(controller.logon_time, null, System.Globalization.DateTimeStyles.RoundtripKind);
+                    DateTime currentTime = DateTime.UtcNow;
+                    TimeSpan timeDifference = currentTime - specifiedTime;
+
+                    sb.AppendLine($"{controller.callsign} {controller.name} {controller.frequency} Connected for: {timeDifference.Hours:0#}:{timeDifference.Minutes:0#}:{timeDifference.Seconds:0#}");
                     if (controller.facility == 5)
                     {
                         isIncludeApp = true;
                     }
                 }
+
+                foreach (var atis in controlledAirport.Atis)
+                {
+                    if (atis.text_atis != null)
+                    {
+                        sb.AppendLine();
+                        sb.AppendLine($"{atis.callsign} {atis.name} {atis.frequency}:");
+                        foreach (var message in atis.text_atis)
+                        {
+                            sb.AppendLine(message);
+                        }
+                    }
+
+
+                }
+
+                var imageSource = new BitmapImage(new Uri(Consts.towerRadarImage,
+                    UriKind.Absolute));
+                if (facilities.Contains(5))
+                {
+                    if (facilities.Contains(3) || facilities.Contains(4))
+                    {
+                        imageSource = new BitmapImage(new Uri(Consts.towerRadarImage,
+                            UriKind.Absolute));
+                    } 
+                    else if (facilities.Contains(2) || controlledAirport.Atis.Count > 0)
+                    {
+                        imageSource = new BitmapImage(new Uri(Consts.radioRadarImage,
+                            UriKind.Absolute));
+                    }
+                }
+                else
+                {
+                    if (facilities.Contains(3) || facilities.Contains(4))
+                    {
+                        imageSource = new BitmapImage(new Uri(Consts.towerImage,
+                            UriKind.Absolute));
+                    }
+                    else if (facilities.Contains(2) || controlledAirport.Atis.Count > 0)
+                    {
+                        imageSource = new BitmapImage(new Uri(Consts.radioImage,
+                            UriKind.Absolute));
+                    }
+                }
+
+                var image = new Image()
+                {
+                    Height = 32,
+                    Width = 32,
+                    Source = imageSource
+                };
 
 
                 if (isIncludeApp)
@@ -151,8 +212,7 @@ namespace FSTRaK.Views
                     {
                         Stroke = new System.Windows.Media.SolidColorBrush(System.Windows.Media.Colors.Red),
                         Fill = new System.Windows.Media.SolidColorBrush(System.Windows.Media.Colors.LightPink),
-                        StrokeThickness = 1,
-                        Opacity = 0.3
+                        StrokeThickness = 2,
                     };
 
                     // Calculate vertices for a circle
@@ -169,7 +229,7 @@ namespace FSTRaK.Views
                     }
                     circlePolygon.Locations = locations;
 
-                    vatsimAirportsOverlay.Children.Add(circlePolygon);
+                    vatsimAppCirclesOverlay.Children.Add(circlePolygon);
                 }
                 
                 MapItem mi = new MapItem
@@ -220,7 +280,7 @@ namespace FSTRaK.Views
                 if (pilot.flight_plan != null)
                 {
                     sb.AppendLine($"Flying from {pilot.flight_plan.departure} to {pilot.flight_plan.arrival}");
-                    sb.AppendLine($"Flying from {pilot.flight_plan.aircraft_short}  {pilot.flight_plan.aircraft}");
+                    sb.AppendLine($"{pilot.flight_plan.aircraft_short}  {pilot.flight_plan.aircraft}");
                 }
                 sb.AppendLine($"Altitude: {pilot.altitude} ft");
                 sb.AppendLine($"Heading: {pilot.heading}");

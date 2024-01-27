@@ -8,5 +8,6 @@ namespace FSTRaK.BusinessLogic.VatsimService.VatsimModel
     {
         public List<Pilot> pilots;
         public List<Controller> controllers;
+        public List<Atis> atis;
     }
 }

@@ -261,7 +261,7 @@ namespace FSTRaK.ViewModels
             StopCenterOnAirplaneCommand = new RelayCommand(o => IsCenterOnAirplane = false);
             EnableVatsimItemCommand = new RelayCommand(o =>
             {
-                if (IsShowVatsimAircraft || IsShowVatsimAirports || _isShowVatsimFirs)
+                if (IsShowVatsimAircraft || IsShowVatsimAirports || IsShowVatsimFirs)
                 {
                     _vatsimService.Start();
                 }

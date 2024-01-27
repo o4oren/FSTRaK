@@ -282,6 +282,27 @@ namespace FSTRaK.BusinessLogic.VatsimService
                     }
                 }
             }
+
+            foreach (var atis in VatsimData.atis)
+            {
+                var callsignParts = atis.callsign.Split('_');
+                if (ControlledAirports.ContainsKey(callsignParts[0]))
+                {
+                    var airport = ControlledAirports[callsignParts[0]];
+                    airport.Atis.Add(atis);
+                }
+                else
+                {
+                    var airport = VatsimStaticData.Airports.Find(a => a.ICAO.Equals(callsignParts[0]));
+                    if (airport != null)
+                    {
+                        var controlledAirport = new ControlledAirport(airport);
+                        controlledAirport.Atis.Add(atis);
+                        ControlledAirports.Add(controlledAirport.Airport.ICAO, controlledAirport);
+                    }
+                }
+            }
+
             OnPropertyChanged(nameof(ControlledAirports));
         }
 
