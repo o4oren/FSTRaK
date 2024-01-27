@@ -94,23 +94,22 @@ namespace FSTRaK.Views
                 {
                     Stroke = Brushes.Transparent,
                     StrokeThickness = 1,
-                    Fill = Brushes.Blue,
+                    Fill = (Brush)mainViewResources["PrimaryDarkBrush"],
                     Data = (Geometry)mainViewResources[aircraftIcon]
                 };
 
                 MapItem mi = new MapItem
                 {
                     Location = new Location(pilot.latitude, pilot.longitude),
-                    Content = path
+                    Content = path,
+                    Margin = new Thickness(-16 * scaleFactor, -16 * scaleFactor, 0, 0)
                 };
 
-                mi.Margin = new Thickness(-16 * scaleFactor, -16 * scaleFactor, 0, 0);
-
-                var rotateTransfom = new RotateTransform(pilot.heading, 16, 16);
-                var scaleTransfom = new ScaleTransform(1 * scaleFactor, 1 * scaleFactor);
+                var rotateTransform = new RotateTransform(pilot.heading, 16, 16);
+                var scaleTransform = new ScaleTransform(1 * scaleFactor, 1 * scaleFactor);
                 var transformGroup = new TransformGroup();
-                transformGroup.Children.Add(rotateTransfom);
-                transformGroup.Children.Add(scaleTransfom);
+                transformGroup.Children.Add(rotateTransform);
+                transformGroup.Children.Add(scaleTransform);
                 mi.RenderTransform = transformGroup;
                 
                 ToolTip toolTip = new ToolTip

@@ -52,7 +52,7 @@
             <TextBlock   FontSize="12" HorizontalAlignment="Right" VerticalAlignment="Bottom" Margin="5" Style="{StaticResource MapAttribution}"
                          utils:HyperlinkText.InlinesSource="{Binding MapProvider.Description}" />
 
-            <map:MapOverlay x:Name="vatsimAircraftOverlay" Opacity="0.8"></map:MapOverlay>
+            <map:MapOverlay x:Name="vatsimAircraftOverlay"></map:MapOverlay>
             <map:MapOverlay x:Name="vatsimAirportsOverlay"></map:MapOverlay>
 
             <!-- map:MapGraticule Opacity="0.5"/ -->
