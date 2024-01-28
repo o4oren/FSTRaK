@@ -108,51 +108,64 @@ namespace FSTRaK.Views
                             continue;
                         }
 
-                        var geoJsonTuple = VatsimService.Instance.GetFirBoundariesByController(controller);
+                        var firMetadataTuple = VatsimService.Instance.GetFirBoundariesByController(controller);
                         LocationCollection locationCollection = new LocationCollection();
-                        foreach (var geoJsonCoordinate in geoJsonTuple.coordinates)
+                        foreach (var geoJsonCoordinate in firMetadataTuple.coordinates)
                         {
                             locationCollection.Add(new Location(geoJsonCoordinate[1], geoJsonCoordinate[0]));
                         }
+                        StackPanel stackPanel = null;
 
                         foreach (UIElement child in vatsimFIRsTextOverlay.Children)
                         {
                             if (child is MapItem)
                             {
-                                var mapItem = (MapItem)child;
-                                if (mapItem.Location.Latitude == geoJsonTuple.labelCoordinates[0]
-                                    && mapItem.Location.Longitude == geoJsonTuple.labelCoordinates[1]
-                                    && !((Label)mapItem.Content).Content.Equals(controller.callsign))
+                                var mapItem = child as MapItem;
+                                if (mapItem.Location.Latitude == firMetadataTuple.labelCoordinates[0]
+                                    && mapItem.Location.Longitude == firMetadataTuple.labelCoordinates[1])
                                 {
-                                    ((Label)mapItem.Content).Content +=
-                                                               $"\n{controller.callsign.Replace("_", "__")}";
+                                    stackPanel = mapItem.Content as StackPanel;
                                 }
-                                continue;
                             }
                         }
 
+                        stackPanel ??= new StackPanel
+                            {
+                                HorizontalAlignment = HorizontalAlignment.Center,
+                                VerticalAlignment = VerticalAlignment.Center
+                            };
+
+                        
+
                         MapPolygon polygon = new MapPolygon
                         {
-                            Stroke = new System.Windows.Media.SolidColorBrush(System.Windows.Media.Colors.Blue),
-                            Fill = new System.Windows.Media.SolidColorBrush(System.Windows.Media.Colors.LightBlue),
+                            Stroke = (Brush)mainViewResources["VatsimFirStrokeBrush"],
+                            Fill = (Brush)mainViewResources["VatsimFirFillBrush"],
                             StrokeThickness = 2,
                             Locations = locationCollection
                         };
 
                         Label label = new Label();
                         label.Foreground = (Brush)mainViewResources["PrimaryDarkBrush"];
-                        label.FontSize = 16;
+                        //label.FontFamily = (FontFamily)Application.Current.Resources["Slopes"];
+                        //label.FontSize = 16;
+                        label.FontWeight = FontWeights.Bold;
+                        label.Padding = new Thickness(0, 0, 0, 2);
                         
+
                         label.Content = controller.callsign.Replace("_", "__");
 
                         ToolTip tooltip = new ToolTip();
                         tooltip.Content =
-                            $"{controller.callsign}\n{geoJsonTuple.firName}\n{controller.name}\n{controller.frequency}\nConnected for: {TimeUtils.GetConnectionsSinceFromTimeString(controller.logon_time)}";
+                            $"{controller.callsign}\n{firMetadataTuple.firName}\n{controller.name}\n{controller.frequency}\nConnected for: {TimeUtils.GetConnectionsSinceFromTimeString(controller.logon_time)}";
+                        tooltip.FontWeight = FontWeights.Normal;
                         label.ToolTip = tooltip;
-
+                        stackPanel.Children.Add(label);
+                        
                         MapItem item = new MapItem();
-                        item.Location = new Location(geoJsonTuple.labelCoordinates[0], geoJsonTuple.labelCoordinates[1]);
-                        item.Content = label;
+
+                        item.Location = new Location(firMetadataTuple.labelCoordinates[0], firMetadataTuple.labelCoordinates[1]);
+                        item.Content = stackPanel;
                         item.HorizontalAlignment = HorizontalAlignment.Center;
                         item.VerticalAlignment = VerticalAlignment.Center;
                         
@@ -164,7 +177,6 @@ namespace FSTRaK.Views
                         Serilog.Log.Error(ex, ex.Message);
                     }
                 }
-
             }
         }
 
@@ -249,15 +261,12 @@ namespace FSTRaK.Views
                     Source = imageSource
                 };
 
-                var fillbrush = new System.Windows.Media.SolidColorBrush(System.Windows.Media.Colors.LightPink);
-                fillbrush.Opacity = 0.5;
                 if (isIncludeApp)
                 {
                     MapPolygon circlePolygon = new MapPolygon
                     {
-                        Stroke = new System.Windows.Media.SolidColorBrush(System.Windows.Media.Colors.Red),
-                        Fill = fillbrush,
-                        
+                        Stroke = (Brush)mainViewResources["VatsimAppCircleStrokeBrush"],
+                        Fill = (Brush)mainViewResources["VatsimAppCircleFillBrush"],
                         StrokeThickness = 2,
                     };
 

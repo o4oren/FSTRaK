@@ -308,17 +308,23 @@ namespace FSTRaK.BusinessLogic.VatsimService
 
         public (double[] labelCoordinates, double[][] coordinates, string firName) GetFirBoundariesByController(Controller controller)
         {
+            if (controller.callsign.StartsWith("LIMM_EN"))
+            {
 
+            };
             var prefix = controller.callsign.Substring(0, controller.callsign.LastIndexOf('_'));
+            var prefixIcaoCandidate = controller.callsign.Split(('_'))[0];
+
             var firBoundary = VatsimStaticData.FIRs.FindAll(f => f.CallsignPrefix.Equals(prefix));
             if (firBoundary.Count == 0)
             {
-                firBoundary = VatsimStaticData.FIRs.FindAll(f => f.CallsignPrefix.Equals(prefix.Split('_')[0]));
+                firBoundary = VatsimStaticData.FIRs.FindAll(f => f.ICAO.Equals(prefixIcaoCandidate));
             }
             if (firBoundary.Count == 0)
             {
-                firBoundary = VatsimStaticData.FIRs.FindAll(f => f.ICAO.Equals(prefix.Split('_')[0]));
+                firBoundary = VatsimStaticData.FIRs.FindAll(f => f.CallsignPrefix.Equals(prefixIcaoCandidate));
             }
+
 
             if (firBoundary.Count == 0)
             {
@@ -326,9 +332,14 @@ namespace FSTRaK.BusinessLogic.VatsimService
             }
 
             string postfix = controller.callsign.Split('_').LastOrDefault();
-            string postFix = postfix is "FSS" ? "1" : "0";
+            string oceanic = postfix is "FSS" ? "1" : "0";
 
-            var fir = FirBoundaries.Features.FirstOrDefault(feature => feature.Properties.id.Equals(firBoundary[0].Boundary) && feature.Properties.oceanic.Equals(postFix));
+            if (controller.callsign.StartsWith("LIMM_EN") )
+            {
+
+            };
+
+            var fir = FirBoundaries.Features.FirstOrDefault(feature => feature.Properties.id.Equals(firBoundary[0].Boundary) && feature.Properties.oceanic.Equals(oceanic));
             if (fir != null)
             {
                 var country =

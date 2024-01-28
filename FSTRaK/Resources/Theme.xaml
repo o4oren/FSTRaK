@@ -88,7 +88,14 @@
     <SolidColorBrush x:Key="MinButtonColorHoverBrush" Color="{DynamicResource MinButtonColorHover}"/>
     <SolidColorBrush x:Key="MinButtonColorPressedBrush" Color="{DynamicResource MinButtonColorPressed}"/>
 
-
+    <SolidColorBrush x:Key="VatsimAicraftColorBrush" Color="{StaticResource PrimaryDark}"/>
+    <SolidColorBrush x:Key="VatsimFriendAicraftColorBrush" Color="DarkGreen"/>
+    <SolidColorBrush x:Key="VatsimAppCircleFillBrush" Color="#F78CA2" />
+    <SolidColorBrush x:Key="VatsimAppCircleStrokeBrush" Color="#7D0A0A"/>
+    <SolidColorBrush x:Key="VatsimFirFillBrush" Color="#91C8E4" />
+    <SolidColorBrush x:Key="VatsimFirStrokeBrush" Color="#080658"/>
+    <SolidColorBrush x:Key="VatsimUirFillBrush" Color="{DynamicResource MinButtonColorPressed}"/>
+    <SolidColorBrush x:Key="VatsimUirStrokeBrush" Color="{DynamicResource MinButtonColorPressed}"/>
 
     <LinearGradientBrush x:Key="MenuPopupBrush"
                      EndPoint="0.5,1"

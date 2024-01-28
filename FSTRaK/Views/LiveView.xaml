@@ -51,10 +51,10 @@
             <map:MapScale Opacity="0.5" HorizontalAlignment="Center" VerticalAlignment="Bottom" Margin="5" />
             <TextBlock   FontSize="12" HorizontalAlignment="Right" VerticalAlignment="Bottom" Margin="5" Style="{StaticResource MapAttribution}"
                          utils:HyperlinkText.InlinesSource="{Binding MapProvider.Description}" />
-            <map:MapOverlay x:Name="vatsimFIRsOverlay" Opacity="0.25"></map:MapOverlay>
+            <map:MapOverlay x:Name="vatsimFIRsOverlay" Opacity="0.3"></map:MapOverlay>
             <map:MapOverlay x:Name="vatsimFIRsTextOverlay"></map:MapOverlay>
 
-            <map:MapOverlay x:Name="vatsimAppCirclesOverlay" Opacity="0.25"></map:MapOverlay>
+            <map:MapOverlay x:Name="vatsimAppCirclesOverlay" Opacity="0.3"></map:MapOverlay>
             <map:MapOverlay x:Name="vatsimAirportsOverlay"></map:MapOverlay>
             <map:MapOverlay x:Name="vatsimAircraftOverlay"></map:MapOverlay>
             <!-- map:MapGraticule Opacity="0.5"/ -->
