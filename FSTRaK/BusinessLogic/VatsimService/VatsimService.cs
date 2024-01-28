@@ -240,7 +240,20 @@ namespace FSTRaK.BusinessLogic.VatsimService
                     string jsonContent = await response.Content.ReadAsStringAsync();
                     Application.Current.Dispatcher.Invoke(() =>
                     {
-                        VatsimData = JsonConvert.DeserializeObject<VatsimData>(jsonContent);
+                        VatsimData data = JsonConvert.DeserializeObject<VatsimData>(jsonContent);
+
+                        //code for adding a controller to the list for debugging
+ //                       Controller c = new Controller();
+ //                       c.callsign = "ZAK_FSS";
+ //                       c.facility = 1;
+ //                       c.cid = 123;
+ //                       c.name = "Oren";
+ //                       c.frequency = "199.9";
+ //                       c.logon_time = "2024-01-28T20:17:29.1405912Z";
+ //                       data.controllers.Add(c);
+
+
+                        VatsimData = data;
                         BuildControlledAirportsList();
                     });
                     
@@ -306,12 +319,8 @@ namespace FSTRaK.BusinessLogic.VatsimService
             OnPropertyChanged(nameof(ControlledAirports));
         }
 
-        public (double[] labelCoordinates, double[][] coordinates, string firName) GetFirBoundariesByController(Controller controller)
+        public (double[] labelCoordinates, double[][][][] coordinates, string firName) GetFirBoundariesByController(Controller controller)
         {
-            if (controller.callsign.StartsWith("LIMM_EN"))
-            {
-
-            };
             var prefix = controller.callsign.Substring(0, controller.callsign.LastIndexOf('_'));
             var prefixIcaoCandidate = controller.callsign.Split(('_'))[0];
 
@@ -334,18 +343,13 @@ namespace FSTRaK.BusinessLogic.VatsimService
             string postfix = controller.callsign.Split('_').LastOrDefault();
             string oceanic = postfix is "FSS" ? "1" : "0";
 
-            if (controller.callsign.StartsWith("LIMM_EN") )
-            {
-
-            };
-
             var fir = FirBoundaries.Features.FirstOrDefault(feature => feature.Properties.id.Equals(firBoundary[0].Boundary) && feature.Properties.oceanic.Equals(oceanic));
             if (fir != null)
             {
                 var country =
                     VatsimStaticData.Countries.FirstOrDefault(c =>
                         c.Value.Initials.Equals(fir.Properties.id.Substring(0, 2)));
-                return (new double[] { Double.Parse(fir.Properties.label_lat), Double.Parse(fir.Properties.label_lon) }, fir.Geometry.Coordinates[0][0], firBoundary[0].Name + " " + country.Value.centerName);
+                return (new double[] { Double.Parse(fir.Properties.label_lat), Double.Parse(fir.Properties.label_lon) }, fir.Geometry.Coordinates, firBoundary[0].Name + " " + country.Value.centerName);
             }
 
             throw new Exception("No FIR was found for " + controller.callsign);

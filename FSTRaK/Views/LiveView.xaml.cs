@@ -98,7 +98,7 @@ namespace FSTRaK.Views
             vatsimFIRsTextOverlay.Children.Clear();
             foreach (var controller in liveViewViewModel.VatsimData.controllers)
             {
-                if (controller.facility == 6)
+                if (controller.facility == 6 || controller.facility == 1)
                 {
                     try
                     {
@@ -108,14 +108,29 @@ namespace FSTRaK.Views
                             continue;
                         }
 
+                        if (controller.callsign.Equals("ZAK_FSS"))
+                        {
+                            ;
+                        }
+
                         var firMetadataTuple = VatsimService.Instance.GetFirBoundariesByController(controller);
-                        LocationCollection locationCollection = new LocationCollection();
+
+                        List<LocationCollection> locations = new List<LocationCollection>();
+
                         foreach (var geoJsonCoordinate in firMetadataTuple.coordinates)
                         {
-                            locationCollection.Add(new Location(geoJsonCoordinate[1], geoJsonCoordinate[0]));
-                        }
-                        StackPanel stackPanel = null;
+                            {
+                                LocationCollection locationCollection = new LocationCollection();
+                                foreach (var coords in geoJsonCoordinate[0])
+                                {
+                                    locationCollection.Add(new Location(coords[1], coords[0]));
+                                }
 
+                                locations.Add(locationCollection);
+                            }
+                        }
+
+                        StackPanel stackPanel = null;
                         foreach (UIElement child in vatsimFIRsTextOverlay.Children)
                         {
                             if (child is MapItem)
@@ -130,20 +145,24 @@ namespace FSTRaK.Views
                         }
 
                         stackPanel ??= new StackPanel
-                            {
-                                HorizontalAlignment = HorizontalAlignment.Center,
-                                VerticalAlignment = VerticalAlignment.Center
-                            };
-
-                        
-
-                        MapPolygon polygon = new MapPolygon
                         {
-                            Stroke = (Brush)mainViewResources["VatsimFirStrokeBrush"],
-                            Fill = (Brush)mainViewResources["VatsimFirFillBrush"],
-                            StrokeThickness = 2,
-                            Locations = locationCollection
+                            HorizontalAlignment = HorizontalAlignment.Center,
+                            VerticalAlignment = VerticalAlignment.Center
                         };
+
+                        foreach (var locationCollection in locations)
+                        {
+                            MapPolygon polygon = new MapPolygon
+                            {
+                                Stroke = (Brush)mainViewResources["VatsimFirStrokeBrush"],
+                                Fill = (Brush)mainViewResources["VatsimFirFillBrush"],
+                                StrokeThickness = 2,
+                                Locations = locationCollection
+                            };
+                            vatsimFIRsOverlay.Children.Add(polygon);
+                        }
+
+
 
                         Label label = new Label();
                         label.Foreground = (Brush)mainViewResources["PrimaryDarkBrush"];
@@ -151,7 +170,7 @@ namespace FSTRaK.Views
                         //label.FontSize = 16;
                         label.FontWeight = FontWeights.Bold;
                         label.Padding = new Thickness(0, 0, 0, 2);
-                        
+
 
                         label.Content = controller.callsign.Replace("_", "__");
 
@@ -161,16 +180,16 @@ namespace FSTRaK.Views
                         tooltip.FontWeight = FontWeights.Normal;
                         label.ToolTip = tooltip;
                         stackPanel.Children.Add(label);
-                        
+
                         MapItem item = new MapItem();
 
                         item.Location = new Location(firMetadataTuple.labelCoordinates[0], firMetadataTuple.labelCoordinates[1]);
                         item.Content = stackPanel;
                         item.HorizontalAlignment = HorizontalAlignment.Center;
                         item.VerticalAlignment = VerticalAlignment.Center;
-                        
-                        vatsimFIRsOverlay.Children.Add(polygon);
                         vatsimFIRsTextOverlay.Children.Add(item);
+
+
                     }
                     catch (Exception ex)
                     {
