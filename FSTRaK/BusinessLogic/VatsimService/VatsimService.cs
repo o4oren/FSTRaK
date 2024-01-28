@@ -114,9 +114,9 @@ namespace FSTRaK.BusinessLogic.VatsimService
                             {
                                 Name = columns[0],
                                 Initials = columns[1],
-                                centerName = columns.Length == 3 && columns[2].Equals(string.Empty)
-                                    ? columns[2]
-                                    : "Center"
+                                centerName = columns[2].Equals(string.Empty)
+                                    ? "Center"
+                                    : columns[2]
                             };
                             VatsimStaticData.Countries.Add(country.Initials, country);
                             line = reader.ReadLine();
@@ -306,7 +306,7 @@ namespace FSTRaK.BusinessLogic.VatsimService
             OnPropertyChanged(nameof(ControlledAirports));
         }
 
-        public (double[] labelCoordinates, double[][] coordinates) GetFirBoundariesByController(Controller controller)
+        public (double[] labelCoordinates, double[][] coordinates, string firName) GetFirBoundariesByController(Controller controller)
         {
 
             var prefix = controller.callsign.Substring(0, controller.callsign.LastIndexOf('_'));
@@ -331,7 +331,10 @@ namespace FSTRaK.BusinessLogic.VatsimService
             var fir = FirBoundaries.Features.FirstOrDefault(feature => feature.Properties.id.Equals(firBoundary[0].Boundary) && feature.Properties.oceanic.Equals(postFix));
             if (fir != null)
             {
-                return (new double[] { Double.Parse(fir.Properties.label_lat), Double.Parse(fir.Properties.label_lon) }, fir.Geometry.Coordinates[0][0]);
+                var country =
+                    VatsimStaticData.Countries.FirstOrDefault(c =>
+                        c.Value.Initials.Equals(fir.Properties.id.Substring(0, 2)));
+                return (new double[] { Double.Parse(fir.Properties.label_lat), Double.Parse(fir.Properties.label_lon) }, fir.Geometry.Coordinates[0][0], firBoundary[0].Name + " " + country.Value.centerName);
             }
 
             throw new Exception("No FIR was found for " + controller.callsign);

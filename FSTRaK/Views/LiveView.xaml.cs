@@ -147,7 +147,7 @@ namespace FSTRaK.Views
 
                         ToolTip tooltip = new ToolTip();
                         tooltip.Content =
-                            $"{controller.callsign}\n{controller.name}\n{controller.frequency}\nConnected for: {TimeUtils.GetConnectionsSinceFromTimeString(controller.logon_time)}";
+                            $"{controller.callsign}\n{geoJsonTuple.firName}\n{controller.name}\n{controller.frequency}\nConnected for: {TimeUtils.GetConnectionsSinceFromTimeString(controller.logon_time)}";
                         label.ToolTip = tooltip;
 
                         MapItem item = new MapItem();
