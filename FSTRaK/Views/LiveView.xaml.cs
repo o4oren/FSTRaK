@@ -82,6 +82,7 @@ namespace FSTRaK.Views
                             {
                                 vatsimFIRsTextOverlay.Children.Clear();
                                 vatsimFIRsOverlay.Children.Clear();
+                                vatsimUIRsOverlay.Children.Clear();
                             }
                             break;
                         default:
@@ -113,83 +114,107 @@ namespace FSTRaK.Views
                             ;
                         }
 
-                        var firMetadataTuple = VatsimService.Instance.GetFirBoundariesByController(controller);
+                        var firs = VatsimService.Instance.GetUirBoundariesByController(controller);
 
-                        List<LocationCollection> locations = new List<LocationCollection>();
-
-                        foreach (var geoJsonCoordinate in firMetadataTuple.coordinates)
+                        if (firs.Count == 0)
                         {
-                            {
-                                LocationCollection locationCollection = new LocationCollection();
-                                foreach (var coords in geoJsonCoordinate[0])
-                                {
-                                    locationCollection.Add(new Location(coords[1], coords[0]));
-                                }
-
-                                locations.Add(locationCollection);
-                            }
+                            var firMetadataTuple = VatsimService.Instance.GetFirBoundariesByController(controller);
+                            firs.Add(firMetadataTuple);
                         }
 
-                        StackPanel stackPanel = null;
-                        foreach (UIElement child in vatsimFIRsTextOverlay.Children)
+                        int i = 0;
+                        foreach (var firMetadataTuple in firs)
                         {
-                            if (child is MapItem)
+                            
+                            List<LocationCollection> locations = new List<LocationCollection>();
+
+                            foreach (var geoJsonCoordinate in firMetadataTuple.coordinates)
                             {
-                                var mapItem = child as MapItem;
-                                if (mapItem.Location.Latitude == firMetadataTuple.labelCoordinates[0]
-                                    && mapItem.Location.Longitude == firMetadataTuple.labelCoordinates[1])
                                 {
-                                    stackPanel = mapItem.Content as StackPanel;
+                                    LocationCollection locationCollection = new LocationCollection();
+                                    foreach (var coords in geoJsonCoordinate[0])
+                                    {
+                                        locationCollection.Add(new Location(coords[1], coords[0]));
+                                    }
+
+                                    locations.Add(locationCollection);
                                 }
                             }
-                        }
 
-                        stackPanel ??= new StackPanel
-                        {
-                            HorizontalAlignment = HorizontalAlignment.Center,
-                            VerticalAlignment = VerticalAlignment.Center
-                        };
 
-                        foreach (var locationCollection in locations)
-                        {
-                            MapPolygon polygon = new MapPolygon
+                            StackPanel stackPanel = null;
+                            foreach (UIElement child in vatsimFIRsTextOverlay.Children)
                             {
-                                Stroke = (Brush)mainViewResources["VatsimFirStrokeBrush"],
-                                Fill = (Brush)mainViewResources["VatsimFirFillBrush"],
-                                StrokeThickness = 2,
-                                Locations = locationCollection
+                                if (child is MapItem)
+                                {
+                                    var mapItem = child as MapItem;
+                                    if (mapItem.Location.Latitude == firMetadataTuple.labelCoordinates[0]
+                                        && mapItem.Location.Longitude == firMetadataTuple.labelCoordinates[1])
+                                    {
+                                        stackPanel = mapItem.Content as StackPanel;
+                                    }
+                                }
+                            }
+
+                            stackPanel ??= new StackPanel
+                            {
+                                HorizontalAlignment = HorizontalAlignment.Center,
+                                VerticalAlignment = VerticalAlignment.Center
                             };
-                            vatsimFIRsOverlay.Children.Add(polygon);
+
+
+                            var strokeBrush = firs.Count > 1 ? (Brush)mainViewResources["VatsimUirStrokeBrush"] : (Brush)mainViewResources["VatsimFirStrokeBrush"];
+                            var fillBrush = firs.Count > 1 ?  (Brush)mainViewResources["VatsimUirFillBrush"] : (Brush)mainViewResources["VatsimFirFillBrush"];
+
+                            foreach (var locationCollection in locations)
+                            {
+                                MapPolygon polygon = new MapPolygon
+                                {
+                                    Stroke = strokeBrush,
+                                    Fill = fillBrush,
+                                    StrokeThickness = 2,
+                                    Locations = locationCollection
+                                };
+                                if (firs.Count > 0)
+                                {
+                                    vatsimUIRsOverlay.Children.Add(polygon);
+                                }
+                                else
+                                {
+                                    vatsimFIRsOverlay.Children.Add(polygon);
+                                }
+                            }
+
+                            if (i == 0)
+                            {
+                                
+                                Label label = new Label();
+                                label.Foreground = (Brush)mainViewResources["PrimaryDarkBrush"];
+                                //label.FontFamily = (FontFamily)Application.Current.Resources["Slopes"];
+                                //label.FontSize = 16;
+                                label.FontWeight = FontWeights.Bold;
+                                label.Padding = new Thickness(0, 0, 0, 2);
+
+
+                                label.Content = controller.callsign.Replace("_", "__");
+
+                                ToolTip tooltip = new ToolTip();
+                                tooltip.Content =
+                                    $"{controller.callsign}\n{firMetadataTuple.firName}\n{controller.name}\n{controller.frequency}\nConnected for: {TimeUtils.GetConnectionsSinceFromTimeString(controller.logon_time)}";
+                                tooltip.FontWeight = FontWeights.Normal;
+                                label.ToolTip = tooltip;
+                                stackPanel.Children.Add(label);
+
+                                MapItem item = new MapItem();
+
+                                item.Location = new Location(firMetadataTuple.labelCoordinates[0], firMetadataTuple.labelCoordinates[1]);
+                                item.Content = stackPanel;
+                                item.HorizontalAlignment = HorizontalAlignment.Center;
+                                item.VerticalAlignment = VerticalAlignment.Center;
+                                vatsimFIRsTextOverlay.Children.Add(item);
+                                i++;
+                            }
                         }
-
-
-
-                        Label label = new Label();
-                        label.Foreground = (Brush)mainViewResources["PrimaryDarkBrush"];
-                        //label.FontFamily = (FontFamily)Application.Current.Resources["Slopes"];
-                        //label.FontSize = 16;
-                        label.FontWeight = FontWeights.Bold;
-                        label.Padding = new Thickness(0, 0, 0, 2);
-
-
-                        label.Content = controller.callsign.Replace("_", "__");
-
-                        ToolTip tooltip = new ToolTip();
-                        tooltip.Content =
-                            $"{controller.callsign}\n{firMetadataTuple.firName}\n{controller.name}\n{controller.frequency}\nConnected for: {TimeUtils.GetConnectionsSinceFromTimeString(controller.logon_time)}";
-                        tooltip.FontWeight = FontWeights.Normal;
-                        label.ToolTip = tooltip;
-                        stackPanel.Children.Add(label);
-
-                        MapItem item = new MapItem();
-
-                        item.Location = new Location(firMetadataTuple.labelCoordinates[0], firMetadataTuple.labelCoordinates[1]);
-                        item.Content = stackPanel;
-                        item.HorizontalAlignment = HorizontalAlignment.Center;
-                        item.VerticalAlignment = VerticalAlignment.Center;
-                        vatsimFIRsTextOverlay.Children.Add(item);
-
-
                     }
                     catch (Exception ex)
                     {

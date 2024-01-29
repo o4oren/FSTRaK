@@ -11,6 +11,7 @@ namespace FSTRaK.BusinessLogic.VatsimService.VatsimModel
     {
         public List<VatsimStaticData.Airport> Airports { get; set; }
         public List<VatsimStaticData.FIR> FIRs { get; set; }
+        public List<VatsimStaticData.UIR> UIRs { get; set; }
         public Dictionary<string, VatsimStaticData.Country> Countries { get; set; }
 
 
@@ -19,6 +20,8 @@ namespace FSTRaK.BusinessLogic.VatsimService.VatsimModel
             Countries = new Dictionary<string, Country>();
             Airports = new List<Airport>();
             FIRs = new List<FIR>();
+            UIRs = new List<UIR>();
+
         }
 
 

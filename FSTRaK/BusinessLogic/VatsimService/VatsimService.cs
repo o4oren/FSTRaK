@@ -10,6 +10,7 @@ using FSTRaK.BusinessLogic.VatsimService.VatsimModel;
 using FSTRaK.Models;
 using Serilog;
 using System.IO;
+using static FSTRaK.BusinessLogic.VatsimService.VatsimModel.VatsimStaticData;
 
 
 namespace FSTRaK.BusinessLogic.VatsimService
@@ -92,7 +93,8 @@ namespace FSTRaK.BusinessLogic.VatsimService
 
         private void ParseStaticData()
         {
-            using (StreamReader reader = new StreamReader($@"{System.AppContext.BaseDirectory}\Resources\Data\VATSpy.dat"))
+            using (StreamReader reader =
+                   new StreamReader($@"{System.AppContext.BaseDirectory}\Resources\Data\VATSpy.dat"))
             {
                 while (!reader.EndOfStream)
                 {
@@ -158,6 +160,7 @@ namespace FSTRaK.BusinessLogic.VatsimService
                             line = reader.ReadLine();
 
                         } while (line is not "[FIRs]");
+                        
 
                         if (line is "[FIRs]")
                         {
@@ -191,11 +194,40 @@ namespace FSTRaK.BusinessLogic.VatsimService
                                 line = reader.ReadLine();
 
                             } while (line is not "[UIRs]");
+                            if (line is "[UIRs]")
+                            {
+                                line = reader.ReadLine();
+                                do
+                                {
+                                    if (line.StartsWith(";") || string.IsNullOrWhiteSpace(line))
+                                    {
+                                        line = reader.ReadLine();
+                                        continue;
+                                    }
+
+                                    string[] columns = line.Split('|');
+
+                                    try
+                                    {
+                                        var uir = new VatsimStaticData.UIR()
+                                        {
+                                            CallsignPrefix = columns[0],
+                                            Name = columns[1],
+                                            Firs = new List<string>(columns[2].Split(',')),
+                                        };
+                                        VatsimStaticData.UIRs.Add(uir);
+                                    }
+                                    catch (Exception ex)
+                                    {
+                                        Log.Error(ex, line);
+                                    }
+
+                                    line = reader.ReadLine();
+
+                                } while (line is not "[IDL]");
+                            }
                         }
                     }
-
-
-                    // Handle additional columns if needed
                 }
             }
         }
@@ -243,14 +275,14 @@ namespace FSTRaK.BusinessLogic.VatsimService
                         VatsimData data = JsonConvert.DeserializeObject<VatsimData>(jsonContent);
 
                         //code for adding a controller to the list for debugging
- //                       Controller c = new Controller();
- //                       c.callsign = "ZAK_FSS";
- //                       c.facility = 1;
- //                       c.cid = 123;
- //                       c.name = "Oren";
- //                       c.frequency = "199.9";
- //                       c.logon_time = "2024-01-28T20:17:29.1405912Z";
- //                       data.controllers.Add(c);
+//                        Controller c = new Controller();
+//                        c.callsign = "EUC-ME_FSS";
+//                        c.facility = 1;
+//                        c.cid = 123;
+//                        c.name = "Oren";
+//                        c.frequency = "199.9";
+//                        c.logon_time = "2024-01-28T20:17:29.1405912Z";
+//                        data.controllers.Add(c);
 
 
                         VatsimData = data;
@@ -353,6 +385,34 @@ namespace FSTRaK.BusinessLogic.VatsimService
             }
 
             throw new Exception("No FIR was found for " + controller.callsign);
+        }
+
+        public List<(double[] labelCoordinates, double[][][][] coordinates, string firName)> GetUirBoundariesByController(Controller controller)
+        {
+            var prefix = controller.callsign.Substring(0, controller.callsign.LastIndexOf('_'));
+            var firs = new List<(double[] labelCoordinates, double[][][][] coordinates, string firName)>();
+            var uris = VatsimStaticData.UIRs.FindAll(u => u.CallsignPrefix.Equals(prefix));
+            if (uris.Count > 0)
+            {
+                foreach (var fir in uris[0].Firs)
+                {
+                    var firBoundaries =
+                        FirBoundaries.Features.FirstOrDefault(feature => feature.Properties.id.Equals(fir));
+                    if (fir != null)
+                    {
+                        var country =
+                            VatsimStaticData.Countries.FirstOrDefault(c =>
+                                c.Value.Initials.Equals(firBoundaries.Properties.id.Substring(0, 2)));
+                        firs.Add((
+                            new double[]
+                            {
+                                Double.Parse(firBoundaries.Properties.label_lat),
+                                Double.Parse(firBoundaries.Properties.label_lon)
+                            }, firBoundaries.Geometry.Coordinates, uris[0].Name));
+                    }
+                }
+            }
+            return firs;
         }
     }
 }
