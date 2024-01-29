@@ -361,7 +361,7 @@
                                        VerticalAlignment="Center" HorizontalAlignment="Center"
                                        Width="50"
                                        Height="50"> 
-                                   <ContentControl Content="{TemplateBinding Content}" HorizontalAlignment="Center" VerticalAlignment="Center"/>
+                                   <ContentControl Content="{TemplateBinding Content}" HorizontalAlignment="Center" VerticalAlignment="Center" Foreground="White"/>
                                    </Grid>
                         </Grid>
 
