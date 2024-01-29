@@ -5,6 +5,7 @@ using System.Windows.Media;
 using System.Windows.Shapes;
 using System;
 using System.Collections.Generic;
+using System.Linq;
 using Serilog;
 using System.Text;
 using System.Windows.Media.Imaging;
@@ -123,6 +124,7 @@ namespace FSTRaK.Views
                         }
 
                         int i = 0;
+                        List<LocationCollection> uirLocations = new List<LocationCollection>();
                         foreach (var firMetadataTuple in firs)
                         {
                             
@@ -136,8 +138,12 @@ namespace FSTRaK.Views
                                     {
                                         locationCollection.Add(new Location(coords[1], coords[0]));
                                     }
-
                                     locations.Add(locationCollection);
+                                    if (firs.Count > 1)
+                                    {
+                                        uirLocations.Add(locationCollection);
+                                    }
+                                    
                                 }
                             }
 
@@ -185,11 +191,13 @@ namespace FSTRaK.Views
                                 }
                             }
 
+
+                            MapItem item = new MapItem();
                             if (i == 0)
                             {
                                 
                                 Label label = new Label();
-                                label.Foreground = (Brush)mainViewResources["PrimaryDarkBrush"];
+                                label.Foreground = firs.Count > 1 ? (Brush)mainViewResources["VatsimUirTextBrush"] : (Brush)mainViewResources["PrimaryDarkBrush"];
                                 //label.FontFamily = (FontFamily)Application.Current.Resources["Slopes"];
                                 //label.FontSize = 16;
                                 label.FontWeight = FontWeights.Bold;
@@ -204,8 +212,6 @@ namespace FSTRaK.Views
                                 tooltip.FontWeight = FontWeights.Normal;
                                 label.ToolTip = tooltip;
                                 stackPanel.Children.Add(label);
-
-                                MapItem item = new MapItem();
 
                                 item.Location = new Location(firMetadataTuple.labelCoordinates[0], firMetadataTuple.labelCoordinates[1]);
                                 item.Content = stackPanel;
