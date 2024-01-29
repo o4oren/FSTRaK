@@ -275,14 +275,14 @@ namespace FSTRaK.BusinessLogic.VatsimService
                         VatsimData data = JsonConvert.DeserializeObject<VatsimData>(jsonContent);
 
                         //code for adding a controller to the list for debugging
-                        Controller c = new Controller();
-                        c.callsign = "EUC-ME_FSS";
-                        c.facility = 1;
-                        c.cid = 123;
-                        c.name = "Oren";
-                        c.frequency = "199.9";
-                        c.logon_time = "2024-01-28T20:17:29.1405912Z";
-                        data.controllers.Add(c);
+//                        Controller c = new Controller();
+//                        c.callsign = "EUC-ME_FSS";
+//                        c.facility = 1;
+//                        c.cid = 123;
+//                        c.name = "Oren";
+//                        c.frequency = "199.9";
+//                        c.logon_time = "2024-01-28T20:17:29.1405912Z";
+//                        data.controllers.Add(c);
 
 
                         VatsimData = data;
