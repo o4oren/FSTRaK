@@ -98,6 +98,7 @@ namespace FSTRaK.Views
         {
             vatsimFIRsOverlay.Children.Clear();
             vatsimFIRsTextOverlay.Children.Clear();
+            vatsimUIRsOverlay.Children.Clear();
             foreach (var controller in liveViewViewModel.VatsimData.controllers)
             {
                 if (controller.facility == 6 || controller.facility == 1)
@@ -124,7 +125,6 @@ namespace FSTRaK.Views
                         }
 
                         int i = 0;
-                        List<LocationCollection> uirLocations = new List<LocationCollection>();
                         foreach (var firMetadataTuple in firs)
                         {
                             
@@ -139,11 +139,6 @@ namespace FSTRaK.Views
                                         locationCollection.Add(new Location(coords[1], coords[0]));
                                     }
                                     locations.Add(locationCollection);
-                                    if (firs.Count > 1)
-                                    {
-                                        uirLocations.Add(locationCollection);
-                                    }
-                                    
                                 }
                             }
 
@@ -181,7 +176,7 @@ namespace FSTRaK.Views
                                     StrokeThickness = 2,
                                     Locations = locationCollection
                                 };
-                                if (firs.Count > 0)
+                                if (firs.Count > 1)
                                 {
                                     vatsimUIRsOverlay.Children.Add(polygon);
                                 }
@@ -323,7 +318,7 @@ namespace FSTRaK.Views
                     // Calculate vertices for a circle
                     int numberOfVertices = 80; // Adjust as needed for smoothness
                     double radius = 80; 
-                    List<Location> locations = new List<Location>();
+                    var locations = new LocationCollection();
                     for (int i = 0; i < numberOfVertices; i++)
                     {
                         double angle = (i * 2 * Math.PI) / numberOfVertices;
