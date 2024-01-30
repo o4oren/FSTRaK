@@ -9,7 +9,6 @@ using FSTRaK.DataTypes;
 using FSTRaK.Utils;
 using Microsoft.Win32;
 using System;
-using Serilog;
 
 namespace FSTRaK.ViewModels
 {
@@ -165,6 +164,8 @@ namespace FSTRaK.ViewModels
 
 
 
+
+
         public ObservableCollection<string> Fonts { get; set; } = new ObservableCollection<string>(new []{"Slopes", "Arial"});
         private string _fontName = "Slopes";
         public string FontName
@@ -179,6 +180,18 @@ namespace FSTRaK.ViewModels
                     Properties.Settings.Default.FontName = _fontName;
                     OnPropertyChanged();
                 }
+            }
+        }
+
+        private string _vatsimId;
+        public string VatsimId
+        {
+            get => _vatsimId;
+            set
+            {
+                _vatsimId = value;
+                Properties.Settings.Default.VatsimId = _vatsimId;
+                OnPropertyChanged();
             }
         }
 
@@ -212,6 +225,7 @@ namespace FSTRaK.ViewModels
             IsMinimizeToTray = Properties.Settings.Default.IsMinimizeToTray;
             IsStartAutomatically = Properties.Settings.Default.IsStartAutomatically;
             FontName = Properties.Settings.Default.FontName;
+            VatsimId = Properties.Settings.Default.VatsimId;
         }
 
         public void SaveSettings()

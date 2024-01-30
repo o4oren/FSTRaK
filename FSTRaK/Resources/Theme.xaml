@@ -88,6 +88,15 @@
     <SolidColorBrush x:Key="MinButtonColorHoverBrush" Color="{DynamicResource MinButtonColorHover}"/>
     <SolidColorBrush x:Key="MinButtonColorPressedBrush" Color="{DynamicResource MinButtonColorPressed}"/>
 
+    <SolidColorBrush x:Key="VatsimAicraftColorBrush" Color="{StaticResource PrimaryDark}"/>
+    <SolidColorBrush x:Key="VatsimFriendAicraftColorBrush" Color="#355E3B"/>
+    <SolidColorBrush x:Key="VatsimAppCircleFillBrush" Color="#F78CA2" />
+    <SolidColorBrush x:Key="VatsimAppCircleStrokeBrush" Color="#7D0A0A"/>
+    <SolidColorBrush x:Key="VatsimFirFillBrush" Color="#91C8E4" />
+    <SolidColorBrush x:Key="VatsimFirStrokeBrush" Color="#080658"/>
+    <SolidColorBrush x:Key="VatsimUirFillBrush" Color="#90EE90"/>
+    <SolidColorBrush x:Key="VatsimUirStrokeBrush" Color="#90EE90"/>
+    <SolidColorBrush x:Key="VatsimUirTextBrush" Color="#355E3B"/>
 
 
     <LinearGradientBrush x:Key="MenuPopupBrush"
@@ -352,7 +361,7 @@
                                        VerticalAlignment="Center" HorizontalAlignment="Center"
                                        Width="50"
                                        Height="50"> 
-                                   <ContentControl Content="{TemplateBinding Content}" HorizontalAlignment="Center" VerticalAlignment="Center"/>
+                                   <ContentControl Content="{TemplateBinding Content}" HorizontalAlignment="Center" VerticalAlignment="Center" Foreground="White"/>
                                    </Grid>
                         </Grid>
 

@@ -11,7 +11,7 @@
              Loaded="OnLoaded"
              d:DesignHeight="450" d:DesignWidth="800">
     <UserControl.Resources>
-        <ResourceDictionary>
+        <ResourceDictionary x:Name="mainViewResources">
             <ResourceDictionary.MergedDictionaries>
                 <ResourceDictionary Source="../Resources/AircraftIconsDictionary.xaml"/>
                 <ResourceDictionary Source="../Resources/MapProvidersDictionary.xaml"/>
@@ -26,40 +26,40 @@
                  ZoomLevel="{Binding ZoomLevel}" 
                  MapProjection="{StaticResource WebMercatorProjection}"
                  Center="{Binding MapCenter, Mode=TwoWay}"
+                 MaxZoomLevel="18"
+                 MinZoomLevel="3"
                  Margin="10,10,10,10">
             <b:Interaction.Triggers>
                 <b:EventTrigger EventName="MouseLeftButtonDown">
                     <b:InvokeCommandAction Command="{Binding StopCenterOnAirplaneCommand}"/>
                 </b:EventTrigger>
             </b:Interaction.Triggers>
+            <map:MapScale Opacity="0.5" HorizontalAlignment="Center" VerticalAlignment="Bottom" Margin="5" />
+            <TextBlock   FontSize="12" HorizontalAlignment="Right" VerticalAlignment="Bottom" Margin="5" Style="{StaticResource MapAttribution}"
+                         utils:HyperlinkText.InlinesSource="{Binding MapProvider.Description}" />
+            <map:MapOverlay x:Name="vatsimUIRsOverlay" Opacity="0.3"></map:MapOverlay>
+            <map:MapOverlay x:Name="vatsimFIRsOverlay" Opacity="0.3"></map:MapOverlay>
+            <map:MapOverlay x:Name="vatsimFIRsTextOverlay"></map:MapOverlay>
+
+            <map:MapOverlay x:Name="vatsimAppCirclesOverlay" Opacity="0.3"></map:MapOverlay>
+            <map:MapOverlay x:Name="vatsimAirportsOverlay"></map:MapOverlay>
+            <map:MapOverlay x:Name="vatsimAircraftOverlay"></map:MapOverlay>
+            <!-- map:MapGraticule Opacity="0.5"/ -->
+
             <map:MapItem Location="{Binding Location}"
-                        Width="32" Height="32"
-                        Margin="-16"
-                        Visibility="{Binding Path=IsShowAirplane, Converter={StaticResource BoolToVis}}"
-                        >
-                <Canvas 
-                    Width="32" Height="32"
-                    Opacity="0.9"
-                    Visibility="{Binding Path=IsShowAirplane, Converter={StaticResource BoolToVis}}"
-                >
-                    <Path x:Name="AirplaneGeometry" Fill="Red" Stroke="DarkRed" StrokeThickness="1"/>
-                </Canvas>
+                         Width="32" Height="32"
+                         Margin="-16"
+                         Visibility="{Binding Path=IsShowAirplane, Converter={StaticResource BoolToVis}}"
+            >
+
+                <Path x:Name="AirplaneGeometry" Fill="Red" Stroke="DarkRed" StrokeThickness="1"/>
                 <map:MapItem.RenderTransform>
                     <RotateTransform CenterX="16" CenterY="16" Angle="{Binding Heading, Mode=OneWay}" />
                 </map:MapItem.RenderTransform>
             </map:MapItem>
-            <map:MapScale Opacity="0.5" HorizontalAlignment="Center" VerticalAlignment="Bottom" Margin="5" />
-            <TextBlock   FontSize="12" HorizontalAlignment="Right" VerticalAlignment="Bottom" Margin="5" Style="{StaticResource MapAttribution}"
-                         utils:HyperlinkText.InlinesSource="{Binding MapProvider.Description}" />
-            <!-- map:MapGraticule Opacity="0.5"/ -->
             <map:MapPolyline Locations="{Binding FlightPath}" Stroke="Red" StrokeThickness="2" StrokeLineJoin="round"/>
             <map:MapPolyline Locations="{Binding LastSegmentLine}" Stroke="Red" StrokeThickness="2" Visibility="{Binding Path=IsShowAirplane, Converter={StaticResource BoolToVis}}"/>
-            <!-- map:MapTileLayer
-                TileSource="https://api.tiles.openaip.net/api/data/openaip/{z}/{x}/{y}.png?apiKey=[API KEY]"
-                SourceName="OpenAIP"
-                Description="© [OpenAIP](https://www.openaip.net)"
-                UpdateWhileViewportChanging="true"
-            /-->
+
         </map:Map>
 
         <StackPanel Margin="10" HorizontalAlignment="Left" MinWidth="160">
@@ -82,6 +82,52 @@
                         <b:InvokeCommandAction Command="{Binding StopCenterOnAirplaneCommand}"/>
                     </b:EventTrigger>
                 </b:Interaction.Triggers>
+            </ToggleButton>
+            <ToggleButton Style="{StaticResource MapToggleButton}" 
+                          IsChecked="{Binding IsShowVatsimAircraft}">
+                <b:Interaction.Triggers>
+                    <b:EventTrigger EventName="Checked">
+                        <b:InvokeCommandAction Command="{Binding EnableVatsimItemCommand}"/>
+                    </b:EventTrigger>
+                    <b:EventTrigger EventName="Unchecked">
+                        <b:InvokeCommandAction Command="{Binding DisableVatsimItemCommand}"/>
+                    </b:EventTrigger>
+                </b:Interaction.Triggers>
+
+                <StackPanel Orientation="Vertical">
+                    <Image Source="/Resources/Images/VATSIM_Logo_White_No_Tagline_500px.png" Width="32" />
+                    <TextBlock Foreground="White">Pilots</TextBlock>
+                </StackPanel>
+            </ToggleButton>
+            <ToggleButton Style="{StaticResource MapToggleButton}" 
+                          IsChecked="{Binding IsShowVatsimAirports}">
+                <b:Interaction.Triggers>
+                    <b:EventTrigger EventName="Checked">
+                        <b:InvokeCommandAction Command="{Binding EnableVatsimItemCommand}"/>
+                    </b:EventTrigger>
+                    <b:EventTrigger EventName="Unchecked">
+                        <b:InvokeCommandAction Command="{Binding DisableVatsimItemCommand}"/>
+                    </b:EventTrigger>
+                </b:Interaction.Triggers>
+                <StackPanel Orientation="Vertical">
+                    <Image Source="/Resources/Images/VATSIM_Logo_White_No_Tagline_500px.png" Width="32" />
+                    <TextBlock Foreground="White">Airports</TextBlock>
+                </StackPanel>
+            </ToggleButton>
+            <ToggleButton Style="{StaticResource MapToggleButton}" 
+                          IsChecked="{Binding IsShowVatsimFirs}" >
+                <b:Interaction.Triggers>
+                    <b:EventTrigger EventName="Checked">
+                        <b:InvokeCommandAction Command="{Binding EnableVatsimItemCommand}"/>
+                    </b:EventTrigger>
+                    <b:EventTrigger EventName="Unchecked">
+                        <b:InvokeCommandAction Command="{Binding DisableVatsimItemCommand}"/>
+                    </b:EventTrigger>
+                </b:Interaction.Triggers>
+                <StackPanel Orientation="Vertical">
+                    <Image Source="/Resources/Images/VATSIM_Logo_White_No_Tagline_500px.png" Width="32" />
+                    <TextBlock Foreground="White">FIRs</TextBlock>
+                </StackPanel>
             </ToggleButton>
         </StackPanel>
     </Grid>

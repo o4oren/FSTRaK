@@ -411,10 +411,19 @@ internal sealed class SimConnectService : INotifyPropertyChanged
 
     private void UpdateInFlightState()
     {
-        if (!LoadedFlight.Equals(MainMenuFlt) && PauseState != 1)
+        Log.Information($"Flight state updated : Loaded flight - {LoadedFlight}, Pause state: {PauseState}");
+        if (IsInFlight && PauseState == 1)
+        {
+            // Do nothing. This is to prevent enabling VR mid flight from ending the flight.
+        }
+        else if (!LoadedFlight.Equals(MainMenuFlt) && PauseState != 1)
+        {
             IsInFlight = true;
+        }
         else
+        {
             IsInFlight = false;
+        }
     }
 
     private void simconnect_OnRecvQuit(SimConnect sender, SIMCONNECT_RECV data)
@@ -434,7 +443,11 @@ internal sealed class SimConnectService : INotifyPropertyChanged
 
     private void simconnect_OnRecvException(SimConnect sender, SIMCONNECT_RECV_EXCEPTION data)
     {
-        Log.Error($"Simconnect excpetion {data.dwException}");
+        Log.Error($"Simconnect exception {data.dwException}");
+
+        // Due to previous hanging after System.Runtime.InteropServices.COMException (0xC000014B) we will try to set IsConnected to false - and let it try to connect again.
+        IsConnected = false;
+        _connectionTimer.Start();
     }
 
     private void Simconnect_OnRecvSimobjectData(SimConnect sender, SIMCONNECT_RECV_SIMOBJECT_DATA data)

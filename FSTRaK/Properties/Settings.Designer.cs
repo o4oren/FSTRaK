@@ -178,5 +178,17 @@ namespace FSTRaK.Properties {
                 this["FontName"] = value;
             }
         }
+        
+        [global::System.Configuration.UserScopedSettingAttribute()]
+        [global::System.Diagnostics.DebuggerNonUserCodeAttribute()]
+        [global::System.Configuration.DefaultSettingValueAttribute("")]
+        public string VatsimId {
+            get {
+                return ((string)(this["VatsimId"]));
+            }
+            set {
+                this["VatsimId"] = value;
+            }
+        }
     }
 }

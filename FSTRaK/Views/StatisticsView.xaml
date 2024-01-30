@@ -44,7 +44,6 @@
         <StackPanel Grid.Row="1">
 
             <StackPanel Margin="10" >
-
                 <TextBlock 
                     Foreground="{StaticResource PrimaryDarkBrush}"
                     FontSize="28"
