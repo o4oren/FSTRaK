@@ -84,8 +84,7 @@
                 </b:Interaction.Triggers>
             </ToggleButton>
             <ToggleButton Style="{StaticResource MapToggleButton}" 
-                          IsChecked="{Binding IsShowVatsimAircraft}" 
-                          Content="Pilots">
+                          IsChecked="{Binding IsShowVatsimAircraft}">
                 <b:Interaction.Triggers>
                     <b:EventTrigger EventName="Checked">
                         <b:InvokeCommandAction Command="{Binding EnableVatsimItemCommand}"/>
@@ -94,10 +93,14 @@
                         <b:InvokeCommandAction Command="{Binding DisableVatsimItemCommand}"/>
                     </b:EventTrigger>
                 </b:Interaction.Triggers>
+
+                <StackPanel Orientation="Vertical">
+                    <Image Source="/Resources/Images/VATSIM_Logo_White_No_Tagline_500px.png" Width="32" />
+                    <TextBlock Foreground="White">Pilots</TextBlock>
+                </StackPanel>
             </ToggleButton>
             <ToggleButton Style="{StaticResource MapToggleButton}" 
-                          IsChecked="{Binding IsShowVatsimAirports}" 
-                          Content="ATC">
+                          IsChecked="{Binding IsShowVatsimAirports}">
                 <b:Interaction.Triggers>
                     <b:EventTrigger EventName="Checked">
                         <b:InvokeCommandAction Command="{Binding EnableVatsimItemCommand}"/>
@@ -106,10 +109,13 @@
                         <b:InvokeCommandAction Command="{Binding DisableVatsimItemCommand}"/>
                     </b:EventTrigger>
                 </b:Interaction.Triggers>
+                <StackPanel Orientation="Vertical">
+                    <Image Source="/Resources/Images/VATSIM_Logo_White_No_Tagline_500px.png" Width="32" />
+                    <TextBlock Foreground="White">Airports</TextBlock>
+                </StackPanel>
             </ToggleButton>
             <ToggleButton Style="{StaticResource MapToggleButton}" 
-                          IsChecked="{Binding IsShowVatsimFirs}" 
-                          Content="FIRs">
+                          IsChecked="{Binding IsShowVatsimFirs}" >
                 <b:Interaction.Triggers>
                     <b:EventTrigger EventName="Checked">
                         <b:InvokeCommandAction Command="{Binding EnableVatsimItemCommand}"/>
@@ -118,6 +124,10 @@
                         <b:InvokeCommandAction Command="{Binding DisableVatsimItemCommand}"/>
                     </b:EventTrigger>
                 </b:Interaction.Triggers>
+                <StackPanel Orientation="Vertical">
+                    <Image Source="/Resources/Images/VATSIM_Logo_White_No_Tagline_500px.png" Width="32" />
+                    <TextBlock Foreground="White">FIRs</TextBlock>
+                </StackPanel>
             </ToggleButton>
         </StackPanel>
     </Grid>
