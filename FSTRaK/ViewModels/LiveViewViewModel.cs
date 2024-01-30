@@ -321,7 +321,7 @@ namespace FSTRaK.ViewModels
 
                     if (ActiveFlight?.Aircraft != null)
                     {
-                        AirplaneIcon = ResourceUtils.GetAircraftIcon(ActiveFlight.Aircraft).Item1;
+                        AirplaneIcon = AircraftResolver.GetAircraftIcon(ActiveFlight.Aircraft).Item1;
                     }
 
 

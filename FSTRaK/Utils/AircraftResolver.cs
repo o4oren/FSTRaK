@@ -8,7 +8,7 @@ using FSTRaK.Models;
 
 namespace FSTRaK.Utils
 {
-    internal static class ResourceUtils
+    internal static class AircraftResolver
     {
         public static readonly List<string> B737IconCandidates = new List<string>(new string[] { "737", "738", "739", "733", "734", "735", "736" });
         public static readonly List<string> A320IconCandidates = new List<string>(new string[] { "A318", "A319", "A320", "A-320", "A321", "A20N", "A21N" });
@@ -23,14 +23,14 @@ namespace FSTRaK.Utils
         public static readonly List<string> ERJ = new List<string>(new string[]
         {
             "E175", "E190", "E170", "E195", "CRJ", "CJ2", "CJ3", "Citation", "Honda", "CJ4", "Lear", "RJ", "C500", "C510", "C525", "C550", "C560",
-            "CL30", "CL60", "C25C", "GLF5", "LJ35"
+            "CL30", "CL60", "C25C", "GLF5", "LJ35", "T154", "T134"
         });
         public static readonly List<string> DC3 = new List<string>(new string[]
         {
             "DC3", "DC-3", "C47", "DC2"
         });
 
-        public static readonly List<string> Helicopter = new List<string>(new string[] { "B06", "H500", "H135", "H145", "H155", "BK-117C-2", "H125", "H275", "R44", "B47G", "R66", "B06", "B212", "UH1" });
+        public static readonly List<string> Helicopter = new List<string>(new string[] { "B06", "H500", "H135", "EC45", "EC35", "H145", "H155", "BK-117C-2", "H125", "H275", "R44", "B47G", "R66", "B06", "B212", "UH1" });
 
         public static System.Drawing.Color GetColorFromResource(string name)
         {
@@ -42,7 +42,7 @@ namespace FSTRaK.Utils
         {
             if (aircraft.Category.Equals("Helicopter"))
                 return ("Helicopter", 0.6);
-            (var aicraftIcon, var scaleFactor) = GetAircraftIcon(aircraft.AircraftType);
+            (var aicraftIcon, var scaleFactor) = GetAircraftIcon(aircraft.AircraftType, true);
             if (aicraftIcon == null)
             {
                 // If not matched on the type, try other heuristics

@@ -352,7 +352,7 @@ namespace FSTRaK.Views
             foreach (var pilot in ((LiveViewViewModel)DataContext).VatsimData.pilots)
             {
 
-                (string aircraftIcon, double scaleFactor) = pilot.flight_plan != null ? ResourceUtils.GetAircraftIcon(pilot.flight_plan.aircraft_short) : ("B737", 0.75);
+                (string aircraftIcon, double scaleFactor) = pilot.flight_plan != null ? AircraftResolver.GetAircraftIcon(pilot.flight_plan.aircraft_short) : ("B737", 0.75);
 
                 Path path = new Path
                 {

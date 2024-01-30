@@ -34,22 +34,6 @@
                     <b:InvokeCommandAction Command="{Binding StopCenterOnAirplaneCommand}"/>
                 </b:EventTrigger>
             </b:Interaction.Triggers>
-            <map:MapItem Location="{Binding Location}"
-                        Width="32" Height="32"
-                        Margin="-16"
-                        Visibility="{Binding Path=IsShowAirplane, Converter={StaticResource BoolToVis}}"
-                        >
-                <Canvas 
-                    Width="32" Height="32"
-                    Opacity="0.9"
-                    Visibility="{Binding Path=IsShowAirplane, Converter={StaticResource BoolToVis}}"
-                >
-                    <Path x:Name="AirplaneGeometry" Fill="Red" Stroke="DarkRed" StrokeThickness="1"/>
-                </Canvas>
-                <map:MapItem.RenderTransform>
-                    <RotateTransform CenterX="16" CenterY="16" Angle="{Binding Heading, Mode=OneWay}" />
-                </map:MapItem.RenderTransform>
-            </map:MapItem>
             <map:MapScale Opacity="0.5" HorizontalAlignment="Center" VerticalAlignment="Bottom" Margin="5" />
             <TextBlock   FontSize="12" HorizontalAlignment="Right" VerticalAlignment="Bottom" Margin="5" Style="{StaticResource MapAttribution}"
                          utils:HyperlinkText.InlinesSource="{Binding MapProvider.Description}" />
@@ -61,14 +45,21 @@
             <map:MapOverlay x:Name="vatsimAirportsOverlay"></map:MapOverlay>
             <map:MapOverlay x:Name="vatsimAircraftOverlay"></map:MapOverlay>
             <!-- map:MapGraticule Opacity="0.5"/ -->
+
+            <map:MapItem Location="{Binding Location}"
+                         Width="32" Height="32"
+                         Margin="-16"
+                         Visibility="{Binding Path=IsShowAirplane, Converter={StaticResource BoolToVis}}"
+            >
+
+                <Path x:Name="AirplaneGeometry" Fill="Red" Stroke="DarkRed" StrokeThickness="1"/>
+                <map:MapItem.RenderTransform>
+                    <RotateTransform CenterX="16" CenterY="16" Angle="{Binding Heading, Mode=OneWay}" />
+                </map:MapItem.RenderTransform>
+            </map:MapItem>
             <map:MapPolyline Locations="{Binding FlightPath}" Stroke="Red" StrokeThickness="2" StrokeLineJoin="round"/>
             <map:MapPolyline Locations="{Binding LastSegmentLine}" Stroke="Red" StrokeThickness="2" Visibility="{Binding Path=IsShowAirplane, Converter={StaticResource BoolToVis}}"/>
-            <!-- map:MapTileLayer
-                TileSource="https://api.tiles.openaip.net/api/data/openaip/{z}/{x}/{y}.png?apiKey=[API KEY]"
-                SourceName="OpenAIP"
-                Description="© [OpenAIP](https://www.openaip.net)"
-                UpdateWhileViewportChanging="true"
-            /-->
+
         </map:Map>
 
         <StackPanel Margin="10" HorizontalAlignment="Left" MinWidth="160">
