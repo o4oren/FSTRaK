@@ -10,6 +10,7 @@ using FSTRaK.BusinessLogic.VatsimService;
 using FSTRaK.BusinessLogic.VatsimService.VatsimModel;
 using FSTRaK.Utils;
 using System.Collections.Generic;
+using Serilog;
 
 namespace FSTRaK.ViewModels
 {
