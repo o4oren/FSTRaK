@@ -6,6 +6,13 @@
     <system:String x:Key="ThemeFontName">Slopes</system:String>
 
 
+    <!--Chart Colors-->
+    <Color x:Key="ChartColor1">#CE301B</Color>
+    <Color x:Key="ChartColor2">#F47A1F</Color>
+    <Color x:Key="ChartColor3">#FDBB2F</Color>
+    <Color x:Key="ChartColor4">#377B2B</Color>
+    <Color x:Key="ChartColor5">#007CC3</Color>
+    <Color x:Key="ChartColor6">#9717F4</Color>
 
     <!--Pallete-->
     <Color x:Key="PrimaryBright">#F2F5F8</Color>

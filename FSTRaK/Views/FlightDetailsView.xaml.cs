@@ -28,7 +28,7 @@ namespace FSTRaK.Views
         {
             ((FlightDetailsViewModel)DataContext).PropertyChanged += DataModel_OnPropertyChange;
 
-            var graphColor = AircraftResolver.GetColorFromResource("BorderLightColor");
+            var graphColor = ColorUtil.GetDrawingColorFromResource("BorderLightColor");
 
             AltSpeedChart.Plot.XAxis.DateTimeFormat(true);
             AltSpeedChart.Plot.YAxis.Label("Altitude");
