@@ -17,6 +17,7 @@
             </ResourceDictionary.MergedDictionaries>
             <FontFamily x:Key="Slopes">pack://application:,,,/Resources/Fonts/#Slopes</FontFamily>
             <BooleanToVisibilityConverter x:Key="BoolToVis" />
+            <utils:ResourceNameToGeometryConverter x:Key="ResourceNameToGeometryConverter" />
             <utils:NullToVisibilityConverter x:Key="NullToVis" />
         </ResourceDictionary>
     </Application.Resources>

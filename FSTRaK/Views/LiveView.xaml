@@ -43,15 +43,54 @@
 
             <map:MapOverlay x:Name="vatsimAppCirclesOverlay" Opacity="0.3"></map:MapOverlay>
             <map:MapOverlay x:Name="vatsimAirportsOverlay"></map:MapOverlay>
-            <map:MapOverlay x:Name="vatsimAircraftOverlay"></map:MapOverlay>
+
+            <map:MapOverlay x:Name="vatsimAircraftOverlay">
+
+            </map:MapOverlay>
+
+            <!-- Vatsim Aircraft -->
+            <map:MapItemsControl ItemsSource="{Binding VatsimAircraftList}" Visibility="{Binding IsShowVatsimAircraft, Converter={StaticResource BoolToVis}}">
+                <map:MapItemsControl.ItemContainerStyle>
+                    <Style TargetType="map:MapItem">
+                        <Setter Property="Location" Value="{Binding Location}"/>
+                    </Style>
+                </map:MapItemsControl.ItemContainerStyle>
+                <map:MapItemsControl.ItemsPanel>
+                    <ItemsPanelTemplate>
+                        <map:MapPanel />
+                    </ItemsPanelTemplate>
+                </map:MapItemsControl.ItemsPanel>
+
+                <map:MapItemsControl.ItemTemplate>
+                    <DataTemplate>
+                        <Path 
+                            Fill="{StaticResource PrimaryDarkBrush}" 
+                            Data="{Binding Path=IconResource, Converter={StaticResource ResourceNameToGeometryConverter}}"
+                            >
+                            <Path.RenderTransform>
+                                <TransformGroup>
+                                    <ScaleTransform CenterX="16" CenterY="16" ScaleX="{Binding ScaleFactror}" ScaleY="{Binding ScaleFactror}"/>
+                                    <RotateTransform CenterY="16" CenterX="16" Angle="{Binding Pilot.heading}"></RotateTransform>
+                                </TransformGroup>
+                            </Path.RenderTransform>
+                            <Path.ToolTip>
+                                <ToolTip Content="{Binding TooltipText}" />
+                            </Path.ToolTip>
+                        </Path>
+                    </DataTemplate>
+                </map:MapItemsControl.ItemTemplate>
+            </map:MapItemsControl>
+
+
+
             <!-- map:MapGraticule Opacity="0.5"/ -->
+
 
             <map:MapItem Location="{Binding Location}"
                          Width="32" Height="32"
                          Margin="-16"
                          Visibility="{Binding Path=IsShowAirplane, Converter={StaticResource BoolToVis}}"
             >
-
                 <Path x:Name="AirplaneGeometry" Fill="Red" Stroke="DarkRed" StrokeThickness="1"/>
                 <map:MapItem.RenderTransform>
                     <RotateTransform CenterX="16" CenterY="16" Angle="{Binding Heading, Mode=OneWay}" />

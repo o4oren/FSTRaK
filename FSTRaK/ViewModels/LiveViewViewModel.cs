@@ -11,6 +11,10 @@ using FSTRaK.BusinessLogic.VatsimService.VatsimModel;
 using FSTRaK.Utils;
 using System.Collections.Generic;
 using Serilog;
+using System.Text;
+using System.Threading.Tasks;
+using System.Windows;
+using System.Windows.Threading;
 
 namespace FSTRaK.ViewModels
 {
@@ -211,6 +215,21 @@ namespace FSTRaK.ViewModels
             }
         }
 
+        private ObservableCollection<VatsimAicraft> _vatsimAircraftList = new ObservableCollection<VatsimAicraft>();
+
+        public ObservableCollection<VatsimAicraft> VatsimAircraftList
+        {
+            get => _vatsimAircraftList;
+            private set
+            {
+                if (value != _vatsimAircraftList)
+                {
+                    _vatsimAircraftList = value;
+                    OnPropertyChanged();
+                }
+            }
+        }
+
         public Dictionary<string, ControlledAirport> ControlledAirports
         {
             get => _vatsimService.ControlledAirports;
@@ -245,10 +264,7 @@ namespace FSTRaK.ViewModels
 
         public string NearestAirport { get; set; }
 
-        public MapTileLayerBase MapProvider
-        {
-            get { return MapProviderResolver.GetMapProvider(); }
-        }
+        public MapTileLayerBase MapProvider => MapProviderResolver.GetMapProvider();
 
 
         private DateTime _lastUpdated = DateTime.Now;
@@ -281,7 +297,8 @@ namespace FSTRaK.ViewModels
             switch (e.PropertyName)
             {
                 case nameof(_vatsimService.VatsimData):
-                    VatsimData = _vatsimService.VatsimData;
+                    VatsimData = _vatsimService.VatsimData;  // check if needed after all is done
+                    ProcessVatsimData();
                     break;
                 case nameof(_vatsimService.ControlledAirports):
                     OnPropertyChanged(nameof(ControlledAirports));
@@ -289,6 +306,28 @@ namespace FSTRaK.ViewModels
                 default:
                     break;
             }
+        }
+
+        private async void ProcessVatsimData()
+        {
+            await Task.Run(() =>
+            {
+                var newVatsimAircraftList = new ObservableCollection<VatsimAicraft>();
+                foreach (var pilot in _vatsimData.pilots)
+                {
+                    var aircraft = new VatsimAicraft(pilot);
+                    newVatsimAircraftList.Add(aircraft);
+                }
+
+
+
+                // Update the UI from the background thread
+                Application.Current.Dispatcher.Invoke(() =>
+                {
+                    VatsimAircraftList = newVatsimAircraftList;
+
+                });
+            });
         }
 
         private void FlightManagerOnPropertyChanged(object sender, PropertyChangedEventArgs e)
@@ -366,6 +405,47 @@ namespace FSTRaK.ViewModels
 
                 default:
                     break;
+            }
+        }
+
+        public class VatsimAicraft
+        {
+            public Pilot Pilot { get;  set; }
+            public string IconResource { get;  set; }
+            public double ScaleFactror { get;  set; }
+            public Location Location { get;  set; }
+            public VatsimAicraft(Pilot pilot)
+            {
+                this.Pilot = pilot;
+                (this.IconResource, ScaleFactror ) = pilot.flight_plan != null ? AircraftResolver.GetAircraftIcon(pilot.flight_plan.aircraft_short) : ("B737", 0.75);
+                this.Location = new MapControl.Location(pilot.latitude, pilot.longitude);
+            }
+
+            public string TooltipText
+            {
+                get => CreateTooltipText();
+                set { }
+            }
+
+            private string CreateTooltipText()
+            {
+                StringBuilder sb = new StringBuilder();
+                sb.AppendLine($"{Pilot.callsign} {Pilot.name}");
+                if (Pilot.flight_plan != null)
+                {
+                    sb.AppendLine($"Flying from {Pilot.flight_plan.departure} to {Pilot.flight_plan.arrival}");
+                    sb.AppendLine($"{Pilot.flight_plan.aircraft_short}  {Pilot.flight_plan.aircraft}");
+                }
+                sb.AppendLine($"Altitude: {Pilot.altitude} ft");
+                sb.AppendLine($"Heading: {Pilot.heading}");
+                sb.AppendLine($"Ground Speed: {Pilot.groundspeed} Kts");
+
+                if (Pilot.flight_plan != null)
+                {
+                    sb.AppendLine($"Flight Plan:\n {Pilot.flight_plan.route}");
+                    sb.AppendLine($"Remarks:\n {Pilot.flight_plan.remarks}");
+                }
+                return sb.ToString();
             }
         }
     }

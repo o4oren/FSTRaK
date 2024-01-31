@@ -5,18 +5,13 @@ using System.Windows.Media;
 using System.Windows.Shapes;
 using System;
 using System.Collections.Generic;
-using System.Linq;
-using Serilog;
 using System.Text;
 using System.Windows.Media.Imaging;
 using FSTRaK.BusinessLogic.VatsimService;
-using FSTRaK.BusinessLogic.VatsimService.VatsimModel;
 using FSTRaK.DataTypes;
-using Microsoft.VisualBasic.Logging;
 using FSTRaK.Utils;
 using MapControl;
-using ScottPlot.Drawing.Colormaps;
-using ScottPlot.Renderable;
+
 
 namespace FSTRaK.Views
 {
@@ -48,12 +43,6 @@ namespace FSTRaK.Views
                             AirplaneGeometry.Data = (System.Windows.Media.Geometry)geometry;
                             break;
                         case "VatsimData":
-                            if (liveViewViewModel.IsShowVatsimAircraft)
-                            {
-                                DrawPilots();
-                            }
-
-
                             if (liveViewViewModel.IsShowVatsimFirs)
                             {
                                 DrawFirs(liveViewViewModel);
@@ -343,64 +332,6 @@ namespace FSTRaK.Views
                 toolTip.Content = sb.ToString();
                 mi.ToolTip = toolTip;
                 vatsimAirportsOverlay.Children.Add(mi);
-            }
-        }
-
-        private void DrawPilots()
-        {
-            vatsimAircraftOverlay.Children.Clear();
-            foreach (var pilot in ((LiveViewViewModel)DataContext).VatsimData.pilots)
-            {
-
-                (string aircraftIcon, double scaleFactor) = pilot.flight_plan != null ? AircraftResolver.GetAircraftIcon(pilot.flight_plan.aircraft_short) : ("B737", 0.75);
-
-                Path path = new Path
-                {
-                    Stroke = Brushes.Transparent,
-                    StrokeThickness = 1,
-                    Fill = (Brush)mainViewResources["PrimaryDarkBrush"],
-                    Data = (Geometry)mainViewResources[aircraftIcon]
-                };
-
-                MapItem mi = new MapItem
-                {
-                    Location = new Location(pilot.latitude, pilot.longitude),
-                    Content = path,
-                    Margin = new Thickness(-16,-16,0,0)
-                };
-
-
-                var rotateTransform = new RotateTransform(pilot.heading, 16, 16);
-                var scaleTransform = new ScaleTransform(1 * scaleFactor, 1 * scaleFactor);
-                var transformGroup = new TransformGroup();
-                transformGroup.Children.Add(rotateTransform);
-                transformGroup.Children.Add(scaleTransform);
-                mi.RenderTransform = transformGroup;
-
-                StringBuilder sb = new StringBuilder();
-                sb.AppendLine($"{pilot.callsign} {pilot.name}");
-                if (pilot.flight_plan != null)
-                {
-                    sb.AppendLine($"Flying from {pilot.flight_plan.departure} to {pilot.flight_plan.arrival}");
-                    sb.AppendLine($"{pilot.flight_plan.aircraft_short}  {pilot.flight_plan.aircraft}");
-                }
-                sb.AppendLine($"Altitude: {pilot.altitude} ft");
-                sb.AppendLine($"Heading: {pilot.heading}");
-                sb.AppendLine($"Ground Speed: {pilot.groundspeed} Kts");
-
-                if (pilot.flight_plan != null)
-                {
-                    sb.AppendLine($"Flight Plan:\n {pilot.flight_plan.route}");
-                    sb.AppendLine($"Remarks:\n {pilot.flight_plan.remarks}");
-                }
-
-                ToolTip toolTip = new ToolTip
-                {
-                    Content = sb.ToString()
-                };
-
-                mi.ToolTip = toolTip;
-                vatsimAircraftOverlay.Children.Add(mi);
             }
         }
     }

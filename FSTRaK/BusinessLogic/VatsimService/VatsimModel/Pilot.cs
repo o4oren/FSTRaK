@@ -1,17 +1,17 @@
 ﻿namespace FSTRaK.BusinessLogic.VatsimService.VatsimModel
 {
-    internal class Pilot
+    public class Pilot
     {
-        public int altitude;
-        public string callsign;
-        public int cid;
-        public int groundspeed;
-        public FlightPlan flight_plan;
-        public int heading;
-        public string last_updated;
-        public double latitude;
-        public double longitude;
-        public string name;
+        public int altitude { get; set; }
+        public string callsign { get; set; }
+        public int cid { get; set; }
+        public int groundspeed { get; set; }
+        public FlightPlan flight_plan { get; set; }
+        public int heading { get; set; }
+        public string last_updated { get; set; }
+        public double latitude { get; set; }
+        public double longitude { get; set; }
+        public string name { get; set; }
 
     }
 }

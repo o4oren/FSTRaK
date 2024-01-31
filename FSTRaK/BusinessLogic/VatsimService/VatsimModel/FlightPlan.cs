@@ -6,7 +6,7 @@ using System.Threading.Tasks;
 
 namespace FSTRaK.BusinessLogic.VatsimService.VatsimModel
 {
-    internal class FlightPlan
+    public class FlightPlan
     {
 
         public string aircraft { get; set; }
