@@ -320,10 +320,10 @@ namespace FSTRaK.ViewModels
                 }
 
 
-
                 // Update the UI from the background thread
                 Application.Current.Dispatcher.Invoke(() =>
                 {
+                    VatsimAircraftList.Clear();
                     VatsimAircraftList = newVatsimAircraftList;
 
                 });

@@ -53,6 +53,7 @@
                 <map:MapItemsControl.ItemContainerStyle>
                     <Style TargetType="map:MapItem">
                         <Setter Property="Location" Value="{Binding Location}"/>
+                        <Setter Property="Margin" Value="-16 -16 0 0"/>
                     </Style>
                 </map:MapItemsControl.ItemContainerStyle>
                 <map:MapItemsControl.ItemsPanel>
@@ -86,16 +87,16 @@
             <!-- map:MapGraticule Opacity="0.5"/ -->
 
 
-            <map:MapItem Location="{Binding Location}"
+            <map:MapContentControl Location="{Binding Location}"
                          Width="32" Height="32"
                          Margin="-16"
                          Visibility="{Binding Path=IsShowAirplane, Converter={StaticResource BoolToVis}}"
             >
                 <Path x:Name="AirplaneGeometry" Fill="Red" Stroke="DarkRed" StrokeThickness="1"/>
-                <map:MapItem.RenderTransform>
+                <map:MapContentControl.RenderTransform>
                     <RotateTransform CenterX="16" CenterY="16" Angle="{Binding Heading, Mode=OneWay}" />
-                </map:MapItem.RenderTransform>
-            </map:MapItem>
+                </map:MapContentControl.RenderTransform>
+            </map:MapContentControl>
             <map:MapPolyline Locations="{Binding FlightPath}" Stroke="Red" StrokeThickness="2" StrokeLineJoin="round"/>
             <map:MapPolyline Locations="{Binding LastSegmentLine}" Stroke="Red" StrokeThickness="2" Visibility="{Binding Path=IsShowAirplane, Converter={StaticResource BoolToVis}}"/>
 
