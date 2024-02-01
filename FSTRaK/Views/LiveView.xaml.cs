@@ -48,13 +48,6 @@ namespace FSTRaK.Views
                                 DrawFirs(liveViewViewModel);
                             }
                             break;
-                        case "ControlledAirports":
-                            if (liveViewViewModel.IsShowVatsimAirports)
-                            {
-                                DrawAirports(liveViewViewModel);
-                            }
-
-                            break;
                         case "IsShowVatsimAirports":
                             if (!liveViewViewModel.IsShowVatsimAirports)
                             {
@@ -218,10 +211,10 @@ namespace FSTRaK.Views
         {
             vatsimAirportsOverlay.Children.Clear();
             vatsimAppCirclesOverlay.Children.Clear();
-            foreach (var ca in liveViewViewModel.ControlledAirports)
+            foreach (var ca in liveViewViewModel.VatsimControlledAirports)
             {
                 bool isIncludeApp = false;
-                var controlledAirport = ca.Value;
+                var controlledAirport = ca;
 
                 HashSet<int> facilities = new HashSet<int>();
 
@@ -259,40 +252,13 @@ namespace FSTRaK.Views
 
                 }
 
-                var imageSource = new BitmapImage(new Uri(Consts.towerRadarImage,
-                    UriKind.Absolute));
-                if (facilities.Contains(5))
-                {
-                    if (facilities.Contains(3) || facilities.Contains(4))
-                    {
-                        imageSource = new BitmapImage(new Uri(Consts.towerRadarImage,
-                            UriKind.Absolute));
-                    } 
-                    else if (facilities.Contains(2) || controlledAirport.Atis.Count > 0)
-                    {
-                        imageSource = new BitmapImage(new Uri(Consts.radioRadarImage,
-                            UriKind.Absolute));
-                    }
-                }
-                else
-                {
-                    if (facilities.Contains(3) || facilities.Contains(4))
-                    {
-                        imageSource = new BitmapImage(new Uri(Consts.towerImage,
-                            UriKind.Absolute));
-                    }
-                    else if (facilities.Contains(2) || controlledAirport.Atis.Count > 0)
-                    {
-                        imageSource = new BitmapImage(new Uri(Consts.radioImage,
-                            UriKind.Absolute));
-                    }
-                }
+
 
                 var image = new Image()
                 {
                     Height = 32,
                     Width = 32,
-                    Source = imageSource
+                    
                 };
 
                 if (isIncludeApp)

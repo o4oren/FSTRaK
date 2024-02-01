@@ -10,11 +10,10 @@ using FSTRaK.BusinessLogic.VatsimService;
 using FSTRaK.BusinessLogic.VatsimService.VatsimModel;
 using FSTRaK.Utils;
 using System.Collections.Generic;
-using Serilog;
 using System.Text;
 using System.Threading.Tasks;
 using System.Windows;
-using System.Windows.Threading;
+using FSTRaK.DataTypes;
 
 namespace FSTRaK.ViewModels
 {
@@ -230,12 +229,17 @@ namespace FSTRaK.ViewModels
             }
         }
 
-        public Dictionary<string, ControlledAirport> ControlledAirports
+        private ObservableCollection<VatsimControlledAirport> _vatsimControlledAirports;
+        public ObservableCollection<VatsimControlledAirport> VatsimControlledAirports
         {
-            get => _vatsimService.ControlledAirports;
+            get => _vatsimControlledAirports;
             private set
             {
-
+                if (value != _vatsimControlledAirports)
+                {
+                    _vatsimControlledAirports = value;
+                    OnPropertyChanged();
+                }
             }
         }
 
@@ -261,8 +265,6 @@ namespace FSTRaK.ViewModels
                 OnPropertyChanged();
             }
         }
-
-        public string NearestAirport { get; set; }
 
         public MapTileLayerBase MapProvider => MapProviderResolver.GetMapProvider();
 
@@ -298,19 +300,160 @@ namespace FSTRaK.ViewModels
             {
                 case nameof(_vatsimService.VatsimData):
                     VatsimData = _vatsimService.VatsimData;  // check if needed after all is done
-                    ProcessVatsimData();
-                    break;
-                case nameof(_vatsimService.ControlledAirports):
-                    OnPropertyChanged(nameof(ControlledAirports));
+                    ProcessVatsimPilots();
+                    ProcessVatsimAirports();
                     break;
                 default:
                     break;
             }
         }
 
-        private async void ProcessVatsimData()
+        private void ProcessVatsimAirports()
         {
-            await Task.Run(() =>
+            
+            Task.Run(() =>
+            {
+                var controlledAirportsDict = new Dictionary<string, VatsimControlledAirport>();
+                foreach (var controller in VatsimData.controllers)
+                {
+                    if (controller.facility == 2 || controller.facility == 3 || controller.facility == 4 || controller.facility == 5)
+                    {
+                        // Find airport
+                        var callsignParts = controller.callsign.Split('_');
+                        if (controlledAirportsDict.ContainsKey(callsignParts[0]))
+                        {
+                            var airport = controlledAirportsDict[callsignParts[0]];
+                            airport.Controllers.Add(controller);
+                        }
+                        else
+                        {
+                            var airport = _vatsimService.VatsimStaticData.Airports.Find(a => a.ICAO.Equals(callsignParts[0]));
+                            if (airport != null)
+                            {
+                                var controlledAirport = new VatsimControlledAirport(airport);
+                                controlledAirport.Controllers.Add(controller);
+                                controlledAirportsDict.Add(controlledAirport.Airport.ICAO, controlledAirport);
+                            }
+                        }
+                    }
+                }
+
+                foreach (var atis in VatsimData.atis)
+                {
+
+                    var callsignParts = atis.callsign.Split('_');
+                    if (controlledAirportsDict.ContainsKey(callsignParts[0]))
+                    {
+                        var airport = controlledAirportsDict[callsignParts[0]];
+                        airport.Atis.Add(atis);
+                    }
+                    else
+                    {
+                        var airport = _vatsimService.VatsimStaticData.Airports.Find(a => a.ICAO.Equals(callsignParts[0]));
+                        if (airport != null)
+                        {
+                            var controlledAirport = new VatsimControlledAirport(airport);
+                            controlledAirport.Atis.Add(atis);
+                            controlledAirportsDict.Add(controlledAirport.Airport.ICAO, controlledAirport);
+                        }
+                    }
+                }
+
+                foreach (var airport in controlledAirportsDict.Values)
+                {
+                    var facilities = new HashSet<int>();
+                    StringBuilder sb = new StringBuilder();
+                    bool isIncludeApp = false;
+
+                    sb.AppendLine($"{airport.Airport.ICAO} {airport.Airport.Name}");
+                    sb.AppendLine();
+                    sb.AppendLine("Controllers:");
+
+                    foreach (var controller in airport.Controllers)
+                    {
+                        facilities.Add(controller.facility);
+
+                        DateTime specifiedTime = DateTime.Parse(controller.logon_time, null, System.Globalization.DateTimeStyles.RoundtripKind);
+                        DateTime currentTime = DateTime.UtcNow;
+                        TimeSpan timeDifference = currentTime - specifiedTime;
+
+                        sb.AppendLine($"{controller.callsign} {controller.name} {controller.frequency} Connected for: {TimeUtils.GetConnectionsSinceFromTimeString(controller.logon_time)}");
+                        if (controller.facility == 5)
+                        {
+                            isIncludeApp = true;
+                        }
+                    }
+
+                    foreach (var atis in airport.Atis)
+                    {
+                        if (atis.text_atis != null)
+                        {
+                            sb.AppendLine();
+                            sb.AppendLine($"{atis.callsign} {atis.name} {atis.frequency}:");
+                            foreach (var message in atis.text_atis)
+                            {
+                                sb.AppendLine(message);
+                            }
+                        }
+                    }
+
+                    airport.TooltipText = sb.ToString();
+                    
+                    if (facilities.Contains(5))
+                    {
+                        if (facilities.Contains(3) || facilities.Contains(4))
+                        {
+                            airport.IconResourse = Consts.TowerRadarImage;
+                        }
+                        else if (facilities.Contains(2) || airport.Atis.Count > 0)
+                        {
+                            airport.IconResourse = Consts.RadioRadarImage;
+                        }
+                    }
+                    else
+                    {
+                        if (facilities.Contains(3) || facilities.Contains(4))
+                        {
+                            airport.IconResourse = Consts.TowerImage;
+                        }
+                        else if (facilities.Contains(2) || airport.Atis.Count > 0)
+                        {
+                            airport.IconResourse = Consts.RadioImage;
+                        }
+                    }
+
+                    // create approach circle locations
+                    if (isIncludeApp)
+                    {
+                        int numberOfVertices = 80; // Adjust as needed for smoothness
+                        double radius = 80;
+                        airport.IsShowCircle = true;
+                        airport.CircleLocations = new LocationCollection();
+                        for (int i = 0; i < numberOfVertices; i++)
+                        {
+                            double angle = (i * 2 * Math.PI) / numberOfVertices;
+                            double latitude = airport.Airport.Latitude + (radius / 111.32) * Math.Sin(angle); // 1 degree of latitude is approximately 111.32 km
+                            double longitude = airport.Airport.Longitude + (radius / (111.32 * Math.Cos(47.6097 * (Math.PI / 180)))) * Math.Cos(angle);
+                            airport.CircleLocations.Add(new Location(latitude, longitude));
+                        }
+                    }
+
+
+                }
+
+                var airportsList = controlledAirportsDict.Values.ToList();
+                
+                Application.Current.Dispatcher.Invoke(() =>
+                {
+                    VatsimControlledAirports = new ObservableCollection<VatsimControlledAirport>(airportsList);
+                });
+                
+            });
+        }
+
+        private void ProcessVatsimPilots()
+        {
+            Task.Run(() =>
             {
                 var newVatsimAircraftList = new ObservableCollection<VatsimAicraft>();
                 foreach (var pilot in _vatsimData.pilots)
@@ -319,13 +462,9 @@ namespace FSTRaK.ViewModels
                     newVatsimAircraftList.Add(aircraft);
                 }
 
-
-                // Update the UI from the background thread
                 Application.Current.Dispatcher.Invoke(() =>
                 {
-                    VatsimAircraftList.Clear();
                     VatsimAircraftList = newVatsimAircraftList;
-
                 });
             });
         }
@@ -406,18 +545,20 @@ namespace FSTRaK.ViewModels
                 default:
                     break;
             }
+
+
         }
 
         public class VatsimAicraft
         {
-            public Pilot Pilot { get;  set; }
-            public string IconResource { get;  set; }
-            public double ScaleFactror { get;  set; }
-            public Location Location { get;  set; }
+            public Pilot Pilot { get; set; }
+            public string IconResource { get; set; }
+            public double ScaleFactror { get; set; }
+            public Location Location { get; set; }
             public VatsimAicraft(Pilot pilot)
             {
                 this.Pilot = pilot;
-                (this.IconResource, ScaleFactror ) = pilot.flight_plan != null ? AircraftResolver.GetAircraftIcon(pilot.flight_plan.aircraft_short) : ("B737", 0.75);
+                (this.IconResource, ScaleFactror) = pilot.flight_plan != null ? AircraftResolver.GetAircraftIcon(pilot.flight_plan.aircraft_short) : ("B737", 0.75);
                 this.Location = new MapControl.Location(pilot.latitude, pilot.longitude);
             }
 
@@ -446,6 +587,23 @@ namespace FSTRaK.ViewModels
                     sb.AppendLine($"Remarks:\n {Pilot.flight_plan.remarks}");
                 }
                 return sb.ToString();
+            }
+        }
+
+        public class VatsimControlledAirport
+        {
+            public VatsimStaticData.Airport Airport { get; private set; }
+            public List<Controller> Controllers { get; private set; }
+            public List<Atis> Atis { get; private set; }
+            public string IconResourse { get; set; }
+            public string TooltipText { get; set; }
+            public bool IsShowCircle { get; set; } = false;
+            public LocationCollection CircleLocations { get; set; }
+            public VatsimControlledAirport(VatsimStaticData.Airport airport)
+            {
+                this.Airport = airport;
+                Controllers = new List<Controller>();
+                Atis = new List<Atis>();
             }
         }
     }
