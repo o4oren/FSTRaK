@@ -300,18 +300,25 @@ namespace FSTRaK.ViewModels
             {
                 case nameof(_vatsimService.VatsimData):
                     VatsimData = _vatsimService.VatsimData;  // check if needed after all is done
-                    ProcessVatsimPilots();
-                    ProcessVatsimAirports();
+                    if (IsShowVatsimAircraft)
+                    {
+                        ProcessVatsimPilots();
+                    }
+
+                    if (IsShowVatsimAirports)
+                    {
+                        ProcessVatsimAirports();
+                    }
                     break;
                 default:
                     break;
             }
         }
 
-        private void ProcessVatsimAirports()
+        private async void ProcessVatsimAirports()
         {
-            
-            Task.Run(() =>
+            var airportsList = new List<VatsimControlledAirport>();
+            await Task.Run(() =>
             {
                 var controlledAirportsDict = new Dictionary<string, VatsimControlledAirport>();
                 foreach (var controller in VatsimData.controllers)
@@ -405,6 +412,10 @@ namespace FSTRaK.ViewModels
                         {
                             airport.IconResourse = Consts.RadioRadarImage;
                         }
+                        else
+                        {
+                            airport.IconResourse = Consts.RadarImage;
+                        }
                     }
                     else
                     {
@@ -437,32 +448,30 @@ namespace FSTRaK.ViewModels
 
                 }
 
-                var airportsList = controlledAirportsDict.Values.ToList();
+                airportsList.AddRange(controlledAirportsDict.Values.ToList());
                 
                 Application.Current.Dispatcher.Invoke(() =>
                 {
                     VatsimControlledAirports = new ObservableCollection<VatsimControlledAirport>(airportsList);
                 });
-                
             });
+
+            VatsimControlledAirports = new ObservableCollection<VatsimControlledAirport>(airportsList);
         }
 
-        private void ProcessVatsimPilots()
+        private async void ProcessVatsimPilots()
         {
-            Task.Run(() =>
+            var newVatsimAircraftList = new ObservableCollection<VatsimAicraft>();
+            await Task.Run(() =>
             {
-                var newVatsimAircraftList = new ObservableCollection<VatsimAicraft>();
                 foreach (var pilot in _vatsimData.pilots)
                 {
                     var aircraft = new VatsimAicraft(pilot);
                     newVatsimAircraftList.Add(aircraft);
                 }
-
-                Application.Current.Dispatcher.Invoke(() =>
-                {
-                    VatsimAircraftList = newVatsimAircraftList;
-                });
             });
+
+            VatsimAircraftList = newVatsimAircraftList;
         }
 
         private void FlightManagerOnPropertyChanged(object sender, PropertyChangedEventArgs e)
