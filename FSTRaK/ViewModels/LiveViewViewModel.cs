@@ -373,10 +373,6 @@ namespace FSTRaK.ViewModels
                     {
                         facilities.Add(controller.facility);
 
-                        DateTime specifiedTime = DateTime.Parse(controller.logon_time, null, System.Globalization.DateTimeStyles.RoundtripKind);
-                        DateTime currentTime = DateTime.UtcNow;
-                        TimeSpan timeDifference = currentTime - specifiedTime;
-
                         sb.AppendLine($"{controller.callsign} {controller.name} {controller.frequency} Connected for: {TimeUtils.GetConnectionsSinceFromTimeString(controller.logon_time)}");
                         if (controller.facility == 5)
                         {
@@ -598,6 +594,13 @@ namespace FSTRaK.ViewModels
             public string IconResourse { get; set; }
             public string TooltipText { get; set; }
             public bool IsShowCircle { get; set; } = false;
+
+            public Location Location
+            {
+                get => new Location(Airport.Latitude, Airport.Longitude);
+                set { }
+            }
+
             public LocationCollection CircleLocations { get; set; }
             public VatsimControlledAirport(VatsimStaticData.Airport airport)
             {

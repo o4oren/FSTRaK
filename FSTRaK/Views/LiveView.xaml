@@ -56,12 +56,6 @@
                         <Setter Property="Margin" Value="-16 -16 0 0"/>
                     </Style>
                 </map:MapItemsControl.ItemContainerStyle>
-                <map:MapItemsControl.ItemsPanel>
-                    <ItemsPanelTemplate>
-                        <map:MapPanel />
-                    </ItemsPanelTemplate>
-                </map:MapItemsControl.ItemsPanel>
-
                 <map:MapItemsControl.ItemTemplate>
                     <DataTemplate>
                         <Path 
@@ -82,11 +76,36 @@
                 </map:MapItemsControl.ItemTemplate>
             </map:MapItemsControl>
 
+            <!--  Vatsim Airports -->
+            <map:MapItemsControl ItemsSource="{Binding VatsimControlledAirports}" Visibility="{Binding IsShowVatsimAirports, Converter={StaticResource BoolToVis}}">
+                <map:MapItemsControl.ItemContainerStyle>
+                    <Style TargetType="map:MapItem">
+                        <Setter Property="Location" Value="{Binding Location}"/>
+                        <Setter Property="Margin" Value="-16 -16 0 0"/>
+                    </Style>
+                </map:MapItemsControl.ItemContainerStyle>
+                <map:MapItemsControl.ItemTemplate>
+                    <DataTemplate>
+                        <Canvas>
+                            <map:MapPolygon 
+                                Stroke="{StaticResource VatsimAppCircleStrokeBrush}"
+                                Fill="{StaticResource VatsimAppCircleFillBrush}"
+                                Visibility="{Binding IsShowCircle, Converter={StaticResource BoolToVis}}"
+                                Locations="{Binding CircleLocations}"/>
+                            <Image Source="{Binding Path=IconResourse, Converter={StaticResource ResourceNameToImageConverter}}" Width="32" Height="32">
+                                <Image.ToolTip>
+                                    <ToolTip Content="{Binding TooltipText}" />
+                                </Image.ToolTip>
+                            </Image>
+                        </Canvas>
 
+                    </DataTemplate>
+                </map:MapItemsControl.ItemTemplate>
+            </map:MapItemsControl>
 
             <!-- map:MapGraticule Opacity="0.5"/ -->
 
-
+            <!--  Aircraft Icon -->
             <map:MapContentControl Location="{Binding Location}"
                          Width="32" Height="32"
                          Margin="-16"

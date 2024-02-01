@@ -19,6 +19,7 @@
             <BooleanToVisibilityConverter x:Key="BoolToVis" />
             <utils:ResourceNameToGeometryConverter x:Key="ResourceNameToGeometryConverter" />
             <utils:NullToVisibilityConverter x:Key="NullToVis" />
+            <utils:ResourceNameToImageConverter x:Key="ResourceNameToImageConverter" />
         </ResourceDictionary>
     </Application.Resources>
 </Application>
