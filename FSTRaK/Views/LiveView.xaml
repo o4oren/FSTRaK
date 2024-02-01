@@ -78,27 +78,34 @@
 
             <!--  Vatsim Airports -->
             <map:MapItemsControl ItemsSource="{Binding VatsimControlledAirports}" Visibility="{Binding IsShowVatsimAirports, Converter={StaticResource BoolToVis}}">
+                <map:MapItemsControl.ItemTemplate>
+                    <DataTemplate>
+                            <map:MapPolygon 
+                                Stroke="{StaticResource VatsimAppCircleStrokeBrush}"
+                                Fill="{StaticResource VatsimAppCircleFillBrush}"
+                                Opacity="0.3"
+                                Visibility="{Binding IsShowCircle, Converter={StaticResource BoolToVis}}"
+                                Locations="{Binding CircleLocations}"/>
+
+                    </DataTemplate>
+                </map:MapItemsControl.ItemTemplate>
+            </map:MapItemsControl>
+
+            <map:MapItemsControl ItemsSource="{Binding VatsimControlledAirports}" Visibility="{Binding IsShowVatsimAirports, Converter={StaticResource BoolToVis}}">
                 <map:MapItemsControl.ItemContainerStyle>
                     <Style TargetType="map:MapItem">
                         <Setter Property="Location" Value="{Binding Location}"/>
-                        <Setter Property="Margin" Value="-16 -16 0 0"/>
+                        <Setter Property="VerticalAlignment" Value="Center"/>
+                        <Setter Property="HorizontalAlignment" Value="Center"/>
                     </Style>
                 </map:MapItemsControl.ItemContainerStyle>
                 <map:MapItemsControl.ItemTemplate>
                     <DataTemplate>
-                        <Canvas>
-                            <map:MapPolygon 
-                                Stroke="{StaticResource VatsimAppCircleStrokeBrush}"
-                                Fill="{StaticResource VatsimAppCircleFillBrush}"
-                                Visibility="{Binding IsShowCircle, Converter={StaticResource BoolToVis}}"
-                                Locations="{Binding CircleLocations}"/>
-                            <Image Source="{Binding Path=IconResourse, Converter={StaticResource ResourceNameToImageConverter}}" Width="32" Height="32">
-                                <Image.ToolTip>
-                                    <ToolTip Content="{Binding TooltipText}" />
-                                </Image.ToolTip>
-                            </Image>
-                        </Canvas>
-
+                        <Image Source="{Binding Path=IconResourse, Converter={StaticResource ResourceNameToImageConverter}}" Width="32" Height="32">
+                            <Image.ToolTip>
+                                <ToolTip Content="{Binding TooltipText}" />
+                            </Image.ToolTip>
+                        </Image>
                     </DataTemplate>
                 </map:MapItemsControl.ItemTemplate>
             </map:MapItemsControl>

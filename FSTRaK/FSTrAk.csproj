@@ -166,7 +166,6 @@
     <Compile Include="Utils\HyperlinkText.cs" />
     <Compile Include="Utils\MapProviderResolver.cs" />
     <Compile Include="Utils\MathUtils.cs" />
-    <Compile Include="Utils\NullToVisibilityConverter.cs" />
     <Compile Include="Utils\PathUtil.cs" />
     <Compile Include="Utils\AircraftResolver.cs" />
     <Compile Include="Utils\Converters.cs" />
