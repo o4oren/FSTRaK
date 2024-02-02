@@ -316,13 +316,14 @@ namespace FSTRaK.BusinessLogic.VatsimService
                 var country =
                     VatsimStaticData.Countries.FirstOrDefault(c =>
                         c.Value.Initials.Equals(fir.Properties.id.Substring(0, 2)));
-                return (new double[] { Double.Parse(fir.Properties.label_lat), Double.Parse(fir.Properties.label_lon) }, fir.Geometry.Coordinates, firBoundary[0].Name + " " + country.Value.centerName);
+                var centerName = country.Value != null ? country.Value.centerName : "Radar";
+                return (new double[] { Double.Parse(fir.Properties.label_lat), Double.Parse(fir.Properties.label_lon) }, fir.Geometry.Coordinates, firBoundary[0].Name + " " + centerName);
             }
 
             throw new Exception("No FIR was found for " + controller.callsign);
         }
 
-        public List<(double[] labelCoordinates, double[][][][] coordinates, string firName)> GetUirBoundariesByController(Controller controller)
+        public List<(double[] labelCoordinates, double[][][][] coordinates, string firName)> GetBoundariesArrayByController(Controller controller)
         {
             var prefix = controller.callsign.Substring(0, controller.callsign.LastIndexOf('_'));
             var firs = new List<(double[] labelCoordinates, double[][][][] coordinates, string firName)>();

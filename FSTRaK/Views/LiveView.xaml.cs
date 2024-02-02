@@ -86,7 +86,7 @@ namespace FSTRaK.Views
                             ;
                         }
 
-                        var firs = VatsimService.Instance.GetUirBoundariesByController(controller);
+                        var firs = VatsimService.Instance.GetBoundariesArrayByController(controller);
 
                         if (firs.Count == 0)
                         {

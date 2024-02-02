@@ -14,7 +14,10 @@ using System.Text;
 using System.Threading;
 using System.Threading.Tasks;
 using System.Windows;
+using System.Windows.Shapes;
 using FSTRaK.DataTypes;
+using System.Windows.Controls;
+using static System.Windows.Forms.VisualStyles.VisualStyleElement;
 
 namespace FSTRaK.ViewModels
 {
@@ -305,10 +308,20 @@ namespace FSTRaK.ViewModels
                     {
                         ProcessVatsimPilots();
                     }
+                    else
+                    {
+                        VatsimAircraftList.Clear();
+                    }
 
                     if (IsShowVatsimAirports)
                     {
                         ProcessVatsimAirports();
+                        VatsimAircraftList.Clear();
+                    }
+
+                    if (IsShowVatsimFirs)
+                    {
+                        ProcessVatsimCtrFSS();
                     }
                     break;
                 default:
@@ -445,8 +458,6 @@ namespace FSTRaK.ViewModels
                             airport.CircleLocations.Add(new Location(latitude, longitude));
                         }
                     }
-
-
                 }
 
                 airportsList.AddRange(controlledAirportsDict.Values.ToList());
@@ -473,6 +484,83 @@ namespace FSTRaK.ViewModels
             });
 
             VatsimAircraftList = newVatsimAircraftList;
+        }
+
+        private async void ProcessVatsimCtrFSS()
+        {
+            await Task.Run(() =>
+            {
+                var firsList = new List<VatsimControlledFir>();
+                foreach (var controller in VatsimData.controllers)
+                {
+                    if (controller.facility == 6 || controller.facility == 1)
+                    {
+                        try
+                        {
+
+                            if (controller.frequency.Equals("199.998"))
+                            {
+                                continue;
+                            }
+
+                            // TODO review this logic
+                            // For UIRs and FIRs crossing the dateline
+                            var firs = _vatsimService.GetBoundariesArrayByController(controller);
+
+                            if (firs.Count == 0)
+                            {
+                                // For most FIRs
+                                var firMetadataTuple = VatsimService.Instance.GetFirBoundariesByController(controller);
+                                firs.Add(firMetadataTuple);
+                            }
+
+                            // IF fIRS > 0 this is a UIR TODO handle UIR in the same or another type
+                            foreach (var firMetadataTuple in firs)
+                            {
+
+                                List<LocationCollection> locations = new List<LocationCollection>();
+
+                                
+                                foreach (var geoJsonCoordinate in firMetadataTuple.coordinates)
+                                {
+                                    {
+                                        LocationCollection locationCollection = new LocationCollection();
+                                        foreach (var coords in geoJsonCoordinate[0])
+                                        {
+                                            locationCollection.Add(new Location(coords[1], coords[0]));
+                                        }
+                                        locations.Add(locationCollection);
+                                    }
+                                }
+
+
+                                VatsimControlledFir vatsimControlledFir = null;
+                                foreach (var controlledFir in firsList)
+                                {
+                                    if (controlledFir.LabelLocation.Equals(firMetadataTuple.labelCoordinates))
+                                    {
+                                        vatsimControlledFir = controlledFir;
+                                    }
+                                }
+
+                                if (vatsimControlledFir == null)
+                                {
+                                    vatsimControlledFir = new VatsimControlledFir();
+                                    vatsimControlledFir.LabelLocation = new Location(firMetadataTuple.labelCoordinates[0], firMetadataTuple.labelCoordinates[1]);
+                                    vatsimControlledFir.Locations = locations;
+                                    firsList.Add(vatsimControlledFir);
+                                }
+
+                                vatsimControlledFir.Controllers.Add(controller);
+                            }
+                        }
+                        catch (Exception ex)
+                        {
+                            Serilog.Log.Error(ex, ex.Message);
+                        }
+                    }
+                }
+            });
         }
 
         private void FlightManagerOnPropertyChanged(object sender, PropertyChangedEventArgs e)
@@ -618,6 +706,23 @@ namespace FSTRaK.ViewModels
                 Controllers = new List<Controller>();
                 Atis = new List<Atis>();
             }
+        }
+
+        public class VatsimControlledFir
+        {
+            public HashSet<Controller> Controllers { get; private set; } = new HashSet<Controller>();
+            public string TooltipText { get; set; }
+            public List<LocationCollection> Locations { get; set; }
+            public Location LabelLocation { get;set; }
+        }
+
+        public class VatsimControlledUir
+        {
+            public List<Controller> Controllers { get; private set; }
+            public string TooltipText { get; set; }
+            public PolygonCollection Polygons { get; private set; }
+            public LocationCollection Location { get; set; }
+            public Location LabelLocation { get; set; }
         }
     }
 }
