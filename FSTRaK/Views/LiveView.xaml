@@ -41,12 +41,6 @@
             <map:MapOverlay x:Name="vatsimFIRsOverlay" Opacity="0.3"></map:MapOverlay>
             <map:MapOverlay x:Name="vatsimFIRsTextOverlay"></map:MapOverlay>
 
-            <map:MapOverlay x:Name="vatsimAppCirclesOverlay" Opacity="0.3"></map:MapOverlay>
-            <map:MapOverlay x:Name="vatsimAirportsOverlay"></map:MapOverlay>
-
-            <map:MapOverlay x:Name="vatsimAircraftOverlay">
-
-            </map:MapOverlay>
 
             <!-- Vatsim Aircraft -->
             <map:MapItemsControl ItemsSource="{Binding VatsimAircraftList}" Visibility="{Binding IsShowVatsimAircraft, Converter={StaticResource BoolToVis}}">

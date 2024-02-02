@@ -45,20 +45,8 @@ namespace FSTRaK.Views
                         case "VatsimData":
                             if (liveViewViewModel.IsShowVatsimFirs)
                             {
-                                DrawFirs(liveViewViewModel);
+                                //DrawFirs(liveViewViewModel);
                             }
-                            break;
-                        case "IsShowVatsimAirports":
-                            if (!liveViewViewModel.IsShowVatsimAirports)
-                            {
-                                vatsimAirportsOverlay.Children.Clear();
-                                vatsimAppCirclesOverlay.Children.Clear();
-                            }
-
-                            break;
-                        case "IsShowVatsimAircraft":
-                            if(!liveViewViewModel.IsShowVatsimAircraft)
-                                vatsimAircraftOverlay.Children.Clear();
                             break;
                         case "IsShowVatsimFirs":
                             if (!liveViewViewModel.IsShowVatsimFirs)

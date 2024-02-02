@@ -11,6 +11,7 @@ using FSTRaK.BusinessLogic.VatsimService.VatsimModel;
 using FSTRaK.Utils;
 using System.Collections.Generic;
 using System.Text;
+using System.Threading;
 using System.Threading.Tasks;
 using System.Windows;
 using FSTRaK.DataTypes;
