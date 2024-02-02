@@ -247,6 +247,22 @@ namespace FSTRaK.ViewModels
             }
         }
 
+        private ObservableCollection<VatsimControlledFir> _vatsimControlledFirs;
+        public ObservableCollection<VatsimControlledFir> VatsimControlledFirs
+        {
+            get => _vatsimControlledFirs;
+            private set
+            {
+                if (value != _vatsimControlledFirs)
+                {
+                    _vatsimControlledFirs = value;
+                    OnPropertyChanged();
+                }
+            }
+        }
+
+        
+
         public ObservableCollection<Location> FlightPath { get; set; } = new ObservableCollection<Location>();
 
         private ObservableCollection<Location> _lastSegmentLine;
@@ -488,9 +504,10 @@ namespace FSTRaK.ViewModels
 
         private async void ProcessVatsimCtrFSS()
         {
+            var firsList = new List<VatsimControlledFir>();
+
             await Task.Run(() =>
             {
-                var firsList = new List<VatsimControlledFir>();
                 foreach (var controller in VatsimData.controllers)
                 {
                     if (controller.facility == 6 || controller.facility == 1)
@@ -537,7 +554,7 @@ namespace FSTRaK.ViewModels
                                 VatsimControlledFir vatsimControlledFir = null;
                                 foreach (var controlledFir in firsList)
                                 {
-                                    if (controlledFir.LabelLocation.Equals(firMetadataTuple.labelCoordinates))
+                                    if (controlledFir.LabelLocation.Equals(new Location(firMetadataTuple.labelCoordinates[0], firMetadataTuple.labelCoordinates[1])))
                                     {
                                         vatsimControlledFir = controlledFir;
                                     }
@@ -548,6 +565,7 @@ namespace FSTRaK.ViewModels
                                     vatsimControlledFir = new VatsimControlledFir();
                                     vatsimControlledFir.LabelLocation = new Location(firMetadataTuple.labelCoordinates[0], firMetadataTuple.labelCoordinates[1]);
                                     vatsimControlledFir.Locations = locations;
+                                    vatsimControlledFir.Name = firMetadataTuple.firName;
                                     firsList.Add(vatsimControlledFir);
                                 }
 
@@ -561,6 +579,8 @@ namespace FSTRaK.ViewModels
                     }
                 }
             });
+            VatsimControlledFirs = new ObservableCollection<VatsimControlledFir>(firsList);
+
         }
 
         private void FlightManagerOnPropertyChanged(object sender, PropertyChangedEventArgs e)
@@ -711,9 +731,44 @@ namespace FSTRaK.ViewModels
         public class VatsimControlledFir
         {
             public HashSet<Controller> Controllers { get; private set; } = new HashSet<Controller>();
-            public string TooltipText { get; set; }
+            public string TooltipText
+            {
+                get
+                {
+                    var sb = new StringBuilder();
+                    sb.AppendLine(Name);
+                    sb.AppendLine();
+                    foreach (var controller in Controllers)
+                    {
+                        sb.AppendLine($"{controller.callsign} {controller.name} {controller.frequency} Connected for: {TimeUtils.GetConnectionsSinceFromTimeString(controller.logon_time)}");
+                    }
+                    return sb.ToString();
+                }
+                private set { }
+            }
+
             public List<LocationCollection> Locations { get; set; }
-            public Location LabelLocation { get;set; }
+            public string Name { get; set; }
+
+            public Location LabelLocation { get; set; }
+
+            public string Label
+            {
+                get
+                {
+                    var sb = new StringBuilder();
+                    foreach (var controller in Controllers)
+                    {
+                        sb.AppendLine(controller.callsign.Replace("_", "__"));
+                    }
+                    if(char.IsWhiteSpace(sb[sb.Length -1]))
+                    {
+                        sb.Remove(sb.Length - 1, 1);
+                    }
+                    return sb.ToString();
+                }
+                private set { }
+            }
         }
 
         public class VatsimControlledUir
