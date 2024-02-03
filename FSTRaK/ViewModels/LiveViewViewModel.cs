@@ -11,14 +11,10 @@ using FSTRaK.BusinessLogic.VatsimService.VatsimModel;
 using FSTRaK.Utils;
 using System.Collections.Generic;
 using System.Text;
-using System.Threading;
 using System.Threading.Tasks;
-using System.Windows;
-using System.Windows.Shapes;
 using FSTRaK.DataTypes;
-using System.Windows.Controls;
 using Serilog;
-using static System.Windows.Forms.VisualStyles.VisualStyleElement;
+using static FSTRaK.ViewModels.LiveViewViewModel;
 
 namespace FSTRaK.ViewModels
 {
@@ -262,7 +258,20 @@ namespace FSTRaK.ViewModels
             }
         }
 
-        
+        private ObservableCollection<VatsimControlledUir> _vatsimControlledUirs = new();
+        public ObservableCollection<VatsimControlledUir> VatsimControlledUirs
+        {
+            get => _vatsimControlledUirs;
+            private set
+            {
+                if (value != _vatsimControlledUirs)
+                {
+                    _vatsimControlledUirs = value;
+                    OnPropertyChanged();
+                }
+            }
+        }
+
 
         public ObservableCollection<Location> FlightPath { get; set; } = new();
 
@@ -485,11 +494,6 @@ namespace FSTRaK.ViewModels
                 }
 
                 airportsList.AddRange(controlledAirportsDict.Values.ToList());
-                
-                Application.Current.Dispatcher.Invoke(() =>
-                {
-                    VatsimControlledAirports = new ObservableCollection<VatsimControlledAirport>(airportsList);
-                });
             });
 
             VatsimControlledAirports = new ObservableCollection<VatsimControlledAirport>(airportsList);
@@ -513,6 +517,7 @@ namespace FSTRaK.ViewModels
         private async void ProcessVatsimCtrFSS()
         {
             var firsList = new List<VatsimControlledFir>();
+            var uirDict = new Dictionary<string, VatsimControlledUir>();
 
             await Task.Run(() =>
             {
@@ -549,12 +554,9 @@ namespace FSTRaK.ViewModels
                             }
 
                             // IF fIRS > 0 this is a UIR TODO handle UIR in the same or another type
+                            List<LocationCollection> locations = new List<LocationCollection>();
                             foreach (var firMetadataTuple in firs)
                             {
-
-                                List<LocationCollection> locations = new List<LocationCollection>();
-
-                                
                                 foreach (var geoJsonCoordinate in firMetadataTuple.coordinates)
                                 {
                                     {
@@ -567,26 +569,48 @@ namespace FSTRaK.ViewModels
                                     }
                                 }
 
-
-                                VatsimControlledFir vatsimControlledFir = null;
-                                foreach (var controlledFir in firsList)
+                                VatsimControlledUir controlledUir = null;
+                                if (firs.Count > 1)
                                 {
-                                    if (controlledFir.LabelLocation.Equals(new Location(firMetadataTuple.labelCoordinates[0], firMetadataTuple.labelCoordinates[1])))
+                                    var uir = _vatsimService.VatsimStaticData.UIRs.FirstOrDefault(u =>
+                                        u.CallsignPrefix.Equals(controller.callsign.Split('_')[0]));
+                                    uirDict.TryGetValue(uir.CallsignPrefix, out controlledUir);
+                                    if (controlledUir == null)
                                     {
-                                        vatsimControlledFir = controlledFir;
+                                        controlledUir = new VatsimControlledUir()
+                                        {
+                                            Name = uir.Name,
+                                            Callsign = uir.CallsignPrefix,
+                                            FirLocations = locations
+                                        };
+                                        uirDict.Add(uir.CallsignPrefix, controlledUir);
                                     }
-                                }
 
-                                if (vatsimControlledFir == null)
+                                    controlledUir.Controllers.Add(controller);
+                                }
+                                else
                                 {
-                                    vatsimControlledFir = new VatsimControlledFir();
-                                    vatsimControlledFir.LabelLocation = new Location(firMetadataTuple.labelCoordinates[0], firMetadataTuple.labelCoordinates[1]);
-                                    vatsimControlledFir.Locations = locations;
-                                    vatsimControlledFir.Name = firMetadataTuple.firName;
-                                    firsList.Add(vatsimControlledFir);
+
+                                    VatsimControlledFir vatsimControlledFir = null;
+                                    foreach (var controlledFir in firsList)
+                                    {
+                                        if (controlledFir.LabelLocation.Equals(firMetadataTuple.labelCoordinates))
+                                        {
+                                            vatsimControlledFir = controlledFir;
+                                        }
+                                    }
+                                    if (vatsimControlledFir == null)
+                                    {
+                                        vatsimControlledFir = new VatsimControlledFir();
+                                        vatsimControlledFir.LabelLocation = firMetadataTuple.labelCoordinates;
+                                        vatsimControlledFir.Locations = locations;
+                                        vatsimControlledFir.Name = firMetadataTuple.firName;
+                                        firsList.Add(vatsimControlledFir);
+                                    }
+
+                                    vatsimControlledFir.Controllers.Add(controller);
                                 }
 
-                                vatsimControlledFir.Controllers.Add(controller);
                             }
                         }
                         catch (Exception ex)
@@ -597,7 +621,7 @@ namespace FSTRaK.ViewModels
                 }
             });
             VatsimControlledFirs = new ObservableCollection<VatsimControlledFir>(firsList);
-
+            VatsimControlledUirs = new ObservableCollection<VatsimControlledUir>(uirDict.Values.ToList());
         }
 
         private void FlightManagerOnPropertyChanged(object sender, PropertyChangedEventArgs e)
@@ -676,8 +700,6 @@ namespace FSTRaK.ViewModels
                 default:
                     break;
             }
-
-
         }
 
         public class VatsimAicraft
@@ -790,11 +812,41 @@ namespace FSTRaK.ViewModels
 
         public class VatsimControlledUir
         {
-            public List<Controller> Controllers { get; private set; }
-            public string TooltipText { get; set; }
-            public PolygonCollection Polygons { get; private set; }
-            public LocationCollection Location { get; set; }
-            public Location LabelLocation { get; set; }
+            public List<LocationCollection> FirLocations { get; set; } = new List<LocationCollection>();
+            public HashSet<Controller> Controllers { get; private set; } = new();
+            public string TooltipText
+            {
+                get
+                {
+                    var sb = new StringBuilder();
+                    sb.AppendLine(Name);
+                    sb.AppendLine();
+                    foreach (var controller in Controllers)
+                    {
+                        sb.AppendLine($"{controller.callsign} {controller.name} {controller.frequency} Connected for: {TimeUtils.GetConnectionsSinceFromTimeString(controller.logon_time)}");
+                    }
+                    return sb.ToString();
+                }
+                private set { }
+            }
+            public string Callsign { get; set; }
+            public string Name { get; set; }
+            public string Label
+            {
+                get
+                {
+                    return Name;
+                }
+                private set { }
+            }
+            public Location LabelLocation
+            {
+                get
+                {
+                    return CoordinatesUtil.CalculateCenter(FirLocations);
+                }
+                private set { }
+            }
         }
     }
 }
