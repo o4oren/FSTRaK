@@ -33,12 +33,6 @@ namespace FSTRaK.Utils
 
         public static readonly List<string> Helicopter = new List<string>(new string[] { "B06", "H500", "H135", "EC45", "EC35", "H145", "H155", "BK-117C-2", "H125", "H275", "R44", "B47G", "R66", "B06", "B212", "UH1" });
 
-        public static System.Drawing.Color GetColorFromResource(string name)
-        {
-            var mColor = (System.Windows.Media.Color)Application.Current.Resources[name];
-            return System.Drawing.Color.FromArgb(mColor.A, mColor.R, mColor.G, mColor.B);
-        }
-
         public static (string, double) GetAircraftIcon(Aircraft aircraft)
         {
             if (aircraft.Category.Equals("Helicopter"))

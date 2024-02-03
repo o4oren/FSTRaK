@@ -28,6 +28,8 @@ namespace FSTRaK
         {
             _mutex = new Mutex(true, AppName, out var createdNew);
 
+
+
             if (!createdNew)
             {
                 MessageBox.Show("An instance of FSTrAk is already running...", "FSTrAk");

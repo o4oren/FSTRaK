@@ -6,6 +6,13 @@
     <system:String x:Key="ThemeFontName">Slopes</system:String>
 
 
+    <!--Chart Colors-->
+    <Color x:Key="ChartColor1">#CE301B</Color>
+    <Color x:Key="ChartColor2">#F47A1F</Color>
+    <Color x:Key="ChartColor3">#FDBB2F</Color>
+    <Color x:Key="ChartColor4">#377B2B</Color>
+    <Color x:Key="ChartColor5">#007CC3</Color>
+    <Color x:Key="ChartColor6">#9717F4</Color>
 
     <!--Pallete-->
     <Color x:Key="PrimaryBright">#F2F5F8</Color>
@@ -94,6 +101,7 @@
     <SolidColorBrush x:Key="VatsimAppCircleStrokeBrush" Color="#7D0A0A"/>
     <SolidColorBrush x:Key="VatsimFirFillBrush" Color="#91C8E4" />
     <SolidColorBrush x:Key="VatsimFirStrokeBrush" Color="#080658"/>
+    <SolidColorBrush x:Key="VatsimFirTextBrush" Color="#080658"/>
     <SolidColorBrush x:Key="VatsimUirFillBrush" Color="#90EE90"/>
     <SolidColorBrush x:Key="VatsimUirStrokeBrush" Color="#90EE90"/>
     <SolidColorBrush x:Key="VatsimUirTextBrush" Color="#355E3B"/>

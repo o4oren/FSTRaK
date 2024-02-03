@@ -10,7 +10,7 @@ using FSTRaK.BusinessLogic.VatsimService.VatsimModel;
 using FSTRaK.Models;
 using Serilog;
 using System.IO;
-using static FSTRaK.BusinessLogic.VatsimService.VatsimModel.VatsimStaticData;
+using MapControl;
 
 
 namespace FSTRaK.BusinessLogic.VatsimService
@@ -36,19 +36,6 @@ namespace FSTRaK.BusinessLogic.VatsimService
             }
         }
 
-        private Dictionary<string, ControlledAirport> _controlledAirports;
-        public Dictionary<string, ControlledAirport> ControlledAirports
-        {
-            get => _controlledAirports;
-            private set
-            {
-                if (value != _controlledAirports)
-                {
-                    _controlledAirports = value;
-                    OnPropertyChanged();
-                }
-            }
-        }
 
         public VatsimStaticData VatsimStaticData
         {
@@ -65,7 +52,6 @@ namespace FSTRaK.BusinessLogic.VatsimService
         private VatsimService()
         {
             VatsimStaticData = new VatsimStaticData();
-            ControlledAirports = new Dictionary<string, ControlledAirport>();
             _connectionTimer = new Timer(ConnectionInterval);
             _connectionTimer.Elapsed += async (sender, e) => await GetVatsimData();
             _connectionTimer.AutoReset = true;
@@ -286,7 +272,6 @@ namespace FSTRaK.BusinessLogic.VatsimService
 
 
                         VatsimData = data;
-                        BuildControlledAirportsList();
                     });
                     
                 }
@@ -301,57 +286,7 @@ namespace FSTRaK.BusinessLogic.VatsimService
             }
         }
 
-        private void BuildControlledAirportsList()
-        {
-            ControlledAirports.Clear();
-            foreach (var controller in VatsimData.controllers)
-            {
-                if (controller.facility == 2 || controller.facility == 3 || controller.facility == 4 || controller.facility == 5)
-                {
-                    // Find airport
-                    var callsignParts = controller.callsign.Split('_');
-                    if (ControlledAirports.ContainsKey(callsignParts[0]))
-                    {
-                        var airport = ControlledAirports[callsignParts[0]];
-                        airport.Controllers.Add(controller);
-                    }
-                    else
-                    {
-                        var airport = VatsimStaticData.Airports.Find(a => a.ICAO.Equals(callsignParts[0]));
-                        if (airport != null)
-                        {
-                            var controlledAirport = new ControlledAirport(airport);
-                            controlledAirport.Controllers.Add(controller);
-                            ControlledAirports.Add(controlledAirport.Airport.ICAO, controlledAirport);
-                        }
-                    }
-                }
-            }
-
-            foreach (var atis in VatsimData.atis)
-            {
-                var callsignParts = atis.callsign.Split('_');
-                if (ControlledAirports.ContainsKey(callsignParts[0]))
-                {
-                    var airport = ControlledAirports[callsignParts[0]];
-                    airport.Atis.Add(atis);
-                }
-                else
-                {
-                    var airport = VatsimStaticData.Airports.Find(a => a.ICAO.Equals(callsignParts[0]));
-                    if (airport != null)
-                    {
-                        var controlledAirport = new ControlledAirport(airport);
-                        controlledAirport.Atis.Add(atis);
-                        ControlledAirports.Add(controlledAirport.Airport.ICAO, controlledAirport);
-                    }
-                }
-            }
-
-            OnPropertyChanged(nameof(ControlledAirports));
-        }
-
-        public (double[] labelCoordinates, double[][][][] coordinates, string firName) GetFirBoundariesByController(Controller controller)
+        public (Location labelCoordinates, double[][][][] coordinates, string firName) GetFirBoundariesByController(Controller controller)
         {
             var prefix = controller.callsign.Substring(0, controller.callsign.LastIndexOf('_'));
             var prefixIcaoCandidate = controller.callsign.Split(('_'))[0];
@@ -375,26 +310,37 @@ namespace FSTRaK.BusinessLogic.VatsimService
             string postfix = controller.callsign.Split('_').LastOrDefault();
             string oceanic = postfix is "FSS" ? "1" : "0";
 
-            var fir = FirBoundaries.Features.FirstOrDefault(feature => feature.Properties.id.Equals(firBoundary[0].Boundary) && feature.Properties.oceanic.Equals(oceanic));
+            GeoJsonFeature fir;
+            if (!firBoundary[0].Boundary.Equals(string.Empty))
+            {
+                fir = FirBoundaries.Features.FirstOrDefault(feature => feature.Properties.id.Equals(firBoundary[0].Boundary) && feature.Properties.oceanic.Equals(oceanic));
+            }
+            else
+            {
+                fir = FirBoundaries.Features.FirstOrDefault(feature => feature.Properties.id.Equals(firBoundary[0].ICAO) && feature.Properties.oceanic.Equals(oceanic));
+            }
+
+            
             if (fir != null)
             {
                 var country =
                     VatsimStaticData.Countries.FirstOrDefault(c =>
                         c.Value.Initials.Equals(fir.Properties.id.Substring(0, 2)));
-                return (new double[] { Double.Parse(fir.Properties.label_lat), Double.Parse(fir.Properties.label_lon) }, fir.Geometry.Coordinates, firBoundary[0].Name + " " + country.Value.centerName);
+                var centerName = country.Value != null ? country.Value.centerName : "Radar";
+                return (new Location( Double.Parse(fir.Properties.label_lat), Double.Parse(fir.Properties.label_lon) ), fir.Geometry.Coordinates, firBoundary[0].Name + " " + centerName);
             }
 
             throw new Exception("No FIR was found for " + controller.callsign);
         }
 
-        public List<(double[] labelCoordinates, double[][][][] coordinates, string firName)> GetUirBoundariesByController(Controller controller)
+        public List<(Location labelCoordinates, double[][][][] coordinates, string firName)> GetBoundariesArrayByController(Controller controller)
         {
             var prefix = controller.callsign.Substring(0, controller.callsign.LastIndexOf('_'));
-            var firs = new List<(double[] labelCoordinates, double[][][][] coordinates, string firName)>();
-            var uris = VatsimStaticData.UIRs.FindAll(u => u.CallsignPrefix.Equals(prefix));
-            if (uris.Count > 0)
+            var firs = new List<(Location labelCoordinates, double[][][][] coordinates, string firName)>();
+            var uirs = VatsimStaticData.UIRs.FindAll(u => u.CallsignPrefix.Equals(prefix));
+            if (uirs.Count > 0)
             {
-                foreach (var fir in uris[0].Firs)
+                foreach (var fir in uirs[0].Firs)
                 {
                     var firBoundaries =
                         FirBoundaries.Features.FirstOrDefault(feature => feature.Properties.id.Equals(fir));
@@ -403,12 +349,7 @@ namespace FSTRaK.BusinessLogic.VatsimService
                         var country =
                             VatsimStaticData.Countries.FirstOrDefault(c =>
                                 c.Value.Initials.Equals(firBoundaries.Properties.id.Substring(0, 2)));
-                        firs.Add((
-                            new double[]
-                            {
-                                Double.Parse(firBoundaries.Properties.label_lat),
-                                Double.Parse(firBoundaries.Properties.label_lon)
-                            }, firBoundaries.Geometry.Coordinates, uris[0].Name));
+                        firs.Add((new Location(Double.Parse(firBoundaries.Properties.label_lat), Double.Parse(firBoundaries.Properties.label_lon)), firBoundaries.Geometry.Coordinates, uirs[0].Name));
                     }
                 }
             }

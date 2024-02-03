@@ -37,26 +37,198 @@
             <map:MapScale Opacity="0.5" HorizontalAlignment="Center" VerticalAlignment="Bottom" Margin="5" />
             <TextBlock   FontSize="12" HorizontalAlignment="Right" VerticalAlignment="Bottom" Margin="5" Style="{StaticResource MapAttribution}"
                          utils:HyperlinkText.InlinesSource="{Binding MapProvider.Description}" />
-            <map:MapOverlay x:Name="vatsimUIRsOverlay" Opacity="0.3"></map:MapOverlay>
-            <map:MapOverlay x:Name="vatsimFIRsOverlay" Opacity="0.3"></map:MapOverlay>
-            <map:MapOverlay x:Name="vatsimFIRsTextOverlay"></map:MapOverlay>
 
-            <map:MapOverlay x:Name="vatsimAppCirclesOverlay" Opacity="0.3"></map:MapOverlay>
-            <map:MapOverlay x:Name="vatsimAirportsOverlay"></map:MapOverlay>
-            <map:MapOverlay x:Name="vatsimAircraftOverlay"></map:MapOverlay>
+            <!--  Vatsim UIRs -->
+            <map:MapItemsControl ItemsSource="{Binding VatsimControlledUirs}" Visibility="{Binding IsShowVatsimFirs, Converter={StaticResource BoolToVis}}">
+                <map:MapItemsControl.ItemTemplate>
+                    <DataTemplate>
+                        <map:MapPanel>
+                            <map:MapItemsControl ItemsSource="{Binding FirLocations}">
+                                <map:MapItemsControl.ItemTemplate>
+                                    <DataTemplate>
+                                        <map:MapPolygon 
+                                            Stroke="{StaticResource VatsimUirFillBrush}"
+                                            Fill="{StaticResource VatsimUirFillBrush}"
+                                            Opacity="0.3"
+                                            Locations="{Binding}"/>
+                                    </DataTemplate>
+                                </map:MapItemsControl.ItemTemplate>
+                            </map:MapItemsControl>
+                        </map:MapPanel>
+                    </DataTemplate>
+                </map:MapItemsControl.ItemTemplate>
+            </map:MapItemsControl>
+
+            <!--  Vatsim FIRs -->
+            <map:MapItemsControl ItemsSource="{Binding VatsimControlledFirs}" Visibility="{Binding IsShowVatsimFirs, Converter={StaticResource BoolToVis}}">
+                <map:MapItemsControl.ItemTemplate>
+                    <DataTemplate>
+                        <map:MapPanel>
+                            <ItemsControl ItemsSource="{Binding Locations}">
+                                <ItemsControl.ItemTemplate>
+                                    <DataTemplate>
+                                        <map:MapPolygon 
+                                            Stroke="{StaticResource VatsimFirStrokeBrush}"
+                                            Fill="{StaticResource VatsimFirFillBrush}"
+                                            Opacity="0.3"
+                                            Locations="{Binding}"/>
+                                    </DataTemplate>
+                                </ItemsControl.ItemTemplate>
+                            </ItemsControl>
+                        </map:MapPanel>
+
+                    </DataTemplate>
+                </map:MapItemsControl.ItemTemplate>
+            </map:MapItemsControl>
+
+            <!--  Vatsim Airports -->
+            <map:MapItemsControl ItemsSource="{Binding VatsimControlledAirports}" Visibility="{Binding IsShowVatsimAirports, Converter={StaticResource BoolToVis}}">
+                <map:MapItemsControl.ItemTemplate>
+                    <DataTemplate>
+                            <map:MapPolygon 
+                                Stroke="{StaticResource VatsimAppCircleStrokeBrush}"
+                                Fill="{StaticResource VatsimAppCircleFillBrush}"
+                                Opacity="0.3"
+                                Visibility="{Binding IsShowCircle, Converter={StaticResource BoolToVis}}"
+                                Locations="{Binding CircleLocations}"/>
+
+                    </DataTemplate>
+                </map:MapItemsControl.ItemTemplate>
+            </map:MapItemsControl>
+
+            <map:MapItemsControl ItemsSource="{Binding VatsimControlledAirports}" Visibility="{Binding IsShowVatsimAirports, Converter={StaticResource BoolToVis}}">
+                <map:MapItemsControl.ItemContainerStyle>
+                    <Style TargetType="map:MapItem">
+                        <Setter Property="Location" Value="{Binding Location}"/>
+                        <Setter Property="VerticalAlignment" Value="Center"/>
+                        <Setter Property="HorizontalAlignment" Value="Center"/>
+                    </Style>
+                </map:MapItemsControl.ItemContainerStyle>
+                <map:MapItemsControl.ItemTemplate>
+                    <DataTemplate>
+                        <Image Source="{Binding Path=IconResourse, Converter={StaticResource ResourceNameToImageConverter}}" Width="32" Height="32">
+                            <Image.ToolTip>
+                                <ToolTip Content="{Binding TooltipText}" />
+                            </Image.ToolTip>
+                        </Image>
+                    </DataTemplate>
+                </map:MapItemsControl.ItemTemplate>
+            </map:MapItemsControl>
+
+            <!-- Labels - fir uir -->
+
+            <map:MapItemsControl ItemsSource="{Binding VatsimControlledFirs}" Visibility="{Binding IsShowVatsimFirs, Converter={StaticResource BoolToVis}}">
+                <map:MapItemsControl.ItemContainerStyle>
+                    <Style TargetType="map:MapItem">
+                        <Setter Property="Location" Value="{Binding LabelLocation}"/>
+                        <Setter Property="HorizontalAlignment" Value="Center"/>
+                        <Setter Property="VerticalAlignment" Value="Center"/>
+                    </Style>
+                </map:MapItemsControl.ItemContainerStyle>
+                <map:MapItemsControl.ItemTemplate>
+                    <DataTemplate>
+                        <map:MapContentControl>
+                            <Label Content="{Binding  Label}" 
+                                   Foreground="{StaticResource VatsimFirTextBrush}"
+                                   FontWeight="Bold"
+                                   HorizontalAlignment="Center"
+                                   VerticalAlignment="Center"
+                            >
+                                <Label.ToolTip>
+                                    <ToolTip Content="{Binding TooltipText}" FontWeight="Normal"/>
+                                </Label.ToolTip>
+                            </Label>
+                        </map:MapContentControl>
+                    </DataTemplate>
+                </map:MapItemsControl.ItemTemplate>
+            </map:MapItemsControl>
+
+            <map:MapItemsControl ItemsSource="{Binding VatsimControlledUirs}" Visibility="{Binding IsShowVatsimFirs, Converter={StaticResource BoolToVis}}">
+                <map:MapItemsControl.ItemContainerStyle>
+                    <Style TargetType="map:MapItem">
+                        <Setter Property="Location" Value="{Binding LabelLocation}"/>
+                        <Setter Property="HorizontalAlignment" Value="Center"/>
+                        <Setter Property="VerticalAlignment" Value="Center"/>
+                    </Style>
+                </map:MapItemsControl.ItemContainerStyle>
+                <map:MapItemsControl.ItemTemplate>
+                    <DataTemplate>
+                        <map:MapContentControl>
+                            <Label Content="{Binding Label}" 
+                                   Foreground="{StaticResource VatsimUirTextBrush}"
+                                   FontWeight="Bold"
+                                   HorizontalAlignment="Center"
+                                   VerticalAlignment="Center"
+                            >
+                                <Label.ToolTip>
+                                    <ToolTip Content="{Binding TooltipText}" FontWeight="Normal"/>
+                                </Label.ToolTip>
+                            </Label>
+                        </map:MapContentControl>
+                    </DataTemplate>
+                </map:MapItemsControl.ItemTemplate>
+            </map:MapItemsControl>
+
+            <!-- Vatsim Aircraft -->
+            <map:MapItemsControl ItemsSource="{Binding VatsimAircraftList}" Visibility="{Binding IsShowVatsimAircraft, Converter={StaticResource BoolToVis}}">
+                <map:MapItemsControl.ItemContainerStyle>
+                    <Style TargetType="map:MapItem">
+                        <Setter Property="Location" Value="{Binding Location}"/>
+                        <Setter Property="Margin" Value="-16 -16 0 0"/>
+                    </Style>
+                </map:MapItemsControl.ItemContainerStyle>
+                <map:MapItemsControl.ItemTemplate>
+                    <DataTemplate>
+                        <Path 
+                            Fill="{StaticResource PrimaryDarkBrush}" 
+                            Data="{Binding Path=IconResource, Converter={StaticResource ResourceNameToGeometryConverter}}"
+                        >
+                            <Path.RenderTransform>
+                                <TransformGroup>
+                                    <ScaleTransform CenterX="16" CenterY="16" ScaleX="{Binding ScaleFactror}" ScaleY="{Binding ScaleFactror}"/>
+                                    <RotateTransform CenterY="16" CenterX="16" Angle="{Binding Pilot.heading}"></RotateTransform>
+                                </TransformGroup>
+                            </Path.RenderTransform>
+                            <Path.ToolTip>
+                                <ToolTip Content="{Binding TooltipText}" />
+                            </Path.ToolTip>
+                        </Path>
+                    </DataTemplate>
+                </map:MapItemsControl.ItemTemplate>
+            </map:MapItemsControl>
+
+            <!-- map:MapItemsControl ItemsSource="{Binding VatsimControlledAirports}" Visibility="{Binding IsShowVatsimAirports, Converter={StaticResource BoolToVis}}">
+                <map:MapItemsControl.ItemContainerStyle>
+                    <Style TargetType="map:MapItem">
+                        <Setter Property="Location" Value="{Binding Location}"/>
+                        <Setter Property="VerticalAlignment" Value="Center"/>
+                        <Setter Property="HorizontalAlignment" Value="Center"/>
+                    </Style>
+                </map:MapItemsControl.ItemContainerStyle>
+                <map:MapItemsControl.ItemTemplate>
+                    <DataTemplate>
+                        <Image Source="{Binding Path=IconResourse, Converter={StaticResource ResourceNameToImageConverter}}" Width="32" Height="32">
+                            <Image.ToolTip>
+                                <ToolTip Content="{Binding TooltipText}" />
+                            </Image.ToolTip>
+                        </Image>
+                    </DataTemplate>
+                </map:MapItemsControl.ItemTemplate>
+            </-->
+
             <!-- map:MapGraticule Opacity="0.5"/ -->
 
-            <map:MapItem Location="{Binding Location}"
+            <!--  Aircraft Icon -->
+            <map:MapContentControl Location="{Binding Location}"
                          Width="32" Height="32"
                          Margin="-16"
                          Visibility="{Binding Path=IsShowAirplane, Converter={StaticResource BoolToVis}}"
             >
-
                 <Path x:Name="AirplaneGeometry" Fill="Red" Stroke="DarkRed" StrokeThickness="1"/>
-                <map:MapItem.RenderTransform>
+                <map:MapContentControl.RenderTransform>
                     <RotateTransform CenterX="16" CenterY="16" Angle="{Binding Heading, Mode=OneWay}" />
-                </map:MapItem.RenderTransform>
-            </map:MapItem>
+                </map:MapContentControl.RenderTransform>
+            </map:MapContentControl>
             <map:MapPolyline Locations="{Binding FlightPath}" Stroke="Red" StrokeThickness="2" StrokeLineJoin="round"/>
             <map:MapPolyline Locations="{Binding LastSegmentLine}" Stroke="Red" StrokeThickness="2" Visibility="{Binding Path=IsShowAirplane, Converter={StaticResource BoolToVis}}"/>
 

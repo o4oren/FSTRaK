@@ -1,24 +1,11 @@
 ﻿using FSTRaK.ViewModels;
-using System;
 using System.Collections.Generic;
-using System.ComponentModel;
 using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
 using System.Windows;
 using System.Windows.Controls;
-using System.Windows.Data;
-using System.Windows.Documents;
-using System.Windows.Input;
-using System.Windows.Media;
-using System.Windows.Media.Imaging;
-using System.Windows.Navigation;
-using System.Windows.Shapes;
 using ScottPlot;
-using ScottPlot.Plottable;
 using FSTRaK.Utils;
 using System.Drawing;
-using static System.Resources.ResXFileRef;
 using Color = System.Drawing.Color;
 
 namespace FSTRaK.Views
@@ -58,6 +45,26 @@ namespace FSTRaK.Views
                             GeneratePie(aircraftDistributionDictionary, AircraftDistributionChart);
                         }
                         break;
+
+                    case "FrequentDepartureAirportsDistribution":
+                        var depDistributionDeictionary = ((StatisticsViewModel)DataContext).FrequentDepartureAirportsDistribution;
+
+                        if (depDistributionDeictionary != null && depDistributionDeictionary.Any())
+                        {
+                            GeneratePie(depDistributionDeictionary, DepDistributionChart);
+                        }
+                        break;
+
+                    case "FrequentArrivalAirportsDistribution":
+                        var arrDistributionDeictionary = ((StatisticsViewModel)DataContext).FrequentArrivalAirportsDistribution;
+
+                        if (arrDistributionDeictionary != null && arrDistributionDeictionary.Any())
+                        {
+                            GeneratePie(arrDistributionDeictionary, ArrDistributionChart);
+                        }
+                        break;
+
+
                 }
             };
             ((StatisticsViewModel)DataContext).ViewLoaded();
@@ -69,12 +76,18 @@ namespace FSTRaK.Views
             var plt = chart.Plot;
             plt.Clear();
             chart.Plot.Style(
-                figureBackground: System.Drawing.Color.Transparent,
-                dataBackground: System.Drawing.Color.Transparent
+                figureBackground: Color.Transparent,
+                dataBackground: Color.Transparent
             );
             double[] values = data.Values.ToArray();
             string[] labels = data.Keys.ToArray();
-            
+
+            Color color1 = ColorUtil.GetDrawingColorFromResource("ChartColor1");
+            Color color2 = ColorUtil.GetDrawingColorFromResource("ChartColor2");
+            Color color3 = ColorUtil.GetDrawingColorFromResource("ChartColor3");
+            Color color4 = ColorUtil.GetDrawingColorFromResource("ChartColor4");
+            Color color5 = ColorUtil.GetDrawingColorFromResource("ChartColor5");
+            Color color6 = ColorUtil.GetDrawingColorFromResource("ChartColor6");
 
             var pie = plt.AddPie(values);
             pie.SliceLabels = labels;
@@ -91,6 +104,7 @@ namespace FSTRaK.Views
             var legend = chart.Plot.Legend();
             chart.Configuration.Pan = false;
             chart.Configuration.Zoom = false;
+            pie.SliceFillColors = new Color[] { color1, color2, color3, color4, color5, color6 };
 
             chart.Refresh();
         }
