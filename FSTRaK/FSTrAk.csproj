@@ -171,6 +171,7 @@
     <Compile Include="Utils\Converters.cs" />
     <Compile Include="Utils\SkyVectorMapTileLayer.cs" />
     <Compile Include="Utils\SkyVectorTileSource.cs" />
+    <Compile Include="Utils\StringUtil.cs" />
     <Compile Include="Utils\TimeUtils.cs" />
     <Compile Include="Utils\UnitsUtil.cs" />
     <Compile Include="ViewModels\AddCommentViewModel.cs" />
@@ -396,6 +397,9 @@
     </PackageReference>
     <PackageReference Include="System.Data.SQLite.EF6.Migrations">
       <Version>1.0.113</Version>
+    </PackageReference>
+    <PackageReference Include="System.Linq.Dynamic">
+      <Version>1.0.8</Version>
     </PackageReference>
     <PackageReference Include="System.Numerics.Vectors">
       <Version>4.5.0</Version>

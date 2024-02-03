@@ -58,31 +58,6 @@
                     </DataTemplate>
                 </map:MapItemsControl.ItemTemplate>
             </map:MapItemsControl>
-            <map:MapItemsControl ItemsSource="{Binding VatsimControlledUirs}" Visibility="{Binding IsShowVatsimFirs, Converter={StaticResource BoolToVis}}">
-                <map:MapItemsControl.ItemContainerStyle>
-                    <Style TargetType="map:MapItem">
-                        <Setter Property="Location" Value="{Binding LabelLocation}"/>
-                        <Setter Property="HorizontalAlignment" Value="Center"/>
-                        <Setter Property="VerticalAlignment" Value="Center"/>
-                    </Style>
-                </map:MapItemsControl.ItemContainerStyle>
-                <map:MapItemsControl.ItemTemplate>
-                    <DataTemplate>
-                        <map:MapContentControl>
-                            <Label Content="{Binding Label}" 
-                                   Foreground="{StaticResource VatsimUirTextBrush}"
-                                   FontWeight="Bold"
-                                   HorizontalAlignment="Center"
-                                   VerticalAlignment="Center"
-                                   >
-                                <Label.ToolTip>
-                                    <ToolTip Content="{Binding TooltipText}" FontWeight="Normal"/>
-                                </Label.ToolTip>
-                            </Label>
-                        </map:MapContentControl>
-                    </DataTemplate>
-                </map:MapItemsControl.ItemTemplate>
-            </map:MapItemsControl>
 
             <!--  Vatsim FIRs -->
             <map:MapItemsControl ItemsSource="{Binding VatsimControlledFirs}" Visibility="{Binding IsShowVatsimFirs, Converter={StaticResource BoolToVis}}">
@@ -102,31 +77,6 @@
                             </ItemsControl>
                         </map:MapPanel>
 
-                    </DataTemplate>
-                </map:MapItemsControl.ItemTemplate>
-            </map:MapItemsControl>
-            <map:MapItemsControl ItemsSource="{Binding VatsimControlledFirs}" Visibility="{Binding IsShowVatsimFirs, Converter={StaticResource BoolToVis}}">
-                <map:MapItemsControl.ItemContainerStyle>
-                    <Style TargetType="map:MapItem">
-                        <Setter Property="Location" Value="{Binding LabelLocation}"/>
-                        <Setter Property="HorizontalAlignment" Value="Center"/>
-                        <Setter Property="VerticalAlignment" Value="Center"/>
-                    </Style>
-                </map:MapItemsControl.ItemContainerStyle>
-                <map:MapItemsControl.ItemTemplate>
-                    <DataTemplate>
-                        <map:MapContentControl>
-                            <Label Content="{Binding  Label}" 
-                                   Foreground="{StaticResource VatsimFirTextBrush}"
-                                   FontWeight="Bold"
-                                   HorizontalAlignment="Center"
-                                   VerticalAlignment="Center"
-                                   >
-                                <Label.ToolTip>
-                                    <ToolTip Content="{Binding TooltipText}" FontWeight="Normal"/>
-                                </Label.ToolTip>
-                            </Label>
-                        </map:MapContentControl>
                     </DataTemplate>
                 </map:MapItemsControl.ItemTemplate>
             </map:MapItemsControl>
@@ -161,6 +111,60 @@
                                 <ToolTip Content="{Binding TooltipText}" />
                             </Image.ToolTip>
                         </Image>
+                    </DataTemplate>
+                </map:MapItemsControl.ItemTemplate>
+            </map:MapItemsControl>
+
+            <!-- Labels - fir uir -->
+
+            <map:MapItemsControl ItemsSource="{Binding VatsimControlledFirs}" Visibility="{Binding IsShowVatsimFirs, Converter={StaticResource BoolToVis}}">
+                <map:MapItemsControl.ItemContainerStyle>
+                    <Style TargetType="map:MapItem">
+                        <Setter Property="Location" Value="{Binding LabelLocation}"/>
+                        <Setter Property="HorizontalAlignment" Value="Center"/>
+                        <Setter Property="VerticalAlignment" Value="Center"/>
+                    </Style>
+                </map:MapItemsControl.ItemContainerStyle>
+                <map:MapItemsControl.ItemTemplate>
+                    <DataTemplate>
+                        <map:MapContentControl>
+                            <Label Content="{Binding  Label}" 
+                                   Foreground="{StaticResource VatsimFirTextBrush}"
+                                   FontWeight="Bold"
+                                   HorizontalAlignment="Center"
+                                   VerticalAlignment="Center"
+                            >
+                                <Label.ToolTip>
+                                    <ToolTip Content="{Binding TooltipText}" FontWeight="Normal"/>
+                                </Label.ToolTip>
+                            </Label>
+                        </map:MapContentControl>
+                    </DataTemplate>
+                </map:MapItemsControl.ItemTemplate>
+            </map:MapItemsControl>
+
+            <map:MapItemsControl ItemsSource="{Binding VatsimControlledUirs}" Visibility="{Binding IsShowVatsimFirs, Converter={StaticResource BoolToVis}}">
+                <map:MapItemsControl.ItemContainerStyle>
+                    <Style TargetType="map:MapItem">
+                        <Setter Property="Location" Value="{Binding LabelLocation}"/>
+                        <Setter Property="HorizontalAlignment" Value="Center"/>
+                        <Setter Property="VerticalAlignment" Value="Center"/>
+                    </Style>
+                </map:MapItemsControl.ItemContainerStyle>
+                <map:MapItemsControl.ItemTemplate>
+                    <DataTemplate>
+                        <map:MapContentControl>
+                            <Label Content="{Binding Label}" 
+                                   Foreground="{StaticResource VatsimUirTextBrush}"
+                                   FontWeight="Bold"
+                                   HorizontalAlignment="Center"
+                                   VerticalAlignment="Center"
+                            >
+                                <Label.ToolTip>
+                                    <ToolTip Content="{Binding TooltipText}" FontWeight="Normal"/>
+                                </Label.ToolTip>
+                            </Label>
+                        </map:MapContentControl>
                     </DataTemplate>
                 </map:MapItemsControl.ItemTemplate>
             </map:MapItemsControl>

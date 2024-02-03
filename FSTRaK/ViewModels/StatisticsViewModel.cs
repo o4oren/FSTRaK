@@ -5,6 +5,8 @@ using System.Linq;
 using FSTRaK.Models;
 using FSTRaK.Models.Entity;
 using FSTRaK.Utils;
+using System.Linq.Dynamic;
+using Serilog;
 
 namespace FSTRaK.ViewModels
 {
@@ -182,6 +184,28 @@ namespace FSTRaK.ViewModels
             }
         }
 
+        private Dictionary<string, double> _frequentDepartureAirportsDistribution;
+        public Dictionary<string, double> FrequentDepartureAirportsDistribution
+        {
+            get => _frequentDepartureAirportsDistribution;
+            set
+            {
+                _frequentDepartureAirportsDistribution = value;
+                OnPropertyChanged();
+            }
+        }
+
+        private Dictionary<string, double> _frequentArrivalAirportsDistribution;
+        public Dictionary<string, double> FrequentArrivalAirportsDistribution
+        {
+            get => _frequentArrivalAirportsDistribution;
+            set
+            {
+                _frequentArrivalAirportsDistribution = value;
+                OnPropertyChanged();
+            }
+        }
+
 
 
         public StatisticsViewModel()
@@ -259,6 +283,10 @@ namespace FSTRaK.ViewModels
 
             AirlineDistribution = CalculateAirlineDistribution(flights);
 
+            FrequentDepartureAirportsDistribution = CalculateAirportDistribution(flights, AirportType.DEP);
+
+            FrequentArrivalAirportsDistribution = CalculateAirportDistribution(flights, AirportType.ARR);
+
         }
 
         private static Dictionary<string, double> CalculateAirlineDistribution(IQueryable<Flight> flights)
@@ -323,6 +351,73 @@ namespace FSTRaK.ViewModels
             }
 
             return aircraftDistribution;
+        }
+
+        private static Dictionary<string, double> CalculateAirportDistribution(IQueryable<Flight> flights, AirportType type)
+        {
+            var i = 0;
+            var sum = 0;
+            var airportDistribution = new Dictionary<string, double>();
+
+            if (type == AirportType.ARR)
+            {
+                foreach (var f in flights.GroupBy(f => f.ArrivalAirport)
+                             .Select(group => new
+                             {
+                                 airport = group.Key,
+                                 count = group.Count()
+                             })
+                             .OrderByDescending(x => x.count))
+                {
+                    if (i < 5)
+                    {
+                        airportDistribution.Add(f.airport, f.count);
+                        i++;
+                    }
+                    else
+                    {
+                        sum += f.count;
+                    }
+                }
+
+                if (sum > 0)
+                {
+                    airportDistribution.Add("Other", (double)sum);
+                }
+            }
+            else
+            {
+                foreach (var f in flights.GroupBy(f => f.DepartureAirport)
+                             .Select(group => new
+                             {
+                                 airport = group.Key,
+                                 count = group.Count()
+                             })
+                             .OrderByDescending(x => x.count))
+                {
+                    if (i < 5)
+                    {
+                        airportDistribution.Add(f.airport, f.count);
+                        i++;
+                    }
+                    else
+                    {
+                        sum += f.count;
+                    }
+                }
+
+                if (sum > 0)
+                {
+                    airportDistribution.Add("Other", (double)sum);
+                }
+            }
+
+            return airportDistribution;
+        }
+
+        private enum AirportType
+        {
+            DEP, ARR
         }
 
         internal void ViewLoaded()

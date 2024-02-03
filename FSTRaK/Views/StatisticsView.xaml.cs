@@ -45,6 +45,26 @@ namespace FSTRaK.Views
                             GeneratePie(aircraftDistributionDictionary, AircraftDistributionChart);
                         }
                         break;
+
+                    case "FrequentDepartureAirportsDistribution":
+                        var depDistributionDeictionary = ((StatisticsViewModel)DataContext).FrequentDepartureAirportsDistribution;
+
+                        if (depDistributionDeictionary != null && depDistributionDeictionary.Any())
+                        {
+                            GeneratePie(depDistributionDeictionary, DepDistributionChart);
+                        }
+                        break;
+
+                    case "FrequentArrivalAirportsDistribution":
+                        var arrDistributionDeictionary = ((StatisticsViewModel)DataContext).FrequentArrivalAirportsDistribution;
+
+                        if (arrDistributionDeictionary != null && arrDistributionDeictionary.Any())
+                        {
+                            GeneratePie(arrDistributionDeictionary, ArrDistributionChart);
+                        }
+                        break;
+
+
                 }
             };
             ((StatisticsViewModel)DataContext).ViewLoaded();

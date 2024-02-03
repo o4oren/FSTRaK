@@ -14,7 +14,6 @@ using System.Text;
 using System.Threading.Tasks;
 using FSTRaK.DataTypes;
 using Serilog;
-using static FSTRaK.ViewModels.LiveViewViewModel;
 
 namespace FSTRaK.ViewModels
 {
@@ -447,6 +446,7 @@ namespace FSTRaK.ViewModels
                         }
                     }
 
+                    StringUtil.RemoveTrailingWhitespace(sb);
                     airport.TooltipText = sb.ToString();
                     
                     if (facilities.Contains(5))
@@ -739,6 +739,7 @@ namespace FSTRaK.ViewModels
                     sb.AppendLine($"Flight Plan:\n {Pilot.flight_plan.route}");
                     sb.AppendLine($"Remarks:\n {Pilot.flight_plan.remarks}");
                 }
+                StringUtil.RemoveTrailingWhitespace(sb);
                 return sb.ToString();
             }
         }
@@ -781,6 +782,7 @@ namespace FSTRaK.ViewModels
                     {
                         sb.AppendLine($"{controller.callsign} {controller.name} {controller.frequency} Connected for: {TimeUtils.GetConnectionsSinceFromTimeString(controller.logon_time)}");
                     }
+                    StringUtil.RemoveTrailingWhitespace(sb);
                     return sb.ToString();
                 }
                 private set { }
@@ -804,6 +806,7 @@ namespace FSTRaK.ViewModels
                     {
                         sb.Remove(sb.Length - 1, 1);
                     }
+                    StringUtil.RemoveTrailingWhitespace(sb);
                     return sb.ToString();
                 }
                 private set { }
@@ -825,6 +828,7 @@ namespace FSTRaK.ViewModels
                     {
                         sb.AppendLine($"{controller.callsign} {controller.name} {controller.frequency} Connected for: {TimeUtils.GetConnectionsSinceFromTimeString(controller.logon_time)}");
                     }
+                    StringUtil.RemoveTrailingWhitespace(sb);
                     return sb.ToString();
                 }
                 private set { }

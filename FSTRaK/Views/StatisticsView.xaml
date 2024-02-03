@@ -19,6 +19,7 @@
             <RowDefinition Height="Auto"/>
             <RowDefinition Height="Auto" />
             <RowDefinition />
+            <RowDefinition />
         </Grid.RowDefinitions>
         <StackPanel Orientation="Horizontal" Grid.Column="0" Grid.Row="0" Margin="10">
             <Label Style="{StaticResource FSTrAkLabel}">By Airline</Label>
@@ -41,7 +42,7 @@
 
 
 
-        <StackPanel Grid.Row="1">
+        <StackPanel Grid.Row="1" Grid.Column="0">
 
             <StackPanel Margin="10" >
                 <TextBlock 
@@ -93,6 +94,21 @@
             </Label>
             <WpfPlot x:Name="AirlineDistributionChart" Margin="10,39,10,10"  />
         </Grid>
+
+        <Grid Grid.Row="3" Grid.Column="0" Margin="10,10,10,10">
+            <Label Style="{StaticResource FSTrAkLabel}">
+                Top Depatrure Airports
+            </Label>
+            <WpfPlot x:Name="DepDistributionChart" Margin="10,39,10,10" Grid.Column="0"/>
+        </Grid>
+
+        <Grid Grid.Row="3" Grid.Column="1" Margin="10,10,10,10">
+            <Label Style="{StaticResource FSTrAkLabel}">
+                Top Arrival Airports
+            </Label>
+            <WpfPlot x:Name="ArrDistributionChart" Margin="10,39,10,10"  />
+        </Grid>
+
 
     </Grid>
 </UserControl>
