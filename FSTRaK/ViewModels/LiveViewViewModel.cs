@@ -17,6 +17,7 @@ using System.Windows;
 using System.Windows.Shapes;
 using FSTRaK.DataTypes;
 using System.Windows.Controls;
+using Serilog;
 using static System.Windows.Forms.VisualStyles.VisualStyleElement;
 
 namespace FSTRaK.ViewModels
@@ -134,7 +135,7 @@ namespace FSTRaK.ViewModels
             }
         }
 
-        private Location _mapCenter = new Location(51, 0);
+        private Location _mapCenter = new(51, 0);
         public Location MapCenter
         {
             get => _mapCenter;
@@ -218,7 +219,7 @@ namespace FSTRaK.ViewModels
             }
         }
 
-        private ObservableCollection<VatsimAicraft> _vatsimAircraftList = new ObservableCollection<VatsimAicraft>();
+        private ObservableCollection<VatsimAicraft> _vatsimAircraftList = new();
 
         public ObservableCollection<VatsimAicraft> VatsimAircraftList
         {
@@ -233,7 +234,7 @@ namespace FSTRaK.ViewModels
             }
         }
 
-        private ObservableCollection<VatsimControlledAirport> _vatsimControlledAirports;
+        private ObservableCollection<VatsimControlledAirport> _vatsimControlledAirports = new();
         public ObservableCollection<VatsimControlledAirport> VatsimControlledAirports
         {
             get => _vatsimControlledAirports;
@@ -247,7 +248,7 @@ namespace FSTRaK.ViewModels
             }
         }
 
-        private ObservableCollection<VatsimControlledFir> _vatsimControlledFirs;
+        private ObservableCollection<VatsimControlledFir> _vatsimControlledFirs = new();
         public ObservableCollection<VatsimControlledFir> VatsimControlledFirs
         {
             get => _vatsimControlledFirs;
@@ -263,7 +264,7 @@ namespace FSTRaK.ViewModels
 
         
 
-        public ObservableCollection<Location> FlightPath { get; set; } = new ObservableCollection<Location>();
+        public ObservableCollection<Location> FlightPath { get; set; } = new();
 
         private ObservableCollection<Location> _lastSegmentLine;
         public ObservableCollection<Location> LastSegmentLine
@@ -332,12 +333,19 @@ namespace FSTRaK.ViewModels
                     if (IsShowVatsimAirports)
                     {
                         ProcessVatsimAirports();
-                        VatsimAircraftList.Clear();
+                    }
+                    else
+                    {
+                        VatsimControlledAirports.Clear();
                     }
 
                     if (IsShowVatsimFirs)
                     {
                         ProcessVatsimCtrFSS();
+                    }
+                    else
+                    {
+                        VatsimControlledFirs.Clear();
                     }
                     break;
                 default:
@@ -527,8 +535,17 @@ namespace FSTRaK.ViewModels
                             if (firs.Count == 0)
                             {
                                 // For most FIRs
-                                var firMetadataTuple = VatsimService.Instance.GetFirBoundariesByController(controller);
-                                firs.Add(firMetadataTuple);
+                                try
+                                {
+                                    var firMetadataTuple =
+                                        VatsimService.Instance.GetFirBoundariesByController(controller);
+                                    firs.Add(firMetadataTuple);
+                                }
+                                catch (Exception ex)
+                                {
+                                    Log.Error(ex.Message, ex);
+                                    continue;
+                                }
                             }
 
                             // IF fIRS > 0 this is a UIR TODO handle UIR in the same or another type
@@ -715,7 +732,7 @@ namespace FSTRaK.ViewModels
 
             public Location Location
             {
-                get => new Location(Airport.Latitude, Airport.Longitude);
+                get => new(Airport.Latitude, Airport.Longitude);
                 set { }
             }
 
@@ -730,7 +747,7 @@ namespace FSTRaK.ViewModels
 
         public class VatsimControlledFir
         {
-            public HashSet<Controller> Controllers { get; private set; } = new HashSet<Controller>();
+            public HashSet<Controller> Controllers { get; private set; } = new();
             public string TooltipText
             {
                 get

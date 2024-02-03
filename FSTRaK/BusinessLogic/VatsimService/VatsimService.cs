@@ -10,7 +10,6 @@ using FSTRaK.BusinessLogic.VatsimService.VatsimModel;
 using FSTRaK.Models;
 using Serilog;
 using System.IO;
-using static FSTRaK.BusinessLogic.VatsimService.VatsimModel.VatsimStaticData;
 
 
 namespace FSTRaK.BusinessLogic.VatsimService
@@ -310,7 +309,17 @@ namespace FSTRaK.BusinessLogic.VatsimService
             string postfix = controller.callsign.Split('_').LastOrDefault();
             string oceanic = postfix is "FSS" ? "1" : "0";
 
-            var fir = FirBoundaries.Features.FirstOrDefault(feature => feature.Properties.id.Equals(firBoundary[0].Boundary) && feature.Properties.oceanic.Equals(oceanic));
+            GeoJsonFeature fir;
+            if (!firBoundary[0].Boundary.Equals(string.Empty))
+            {
+                fir = FirBoundaries.Features.FirstOrDefault(feature => feature.Properties.id.Equals(firBoundary[0].Boundary) && feature.Properties.oceanic.Equals(oceanic));
+            }
+            else
+            {
+                fir = FirBoundaries.Features.FirstOrDefault(feature => feature.Properties.id.Equals(firBoundary[0].ICAO) && feature.Properties.oceanic.Equals(oceanic));
+            }
+
+            
             if (fir != null)
             {
                 var country =

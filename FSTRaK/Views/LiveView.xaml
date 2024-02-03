@@ -42,30 +42,50 @@
             <map:MapOverlay x:Name="vatsimFIRsTextOverlay"></map:MapOverlay>
 
 
-            <!-- Vatsim Aircraft -->
-            <map:MapItemsControl ItemsSource="{Binding VatsimAircraftList}" Visibility="{Binding IsShowVatsimAircraft, Converter={StaticResource BoolToVis}}">
+
+            <!--  Vatsim FIRs -->
+            <map:MapItemsControl ItemsSource="{Binding VatsimControlledFirs}" Visibility="{Binding IsShowVatsimFirs, Converter={StaticResource BoolToVis}}">
+                <map:MapItemsControl.ItemTemplate>
+                    <DataTemplate>
+                        <map:MapPanel>
+                            <ItemsControl ItemsSource="{Binding Locations}">
+                                <ItemsControl.ItemTemplate>
+                                    <DataTemplate>
+                                        <map:MapPolygon 
+                                            Stroke="{StaticResource VatsimFirStrokeBrush}"
+                                            Fill="{StaticResource VatsimFirFillBrush}"
+                                            Opacity="0.3"
+                                            Locations="{Binding}"/>
+                                    </DataTemplate>
+                                </ItemsControl.ItemTemplate>
+                            </ItemsControl>
+                        </map:MapPanel>
+
+                    </DataTemplate>
+                </map:MapItemsControl.ItemTemplate>
+            </map:MapItemsControl>
+            <map:MapItemsControl ItemsSource="{Binding VatsimControlledFirs}" Visibility="{Binding IsShowVatsimFirs, Converter={StaticResource BoolToVis}}">
                 <map:MapItemsControl.ItemContainerStyle>
                     <Style TargetType="map:MapItem">
-                        <Setter Property="Location" Value="{Binding Location}"/>
-                        <Setter Property="Margin" Value="-16 -16 0 0"/>
+                        <Setter Property="Location" Value="{Binding LabelLocation}"/>
+                        <Setter Property="HorizontalAlignment" Value="Center"/>
+                        <Setter Property="VerticalAlignment" Value="Center"/>
                     </Style>
                 </map:MapItemsControl.ItemContainerStyle>
                 <map:MapItemsControl.ItemTemplate>
                     <DataTemplate>
-                        <Path 
-                            Fill="{StaticResource PrimaryDarkBrush}" 
-                            Data="{Binding Path=IconResource, Converter={StaticResource ResourceNameToGeometryConverter}}"
-                            >
-                            <Path.RenderTransform>
-                                <TransformGroup>
-                                    <ScaleTransform CenterX="16" CenterY="16" ScaleX="{Binding ScaleFactror}" ScaleY="{Binding ScaleFactror}"/>
-                                    <RotateTransform CenterY="16" CenterX="16" Angle="{Binding Pilot.heading}"></RotateTransform>
-                                </TransformGroup>
-                            </Path.RenderTransform>
-                            <Path.ToolTip>
-                                <ToolTip Content="{Binding TooltipText}" />
-                            </Path.ToolTip>
-                        </Path>
+                        <map:MapContentControl>
+                            <Label Content="{Binding  Label}" 
+                                   Foreground="{StaticResource VatsimFirTextBrush}"
+                                   FontWeight="Bold"
+                                   HorizontalAlignment="Center"
+                                   VerticalAlignment="Center"
+                                   >
+                                <Label.ToolTip>
+                                    <ToolTip Content="{Binding TooltipText}" FontWeight="Normal"/>
+                                </Label.ToolTip>
+                            </Label>
+                        </map:MapContentControl>
                     </DataTemplate>
                 </map:MapItemsControl.ItemTemplate>
             </map:MapItemsControl>
@@ -104,45 +124,30 @@
                 </map:MapItemsControl.ItemTemplate>
             </map:MapItemsControl>
 
-            <!--  Vatsim FIRs -->
-            <map:MapItemsControl ItemsSource="{Binding VatsimControlledFirs}" Visibility="{Binding IsShowVatsimFirs, Converter={StaticResource BoolToVis}}">
-                <map:MapItemsControl.ItemTemplate>
-                    <DataTemplate>
-                        <map:MapPanel>
-                            <ItemsControl ItemsSource="{Binding Locations}">
-                                <ItemsControl.ItemTemplate>
-                                    <DataTemplate>
-                                        <map:MapPolygon 
-                                            Stroke="{StaticResource VatsimFirStrokeBrush}"
-                                            Fill="{StaticResource VatsimFirFillBrush}"
-                                            Opacity="0.3"
-                                            Locations="{Binding}"/>
-                                    </DataTemplate>
-                                </ItemsControl.ItemTemplate>
-                            </ItemsControl>
-                        </map:MapPanel>
-
-                    </DataTemplate>
-                </map:MapItemsControl.ItemTemplate>
-            </map:MapItemsControl>
-            <map:MapItemsControl ItemsSource="{Binding VatsimControlledFirs}" Visibility="{Binding IsShowVatsimFirs, Converter={StaticResource BoolToVis}}">
+            <!-- Vatsim Aircraft -->
+            <map:MapItemsControl ItemsSource="{Binding VatsimAircraftList}" Visibility="{Binding IsShowVatsimAircraft, Converter={StaticResource BoolToVis}}">
                 <map:MapItemsControl.ItemContainerStyle>
                     <Style TargetType="map:MapItem">
-                        <Setter Property="Location" Value="{Binding LabelLocation}"/>
+                        <Setter Property="Location" Value="{Binding Location}"/>
+                        <Setter Property="Margin" Value="-16 -16 0 0"/>
                     </Style>
                 </map:MapItemsControl.ItemContainerStyle>
                 <map:MapItemsControl.ItemTemplate>
                     <DataTemplate>
-                        <map:MapContentControl>
-                            <Label Content="{Binding Label}" 
-                                   Foreground="{StaticResource VatsimFirTextBrush}"
-                                   FontWeight="Bold"
-                                   >
-                                <Label.ToolTip>
-                                    <ToolTip Content="{Binding TooltipText}" FontWeight="Normal"/>
-                                </Label.ToolTip>
-                            </Label>
-                        </map:MapContentControl>
+                        <Path 
+                            Fill="{StaticResource PrimaryDarkBrush}" 
+                            Data="{Binding Path=IconResource, Converter={StaticResource ResourceNameToGeometryConverter}}"
+                        >
+                            <Path.RenderTransform>
+                                <TransformGroup>
+                                    <ScaleTransform CenterX="16" CenterY="16" ScaleX="{Binding ScaleFactror}" ScaleY="{Binding ScaleFactror}"/>
+                                    <RotateTransform CenterY="16" CenterX="16" Angle="{Binding Pilot.heading}"></RotateTransform>
+                                </TransformGroup>
+                            </Path.RenderTransform>
+                            <Path.ToolTip>
+                                <ToolTip Content="{Binding TooltipText}" />
+                            </Path.ToolTip>
+                        </Path>
                     </DataTemplate>
                 </map:MapItemsControl.ItemTemplate>
             </map:MapItemsControl>
