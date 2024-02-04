@@ -242,6 +242,7 @@ namespace FSTRaK.BusinessLogic.VatsimService
         public void Stop()
         {
             Log.Information("Stopping to poll VATSIM");
+            VatsimData = null;
             _connectionTimer.Stop();
         }
 

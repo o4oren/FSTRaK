@@ -91,6 +91,14 @@
         MaxZoomLevel="11"
         UpdateWhileViewportChanging="true"
         x:Shared="false"/>
+    <map:MapTileLayer
+        x:Key="DFS (German VFR charts)"
+        TileSource="https://secais.dfs.de/static-maps/icao500/tiles/{z}/{x}/{y}.png"
+        SourceName="DFSCharts"
+        Description="© [DFS Deutsche Flugsicherung GmbH](https://www.dfs.de/homepage/de)"
+        UpdateWhileViewportChanging="true"
+        x:Shared="false"/>
+
     <!-- map:MapTileLayer
         x:Key="OpenAIP"
         TileSource="https://api.tiles.openaip.net/api/data/openaip/{z}/{x}/{y}.png?apiKey=[]"
