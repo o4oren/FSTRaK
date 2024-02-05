@@ -190,5 +190,17 @@ namespace FSTRaK.Properties {
                 this["VatsimId"] = value;
             }
         }
+        
+        [global::System.Configuration.UserScopedSettingAttribute()]
+        [global::System.Diagnostics.DebuggerNonUserCodeAttribute()]
+        [global::System.Configuration.DefaultSettingValueAttribute("")]
+        public string MapTilerApiKey {
+            get {
+                return ((string)(this["MapTilerApiKey"]));
+            }
+            set {
+                this["MapTilerApiKey"] = value;
+            }
+        }
     }
 }

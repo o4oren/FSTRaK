@@ -74,6 +74,10 @@ namespace FSTRaK.Views
             // Initialize MapControl global settings
             var bingApiKey = Properties.Settings.Default.BingApiKey;
             BingMapsTileLayer.ApiKey = bingApiKey;
+
+            var maptillerApiKey = Properties.Settings.Default.MapTilerApiKey;
+            MapTilerMapTileLayer.ApiKey = maptillerApiKey;
+
             ImageLoader.HttpClient.DefaultRequestHeaders.Add("User-Agent", "FSTrAk - Flight Simulator logbook and tracker");
             TileImageLoader.Cache = new SQLiteCache(PathUtil.GetApplicationLocalDataPath());
 

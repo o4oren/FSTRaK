@@ -55,10 +55,21 @@
                 </TextBox>
                 <StackPanel.ToolTip>
                     Bing map require an API Key. 
+                    Please see https://docs.maptiler.com/cloud/api.
+                </StackPanel.ToolTip>
+            </StackPanel>
+
+            <StackPanel Orientation="Horizontal" Margin="10" Visibility="{Binding IsShowMapTilerApiKeyField, Converter={StaticResource BoolToVis}}" ToolTipService.ShowDuration="5000">
+                <Label  Style="{StaticResource FSTrAkLabel}" Width="250">Maptiler API Key</Label>
+                <TextBox FontFamily="{DynamicResource Slopes}" Foreground="{StaticResource TextColor}" FontSize="20" Text="{Binding MapTilerApiKey}" TextWrapping="Wrap" Height="100" Width="200">
+                </TextBox>
+                <StackPanel.ToolTip>
+                    Maptiler maps require an API Key. 
                     Please see the instructions at 
                     https://learn.microsoft.com/en-us/bingmaps/getting-started/bing-maps-dev-center-help/getting-a-bing-maps-key
                 </StackPanel.ToolTip>
             </StackPanel>
+
             <StackPanel Orientation="Horizontal" Margin="10" ToolTipService.ShowDuration="5000">
                 <Label Style="{StaticResource FSTrAkLabel}" Width="250">Units</Label>
                 <ComboBox FontFamily="{DynamicResource Slopes}" Foreground="{StaticResource TextColor}" FontSize="24" Width="200"

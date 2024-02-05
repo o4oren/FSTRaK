@@ -169,6 +169,7 @@
     <Compile Include="Utils\PathUtil.cs" />
     <Compile Include="Utils\AircraftResolver.cs" />
     <Compile Include="Utils\Converters.cs" />
+    <Compile Include="Utils\MapTilerMapTileLayer.cs" />
     <Compile Include="Utils\SkyVectorMapTileLayer.cs" />
     <Compile Include="Utils\SkyVectorTileSource.cs" />
     <Compile Include="Utils\StringUtil.cs" />
