@@ -15,19 +15,17 @@
     <Color x:Key="ChartColor6">#9717F4</Color>
 
     <!--Pallete-->
-    <Color x:Key="PrimaryBright">#F2F5F8</Color>
-    <Color x:Key="PrimaryMid">#D7E0EA</Color>
+    <Color x:Key="PrimaryBright">#003884</Color>
+    <Color x:Key="PrimaryMid">#6176A8</Color>
     <Color x:Key="PrimaryMidDark">#6176A8</Color>
-    <Color x:Key="PrimaryDark">#003884</Color>
-
-    <Color x:Key="ApplicationBackground">#D7E0EA</Color>
-    <SolidColorBrush x:Key="ApplicationHeaderBackgroundColorBrush" Color="#D7E0EA"/>
+    <Color x:Key="PrimaryDark">#F2F5F8</Color> 
 
     <SolidColorBrush x:Key="MenuItemSelectionFill" Color="{StaticResource PrimaryBright}"/>
+    <SolidColorBrush x:Key="ApplicationHeaderBackgroundColorBrush" Color="#003884"/>
 
 
-    <Color x:Key="ContentAreaColorLight">#FFC5CBF9</Color>
-    <Color x:Key="ContentAreaColorDark">#FF7381F9</Color>
+    <Color x:Key="ContentAreaColorLight">#003884</Color>
+    <Color x:Key="ContentAreaColorDark">#003884</Color>
 
     <Color x:Key="DisabledControlLightColor">#FFE8EDF9</Color>
     <Color x:Key="DisabledControlDarkColor">#FFC5CBF9</Color>
@@ -73,7 +71,7 @@
 
 
     <SolidColorBrush x:Key="MainWindowBackground" Color="{DynamicResource PrimaryBright}"/>
-    <SolidColorBrush x:Key="TopBarBackground" Color="{DynamicResource PrimaryMid}"/>
+    <SolidColorBrush x:Key="TopBarBackground" Color="#003884"/>
 
     <SolidColorBrush x:Key="TextColor" Color="{DynamicResource PrimaryDark}"/>
     <SolidColorBrush x:Key="UnselectedTextColor" Color="{DynamicResource PrimaryMidDark}"/>

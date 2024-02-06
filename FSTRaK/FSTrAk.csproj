@@ -162,7 +162,7 @@
     <Compile Include="RelayCommand.cs" />
     <Compile Include="Utils\ColorUtil.cs" />
     <Compile Include="Utils\CoordinatesUtil.cs" />
-    <Compile Include="Utils\FontUtil.cs" />
+    <Compile Include="Utils\ResourceUtil.cs" />
     <Compile Include="Utils\HyperlinkText.cs" />
     <Compile Include="Utils\MapProviderResolver.cs" />
     <Compile Include="Utils\MathUtils.cs" />
@@ -213,6 +213,10 @@
       <DependentUpon>StatisticsView.xaml</DependentUpon>
     </Compile>
     <Page Include="Resources\Images.xaml">
+      <Generator>MSBuild:Compile</Generator>
+      <SubType>Designer</SubType>
+    </Page>
+    <Page Include="Resources\DarkTheme.xaml">
       <Generator>MSBuild:Compile</Generator>
       <SubType>Designer</SubType>
     </Page>

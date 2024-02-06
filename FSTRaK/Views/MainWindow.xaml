@@ -55,7 +55,7 @@
             <StackPanel>
 
             </StackPanel>
-            <Border Grid.Column="0" CornerRadius="20 0 0 0" Background="#D7E0EA">
+            <Border Grid.Column="0" CornerRadius="20 0 0 0" Background="{DynamicResource ApplicationHeaderBackgroundColorBrush}">
                 <StackPanel Margin="0 5 0 0">
                     <Canvas Width="128" Height="47" >
                         <StaticResource ResourceKey="logo"/>
@@ -65,9 +65,9 @@
                 </StackPanel>
             </Border>
 
-            <Border Grid.Column="1" CornerRadius="0 20 0 0" Background="{StaticResource TopBarBackground}">
+            <Border Grid.Column="1" CornerRadius="0 20 0 0" Background="{DynamicResource TopBarBackground}">
                 <Grid Name="MenuBar" MouseLeftButtonDown="DragWindow">
-                    <Rectangle Fill="{StaticResource TopBarBackground}" PreviewMouseLeftButtonDown="DragWindow" Cursor="SizeAll" Margin="0,0,35,78"/>
+                    <Rectangle Fill="{DynamicResource TopBarBackground}" PreviewMouseLeftButtonDown="DragWindow" Cursor="SizeAll" Margin="0,0,35,78"/>
                     <StackPanel Orientation="Horizontal" Margin="0,0,50,0" HorizontalAlignment="Right">
                         <RadioButton Style="{StaticResource MenuButtonTheme}"  IsChecked="True" Command="{Binding MapViewCommand}" Content="Live View" HorizontalAlignment="Right"/>
                         <RadioButton Style="{StaticResource MenuButtonTheme}"  Command="{Binding LogBookCommand}" Content="Logbook" HorizontalAlignment="Right"/>

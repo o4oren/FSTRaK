@@ -101,7 +101,7 @@
 
     <utils:MapTilerMapTileLayer
         x:Key="MapTiler Dataviz"
-        TileSource="https://api.maptiler.com/maps/dataviz/256/{z}/{x}/{y}.png?key={ApiKey}"
+        TileSource="https://api.maptiler.com/maps/dataviz/{z}/{x}/{y}.png?key={ApiKey}"
         SourceName="MapTilerDataviz"
         Description="© [MapTiler](https://www.maptiler.com/copyright/) © [OpenStreetMap contributors](http://www.openstreetmap.org/copyright)"
         UpdateWhileViewportChanging="true"
@@ -128,6 +128,38 @@
         Description="© [MapTiler](https://www.maptiler.com/copyright/) © [OpenStreetMap contributors](http://www.openstreetmap.org/copyright)"
         UpdateWhileViewportChanging="true"
         x:Shared="false"/>
+    <utils:MapTilerMapTileLayer
+        x:Key="MapTiler Basic"
+        TileSource="https://api.maptiler.com/maps/basic-v2/{z}/{x}/{y}.png?key={ApiKey}"
+        SourceName="MapTilerBasic"
+        Description="© [MapTiler](https://www.maptiler.com/copyright/) © [OpenStreetMap contributors](http://www.openstreetmap.org/copyright)"
+        UpdateWhileViewportChanging="true"
+        x:Shared="false"/>
+
+    <utils:MapTilerMapTileLayer
+        x:Key="MapTiler Dataviz Dark"
+        TileSource="https://api.maptiler.com/maps/dataviz-dark/{z}/{x}/{y}.png?key={ApiKey}"
+        SourceName="MapTilerDatavizDark"
+        Description="© [MapTiler](https://www.maptiler.com/copyright/) © [OpenStreetMap contributors](http://www.openstreetmap.org/copyright)"
+        UpdateWhileViewportChanging="true"
+        x:Shared="false"/>
+
+    <utils:MapTilerMapTileLayer
+        x:Key="MapTiler Backdrop Dark"
+        TileSource="https://api.maptiler.com/maps/backdrop-dark/{z}/{x}/{y}.png?key={ApiKey}"
+        SourceName="MapTilerBackdropDark"
+        Description="© [MapTiler](https://www.maptiler.com/copyright/) © [OpenStreetMap contributors](http://www.openstreetmap.org/copyright)"
+        UpdateWhileViewportChanging="true"
+        x:Shared="false"/>
+
+    <utils:MapTilerMapTileLayer
+        x:Key="MapTiler Basic Dark"
+        TileSource="https://api.maptiler.com/maps/basic-v2-dark/{z}/{x}/{y}.png?key={ApiKey}"
+        SourceName="MapTilerBasicDark"
+        Description="© [MapTiler](https://www.maptiler.com/copyright/) © [OpenStreetMap contributors](http://www.openstreetmap.org/copyright)"
+        UpdateWhileViewportChanging="true"
+        x:Shared="false"/>
+
 
     <!-- map:MapTileLayer
         x:Key="OpenAIP"

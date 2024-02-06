@@ -205,8 +205,25 @@ namespace FSTRaK.ViewModels
                 if (value != null && value != _fontName)
                 {
                     _fontName = value;
-                    FontUtil.SetFont(_fontName);
+                    ResourceUtil.SetFont(_fontName);
                     Properties.Settings.Default.FontName = _fontName;
+                    OnPropertyChanged();
+                }
+            }
+        }
+
+        public ObservableCollection<string> Themes { get; set; } = new ObservableCollection<string>(new[] { "Normal", "Dark" });
+        private string _theme = "Slopes";
+        public string Theme
+        {
+            get => _theme;
+            set
+            {
+                if (value != null && value != _theme)
+                {
+                    _theme = value;
+                    ResourceUtil.SetTheme(_theme);
+                    Properties.Settings.Default.Theme = _theme;
                     OnPropertyChanged();
                 }
             }
@@ -255,6 +272,8 @@ namespace FSTRaK.ViewModels
             IsMinimizeToTray = Properties.Settings.Default.IsMinimizeToTray;
             IsStartAutomatically = Properties.Settings.Default.IsStartAutomatically;
             FontName = Properties.Settings.Default.FontName;
+            Theme = Properties.Settings.Default.Theme;
+
             VatsimId = Properties.Settings.Default.VatsimId;
         }
 

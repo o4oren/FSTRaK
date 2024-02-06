@@ -91,9 +91,10 @@ namespace FSTRaK
 //        });
 
         // Set font according to settings
-        FontUtil.SetFont(FSTRaK.Properties.Settings.Default.FontName);
+        ResourceUtil.SetFont(FSTRaK.Properties.Settings.Default.FontName);
+        ResourceUtil.SetTheme(FSTRaK.Properties.Settings.Default.Theme);
 
-        var _ = AirportResolver.Instance;
+            var _ = AirportResolver.Instance;
 
     }
   

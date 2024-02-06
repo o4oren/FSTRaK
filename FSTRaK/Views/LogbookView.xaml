@@ -15,7 +15,6 @@
             <ResourceDictionary.MergedDictionaries>
                 <ResourceDictionary Source="../Resources/AircraftIconsDictionary.xaml"/>
                 <ResourceDictionary Source="../Resources/MapProvidersDictionary.xaml"/>
-                <ResourceDictionary Source="../Resources/Theme.xaml"/>
             </ResourceDictionary.MergedDictionaries>
             <DataTemplate DataType="{x:Type viewmodels:FlightDetailsViewModel}" >
                 <views:FlightDetailsView/>

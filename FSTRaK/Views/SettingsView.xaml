@@ -37,6 +37,19 @@
             </StackPanel>
 
             <StackPanel Orientation="Horizontal" Margin="10" ToolTipService.ShowDuration="5000">
+                <Label Style="{StaticResource FSTrAkLabel}" Width="250">Theme</Label>
+                <ComboBox FontFamily="{DynamicResource Slopes}" 
+                          Foreground="{StaticResource TextColor}" 
+                          FontSize="24" 
+                          Width="200"
+                          ItemsSource="{Binding Themes}"
+                          SelectedItem="{Binding Theme}"/>
+                <StackPanel.ToolTip>
+                    Select the font for FSTrAk
+                </StackPanel.ToolTip>
+            </StackPanel>
+
+            <StackPanel Orientation="Horizontal" Margin="10" ToolTipService.ShowDuration="5000">
                 <Label Style="{StaticResource FSTrAkLabel}" Width="250">Map tiles Provider</Label>
                 <ComboBox FontFamily="{DynamicResource Slopes}" 
                       Foreground="{StaticResource TextColor}" 
