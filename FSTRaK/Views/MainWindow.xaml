@@ -39,7 +39,7 @@
             </DataTemplate>
         </ResourceDictionary>
     </Window.Resources>
-    <Border Background="{StaticResource MainWindowBackground}"
+    <Border Background="{DynamicResource MainWindowBackground}"
             CornerRadius="20">
         <Grid>
             <Grid.ColumnDefinitions>

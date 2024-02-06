@@ -70,7 +70,7 @@
     <SolidColorBrush x:Key="PrimaryDarkBrush" Color="{DynamicResource PrimaryDark}"/>
 
 
-    <SolidColorBrush x:Key="MainWindowBackground" Color="{DynamicResource PrimaryBright}"/>
+    <SolidColorBrush x:Key="MainWindowBackground" Color="#6176A8"/>
     <SolidColorBrush x:Key="TopBarBackground" Color="#003884"/>
 
     <SolidColorBrush x:Key="TextColor" Color="{DynamicResource PrimaryDark}"/>

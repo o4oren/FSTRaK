@@ -75,18 +75,18 @@
                 </StackPanel>
                 </StackPanel>
                 <StackPanel Margin="10" HorizontalAlignment="Right">
-                    <ToggleButton Style="{StaticResource MapToggleButton}" 
+                    <ToggleButton Style="{DynamicResource MapToggleButton}" 
                               IsChecked="{Binding IsShowPath, Mode=TwoWay}" 
-                              Content="{StaticResource PathButton}"/>
-                    <ToggleButton Style="{StaticResource MapToggleButton}" 
+                              Content="{DynamicResource PathButton}"/>
+                <ToggleButton Style="{DynamicResource MapToggleButton}" 
                               IsChecked="{Binding IsShowFlightDetails, Mode=TwoWay}" 
-                              Content="{StaticResource detailsButton}"/>
-                    <ToggleButton Style="{StaticResource MapToggleButton}" 
+                              Content="{DynamicResource detailsButton}"/>
+                <ToggleButton Style="{DynamicResource MapToggleButton}" 
                                   IsChecked="{Binding IsShowScoreboard, Mode=TwoWay}" 
-                                  Content="{StaticResource Scoreboard}"/>
-                <ToggleButton Style="{StaticResource MapToggleButton}" 
+                                  Content="{DynamicResource Scoreboard}"/>
+                <ToggleButton Style="{DynamicResource MapToggleButton}" 
                               IsChecked="{Binding IsShowAltSpeedCharts, Mode=TwoWay}" 
-                              Content="{StaticResource chartsButton}"/>
+                              Content="{DynamicResource chartsButton}"/>
             </StackPanel>
             <Grid Margin="10 10 10 10" HorizontalAlignment="Center" VerticalAlignment="Bottom" Visibility="{Binding IsShowAltSpeedCharts, Converter={StaticResource BoolToVis}}">
                 <Border x:Name="ToggleButtonBorder" BorderThickness="0" Background="Black" Opacity="0.7" CornerRadius="5" Margin="10">
