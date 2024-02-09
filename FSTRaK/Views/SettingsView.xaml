@@ -45,7 +45,7 @@
                           ItemsSource="{Binding Themes}"
                           SelectedItem="{Binding Theme}"/>
                 <StackPanel.ToolTip>
-                    Select the font for FSTrAk
+                    Select the theme for FSTrAk
                 </StackPanel.ToolTip>
             </StackPanel>
 
