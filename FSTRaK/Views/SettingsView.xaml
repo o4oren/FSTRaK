@@ -24,9 +24,9 @@
     <StackPanel Orientation="Horizontal">
         <StackPanel Margin="10">
             <StackPanel Orientation="Horizontal" Margin="10" ToolTipService.ShowDuration="5000">
-                <Label Style="{StaticResource FSTrAkLabel}" Width="250">Font</Label>
+                <Label Style="{DynamicResource FSTrAkLabel}" Width="250">Font</Label>
                 <ComboBox FontFamily="{DynamicResource Slopes}" 
-                          Foreground="{StaticResource TextColor}" 
+                          Foreground="{DynamicResource TextColor}" 
                           FontSize="24" 
                           Width="200"
                           ItemsSource="{Binding Fonts}"
@@ -37,9 +37,22 @@
             </StackPanel>
 
             <StackPanel Orientation="Horizontal" Margin="10" ToolTipService.ShowDuration="5000">
-                <Label Style="{StaticResource FSTrAkLabel}" Width="250">Map tiles Provider</Label>
+                <Label Style="{DynamicResource FSTrAkLabel}" Width="250">Theme</Label>
                 <ComboBox FontFamily="{DynamicResource Slopes}" 
-                      Foreground="{StaticResource TextColor}" 
+                          Foreground="{DynamicResource TextColor}" 
+                          FontSize="24" 
+                          Width="200"
+                          ItemsSource="{Binding Themes}"
+                          SelectedItem="{Binding Theme}"/>
+                <StackPanel.ToolTip>
+                    Select the theme for FSTrAk
+                </StackPanel.ToolTip>
+            </StackPanel>
+
+            <StackPanel Orientation="Horizontal" Margin="10" ToolTipService.ShowDuration="5000">
+                <Label Style="{DynamicResource FSTrAkLabel}" Width="250">Map tiles Provider</Label>
+                <ComboBox FontFamily="{DynamicResource Slopes}" 
+                      Foreground="{DynamicResource TextColor}" 
                       FontSize="24" 
                       Width="200"
                       ItemsSource="{Binding MapProviders}"
@@ -50,54 +63,65 @@
             </StackPanel>
 
             <StackPanel Orientation="Horizontal" Margin="10" Visibility="{Binding IsShowBingApiKeyField, Converter={StaticResource BoolToVis}}" ToolTipService.ShowDuration="5000">
-                <Label  Style="{StaticResource FSTrAkLabel}" Width="250">Bing API Key</Label>
-                <TextBox FontFamily="{DynamicResource Slopes}" Foreground="{StaticResource TextColor}" FontSize="20" Text="{Binding BingApiKey}" TextWrapping="Wrap" Height="100" Width="200">
+                <Label  Style="{DynamicResource FSTrAkLabel}" Width="250">Bing API Key</Label>
+                <TextBox FontFamily="{DynamicResource Slopes}" Foreground="{DynamicResource TextColor}" Background="{DynamicResource ControlBackgroundColorBrush}" FontSize="20" Text="{Binding BingApiKey}" TextWrapping="Wrap" Height="100" Width="200">
                 </TextBox>
                 <StackPanel.ToolTip>
                     Bing map require an API Key. 
+                    Please see https://docs.maptiler.com/cloud/api.
+                </StackPanel.ToolTip>
+            </StackPanel>
+
+            <StackPanel Orientation="Horizontal" Margin="10" Visibility="{Binding IsShowMapTilerApiKeyField, Converter={StaticResource BoolToVis}}" ToolTipService.ShowDuration="5000">
+                <Label  Style="{DynamicResource FSTrAkLabel}" Width="250">Maptiler API Key</Label>
+                <TextBox FontFamily="{DynamicResource Slopes}" Foreground="{DynamicResource TextColor}" Background="{DynamicResource ControlBackgroundColorBrush}" FontSize="20" Text="{Binding MapTilerApiKey}" TextWrapping="Wrap" Height="100" Width="200">
+                </TextBox>
+                <StackPanel.ToolTip>
+                    Maptiler maps require an API Key. 
                     Please see the instructions at 
                     https://learn.microsoft.com/en-us/bingmaps/getting-started/bing-maps-dev-center-help/getting-a-bing-maps-key
                 </StackPanel.ToolTip>
             </StackPanel>
+
             <StackPanel Orientation="Horizontal" Margin="10" ToolTipService.ShowDuration="5000">
-                <Label Style="{StaticResource FSTrAkLabel}" Width="250">Units</Label>
-                <ComboBox FontFamily="{DynamicResource Slopes}" Foreground="{StaticResource TextColor}" FontSize="24" Width="200"
+                <Label Style="{DynamicResource FSTrAkLabel}" Width="250">Units</Label>
+                <ComboBox FontFamily="{DynamicResource Slopes}" Foreground="{DynamicResource TextColor}" FontSize="24" Width="200"
                       ItemsSource="{Binding Source={StaticResource dataFromEnum}}" SelectedItem="{Binding Units}"/>
                 <StackPanel.ToolTip>
                     Select Imperial or Metric weight units
                 </StackPanel.ToolTip>
             </StackPanel>
             <StackPanel Orientation="Horizontal" Margin="10" ToolTipService.ShowDuration="5000">
-                <Label  Style="{StaticResource FSTrAkLabel}" Width="250">Complete flights only</Label>
-                <CheckBox Style="{StaticResource SettingsCheckbox}" FontFamily="{DynamicResource Slopes}" FontSize="20" VerticalAlignment="Center" IsChecked="{Binding IsSaveOnlyCompleteFlights, Mode=TwoWay}"/>
+                <Label  Style="{DynamicResource FSTrAkLabel}" Width="250">Complete flights only</Label>
+                <CheckBox Style="{DynamicResource SettingsCheckbox}" FontFamily="{DynamicResource Slopes}" FontSize="20" VerticalAlignment="Center" IsChecked="{Binding IsSaveOnlyCompleteFlights, Mode=TwoWay}"/>
                 <StackPanel.ToolTip>
                     Only flights that are started and ended on the ground, fully stopped and with engines off are saved
                 </StackPanel.ToolTip>
             </StackPanel>
             <StackPanel Orientation="Horizontal" Margin="10" ToolTipService.ShowDuration="5000">
-                <Label  Style="{StaticResource FSTrAkLabel}" Width="250">Launch FSTrAk on login</Label>
-                <CheckBox Style="{StaticResource SettingsCheckbox}" FontFamily="{DynamicResource Slopes}" FontSize="20" VerticalAlignment="Center" IsChecked="{Binding IsStartAutomatically, Mode=TwoWay}"/>
+                <Label  Style="{DynamicResource FSTrAkLabel}" Width="250">Launch FSTrAk on login</Label>
+                <CheckBox Style="{DynamicResource SettingsCheckbox}" FontFamily="{DynamicResource Slopes}" FontSize="20" VerticalAlignment="Center" IsChecked="{Binding IsStartAutomatically, Mode=TwoWay}"/>
                 <StackPanel.ToolTip>
                     Automatically start FSTrAk when starting Windows
                 </StackPanel.ToolTip>
             </StackPanel>
             <StackPanel Orientation="Horizontal" Margin="10" ToolTipService.ShowDuration="5000">
-                <Label  Style="{StaticResource FSTrAkLabel}" Width="250">launch FSTrAk minimized</Label>
-                <CheckBox Style="{StaticResource SettingsCheckbox}" FontFamily="{DynamicResource Slopes}" FontSize="20" VerticalAlignment="Center" IsChecked="{Binding IsStartMinimized, Mode=TwoWay}"/>
+                <Label  Style="{DynamicResource FSTrAkLabel}" Width="250">launch FSTrAk minimized</Label>
+                <CheckBox Style="{DynamicResource SettingsCheckbox}" FontFamily="{DynamicResource Slopes}" FontSize="20" VerticalAlignment="Center" IsChecked="{Binding IsStartMinimized, Mode=TwoWay}"/>
                 <StackPanel.ToolTip>
                     Launch FSTrAk minimized
                 </StackPanel.ToolTip>
             </StackPanel>
             <StackPanel Orientation="Horizontal" Margin="10" ToolTipService.ShowDuration="5000">
-                <Label  Style="{StaticResource FSTrAkLabel}" Width="250">Minimize to Tray on Close</Label>
-                <CheckBox Style="{StaticResource SettingsCheckbox}" FontFamily="{DynamicResource Slopes}" FontSize="20" VerticalAlignment="Center" IsChecked="{Binding IsMinimizeToTray, Mode=TwoWay}"/>
+                <Label  Style="{DynamicResource FSTrAkLabel}" Width="250">Minimize to Tray on Close</Label>
+                <CheckBox Style="{DynamicResource SettingsCheckbox}" FontFamily="{DynamicResource Slopes}" FontSize="20" VerticalAlignment="Center" IsChecked="{Binding IsMinimizeToTray, Mode=TwoWay}"/>
                 <StackPanel.ToolTip>
                     The close button will only close the FSTrAk window, but not terminate the software. You will find it in the system tray
                 </StackPanel.ToolTip>
             </StackPanel>
             <StackPanel Orientation="Horizontal" Margin="10" ToolTipService.ShowDuration="5000">
-                <Label  Style="{StaticResource FSTrAkLabel}" Width="250">Always on top</Label>
-                <CheckBox Style="{StaticResource SettingsCheckbox}" FontFamily="{DynamicResource Slopes}" FontSize="20" VerticalAlignment="Center" IsChecked="{Binding IsAlwaysOnTop, Mode=TwoWay}"/>
+                <Label  Style="{DynamicResource FSTrAkLabel}" Width="250">Always on top</Label>
+                <CheckBox Style="{DynamicResource SettingsCheckbox}" FontFamily="{DynamicResource Slopes}" FontSize="20" VerticalAlignment="Center" IsChecked="{Binding IsAlwaysOnTop, Mode=TwoWay}"/>
                 <StackPanel.ToolTip>
                     FSTrAk will be the topmost window
                 </StackPanel.ToolTip>
@@ -107,9 +131,10 @@
         </StackPanel>
         <StackPanel Margin="10">
             <StackPanel Orientation="Horizontal" Margin="10" ToolTipService.ShowDuration="5000">
-                <Label Style="{StaticResource FSTrAkLabel}" Width="250">VATSIM ID</Label>
+                <Label Style="{DynamicResource FSTrAkLabel}" Width="250">VATSIM ID</Label>
                 <TextBox FontFamily="{DynamicResource Slopes}" 
-                          Foreground="{StaticResource TextColor}" 
+                          Foreground="{DynamicResource TextColor}" 
+                          Background="{DynamicResource ControlBackgroundColorBrush}"
                           FontSize="24" 
                           Width="200"
                           Text="{Binding VatsimId}" Cursor="Arrow" TextAlignment="Center" Padding="0 8 0 0"

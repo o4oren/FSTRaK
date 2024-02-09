@@ -24,7 +24,7 @@
         <StackPanel Orientation="Horizontal" Grid.Column="0" Grid.Row="0" Margin="10">
             <Label Style="{StaticResource FSTrAkLabel}">By Airline</Label>
             <ComboBox FontFamily="{DynamicResource Slopes}" 
-                      Foreground="{StaticResource TextColor}" 
+                      Foreground="{DynamicResource TextColor}" 
                       FontSize="24" 
                       Width="200"
                       ItemsSource="{Binding Airlines}"
@@ -33,7 +33,7 @@
         <StackPanel Orientation="Horizontal" Grid.Column="1" Grid.Row="0" Margin="10">
             <Label Style="{StaticResource FSTrAkLabel}" Margin="20 0 0 0">By Aircraft Type</Label>
             <ComboBox FontFamily="{DynamicResource Slopes}" 
-                      Foreground="{StaticResource TextColor}" 
+                      Foreground="{DynamicResource TextColor}" 
                       FontSize="24" 
                       Width="200"
                       ItemsSource="{Binding AircraftTypes}"
@@ -46,7 +46,7 @@
 
             <StackPanel Margin="10" >
                 <TextBlock 
-                    Foreground="{StaticResource PrimaryDarkBrush}"
+                    Foreground="{DynamicResource TextColor}"
                     FontSize="28"
                     Margin="10"
                     FontFamily="{DynamicResource {StaticResource ThemeFontName}}"
@@ -82,28 +82,28 @@
         </StackPanel>
 
         <Grid Grid.Row="2" Grid.Column="0" Margin="10,10,10,10">
-            <Label Style="{StaticResource FSTrAkLabel}">
+            <Label Style="{DynamicResource FSTrAkLabel}">
                 Top Aircraft
             </Label>
             <WpfPlot x:Name="AircraftDistributionChart" Margin="10,39,10,10" Grid.Column="0"/>
         </Grid>
 
         <Grid Grid.Row="2" Grid.Column="1" Margin="10,10,10,10">
-            <Label Style="{StaticResource FSTrAkLabel}">
+            <Label Style="{DynamicResource FSTrAkLabel}">
                 Top Airlines
             </Label>
             <WpfPlot x:Name="AirlineDistributionChart" Margin="10,39,10,10"  />
         </Grid>
 
         <Grid Grid.Row="3" Grid.Column="0" Margin="10,10,10,10">
-            <Label Style="{StaticResource FSTrAkLabel}">
+            <Label Style="{DynamicResource FSTrAkLabel}">
                 Top Depatrure Airports
             </Label>
             <WpfPlot x:Name="DepDistributionChart" Margin="10,39,10,10" Grid.Column="0"/>
         </Grid>
 
         <Grid Grid.Row="3" Grid.Column="1" Margin="10,10,10,10">
-            <Label Style="{StaticResource FSTrAkLabel}">
+            <Label Style="{DynamicResource FSTrAkLabel}">
                 Top Arrival Airports
             </Label>
             <WpfPlot x:Name="ArrDistributionChart" Margin="10,39,10,10"  />

@@ -91,6 +91,76 @@
         MaxZoomLevel="11"
         UpdateWhileViewportChanging="true"
         x:Shared="false"/>
+    <map:MapTileLayer
+        x:Key="DFS (German VFR charts)"
+        TileSource="https://secais.dfs.de/static-maps/icao500/tiles/{z}/{x}/{y}.png"
+        SourceName="DFSCharts"
+        Description="© [DFS Deutsche Flugsicherung GmbH](https://www.dfs.de/homepage/de)"
+        UpdateWhileViewportChanging="true"
+        x:Shared="false"/>
+
+    <utils:MapTilerMapTileLayer
+        x:Key="MapTiler Dataviz"
+        TileSource="https://api.maptiler.com/maps/dataviz/{z}/{x}/{y}.png?key={ApiKey}"
+        SourceName="MapTilerDataviz"
+        Description="© [MapTiler](https://www.maptiler.com/copyright/) © [OpenStreetMap contributors](http://www.openstreetmap.org/copyright)"
+        UpdateWhileViewportChanging="true"
+        x:Shared="false"/>
+
+    <utils:MapTilerMapTileLayer
+        x:Key="MapTiler Backdrop"
+        TileSource="https://api.maptiler.com/maps/backdrop/{z}/{x}/{y}.png?key={ApiKey}"
+        SourceName="MapTilerBackdrop"
+        Description="© [MapTiler](https://www.maptiler.com/copyright/) © [OpenStreetMap contributors](http://www.openstreetmap.org/copyright)"
+        UpdateWhileViewportChanging="true"
+        x:Shared="false"/>
+    <utils:MapTilerMapTileLayer
+        x:Key="MapTiler Topo"
+        TileSource="https://api.maptiler.com/maps/topo-v2/{z}/{x}/{y}.png?key={ApiKey}"
+        SourceName="MapTilerTopo"
+        Description="© [MapTiler](https://www.maptiler.com/copyright/) © [OpenStreetMap contributors](http://www.openstreetmap.org/copyright)"
+        UpdateWhileViewportChanging="true"
+        x:Shared="false"/>
+    <utils:MapTilerMapTileLayer
+        x:Key="MapTiler Satellite"
+        TileSource="https://api.maptiler.com/maps/satellite/{z}/{x}/{y}.jpg?key={ApiKey}"
+        SourceName="MapTilerSat"
+        Description="© [MapTiler](https://www.maptiler.com/copyright/) © [OpenStreetMap contributors](http://www.openstreetmap.org/copyright)"
+        UpdateWhileViewportChanging="true"
+        x:Shared="false"/>
+    <utils:MapTilerMapTileLayer
+        x:Key="MapTiler Basic"
+        TileSource="https://api.maptiler.com/maps/basic-v2/{z}/{x}/{y}.png?key={ApiKey}"
+        SourceName="MapTilerBasic"
+        Description="© [MapTiler](https://www.maptiler.com/copyright/) © [OpenStreetMap contributors](http://www.openstreetmap.org/copyright)"
+        UpdateWhileViewportChanging="true"
+        x:Shared="false"/>
+
+    <utils:MapTilerMapTileLayer
+        x:Key="MapTiler Dataviz Dark"
+        TileSource="https://api.maptiler.com/maps/dataviz-dark/{z}/{x}/{y}.png?key={ApiKey}"
+        SourceName="MapTilerDatavizDark"
+        Description="© [MapTiler](https://www.maptiler.com/copyright/) © [OpenStreetMap contributors](http://www.openstreetmap.org/copyright)"
+        UpdateWhileViewportChanging="true"
+        x:Shared="false"/>
+
+    <utils:MapTilerMapTileLayer
+        x:Key="MapTiler Backdrop Dark"
+        TileSource="https://api.maptiler.com/maps/backdrop-dark/{z}/{x}/{y}.png?key={ApiKey}"
+        SourceName="MapTilerBackdropDark"
+        Description="© [MapTiler](https://www.maptiler.com/copyright/) © [OpenStreetMap contributors](http://www.openstreetmap.org/copyright)"
+        UpdateWhileViewportChanging="true"
+        x:Shared="false"/>
+
+    <utils:MapTilerMapTileLayer
+        x:Key="MapTiler Basic Dark"
+        TileSource="https://api.maptiler.com/maps/basic-v2-dark/{z}/{x}/{y}.png?key={ApiKey}"
+        SourceName="MapTilerBasicDark"
+        Description="© [MapTiler](https://www.maptiler.com/copyright/) © [OpenStreetMap contributors](http://www.openstreetmap.org/copyright)"
+        UpdateWhileViewportChanging="true"
+        x:Shared="false"/>
+
+
     <!-- map:MapTileLayer
         x:Key="OpenAIP"
         TileSource="https://api.tiles.openaip.net/api/data/openaip/{z}/{x}/{y}.png?apiKey=[]"

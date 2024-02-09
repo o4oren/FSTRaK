@@ -39,11 +39,12 @@
             </DataTemplate>
         </ResourceDictionary>
     </Window.Resources>
-    <Border Background="{StaticResource MainWindowBackground}"
+    <Border Background="{DynamicResource MainWindowBackground}"
             CornerRadius="20">
         <Grid>
             <Grid.ColumnDefinitions>
-                <ColumnDefinition Width="200" />
+                <ColumnDefinition Width="36.694" />
+                <ColumnDefinition Width="163.306"/>
                 <ColumnDefinition/>
             </Grid.ColumnDefinitions>
 
@@ -52,34 +53,36 @@
                 <RowDefinition/>
             </Grid.RowDefinitions>
 
-            <StackPanel>
+            <StackPanel Grid.ColumnSpan="2">
 
             </StackPanel>
-            <Border Grid.Column="0" CornerRadius="20 0 0 0" Background="#D7E0EA">
+            <Border Grid.Column="0" CornerRadius="20 0 0 0" Background="{DynamicResource ApplicationHeaderBackgroundColorBrush}" Grid.ColumnSpan="2">
                 <StackPanel Margin="0 5 0 0">
-                    <Canvas Width="128" Height="47" >
-                        <StaticResource ResourceKey="logo"/>
+                    <Canvas Width="128" Height="47" RenderTransform="0.04510557,0,0,0.04510557,0.5316752,0">
+                        <Canvas  RenderTransform="0.1,0,0,-0.1,0,1042">
+                            <Path Fill="{DynamicResource LogoFillBursh}" Data="{StaticResource logo}" />
+                        </Canvas>
                     </Canvas>
-                    <Label FontSize="30" FontWeight="Bold" Foreground="{StaticResource TextColor}" FontFamily="{DynamicResource Slopes}" HorizontalAlignment="Center" VerticalAlignment="Center">FSTrAk</Label>
+                    <Label FontSize="30" FontWeight="Bold" Foreground="{DynamicResource TextColor}" FontFamily="{DynamicResource Slopes}" HorizontalAlignment="Center" VerticalAlignment="Center">FSTrAk</Label>
 
                 </StackPanel>
             </Border>
 
-            <Border Grid.Column="1" CornerRadius="0 20 0 0" Background="{StaticResource TopBarBackground}">
+            <Border Grid.Column="2" CornerRadius="0 20 0 0" Background="{DynamicResource TopBarBackground}">
                 <Grid Name="MenuBar" MouseLeftButtonDown="DragWindow">
-                    <Rectangle Fill="{StaticResource TopBarBackground}" PreviewMouseLeftButtonDown="DragWindow" Cursor="SizeAll" Margin="0,0,35,78"/>
+                    <Rectangle Fill="{DynamicResource TopBarBackground}" PreviewMouseLeftButtonDown="DragWindow" Cursor="SizeAll" Margin="0,0,35,78"/>
                     <StackPanel Orientation="Horizontal" Margin="0,0,50,0" HorizontalAlignment="Right">
-                        <RadioButton Style="{StaticResource MenuButtonTheme}"  IsChecked="True" Command="{Binding MapViewCommand}" Content="Live View" HorizontalAlignment="Right"/>
-                        <RadioButton Style="{StaticResource MenuButtonTheme}"  Command="{Binding LogBookCommand}" Content="Logbook" HorizontalAlignment="Right"/>
-                        <RadioButton Style="{StaticResource MenuButtonTheme}"  Command="{Binding StatisticsCommand}" Content="Statistics" HorizontalAlignment="Right"/>
-                        <RadioButton Style="{StaticResource MenuButtonTheme}"  Command="{Binding SettingsCommand}" Content="Settings" HorizontalAlignment="Right"/>
+                        <RadioButton Style="{DynamicResource MenuButtonTheme}"  IsChecked="True" Command="{Binding MapViewCommand}" Content="Live View" HorizontalAlignment="Right"/>
+                        <RadioButton Style="{DynamicResource MenuButtonTheme}"  Command="{Binding LogBookCommand}" Content="Logbook" HorizontalAlignment="Right"/>
+                        <RadioButton Style="{DynamicResource MenuButtonTheme}"  Command="{Binding StatisticsCommand}" Content="Statistics" HorizontalAlignment="Right"/>
+                        <RadioButton Style="{DynamicResource MenuButtonTheme}"  Command="{Binding SettingsCommand}" Content="Settings" HorizontalAlignment="Right"/>
                     </StackPanel>
                     <Button Margin="0, 15, 15, 0" VerticalAlignment="Top" Height="15" Width="15" Style="{StaticResource CloseButtonTheme}"  HorizontalAlignment="Right" Click="ButtonClick_CloseApplication" ClickMode="Release">X</Button>
                     <Button Margin="0,15,42,0" VerticalAlignment="Top" Height="15" Width="15" Style="{StaticResource MinButtonTheme}"  HorizontalAlignment="Right" Click="ButtonClick_MinimizeApplication" ClickMode="Release">X</Button>
 
                 </Grid>
             </Border>
-            <ContentControl Name="cont" Grid.Row="1" Grid.Column="0" Grid.ColumnSpan="2" Content="{Binding ActiveView}"></ContentControl>
+            <ContentControl Name="cont" Grid.Row="1" Grid.Column="0" Grid.ColumnSpan="3" Content="{Binding ActiveView}"></ContentControl>
         </Grid>
     </Border>
 </Window>

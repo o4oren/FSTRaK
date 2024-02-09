@@ -33,6 +33,11 @@ namespace FSTRaK.ViewModels
                     else
                         IsShowBingApiKeyField = false;
 
+                    if (mapProvider is MapTilerMapTileLayer)
+                        IsShowMapTilerApiKeyField = true;
+                    else
+                        IsShowMapTilerApiKeyField = false;
+
                 }
                 OnPropertyChanged();
             }
@@ -47,6 +52,19 @@ namespace FSTRaK.ViewModels
                 _bingApiKey = value;
                 Properties.Settings.Default.BingApiKey = _bingApiKey;
                 BingMapsTileLayer.ApiKey = _bingApiKey;
+                OnPropertyChanged();
+            }
+        }
+
+        private string _mapTilerApiKey = "";
+        public string MapTilerApiKey
+        {
+            get => _mapTilerApiKey;
+            set
+            {
+                _mapTilerApiKey = value;
+                Properties.Settings.Default.MapTilerApiKey = _mapTilerApiKey;
+                MapTilerMapTileLayer.ApiKey = _mapTilerApiKey;
                 OnPropertyChanged();
             }
         }
@@ -70,6 +88,17 @@ namespace FSTRaK.ViewModels
             private set
             {
                 _isShowBingApiKeyField = value;
+                OnPropertyChanged();
+            }
+        }
+
+        private bool _isShowMapTilerApiKeyField = false;
+        public bool IsShowMapTilerApiKeyField
+        {
+            get => _isShowMapTilerApiKeyField;
+            private set
+            {
+                _isShowMapTilerApiKeyField = value;
                 OnPropertyChanged();
             }
         }
@@ -176,8 +205,26 @@ namespace FSTRaK.ViewModels
                 if (value != null && value != _fontName)
                 {
                     _fontName = value;
-                    FontUtil.SetFont(_fontName);
+                    ResourceUtil.SetFont(_fontName);
                     Properties.Settings.Default.FontName = _fontName;
+                    OnPropertyChanged();
+                }
+            }
+        }
+
+        public ObservableCollection<string> Themes { get; set; } = new ObservableCollection<string>(new[] { "Normal", "Dark" });
+        private string _theme = "Slopes";
+        public string Theme
+        {
+            get => _theme;
+            set
+            {
+                if (value != null && value != _theme)
+                {
+                    _theme = value;
+                    ResourceUtil.SetTheme(_theme);
+                    ResourceUtil.SetFont(FontName);
+                    Properties.Settings.Default.Theme = _theme;
                     OnPropertyChanged();
                 }
             }
@@ -218,6 +265,7 @@ namespace FSTRaK.ViewModels
         {
             SelectedMapProvider = Properties.Settings.Default.MapTileProvider;
             BingApiKey = Properties.Settings.Default.BingApiKey;
+            MapTilerApiKey = Properties.Settings.Default.MapTilerApiKey;
             IsAlwaysOnTop = Properties.Settings.Default.IsAlwaysOnTop;
             IsSaveOnlyCompleteFlights = Properties.Settings.Default.IsSaveOnlyCompleteFlights;
             Units = (Units)Properties.Settings.Default.Units;
@@ -225,6 +273,8 @@ namespace FSTRaK.ViewModels
             IsMinimizeToTray = Properties.Settings.Default.IsMinimizeToTray;
             IsStartAutomatically = Properties.Settings.Default.IsStartAutomatically;
             FontName = Properties.Settings.Default.FontName;
+            Theme = Properties.Settings.Default.Theme;
+
             VatsimId = Properties.Settings.Default.VatsimId;
         }
 

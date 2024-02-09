@@ -15,7 +15,6 @@
             <ResourceDictionary.MergedDictionaries>
                 <ResourceDictionary Source="../Resources/AircraftIconsDictionary.xaml"/>
                 <ResourceDictionary Source="../Resources/MapProvidersDictionary.xaml"/>
-                <ResourceDictionary Source="../Resources/Theme.xaml"/>
             </ResourceDictionary.MergedDictionaries>
         </ResourceDictionary>
     </UserControl.Resources>
@@ -47,8 +46,8 @@
                                 <map:MapItemsControl.ItemTemplate>
                                     <DataTemplate>
                                         <map:MapPolygon 
-                                            Stroke="{StaticResource VatsimUirFillBrush}"
-                                            Fill="{StaticResource VatsimUirFillBrush}"
+                                            Stroke="{DynamicResource VatsimUirFillBrush}"
+                                            Fill="{DynamicResource VatsimUirFillBrush}"
                                             Opacity="0.3"
                                             Locations="{Binding}"/>
                                     </DataTemplate>
@@ -68,8 +67,8 @@
                                 <ItemsControl.ItemTemplate>
                                     <DataTemplate>
                                         <map:MapPolygon 
-                                            Stroke="{StaticResource VatsimFirStrokeBrush}"
-                                            Fill="{StaticResource VatsimFirFillBrush}"
+                                            Stroke="{DynamicResource VatsimFirStrokeBrush}"
+                                            Fill="{DynamicResource VatsimFirFillBrush}"
                                             Opacity="0.3"
                                             Locations="{Binding}"/>
                                     </DataTemplate>
@@ -86,8 +85,8 @@
                 <map:MapItemsControl.ItemTemplate>
                     <DataTemplate>
                             <map:MapPolygon 
-                                Stroke="{StaticResource VatsimAppCircleStrokeBrush}"
-                                Fill="{StaticResource VatsimAppCircleFillBrush}"
+                                Stroke="{DynamicResource VatsimAppCircleStrokeBrush}"
+                                Fill="{DynamicResource VatsimAppCircleFillBrush}"
                                 Opacity="0.3"
                                 Visibility="{Binding IsShowCircle, Converter={StaticResource BoolToVis}}"
                                 Locations="{Binding CircleLocations}"/>
@@ -129,7 +128,7 @@
                     <DataTemplate>
                         <map:MapContentControl>
                             <Label Content="{Binding  Label}" 
-                                   Foreground="{StaticResource VatsimFirTextBrush}"
+                                   Foreground="{DynamicResource VatsimFirTextBrush}"
                                    FontWeight="Bold"
                                    HorizontalAlignment="Center"
                                    VerticalAlignment="Center"
@@ -155,7 +154,7 @@
                     <DataTemplate>
                         <map:MapContentControl>
                             <Label Content="{Binding Label}" 
-                                   Foreground="{StaticResource VatsimUirTextBrush}"
+                                   Foreground="{DynamicResource VatsimUirTextBrush}"
                                    FontWeight="Bold"
                                    HorizontalAlignment="Center"
                                    VerticalAlignment="Center"
@@ -180,7 +179,7 @@
                 <map:MapItemsControl.ItemTemplate>
                     <DataTemplate>
                         <Path 
-                            Fill="{StaticResource PrimaryDarkBrush}" 
+                            Fill="{DynamicResource VatsimAicraftColorBrush}" 
                             Data="{Binding Path=IconResource, Converter={StaticResource ResourceNameToGeometryConverter}}"
                         >
                             <Path.RenderTransform>
@@ -196,25 +195,6 @@
                     </DataTemplate>
                 </map:MapItemsControl.ItemTemplate>
             </map:MapItemsControl>
-
-            <!-- map:MapItemsControl ItemsSource="{Binding VatsimControlledAirports}" Visibility="{Binding IsShowVatsimAirports, Converter={StaticResource BoolToVis}}">
-                <map:MapItemsControl.ItemContainerStyle>
-                    <Style TargetType="map:MapItem">
-                        <Setter Property="Location" Value="{Binding Location}"/>
-                        <Setter Property="VerticalAlignment" Value="Center"/>
-                        <Setter Property="HorizontalAlignment" Value="Center"/>
-                    </Style>
-                </map:MapItemsControl.ItemContainerStyle>
-                <map:MapItemsControl.ItemTemplate>
-                    <DataTemplate>
-                        <Image Source="{Binding Path=IconResourse, Converter={StaticResource ResourceNameToImageConverter}}" Width="32" Height="32">
-                            <Image.ToolTip>
-                                <ToolTip Content="{Binding TooltipText}" />
-                            </Image.ToolTip>
-                        </Image>
-                    </DataTemplate>
-                </map:MapItemsControl.ItemTemplate>
-            </-->
 
             <!-- map:MapGraticule Opacity="0.5"/ -->
 
@@ -245,7 +225,7 @@
         <StackPanel Margin="10" HorizontalAlignment="Right">
             <ToggleButton Style="{StaticResource MapToggleButton}" 
                           IsChecked="{Binding IsCenterOnAirplane}" 
-                          Content="{StaticResource CenterMap}">
+                          Content="{DynamicResource CenterMap}">
                 <b:Interaction.Triggers>
                     <b:EventTrigger EventName="Checked">
                         <b:InvokeCommandAction Command="{Binding CenterOnAirplaneCommand}"/>

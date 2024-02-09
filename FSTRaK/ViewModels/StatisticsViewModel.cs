@@ -371,16 +371,19 @@ namespace FSTRaK.ViewModels
                 {
                     if (i < 5)
                     {
-                        airportDistribution.Add(f.airport, f.count);
-                        i++;
+                        if (f.airport != null)
+                        {
+                            airportDistribution.Add(f.airport, f.count);
+                        }
                     }
                     else
                     {
                         sum += f.count;
                     }
+                    i++;
                 }
 
-                if (sum > 0)
+                if (i >= 5 && sum > 0)
                 {
                     airportDistribution.Add("Other", (double)sum);
                 }
@@ -397,16 +400,19 @@ namespace FSTRaK.ViewModels
                 {
                     if (i < 5)
                     {
-                        airportDistribution.Add(f.airport, f.count);
-                        i++;
+                        if (f.airport != null)
+                        {
+                            airportDistribution.Add(f.airport, f.count);
+                        }
                     }
                     else
                     {
                         sum += f.count;
                     }
+                    i++;
                 }
 
-                if (sum > 0)
+                if (i >= 5 && sum > 0)
                 {
                     airportDistribution.Add("Other", (double)sum);
                 }
