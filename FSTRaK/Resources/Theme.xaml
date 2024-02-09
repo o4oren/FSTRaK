@@ -75,24 +75,27 @@
     <SolidColorBrush x:Key="PrimaryDarkBrush" Color="{DynamicResource PrimaryDark}"/>
     <SolidColorBrush x:Key="LogoFillBursh" Color="{DynamicResource PrimaryDark}"/>
 
-    
+    <SolidColorBrush x:Key="ControlBackgroundColorBrush" Color="{DynamicResource ControlLightColor}"/>
+
     <SolidColorBrush x:Key="MainWindowBackground" Color="{DynamicResource PrimaryBright}"/>
     <SolidColorBrush x:Key="TopBarBackground" Color="{DynamicResource PrimaryMid}"/>
 
     <SolidColorBrush x:Key="TextColor" Color="{DynamicResource PrimaryDark}"/>
     <SolidColorBrush x:Key="UnselectedTextColor" Color="{DynamicResource PrimaryMidDark}"/>
     <SolidColorBrush x:Key="BrightTextColor" Color="{DynamicResource PrimaryBright}"/>
+    <SolidColorBrush x:Key="SuperBrightTextColor" Color="{DynamicResource PrimaryBright}"/>
+
     <SolidColorBrush x:Key="MidBorderBrush" Color="{DynamicResource PrimaryMid}"/>
 
     <SolidColorBrush x:Key="BorderLightColorBrush" Color="{DynamicResource BorderLightColor}"/>
     <SolidColorBrush x:Key="BorderMidColorBrush" Color="{DynamicResource BorderMediumColor}"/>
     <SolidColorBrush x:Key="ListViewItemBackgroundBrush" Color="white"/>
     <SolidColorBrush x:Key="ListViewBackgroundBrush" Color="white"/>
+    <SolidColorBrush x:Key="OverlayBackgroundBrush" Color="black"/>
 
+    
 
-
-
-<Color x:Key="CloseButtonColor">Red</Color>
+    <Color x:Key="CloseButtonColor">Red</Color>
     <Color x:Key="CloseButtonColorHover">#cc1b1b</Color>
     <Color x:Key="CloseButtonColorPressed">DarkRed</Color>
     <Color x:Key="MinButtonColor">#fcba03</Color>
@@ -106,7 +109,7 @@
     <SolidColorBrush x:Key="MinButtonColorHoverBrush" Color="{DynamicResource MinButtonColorHover}"/>
     <SolidColorBrush x:Key="MinButtonColorPressedBrush" Color="{DynamicResource MinButtonColorPressed}"/>
 
-    <SolidColorBrush x:Key="VatsimAicraftColorBrush" Color="{StaticResource PrimaryDark}"/>
+    <SolidColorBrush x:Key="VatsimAicraftColorBrush" Color="{DynamicResource PrimaryDark}"/>
     <SolidColorBrush x:Key="VatsimFriendAicraftColorBrush" Color="#355E3B"/>
     <SolidColorBrush x:Key="VatsimAppCircleFillBrush" Color="#F78CA2" />
     <SolidColorBrush x:Key="VatsimAppCircleStrokeBrush" Color="#7D0A0A"/>
@@ -422,7 +425,7 @@
             Background="{StaticResource BrightTextColor}"
             BorderThickness="1">
                 <Border.BorderBrush>
-                    <SolidColorBrush Color="{StaticResource BorderMediumColor}"/>
+                    <SolidColorBrush Color="{DynamicResource BorderMediumColor}"/>
                 </Border.BorderBrush>
             </Border>
             <Border Grid.Column="0"
@@ -433,7 +436,7 @@
                     <SolidColorBrush Color="{DynamicResource ControlLightColor}"/>
                 </Border.Background>
                 <Border.BorderBrush>
-                    <SolidColorBrush Color="{StaticResource BorderMediumColor}"/>
+                    <SolidColorBrush Color="{DynamicResource BorderMediumColor}"/>
                 </Border.BorderBrush>
             </Border>
             <Path x:Name="Arrow"

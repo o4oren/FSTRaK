@@ -63,7 +63,7 @@
                             <Path Fill="{DynamicResource LogoFillBursh}" Data="{StaticResource logo}" />
                         </Canvas>
                     </Canvas>
-                    <Label FontSize="30" FontWeight="Bold" Foreground="{StaticResource TextColor}" FontFamily="{DynamicResource Slopes}" HorizontalAlignment="Center" VerticalAlignment="Center">FSTrAk</Label>
+                    <Label FontSize="30" FontWeight="Bold" Foreground="{DynamicResource TextColor}" FontFamily="{DynamicResource Slopes}" HorizontalAlignment="Center" VerticalAlignment="Center">FSTrAk</Label>
 
                 </StackPanel>
             </Border>
@@ -72,10 +72,10 @@
                 <Grid Name="MenuBar" MouseLeftButtonDown="DragWindow">
                     <Rectangle Fill="{DynamicResource TopBarBackground}" PreviewMouseLeftButtonDown="DragWindow" Cursor="SizeAll" Margin="0,0,35,78"/>
                     <StackPanel Orientation="Horizontal" Margin="0,0,50,0" HorizontalAlignment="Right">
-                        <RadioButton Style="{StaticResource MenuButtonTheme}"  IsChecked="True" Command="{Binding MapViewCommand}" Content="Live View" HorizontalAlignment="Right"/>
-                        <RadioButton Style="{StaticResource MenuButtonTheme}"  Command="{Binding LogBookCommand}" Content="Logbook" HorizontalAlignment="Right"/>
-                        <RadioButton Style="{StaticResource MenuButtonTheme}"  Command="{Binding StatisticsCommand}" Content="Statistics" HorizontalAlignment="Right"/>
-                        <RadioButton Style="{StaticResource MenuButtonTheme}"  Command="{Binding SettingsCommand}" Content="Settings" HorizontalAlignment="Right"/>
+                        <RadioButton Style="{DynamicResource MenuButtonTheme}"  IsChecked="True" Command="{Binding MapViewCommand}" Content="Live View" HorizontalAlignment="Right"/>
+                        <RadioButton Style="{DynamicResource MenuButtonTheme}"  Command="{Binding LogBookCommand}" Content="Logbook" HorizontalAlignment="Right"/>
+                        <RadioButton Style="{DynamicResource MenuButtonTheme}"  Command="{Binding StatisticsCommand}" Content="Statistics" HorizontalAlignment="Right"/>
+                        <RadioButton Style="{DynamicResource MenuButtonTheme}"  Command="{Binding SettingsCommand}" Content="Settings" HorizontalAlignment="Right"/>
                     </StackPanel>
                     <Button Margin="0, 15, 15, 0" VerticalAlignment="Top" Height="15" Width="15" Style="{StaticResource CloseButtonTheme}"  HorizontalAlignment="Right" Click="ButtonClick_CloseApplication" ClickMode="Release">X</Button>
                     <Button Margin="0,15,42,0" VerticalAlignment="Top" Height="15" Width="15" Style="{StaticResource MinButtonTheme}"  HorizontalAlignment="Right" Click="ButtonClick_MinimizeApplication" ClickMode="Release">X</Button>

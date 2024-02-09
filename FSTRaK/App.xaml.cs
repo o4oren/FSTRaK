@@ -72,27 +72,27 @@ namespace FSTRaK
             }
         });
 
-//        Task.Run(() =>
-//        {
-//            if (FSTRaK.Properties.Settings.Default.IsStartAutomatically)
-//            {
-//                // Start up with windows login
-//                RegistryKey rkStartUp = Registry.CurrentUser;
-//                var applicationLocation = System.Reflection.Assembly.GetExecutingAssembly().Location;
-//
-//                var startupPathSubKey = rkStartUp.OpenSubKey(@"Software\Microsoft\Windows\CurrentVersion\Run", true);
-//
-//
-//                if (startupPathSubKey?.GetValue("FSTrAk") == null)
-//                {
-//                    startupPathSubKey?.SetValue("FSTrAk", applicationLocation, RegistryValueKind.ExpandString);
-//                }
-//            }
-//        });
+            //        Task.Run(() =>
+            //        {
+            //            if (FSTRaK.Properties.Settings.Default.IsStartAutomatically)
+            //            {
+            //                // Start up with windows login
+            //                RegistryKey rkStartUp = Registry.CurrentUser;
+            //                var applicationLocation = System.Reflection.Assembly.GetExecutingAssembly().Location;
+            //
+            //                var startupPathSubKey = rkStartUp.OpenSubKey(@"Software\Microsoft\Windows\CurrentVersion\Run", true);
+            //
+            //
+            //                if (startupPathSubKey?.GetValue("FSTrAk") == null)
+            //                {
+            //                    startupPathSubKey?.SetValue("FSTrAk", applicationLocation, RegistryValueKind.ExpandString);
+            //                }
+            //            }
+            //        });
 
-        // Set font according to settings
-        ResourceUtil.SetFont(FSTRaK.Properties.Settings.Default.FontName);
-        ResourceUtil.SetTheme(FSTRaK.Properties.Settings.Default.Theme);
+            // Set font according to settings
+            ResourceUtil.SetTheme(FSTRaK.Properties.Settings.Default.Theme);
+            ResourceUtil.SetFont(FSTRaK.Properties.Settings.Default.FontName);
 
             var _ = AirportResolver.Instance;
 

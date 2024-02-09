@@ -18,14 +18,14 @@
         </Grid.RowDefinitions>
             
         <Border 
-        Background="Black" 
+        Background="{DynamicResource OverlayBackgroundBrush}" 
         Opacity="0.7"
         CornerRadius="5"
         Grid.Row="0" Grid.RowSpan="2"
         />
         <Label Grid.Row="0"
                x:Name="header"
-                       Foreground="{StaticResource BrightTextColor}"
+                       Foreground="{DynamicResource SuperBrightTextColor}"
                        FontSize="{DynamicResource HeaderFontSize}"
                        Margin="5"
                        FontFamily="{DynamicResource {StaticResource ThemeFontName}}"
@@ -36,7 +36,7 @@
             <TextBlock 
                 x:Name="text"
                 Grid.Row="1"                                        
-                       Foreground="{StaticResource BrightTextColor}"
+                       Foreground="{DynamicResource SuperBrightTextColor}"
                        FontSize="{DynamicResource TextFontSize}"
                        Margin="5"
                        FontFamily="{DynamicResource {StaticResource ThemeFontName}}"

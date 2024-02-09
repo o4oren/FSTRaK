@@ -46,8 +46,8 @@
                                 <map:MapItemsControl.ItemTemplate>
                                     <DataTemplate>
                                         <map:MapPolygon 
-                                            Stroke="{StaticResource VatsimUirFillBrush}"
-                                            Fill="{StaticResource VatsimUirFillBrush}"
+                                            Stroke="{DynamicResource VatsimUirFillBrush}"
+                                            Fill="{DynamicResource VatsimUirFillBrush}"
                                             Opacity="0.3"
                                             Locations="{Binding}"/>
                                     </DataTemplate>
@@ -67,8 +67,8 @@
                                 <ItemsControl.ItemTemplate>
                                     <DataTemplate>
                                         <map:MapPolygon 
-                                            Stroke="{StaticResource VatsimFirStrokeBrush}"
-                                            Fill="{StaticResource VatsimFirFillBrush}"
+                                            Stroke="{DynamicResource VatsimFirStrokeBrush}"
+                                            Fill="{DynamicResource VatsimFirFillBrush}"
                                             Opacity="0.3"
                                             Locations="{Binding}"/>
                                     </DataTemplate>
@@ -85,8 +85,8 @@
                 <map:MapItemsControl.ItemTemplate>
                     <DataTemplate>
                             <map:MapPolygon 
-                                Stroke="{StaticResource VatsimAppCircleStrokeBrush}"
-                                Fill="{StaticResource VatsimAppCircleFillBrush}"
+                                Stroke="{DynamicResource VatsimAppCircleStrokeBrush}"
+                                Fill="{DynamicResource VatsimAppCircleFillBrush}"
                                 Opacity="0.3"
                                 Visibility="{Binding IsShowCircle, Converter={StaticResource BoolToVis}}"
                                 Locations="{Binding CircleLocations}"/>
@@ -128,7 +128,7 @@
                     <DataTemplate>
                         <map:MapContentControl>
                             <Label Content="{Binding  Label}" 
-                                   Foreground="{StaticResource VatsimFirTextBrush}"
+                                   Foreground="{DynamicResource VatsimFirTextBrush}"
                                    FontWeight="Bold"
                                    HorizontalAlignment="Center"
                                    VerticalAlignment="Center"
@@ -154,7 +154,7 @@
                     <DataTemplate>
                         <map:MapContentControl>
                             <Label Content="{Binding Label}" 
-                                   Foreground="{StaticResource VatsimUirTextBrush}"
+                                   Foreground="{DynamicResource VatsimUirTextBrush}"
                                    FontWeight="Bold"
                                    HorizontalAlignment="Center"
                                    VerticalAlignment="Center"
@@ -179,7 +179,7 @@
                 <map:MapItemsControl.ItemTemplate>
                     <DataTemplate>
                         <Path 
-                            Fill="{StaticResource PrimaryDarkBrush}" 
+                            Fill="{DynamicResource VatsimAicraftColorBrush}" 
                             Data="{Binding Path=IconResource, Converter={StaticResource ResourceNameToGeometryConverter}}"
                         >
                             <Path.RenderTransform>

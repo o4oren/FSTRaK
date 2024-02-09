@@ -223,6 +223,7 @@ namespace FSTRaK.ViewModels
                 {
                     _theme = value;
                     ResourceUtil.SetTheme(_theme);
+                    ResourceUtil.SetFont(FontName);
                     Properties.Settings.Default.Theme = _theme;
                     OnPropertyChanged();
                 }

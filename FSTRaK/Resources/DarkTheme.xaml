@@ -19,7 +19,10 @@
     <Color x:Key="PrimaryBright">#152238</Color>
     <Color x:Key="PrimaryMid">#203354</Color>
     <Color x:Key="PrimaryMidDark">#1c2e4a</Color>
-    <Color x:Key="PrimaryDark">#192841</Color> 
+    <Color x:Key="PrimaryDark">#192841</Color>
+    <Color x:Key="BrightInDarkMode">#23395d</Color>
+
+    
 
     <SolidColorBrush x:Key="MenuItemSelectionFill" Color="{StaticResource PrimaryBright}"/>
     <SolidColorBrush x:Key="ApplicationHeaderBackgroundColorBrush" Color="{DynamicResource  PrimaryBright}"/>
@@ -35,7 +38,7 @@
     <Color x:Key="SelectedBackgroundColor">#FFC5CBF9</Color>
     <Color x:Key="SelectedUnfocusedColor">#FFDDDDDD</Color>
 
-    <Color x:Key="ControlLightColor">White</Color>
+    <Color x:Key="ControlLightColor">#23395d</Color>
     <Color x:Key="ControlMediumColor">#203354</Color>
     <Color x:Key="ControlDarkColor">#FF211AA9</Color>
 
@@ -70,23 +73,29 @@
     <SolidColorBrush x:Key="PrimaryMedumBrush" Color="{DynamicResource PrimaryMid}"/>
     <SolidColorBrush x:Key="PrimaryDarkBrush" Color="{DynamicResource PrimaryDark}"/>
 
+    <SolidColorBrush x:Key="ControlBackgroundColorBrush" Color="{DynamicResource ControlLightColor}"/>
 
     <SolidColorBrush x:Key="MainWindowBackground" Color="{DynamicResource PrimaryMidDark}"/>
     <SolidColorBrush x:Key="TopBarBackground" Color="{DynamicResource PrimaryBright}"/>
 
     <SolidColorBrush x:Key="TextColor" Color="{DynamicResource HeaderTopColor}"/>
     <SolidColorBrush x:Key="UnselectedTextColor" Color="{DynamicResource ControlMediumColor}"/>
-    <SolidColorBrush x:Key="BrightTextColor" Color="{DynamicResource PrimaryBright}"/>
+    <SolidColorBrush x:Key="BrightTextColor" Color="{DynamicResource BrightInDarkMode}"/>
+    <SolidColorBrush x:Key="SuperBrightTextColor" Color="{DynamicResource BorderLightColor}"/>
+
     <SolidColorBrush x:Key="MidBorderBrush" Color="{DynamicResource PrimaryMid}"/>
 
     <SolidColorBrush x:Key="LogoFillBursh" Color="{DynamicResource HeaderTopColor}"/>
 
     <SolidColorBrush x:Key="ListViewItemBackgroundBrush" Color="{DynamicResource PrimaryDark}"/>
     <SolidColorBrush x:Key="ListViewBackgroundBrush" Color="{DynamicResource PrimaryDark}"/>
+    <SolidColorBrush x:Key="SelectedItemBackgroundBrush" Color="{DynamicResource BrightInDarkMode}"/>
+    <SolidColorBrush x:Key="TextBoxBackgroundBrush" Color="{DynamicResource BrightInDarkMode}"/>
 
     <SolidColorBrush x:Key="BorderLightColorBrush" Color="{DynamicResource BorderLightColor}"/>
     <SolidColorBrush x:Key="BorderMidColorBrush" Color="{DynamicResource BorderMediumColor}"/>
-    
+    <SolidColorBrush x:Key="OverlayBackgroundBrush" Color="{DynamicResource HeaderTopColor}"/>
+
 
     <Color x:Key="CloseButtonColor">Red</Color>
     <Color x:Key="CloseButtonColorHover">#cc1b1b</Color>
@@ -102,7 +111,7 @@
     <SolidColorBrush x:Key="MinButtonColorHoverBrush" Color="{DynamicResource MinButtonColorHover}"/>
     <SolidColorBrush x:Key="MinButtonColorPressedBrush" Color="{DynamicResource MinButtonColorPressed}"/>
 
-    <SolidColorBrush x:Key="VatsimAicraftColorBrush" Color="{StaticResource PrimaryDark}"/>
+    <SolidColorBrush x:Key="VatsimAicraftColorBrush" Color="{DynamicResource BorderMediumColor}"/>
     <SolidColorBrush x:Key="VatsimFriendAicraftColorBrush" Color="#355E3B"/>
     <SolidColorBrush x:Key="VatsimAppCircleFillBrush" Color="#F78CA2" />
     <SolidColorBrush x:Key="VatsimAppCircleStrokeBrush" Color="#7D0A0A"/>
@@ -278,7 +287,7 @@
                                 <SolidColorBrush Color="{DynamicResource BorderMediumColor}" />
                             </Border.BorderBrush>
                             <Border.Background>
-                                <SolidColorBrush Color="{DynamicResource ControlLightColor}" />
+                            <SolidColorBrush Color="{DynamicResource BrightInDarkMode}" />
                             </Border.Background>
                             <ContentControl x:Name="CheckContainer" Margin="-5 -5 0 0"/>
                         </Border>
@@ -415,7 +424,7 @@
             <Border x:Name="Border"
             Grid.ColumnSpan="2"
             CornerRadius="1"
-            Background="{StaticResource BrightTextColor}"
+            Background="{DynamicResource BrightTextColor}"
             BorderThickness="1">
                 <Border.BorderBrush>
                     <SolidColorBrush Color="{StaticResource BorderMediumColor}"/>
@@ -438,7 +447,7 @@
           VerticalAlignment="Center"
           Data="M 0 0 L 4 4 L 8 0 " >
                 <Path.Stroke>
-                <SolidColorBrush Color="{DynamicResource PrimaryMidDark}"/>
+                <SolidColorBrush Color="{DynamicResource HeaderTopColor}"/>
                 </Path.Stroke>
             </Path>
         </Grid>
@@ -559,7 +568,7 @@
                                         <SolidColorBrush Color="{DynamicResource BorderMediumColor}" />
                                     </Border.BorderBrush>
                                     <Border.Background>
-                                        <SolidColorBrush Color="{DynamicResource ControlLightColor}" />
+                                        <SolidColorBrush Color="{DynamicResource PrimaryBright}" />
                                     </Border.Background>
                                 </Border>
                                 <ScrollViewer Margin="4,6,4,6"
@@ -624,7 +633,7 @@
                                                 Storyboard.TargetProperty="(Panel.Background).
                     (SolidColorBrush.Color)">
                                             <EasingColorKeyFrame KeyTime="0"
-                                         Value="{StaticResource PrimaryMid}" />
+                                         Value="{DynamicResource PrimaryMid}" />
                                         </ColorAnimationUsingKeyFrames>
                                     </Storyboard>
                                 </VisualState>
@@ -644,10 +653,10 @@
                     </Border>
                     <ControlTemplate.Triggers>
                         <Trigger Property="IsMouseOver" Value="true">
-                            <Setter TargetName="Border" Property="Background" Value="{StaticResource BrightTextColor}" />
+                            <Setter TargetName="Border" Property="Background" Value="{DynamicResource PrimaryMedumBrush}" />
                         </Trigger>
                         <Trigger Property="IsSelected" Value="true">
-                            <Setter TargetName="Border" Property="Background" Value="{StaticResource TopBarBackground}" />
+                            <Setter TargetName="Border" Property="Background" Value="{DynamicResource SelectedItemBackgroundBrush}" />
                         </Trigger>
                     </ControlTemplate.Triggers>
                 </ControlTemplate>
@@ -714,7 +723,7 @@
                 SnapsToDevicePixels="true"
                             BorderThickness="1"
                             CornerRadius="15"
-                            Background="{DynamicResource PrimaryDarkBrush}"
+                            Background="{DynamicResource TextBoxBackgroundBrush}"
                             >
                         <Border.BorderBrush>
                             <SolidColorBrush Color="{DynamicResource BorderMediumColor}" />
@@ -726,7 +735,7 @@
                                  BorderBrush="Transparent" 
                                  FontFamily="{DynamicResource Slopes}" FontSize="22" Foreground="{DynamicResource TextColor}"
                                  Text="{Binding RelativeSource={RelativeSource TemplatedParent}, Path=Text, UpdateSourceTrigger=PropertyChanged}"
-                                 Background="{DynamicResource PrimaryDarkBrush}"
+                                 Background="{DynamicResource TextBoxBackgroundBrush}"
                                  />
                     </Border>
                     <ControlTemplate.Triggers>
@@ -755,7 +764,7 @@
             <Setter.Value>
                 <ControlTemplate TargetType="{x:Type ContextMenu}">
                     <Border x:Name="Border"
-                            Background="White"
+                            Background="{DynamicResource TextBoxBackgroundBrush}"
                             BorderThickness="1"
                             Padding="10"
                             CornerRadius="5"
@@ -769,7 +778,7 @@
         </Setter>
     </Style>
     <Style TargetType="{x:Type MenuItem}">
-        <Setter Property="Background" Value="White" />
+        <Setter Property="Background" Value="{DynamicResource TextBoxBackgroundBrush}" />
         <Setter Property="FontFamily" Value="{DynamicResource Slopes}" />
         <Setter Property="FontSize" Value="18" />
         <Setter Property="Foreground" Value="{StaticResource TextColor}" />
@@ -894,7 +903,7 @@
                 Value="true" />
         <Setter Property="HasDropShadow"
                 Value="True" />
-        <Setter Property="Foreground" Value="{StaticResource BrightTextColor}"></Setter>
+        <Setter Property="Foreground" Value="{DynamicResource BrightTextColor}"></Setter>
         <Setter Property="MaxWidth" Value="500" />
 
         <Setter Property="Template">
