@@ -43,7 +43,8 @@
             CornerRadius="20">
         <Grid>
             <Grid.ColumnDefinitions>
-                <ColumnDefinition Width="200" />
+                <ColumnDefinition Width="36.694" />
+                <ColumnDefinition Width="163.306"/>
                 <ColumnDefinition/>
             </Grid.ColumnDefinitions>
 
@@ -52,20 +53,22 @@
                 <RowDefinition/>
             </Grid.RowDefinitions>
 
-            <StackPanel>
+            <StackPanel Grid.ColumnSpan="2">
 
             </StackPanel>
-            <Border Grid.Column="0" CornerRadius="20 0 0 0" Background="{DynamicResource ApplicationHeaderBackgroundColorBrush}">
+            <Border Grid.Column="0" CornerRadius="20 0 0 0" Background="{DynamicResource ApplicationHeaderBackgroundColorBrush}" Grid.ColumnSpan="2">
                 <StackPanel Margin="0 5 0 0">
-                    <Canvas Width="128" Height="47" >
-                        <StaticResource ResourceKey="logo"/>
+                    <Canvas Width="128" Height="47" RenderTransform="0.04510557,0,0,0.04510557,0.5316752,0">
+                        <Canvas  RenderTransform="0.1,0,0,-0.1,0,1042">
+                            <Path Fill="{DynamicResource LogoFillBursh}" Data="{StaticResource logo}" />
+                        </Canvas>
                     </Canvas>
                     <Label FontSize="30" FontWeight="Bold" Foreground="{StaticResource TextColor}" FontFamily="{DynamicResource Slopes}" HorizontalAlignment="Center" VerticalAlignment="Center">FSTrAk</Label>
 
                 </StackPanel>
             </Border>
 
-            <Border Grid.Column="1" CornerRadius="0 20 0 0" Background="{DynamicResource TopBarBackground}">
+            <Border Grid.Column="2" CornerRadius="0 20 0 0" Background="{DynamicResource TopBarBackground}">
                 <Grid Name="MenuBar" MouseLeftButtonDown="DragWindow">
                     <Rectangle Fill="{DynamicResource TopBarBackground}" PreviewMouseLeftButtonDown="DragWindow" Cursor="SizeAll" Margin="0,0,35,78"/>
                     <StackPanel Orientation="Horizontal" Margin="0,0,50,0" HorizontalAlignment="Right">
@@ -79,7 +82,7 @@
 
                 </Grid>
             </Border>
-            <ContentControl Name="cont" Grid.Row="1" Grid.Column="0" Grid.ColumnSpan="2" Content="{Binding ActiveView}"></ContentControl>
+            <ContentControl Name="cont" Grid.Row="1" Grid.Column="0" Grid.ColumnSpan="3" Content="{Binding ActiveView}"></ContentControl>
         </Grid>
     </Border>
 </Window>

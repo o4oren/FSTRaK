@@ -15,16 +15,17 @@
     <Color x:Key="ChartColor6">#9717F4</Color>
 
     <!--Pallete-->
-    <Color x:Key="PrimaryBright">#003884</Color>
-    <Color x:Key="PrimaryMid">#6176A8</Color>
-    <Color x:Key="PrimaryMidDark">#6176A8</Color>
-    <Color x:Key="PrimaryDark">#F2F5F8</Color> 
+    
+    <Color x:Key="PrimaryBright">#152238</Color>
+    <Color x:Key="PrimaryMid">#203354</Color>
+    <Color x:Key="PrimaryMidDark">#1c2e4a</Color>
+    <Color x:Key="PrimaryDark">#192841</Color> 
 
     <SolidColorBrush x:Key="MenuItemSelectionFill" Color="{StaticResource PrimaryBright}"/>
-    <SolidColorBrush x:Key="ApplicationHeaderBackgroundColorBrush" Color="#003884"/>
+    <SolidColorBrush x:Key="ApplicationHeaderBackgroundColorBrush" Color="{DynamicResource  PrimaryBright}"/>
 
 
-    <Color x:Key="ContentAreaColorLight">#003884</Color>
+    <Color x:Key="ContentAreaColorLight">#152238</Color>
     <Color x:Key="ContentAreaColorDark">#003884</Color>
 
     <Color x:Key="DisabledControlLightColor">#FFE8EDF9</Color>
@@ -35,7 +36,7 @@
     <Color x:Key="SelectedUnfocusedColor">#FFDDDDDD</Color>
 
     <Color x:Key="ControlLightColor">White</Color>
-    <Color x:Key="ControlMediumColor">#FF7381F9</Color>
+    <Color x:Key="ControlMediumColor">#203354</Color>
     <Color x:Key="ControlDarkColor">#FF211AA9</Color>
 
     <Color x:Key="ControlMouseOverColor">#FF3843C4</Color>
@@ -59,7 +60,7 @@
     <Color x:Key="DefaultBorderBrushDarkColor">Black</Color>
 
     <!--Control-specific resources.-->
-    <Color x:Key="HeaderTopColor">#FFC5CBF9</Color>
+    <Color x:Key="HeaderTopColor">#2c5a7a</Color>
     <Color x:Key="DatagridCurrentCellBorderColor">Black</Color>
     <Color x:Key="SliderTrackDarkColor">#FFC5CBF9</Color>
 
@@ -70,13 +71,18 @@
     <SolidColorBrush x:Key="PrimaryDarkBrush" Color="{DynamicResource PrimaryDark}"/>
 
 
-    <SolidColorBrush x:Key="MainWindowBackground" Color="#6176A8"/>
-    <SolidColorBrush x:Key="TopBarBackground" Color="#003884"/>
+    <SolidColorBrush x:Key="MainWindowBackground" Color="{DynamicResource PrimaryMidDark}"/>
+    <SolidColorBrush x:Key="TopBarBackground" Color="{DynamicResource PrimaryBright}"/>
 
-    <SolidColorBrush x:Key="TextColor" Color="{DynamicResource PrimaryDark}"/>
-    <SolidColorBrush x:Key="UnselectedTextColor" Color="{DynamicResource PrimaryMidDark}"/>
+    <SolidColorBrush x:Key="TextColor" Color="{DynamicResource HeaderTopColor}"/>
+    <SolidColorBrush x:Key="UnselectedTextColor" Color="{DynamicResource ControlMediumColor}"/>
     <SolidColorBrush x:Key="BrightTextColor" Color="{DynamicResource PrimaryBright}"/>
     <SolidColorBrush x:Key="MidBorderBrush" Color="{DynamicResource PrimaryMid}"/>
+
+    <SolidColorBrush x:Key="LogoFillBursh" Color="{DynamicResource HeaderTopColor}"/>
+
+    <SolidColorBrush x:Key="ListViewItemBackgroundBrush" Color="{DynamicResource PrimaryDark}"/>
+    <SolidColorBrush x:Key="ListViewBackgroundBrush" Color="{DynamicResource PrimaryDark}"/>
 
     <SolidColorBrush x:Key="BorderLightColorBrush" Color="{DynamicResource BorderLightColor}"/>
     <SolidColorBrush x:Key="BorderMidColorBrush" Color="{DynamicResource BorderMediumColor}"/>
@@ -225,7 +231,7 @@
         <Setter Property="FontSize"
                 Value="22" />
         <Setter Property="Foreground"
-                Value="{StaticResource PrimaryDarkBrush}" />
+                Value="{StaticResource TextColor}" />
     </Style>
 
     <Style TargetType="{x:Type Button}">
@@ -708,23 +714,24 @@
                 SnapsToDevicePixels="true"
                             BorderThickness="1"
                             CornerRadius="15"
-                            Background="white"
+                            Background="{DynamicResource PrimaryDarkBrush}"
                             >
                         <Border.BorderBrush>
                             <SolidColorBrush Color="{DynamicResource BorderMediumColor}" />
                         </Border.BorderBrush>
+
                         <TextBox x:Name="TextBox"
                             Margin="10 0 10 0" 
                                  BorderThickness="0"
                                  BorderBrush="Transparent" 
-                                 FontFamily="{DynamicResource Slopes}" FontSize="22" Foreground="{StaticResource TextColor}"
+                                 FontFamily="{DynamicResource Slopes}" FontSize="22" Foreground="{DynamicResource TextColor}"
                                  Text="{Binding RelativeSource={RelativeSource TemplatedParent}, Path=Text, UpdateSourceTrigger=PropertyChanged}"
-                                 
+                                 Background="{DynamicResource PrimaryDarkBrush}"
                                  />
                     </Border>
                     <ControlTemplate.Triggers>
                         <Trigger Property="IsMouseOver" Value="True">
-                            <Setter TargetName="Border" Property="BorderBrush" Value="{StaticResource SilverGradient}"/>
+                            <Setter TargetName="Border" Property="BorderBrush" Value="{DynamicResource SilverGradient}"/>
                         </Trigger>
                         <Trigger Property="IsKeyboardFocused" Value="True">
                             <Setter TargetName="Border" Property="BorderBrush" Value="purple"/>
@@ -797,7 +804,7 @@
             <Setter.Value>
                 <ControlTemplate TargetType="{x:Type Thumb}">
                     <Border CornerRadius="5"
-                Background="{TemplateBinding Background}"
+                Background="{DynamicResource PrimaryDarkBrush}"
                 BorderBrush="{TemplateBinding BorderBrush}"
                 BorderThickness="1" />
                 </ControlTemplate>
@@ -813,12 +820,12 @@
             </Grid.RowDefinitions>
             <Border Grid.RowSpan="1"
             CornerRadius="2"
-            Background="#F0F0F0" />
+            Background="{DynamicResource PrimaryMedumBrush}" />
             <Track x:Name="PART_Track"
            IsDirectionReversed="true">
                 <Track.Thumb>
-                    <Thumb Style="{StaticResource ScrollBarThumb}"
-                           Background="{StaticResource BorderMidColorBrush}"
+                    <Thumb Style="{DynamicResource ScrollBarThumb}"
+                           Background="{DynamicResource PrimaryDarkBrush}"
 
                Margin="1,0,1,0">
                     </Thumb>
@@ -836,14 +843,14 @@
             </Grid.ColumnDefinitions>
             <Border Grid.ColumnSpan="3"
             CornerRadius="2"
-            Background="#F0F0F0" />
+            Background="{DynamicResource PrimaryMedumBrush}" />
 
             <Track x:Name="PART_Track"
            IsDirectionReversed="False">
                 <Track.Thumb>
-                    <Thumb Style="{StaticResource ScrollBarThumb}"
+                    <Thumb Style="{DynamicResource ScrollBarThumb}"
                Margin="0,1,0,1"
-               Background="{StaticResource BorderMidColorBrush}"
+               Background="{DynamicResource PrimaryDarkBrush}"
                >
 
 
@@ -867,7 +874,7 @@
                 <Setter Property="Height"
               Value="12" />
                 <Setter Property="Template"
-              Value="{StaticResource HorizontalScrollBar}" />
+              Value="{DynamicResource HorizontalScrollBar}" />
             </Trigger>
             <Trigger Property="Orientation"
              Value="Vertical">
@@ -876,7 +883,7 @@
                 <Setter Property="Height"
               Value="Auto" />
                 <Setter Property="Template"
-              Value="{StaticResource VerticalScrollBar}" />
+              Value="{DynamicResource VerticalScrollBar}" />
             </Trigger>
         </Style.Triggers>
     </Style>

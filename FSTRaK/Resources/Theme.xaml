@@ -20,6 +20,9 @@
     <Color x:Key="PrimaryMidDark">#6176A8</Color>
     <Color x:Key="PrimaryDark">#003884</Color>
 
+    <Color x:Key="LogoColor">#003884</Color>
+
+
     <Color x:Key="ApplicationBackground">#D7E0EA</Color>
     <SolidColorBrush x:Key="ApplicationHeaderBackgroundColorBrush" Color="#D7E0EA"/>
 
@@ -70,8 +73,9 @@
     <SolidColorBrush x:Key="PrimaryLightBrush" Color="{DynamicResource PrimaryBright}"/>
     <SolidColorBrush x:Key="PrimaryMedumBrush" Color="{DynamicResource PrimaryMid}"/>
     <SolidColorBrush x:Key="PrimaryDarkBrush" Color="{DynamicResource PrimaryDark}"/>
+    <SolidColorBrush x:Key="LogoFillBursh" Color="{DynamicResource PrimaryDark}"/>
 
-
+    
     <SolidColorBrush x:Key="MainWindowBackground" Color="{DynamicResource PrimaryBright}"/>
     <SolidColorBrush x:Key="TopBarBackground" Color="{DynamicResource PrimaryMid}"/>
 
@@ -82,9 +86,13 @@
 
     <SolidColorBrush x:Key="BorderLightColorBrush" Color="{DynamicResource BorderLightColor}"/>
     <SolidColorBrush x:Key="BorderMidColorBrush" Color="{DynamicResource BorderMediumColor}"/>
-    
+    <SolidColorBrush x:Key="ListViewItemBackgroundBrush" Color="white"/>
+    <SolidColorBrush x:Key="ListViewBackgroundBrush" Color="white"/>
 
-    <Color x:Key="CloseButtonColor">Red</Color>
+
+
+
+<Color x:Key="CloseButtonColor">Red</Color>
     <Color x:Key="CloseButtonColorHover">#cc1b1b</Color>
     <Color x:Key="CloseButtonColorPressed">DarkRed</Color>
     <Color x:Key="MinButtonColor">#fcba03</Color>
@@ -397,7 +405,7 @@
             <Setter Property="Background" Value="Transparent" />
             <Setter Property="FontFamily" Value="{DynamicResource Slopes}"/>
             <Setter Property="FontSize" Value="28" />
-            <Setter Property="Foreground" Value="{StaticResource TextColor}" />
+            <Setter Property="Foreground" Value="{DynamicResource TextColor}" />
         </Style.Setters>
     </Style>
 
@@ -719,14 +727,14 @@
                             Margin="10 0 10 0" 
                                  BorderThickness="0"
                                  BorderBrush="Transparent" 
-                                 FontFamily="{DynamicResource Slopes}" FontSize="22" Foreground="{StaticResource TextColor}"
+                                 FontFamily="{DynamicResource Slopes}" FontSize="22" Foreground="{DynamicResource TextColor}"
                                  Text="{Binding RelativeSource={RelativeSource TemplatedParent}, Path=Text, UpdateSourceTrigger=PropertyChanged}"
                                  
                                  />
                     </Border>
                     <ControlTemplate.Triggers>
                         <Trigger Property="IsMouseOver" Value="True">
-                            <Setter TargetName="Border" Property="BorderBrush" Value="{StaticResource SilverGradient}"/>
+                            <Setter TargetName="Border" Property="BorderBrush" Value="{DynamicResource SilverGradient}"/>
                         </Trigger>
                         <Trigger Property="IsKeyboardFocused" Value="True">
                             <Setter TargetName="Border" Property="BorderBrush" Value="purple"/>
@@ -819,8 +827,8 @@
             <Track x:Name="PART_Track"
            IsDirectionReversed="true">
                 <Track.Thumb>
-                    <Thumb Style="{StaticResource ScrollBarThumb}"
-                           Background="{StaticResource BorderMidColorBrush}"
+                    <Thumb Style="{DynamicResource ScrollBarThumb}"
+                           Background="{DynamicResource BorderMidColorBrush}"
 
                Margin="1,0,1,0">
                     </Thumb>

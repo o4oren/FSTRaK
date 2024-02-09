@@ -52,7 +52,7 @@
                  MapLayer="{Binding MapProvider}" 
                  ZoomLevel="3" 
                  Center="51,0"
-                 MapProjection="{StaticResource WebMercatorProjection}"
+                 MapProjection="{DynamicResource WebMercatorProjection}"
                  Margin="10,10,10,10"
                          >
                     <map:MapScale Opacity="0.5" HorizontalAlignment="Center" VerticalAlignment="Bottom" Margin="5" />
