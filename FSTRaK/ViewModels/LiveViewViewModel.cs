@@ -388,10 +388,9 @@ namespace FSTRaK.ViewModels
                         // Find airport
                         var callsignParts = controller.callsign.Split('_');
                         var airport = _vatsimService.VatsimStaticData.Airports.Find(a => a.ICAO.Equals(callsignParts[0]) || a.IATA.Equals(callsignParts[0]));
-                        if (airport != null && controlledAirportsDict.ContainsKey(airport.ICAO))
+                        if (airport != null && controlledAirportsDict.TryGetValue(airport.ICAO, out var controlledAirport1))
                         {
-                            var controlledAirport = controlledAirportsDict[airport.ICAO];
-                            controlledAirport.Controllers.Add(controller);
+                            controlledAirport1.Controllers.Add(controller);
                         }
                         else
                         {
