@@ -9,7 +9,9 @@ using System.Drawing;
 using System.Linq;
 using System.Windows;
 using System.Windows.Controls;
+using System.Windows.Navigation;
 using FSTRaK.Utils;
+using System.Diagnostics;
 
 namespace FSTRaK.Views
 {
@@ -133,5 +135,10 @@ namespace FSTRaK.Views
             LogbookMap.TargetHeading = 0d;
         }
 
+        private void Hyperlink_RequestNavigate(object sender, RequestNavigateEventArgs e)
+        {
+            Process.Start(new ProcessStartInfo(e.Uri.AbsoluteUri));
+            e.Handled = true;
+        }
     }
 }

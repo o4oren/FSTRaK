@@ -5,8 +5,10 @@ using System.Windows.Media;
 using System.Windows.Shapes;
 using System;
 using System.Collections.Generic;
+using System.Diagnostics;
 using System.Text;
 using System.Windows.Media.Imaging;
+using System.Windows.Navigation;
 using FSTRaK.BusinessLogic.VatsimService;
 using FSTRaK.DataTypes;
 using FSTRaK.Utils;
@@ -48,6 +50,12 @@ namespace FSTRaK.Views
                     }
                 }
             });
+        }
+
+        private void Hyperlink_RequestNavigate(object sender, RequestNavigateEventArgs e)
+        {
+            Process.Start(new ProcessStartInfo(e.Uri.AbsoluteUri));
+            e.Handled = true;
         }
     }
 }

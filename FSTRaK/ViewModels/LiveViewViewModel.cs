@@ -297,6 +297,12 @@ namespace FSTRaK.ViewModels
 
         public MapTileLayerBase MapProvider => MapProviderResolver.GetMapProvider();
 
+        public bool IsMaptillerCMap
+        {
+            get => MapProvider is MapTilerMapTileLayer;
+        }
+
+
 
         private DateTime _lastUpdated = DateTime.Now;
 
@@ -763,6 +769,7 @@ namespace FSTRaK.ViewModels
             public string IconResourse { get; set; }
             public string TooltipText { get; set; }
             public bool IsShowCircle { get; set; } = false;
+
 
             public Location Location
             {
