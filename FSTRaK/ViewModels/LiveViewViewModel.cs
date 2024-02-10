@@ -378,24 +378,27 @@ namespace FSTRaK.ViewModels
                 var controlledAirportsDict = new Dictionary<string, VatsimControlledAirport>();
                 foreach (var controller in VatsimData.controllers)
                 {
+                    if (controller.callsign.Equals("DEN_I_APP"))
+                    {
+
+                    }
+
                     if (controller.facility == 2 || controller.facility == 3 || controller.facility == 4 || controller.facility == 5)
                     {
                         // Find airport
                         var callsignParts = controller.callsign.Split('_');
-                        if (controlledAirportsDict.ContainsKey(callsignParts[0]))
+                        var airport = _vatsimService.VatsimStaticData.Airports.Find(a => a.ICAO.Equals(callsignParts[0]) || a.IATA.Equals(callsignParts[0]));
+                        if (airport != null && controlledAirportsDict.ContainsKey(airport.ICAO))
                         {
-                            var airport = controlledAirportsDict[callsignParts[0]];
-                            airport.Controllers.Add(controller);
+                            var controlledAirport = controlledAirportsDict[airport.ICAO];
+                            controlledAirport.Controllers.Add(controller);
                         }
                         else
                         {
-                            var airport = _vatsimService.VatsimStaticData.Airports.Find(a => a.ICAO.Equals(callsignParts[0]));
-                            if (airport != null)
-                            {
-                                var controlledAirport = new VatsimControlledAirport(airport);
-                                controlledAirport.Controllers.Add(controller);
-                                controlledAirportsDict.Add(controlledAirport.Airport.ICAO, controlledAirport);
-                            }
+                            if (airport == null) continue;
+                            var controlledAirport = new VatsimControlledAirport(airport);
+                            controlledAirport.Controllers.Add(controller);
+                            controlledAirportsDict.Add(controlledAirport.Airport.ICAO, controlledAirport);
                         }
                     }
                 }
