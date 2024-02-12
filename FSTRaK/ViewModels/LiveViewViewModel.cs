@@ -378,10 +378,9 @@ namespace FSTRaK.ViewModels
 
         private async void ProcessVatsimAirports()
         {
-            var airportsList = new List<VatsimControlledAirport>();
+            var controlledAirportsDict = new Dictionary<string, VatsimControlledAirport>();
             await Task.Run(() =>
             {
-                var controlledAirportsDict = new Dictionary<string, VatsimControlledAirport>();
                 foreach (var controller in VatsimData.controllers)
                 {
                     if (controller.callsign.Equals("DEN_I_APP"))
@@ -510,15 +509,13 @@ namespace FSTRaK.ViewModels
                     }
                 }
 
-                airportsList.AddRange(controlledAirportsDict.Values.ToList());
             });
-
-            VatsimControlledAirports = new BindingList<VatsimControlledAirport>(airportsList);
+            VatsimControlledAirports.ReplaceContent(controlledAirportsDict.Values.ToList());
         }
 
         private async void ProcessVatsimPilots()
         {
-            var newVatsimAircraftList = new BindingList<VatsimAicraft>();
+            var newVatsimAircraftList = new List<VatsimAicraft>();
             await Task.Run(() =>
             {
                 foreach (var pilot in _vatsimData.pilots)
@@ -527,8 +524,7 @@ namespace FSTRaK.ViewModels
                     newVatsimAircraftList.Add(aircraft);
                 }
             });
-
-            VatsimAircraftList = newVatsimAircraftList;
+            VatsimAircraftList.ReplaceContent(newVatsimAircraftList);
         }
 
         private async void ProcessVatsimCtrFSS()
@@ -627,7 +623,6 @@ namespace FSTRaK.ViewModels
 
                                     vatsimControlledFir.Controllers.Add(controller);
                                 }
-
                             }
                         }
                         catch (Exception ex)
@@ -637,8 +632,9 @@ namespace FSTRaK.ViewModels
                     }
                 }
             });
-            VatsimControlledFirs = new BindingList<VatsimControlledFir>(firsList);
-            VatsimControlledUirs = new BindingList<VatsimControlledUir>(uirDict.Values.ToList());
+
+            VatsimControlledFirs.ReplaceContent(firsList);
+            VatsimControlledUirs.ReplaceContent(uirDict.Values.ToList());
         }
 
         private void FlightManagerOnPropertyChanged(object sender, PropertyChangedEventArgs e)
