@@ -214,9 +214,9 @@ namespace FSTRaK.ViewModels
             }
         }
 
-        private ObservableCollection<VatsimAicraft> _vatsimAircraftList = new();
+        private BindingList<VatsimAicraft> _vatsimAircraftList = new();
 
-        public ObservableCollection<VatsimAicraft> VatsimAircraftList
+        public BindingList<VatsimAicraft> VatsimAircraftList
         {
             get => _vatsimAircraftList;
             private set
@@ -229,8 +229,8 @@ namespace FSTRaK.ViewModels
             }
         }
 
-        private ObservableCollection<VatsimControlledAirport> _vatsimControlledAirports = new();
-        public ObservableCollection<VatsimControlledAirport> VatsimControlledAirports
+        private BindingList<VatsimControlledAirport> _vatsimControlledAirports = new();
+        public BindingList<VatsimControlledAirport> VatsimControlledAirports
         {
             get => _vatsimControlledAirports;
             private set
@@ -243,8 +243,8 @@ namespace FSTRaK.ViewModels
             }
         }
 
-        private ObservableCollection<VatsimControlledFir> _vatsimControlledFirs = new();
-        public ObservableCollection<VatsimControlledFir> VatsimControlledFirs
+        private BindingList<VatsimControlledFir> _vatsimControlledFirs = new();
+        public BindingList<VatsimControlledFir> VatsimControlledFirs
         {
             get => _vatsimControlledFirs;
             private set
@@ -257,8 +257,8 @@ namespace FSTRaK.ViewModels
             }
         }
 
-        private ObservableCollection<VatsimControlledUir> _vatsimControlledUirs = new();
-        public ObservableCollection<VatsimControlledUir> VatsimControlledUirs
+        private BindingList<VatsimControlledUir> _vatsimControlledUirs = new();
+        public BindingList<VatsimControlledUir> VatsimControlledUirs
         {
             get => _vatsimControlledUirs;
             private set
@@ -513,12 +513,12 @@ namespace FSTRaK.ViewModels
                 airportsList.AddRange(controlledAirportsDict.Values.ToList());
             });
 
-            VatsimControlledAirports = new ObservableCollection<VatsimControlledAirport>(airportsList);
+            VatsimControlledAirports = new BindingList<VatsimControlledAirport>(airportsList);
         }
 
         private async void ProcessVatsimPilots()
         {
-            var newVatsimAircraftList = new ObservableCollection<VatsimAicraft>();
+            var newVatsimAircraftList = new BindingList<VatsimAicraft>();
             await Task.Run(() =>
             {
                 foreach (var pilot in _vatsimData.pilots)
@@ -637,8 +637,8 @@ namespace FSTRaK.ViewModels
                     }
                 }
             });
-            VatsimControlledFirs = new ObservableCollection<VatsimControlledFir>(firsList);
-            VatsimControlledUirs = new ObservableCollection<VatsimControlledUir>(uirDict.Values.ToList());
+            VatsimControlledFirs = new BindingList<VatsimControlledFir>(firsList);
+            VatsimControlledUirs = new BindingList<VatsimControlledUir>(uirDict.Values.ToList());
         }
 
         private void FlightManagerOnPropertyChanged(object sender, PropertyChangedEventArgs e)
