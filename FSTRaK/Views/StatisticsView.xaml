@@ -92,35 +92,35 @@
                 <Label Style="{DynamicResource FSTrAkLabel}">
                     Flights per day
                 </Label>
-                <WpfPlot x:Name="ArrFlightsPerDay" Margin="10,39,10,10" Grid.Column="0" Height="240" />
+                <WpfPlot x:Name="ArrFlightsPerDay" Margin="10,39,10,10" Grid.Column="0" MinHeight="240" />
             </Grid>
 
             <Grid Grid.Row="3" Grid.Column="0" Margin="10,10,10,10">
-                <Label Style="{DynamicResource FSTrAkLabel}">
+                <Label Style="{DynamicResource FSTrAkLabel}" Width="200">
                     Top Aircraft
                 </Label>
-                <WpfPlot x:Name="AircraftDistributionChart" Margin="10,39,10,10" Grid.Column="0" MinHeight="120"/>
+                <WpfPlot x:Name="AircraftDistributionChart" Margin="10,39,10,10" Grid.Column="0" MinHeight="120" />
             </Grid>
 
-            <Grid Grid.Row="3" Grid.Column="1" Margin="10,10,10,10">
-                <Label Style="{DynamicResource FSTrAkLabel}">
+            <Grid Grid.Row="3" Grid.Column="1" Margin="10,10,10,10" >
+                <Label Style="{DynamicResource FSTrAkLabel}" Width="200">
                     Top Airlines
                 </Label>
-                <WpfPlot x:Name="AirlineDistributionChart" Margin="10,39,10,10" MinHeight="120" />
+                <WpfPlot x:Name="AirlineDistributionChart" Margin="10,39,10,10" MinHeight="120" MinWidth="400"/>
             </Grid>
 
             <Grid Grid.Row="4" Grid.Column="0" Margin="10,10,10,10">
-                <Label Style="{DynamicResource FSTrAkLabel}">
+                <Label Style="{DynamicResource FSTrAkLabel}" Width="200">
                     Top Departure Airports
                 </Label>
-                <WpfPlot x:Name="DepDistributionChart" Margin="10,39,10,10" Grid.Column="0" MinHeight="120"/>
+                <WpfPlot x:Name="DepDistributionChart" Margin="10,39,10,10" Grid.Column="0" MinHeight="120" MinWidth="400" />
             </Grid>
 
             <Grid Grid.Row="4" Grid.Column="1" Margin="10,10,10,10">
-                <Label Style="{DynamicResource FSTrAkLabel}">
+                <Label Style="{DynamicResource FSTrAkLabel}" Width="200">
                     Top Arrival Airports
                 </Label>
-                <WpfPlot x:Name="ArrDistributionChart" Margin="10,39,10,10" MinHeight="120" />
+                <WpfPlot x:Name="ArrDistributionChart" Margin="10,39,10,10" MinHeight="120" MinWidth="400" />
             </Grid>
 
 

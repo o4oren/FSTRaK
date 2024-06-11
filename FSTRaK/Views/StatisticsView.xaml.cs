@@ -14,6 +14,7 @@ using Microsoft.VisualBasic.Logging;
 using System.Runtime.InteropServices.ComTypes;
 using Newtonsoft.Json.Linq;
 using Log = Serilog.Log;
+using System.Windows.Input;
 
 namespace FSTRaK.Views
 {
@@ -153,20 +154,26 @@ namespace FSTRaK.Views
             chart.Configuration.Pan = true;
             chart.Configuration.LockVerticalAxis = true;
             chart.Configuration.Zoom = true;
-            plt.XAxis.SetZoomInLimit(30);
+            plt.XAxis.SetZoomInLimit(14);
             plt.XAxis.SetZoomOutLimit(CalculateNumberOfDays(data));
-            plt.SetAxisLimits(xAxisMax - 30, xAxisMax);
+            plt.SetAxisLimits(xAxisMax - 60, xAxisMax);
+
+            chart.MouseWheel += (sender, e) =>
+            {
+                if (Keyboard.Modifiers != ModifierKeys.Control)
+                {
+                    e.Handled = true; // Prevent panning
+                }
+            };
 
             chart.AxesChanged += (s, e) =>
             {
 
                 double xMin = plt.GetAxisLimits().XMin;
                 double xMax = plt.GetAxisLimits().XMax;
-
                 
                 Log.Information($"Zoom: {xMax - xMin}");
 
-                // Assuming xAxisMin and xAxisMax are your minimum and maximum x-axis values respectively
                 if (xMin < xAxisMin)
                 {
                     plt.SetAxisLimits(xAxisMin, xAxisMin + (xMax - xMin) + 1);
