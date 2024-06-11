@@ -162,6 +162,39 @@ namespace FSTRaK.ViewModels
             }
         }
 
+        private string _avgLandingFpm;
+        public string AvgLandingFpm
+        {
+            get => _avgLandingFpm;
+            set
+            {
+                _avgLandingFpm = value;
+                OnPropertyChanged();
+            }
+        }
+
+        private string _minLandingFpm;
+        public string MinLandingFpm
+        {
+            get => _minLandingFpm;
+            set
+            {
+                _minLandingFpm = value;
+                OnPropertyChanged();
+            }
+        }
+
+        private string _maxLandingFpm;
+        public string MaxLandingFpm
+        {
+            get => _maxLandingFpm;
+            set
+            {
+                _maxLandingFpm = value;
+                OnPropertyChanged();
+            }
+        }
+
         private Dictionary<string, double> _aircraftDistribution;
         public Dictionary<string, double> AircraftDistribution
         {
@@ -277,6 +310,9 @@ namespace FSTRaK.ViewModels
             TotalPayload = UnitsUtil.GetWeightString(flights.Sum(f => f.TotalPayloadLbs));
             AvgPayload = UnitsUtil.GetWeightString(flights.Average(f => f.TotalPayloadLbs));
 
+            AvgLandingFpm = $"{flights.Where(f => f.LandingFpm > -1).Average(f => f.LandingFpm):N0} fpm";
+            MinLandingFpm = $"{flights.Where(f => f.LandingFpm > -1).Min(f => f.LandingFpm):N0} fpm";
+            MaxLandingFpm = $"{flights.Where(f => f.LandingFpm > -1).Max(f => f.LandingFpm):N0} fpm";
 
             AircraftDistribution = CalculateAircraftDistribution(flights);
 

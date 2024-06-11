@@ -68,7 +68,7 @@
     <GenerateManifests>true</GenerateManifests>
   </PropertyGroup>
   <PropertyGroup>
-    <SignManifests>true</SignManifests>
+    <SignManifests>false</SignManifests>
   </PropertyGroup>
   <PropertyGroup>
     <ApplicationIcon>FSTrAk.ico</ApplicationIcon>
@@ -144,6 +144,7 @@
     <Compile Include="Models\Entity\FlightEvent\OverspeedEvent.cs" />
     <Compile Include="Models\Entity\FlightEvent\GearspeedExceededEvent.cs" />
     <Compile Include="Models\Entity\FlightEvent\FlapsSpeedExceededEvent.cs" />
+    <Compile Include="Models\Entity\Migrations\AddLandingFpmToFlights.cs" />
     <Compile Include="Models\Entity\Migrations\Configuration.cs" />
     <Compile Include="Models\Entity\FlightEvent\CrashEvent.cs" />
     <Compile Include="Models\Entity\FlightEvent\ScoringEvent.cs" />
@@ -448,6 +449,8 @@
       <Install>false</Install>
     </BootstrapperPackage>
   </ItemGroup>
-  <ItemGroup />
+  <ItemGroup>
+    <Folder Include="Migrations\" />
+  </ItemGroup>
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
 </Project>

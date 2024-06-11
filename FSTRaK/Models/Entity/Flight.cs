@@ -9,10 +9,7 @@ using System.ComponentModel.DataAnnotations.Schema;
 using System.Linq;
 using System.Text;
 using Serilog;
-using System.ComponentModel;
-using System.Windows.Controls;
-using System.Windows.Media;
-using System.Xml.Linq;
+
 
 namespace FSTRaK.Models
 {
@@ -48,6 +45,8 @@ namespace FSTRaK.Models
 
         public FlightOutcome FlightOutcome { get; set; }
         public double Score { get; set; }
+
+        public double LandingFpm { get; set; } = -1;
 
         public ObservableCollection<BaseFlightEvent> FlightEvents { get; set; }
 
@@ -124,6 +123,7 @@ namespace FSTRaK.Models
                 .AppendLine($"Block Time: {this.FlightTime}")
                 .AppendLine($"Fuel Used: {TotalFuelUsed:F1} Lbs")
                 .AppendLine($"Flown Distance: {FlightDistanceNm:F0} NM")
+                .AppendLine($"Landing FPM: {LandingFpm:F0} fpm")
                 .Append($"Score: {this.Score}");
             return sb.ToString();
         }
@@ -157,6 +157,7 @@ namespace FSTRaK.Models
                     if(se is LandingEvent @event)
                     {
                         builder.AppendLine($"{@event.LandingRate} {se.EventName} {se.ScoreDelta} Points");
+                        LandingFpm = @event.VerticalSpeed;
                     }
                     else
                     {
