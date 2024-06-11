@@ -9,43 +9,43 @@
              Loaded="OnLoaded"
              >
 
-    <Grid>
-        <Grid.ColumnDefinitions>
-            <ColumnDefinition Width="2*" />
-            <ColumnDefinition Width="2*" />
-            <ColumnDefinition Width="1*" />
-        </Grid.ColumnDefinitions>
-        <Grid.RowDefinitions>
-            <RowDefinition Height="Auto"/>
-            <RowDefinition Height="Auto" />
-            <RowDefinition />
-            <RowDefinition />
-        </Grid.RowDefinitions>
-        <StackPanel Orientation="Horizontal" Grid.Column="0" Grid.Row="0" Margin="10">
-            <Label Style="{StaticResource FSTrAkLabel}">By Airline</Label>
-            <ComboBox FontFamily="{DynamicResource Slopes}" 
+    <ScrollViewer VerticalScrollBarVisibility="Auto" HorizontalScrollBarVisibility="Auto">
+        <Grid>
+            <Grid.ColumnDefinitions>
+                <ColumnDefinition Width="2*" />
+                <ColumnDefinition Width="2*" />
+                <ColumnDefinition Width="1*" />
+            </Grid.ColumnDefinitions>
+            <Grid.RowDefinitions>
+                <RowDefinition Height="Auto"/>
+                <RowDefinition Height="Auto" />
+                <RowDefinition Height="Auto"/>
+                <RowDefinition />
+                <RowDefinition />
+            </Grid.RowDefinitions>
+            <StackPanel Orientation="Horizontal" Grid.Column="0" Grid.Row="0" Margin="10">
+                <Label Style="{StaticResource FSTrAkLabel}">By Airline</Label>
+                <ComboBox FontFamily="{DynamicResource Slopes}" 
                       Foreground="{DynamicResource TextColor}" 
                       FontSize="24" 
                       Width="200"
                       ItemsSource="{Binding Airlines}"
                       SelectedItem="{Binding AirlineFilter}"/>
-        </StackPanel>
-        <StackPanel Orientation="Horizontal" Grid.Column="1" Grid.Row="0" Margin="10">
-            <Label Style="{StaticResource FSTrAkLabel}" Margin="20 0 0 0">By Aircraft Type</Label>
-            <ComboBox FontFamily="{DynamicResource Slopes}" 
+            </StackPanel>
+            <StackPanel Orientation="Horizontal" Grid.Column="1" Grid.Row="0" Margin="10">
+                <Label Style="{StaticResource FSTrAkLabel}" Margin="20 0 0 0">By Aircraft Type</Label>
+                <ComboBox FontFamily="{DynamicResource Slopes}" 
                       Foreground="{DynamicResource TextColor}" 
                       FontSize="24" 
                       Width="200"
                       ItemsSource="{Binding AircraftTypes}"
                       SelectedItem="{Binding AircraftTypeFilter}"/>
-        </StackPanel>
+            </StackPanel>
 
+            <StackPanel Grid.Row="1" Grid.Column="0">
 
-
-        <StackPanel Grid.Row="1" Grid.Column="0">
-
-            <StackPanel Margin="10" >
-                <TextBlock 
+                <StackPanel Margin="10" >
+                    <TextBlock 
                     Foreground="{DynamicResource TextColor}"
                     FontSize="28"
                     Margin="10"
@@ -84,38 +84,47 @@
                     <LineBreak />
                     <Run Text="Average Payload: "/><Run Text="{Binding AvgPayload}"/>
 
-                </TextBlock>
+                    </TextBlock>
+                </StackPanel>
             </StackPanel>
-        </StackPanel>
 
-        <Grid Grid.Row="2" Grid.Column="0" Margin="10,10,10,10">
-            <Label Style="{DynamicResource FSTrAkLabel}">
-                Top Aircraft
-            </Label>
-            <WpfPlot x:Name="AircraftDistributionChart" Margin="10,39,10,10" Grid.Column="0"/>
+            <Grid Grid.Row="2" Grid.Column="0" Grid.ColumnSpan="2" Margin="10,10,10,10">
+                <Label Style="{DynamicResource FSTrAkLabel}">
+                    Flights per day
+                </Label>
+                <WpfPlot x:Name="ArrFlightsPerDay" Margin="10,39,10,10" Grid.Column="0" Height="240" />
+            </Grid>
+
+            <Grid Grid.Row="3" Grid.Column="0" Margin="10,10,10,10">
+                <Label Style="{DynamicResource FSTrAkLabel}">
+                    Top Aircraft
+                </Label>
+                <WpfPlot x:Name="AircraftDistributionChart" Margin="10,39,10,10" Grid.Column="0" MinHeight="120"/>
+            </Grid>
+
+            <Grid Grid.Row="3" Grid.Column="1" Margin="10,10,10,10">
+                <Label Style="{DynamicResource FSTrAkLabel}">
+                    Top Airlines
+                </Label>
+                <WpfPlot x:Name="AirlineDistributionChart" Margin="10,39,10,10" MinHeight="120" />
+            </Grid>
+
+            <Grid Grid.Row="4" Grid.Column="0" Margin="10,10,10,10">
+                <Label Style="{DynamicResource FSTrAkLabel}">
+                    Top Departure Airports
+                </Label>
+                <WpfPlot x:Name="DepDistributionChart" Margin="10,39,10,10" Grid.Column="0" MinHeight="120"/>
+            </Grid>
+
+            <Grid Grid.Row="4" Grid.Column="1" Margin="10,10,10,10">
+                <Label Style="{DynamicResource FSTrAkLabel}">
+                    Top Arrival Airports
+                </Label>
+                <WpfPlot x:Name="ArrDistributionChart" Margin="10,39,10,10" MinHeight="120" />
+            </Grid>
+
+
         </Grid>
-
-        <Grid Grid.Row="2" Grid.Column="1" Margin="10,10,10,10">
-            <Label Style="{DynamicResource FSTrAkLabel}">
-                Top Airlines
-            </Label>
-            <WpfPlot x:Name="AirlineDistributionChart" Margin="10,39,10,10"  />
-        </Grid>
-
-        <Grid Grid.Row="3" Grid.Column="0" Margin="10,10,10,10">
-            <Label Style="{DynamicResource FSTrAkLabel}">
-                Top Depatrure Airports
-            </Label>
-            <WpfPlot x:Name="DepDistributionChart" Margin="10,39,10,10" Grid.Column="0"/>
-        </Grid>
-
-        <Grid Grid.Row="3" Grid.Column="1" Margin="10,10,10,10">
-            <Label Style="{DynamicResource FSTrAkLabel}">
-                Top Arrival Airports
-            </Label>
-            <WpfPlot x:Name="ArrDistributionChart" Margin="10,39,10,10"  />
-        </Grid>
-
-
-    </Grid>
+    </ScrollViewer>
+ 
 </UserControl>

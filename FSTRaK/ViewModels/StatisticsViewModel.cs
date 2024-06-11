@@ -7,6 +7,7 @@ using FSTRaK.Models.Entity;
 using FSTRaK.Utils;
 using System.Linq.Dynamic;
 using Serilog;
+using System.Windows.Media.Media3D;
 
 namespace FSTRaK.ViewModels
 {
@@ -239,6 +240,28 @@ namespace FSTRaK.ViewModels
             }
         }
 
+        private Dictionary<DateTime, double> _flightsPerDay;
+        public Dictionary<DateTime, double> FlightsPerDay
+        {
+            get => _flightsPerDay;
+            set
+            {
+                _flightsPerDay = value;
+                OnPropertyChanged();
+            }
+        }
+
+        private Dictionary<DateTime, int> _flightsPerMonth;
+        public Dictionary<DateTime, int> FlightsPerMonth
+        {
+            get => _flightsPerMonth;
+            set
+            {
+                _flightsPerMonth = value;
+                OnPropertyChanged();
+            }
+        }
+
 
 
         public StatisticsViewModel()
@@ -265,16 +288,16 @@ namespace FSTRaK.ViewModels
             var flights = logbookContext.Flights
                 .Select(f => f)
                 .OrderByDescending(f => f.Id)
-                .Include(f => f.Aircraft);
+                .Include(f => f.Aircraft).ToList();
 
             if (!string.IsNullOrEmpty(AirlineFilter))
             {
-                flights = flights.Where(f => f.Aircraft.Airline.Equals(AirlineFilter));
+                flights = flights.Where(f => f.Aircraft.Airline.Equals(AirlineFilter)).ToList();
             }
 
             if (!string.IsNullOrEmpty(AircraftTypeFilter))
             {
-                flights = flights.Where(f => f.Aircraft.AircraftType.Equals(AircraftTypeFilter));
+                flights = flights.Where(f => f.Aircraft.AircraftType.Equals(AircraftTypeFilter)).ToList();
             }
 
             TotalNumberOfFlights = flights.Count();
@@ -316,16 +339,32 @@ namespace FSTRaK.ViewModels
 
             AircraftDistribution = CalculateAircraftDistribution(flights);
 
-
             AirlineDistribution = CalculateAirlineDistribution(flights);
 
             FrequentDepartureAirportsDistribution = CalculateAirportDistribution(flights, AirportType.DEP);
 
             FrequentArrivalAirportsDistribution = CalculateAirportDistribution(flights, AirportType.ARR);
 
+            FlightsPerDay = CalculateFlightsPerDay(flights);
         }
 
-        private static Dictionary<string, double> CalculateAirlineDistribution(IQueryable<Flight> flights)
+        private static Dictionary<DateTime, double> CalculateFlightsPerDay(List<Flight> flights)
+        {
+            return flights
+                .GroupBy(f => f.StartTime.Date) 
+                .ToDictionary(g => g.Key, g => Convert.ToDouble(g.Count()));
+        }
+
+        private static Dictionary<DateTime, int> CalculateFlightsPerMonth(List<Flight> flights)
+        {
+            // TODO
+            return flights
+                .GroupBy(f => f.StartTime.Date)
+                .ToDictionary(g => g.Key, g => g.Count());
+        }
+
+
+        private static Dictionary<string, double> CalculateAirlineDistribution(List<Flight> flights)
         {
             var airlineDistribution = new Dictionary<string, double>();
             var i = 0;
@@ -357,7 +396,7 @@ namespace FSTRaK.ViewModels
             return airlineDistribution;
         }
 
-        private static Dictionary<string, double> CalculateAircraftDistribution(IQueryable<Flight> flights)
+        private static Dictionary<string, double> CalculateAircraftDistribution(List<Flight> flights)
         {
             var i = 0;
             var sum = 0;
@@ -389,7 +428,7 @@ namespace FSTRaK.ViewModels
             return aircraftDistribution;
         }
 
-        private static Dictionary<string, double> CalculateAirportDistribution(IQueryable<Flight> flights, AirportType type)
+        private static Dictionary<string, double> CalculateAirportDistribution(List<Flight> flights, AirportType type)
         {
             var i = 0;
             var sum = 0;
