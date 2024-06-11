@@ -13,7 +13,7 @@ using Serilog;
 
 namespace FSTRaK.Models
 {
-    internal class Flight : BaseModel
+    public class Flight : BaseModel
     {
         [Column("ID")]
         public int Id { get; set; }
@@ -46,7 +46,7 @@ namespace FSTRaK.Models
         public FlightOutcome FlightOutcome { get; set; }
         public double Score { get; set; }
 
-        public double LandingFpm { get; set; } = -1;
+        public double? LandingFpm { get; set; } = -1;
 
         public ObservableCollection<BaseFlightEvent> FlightEvents { get; set; }
 

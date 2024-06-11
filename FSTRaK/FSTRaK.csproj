@@ -144,7 +144,6 @@
     <Compile Include="Models\Entity\FlightEvent\OverspeedEvent.cs" />
     <Compile Include="Models\Entity\FlightEvent\GearspeedExceededEvent.cs" />
     <Compile Include="Models\Entity\FlightEvent\FlapsSpeedExceededEvent.cs" />
-    <Compile Include="Models\Entity\Migrations\AddLandingFpmToFlights.cs" />
     <Compile Include="Models\Entity\Migrations\Configuration.cs" />
     <Compile Include="Models\Entity\FlightEvent\CrashEvent.cs" />
     <Compile Include="Models\Entity\FlightEvent\ScoringEvent.cs" />

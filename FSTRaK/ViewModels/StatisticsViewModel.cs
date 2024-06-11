@@ -310,9 +310,9 @@ namespace FSTRaK.ViewModels
             TotalPayload = UnitsUtil.GetWeightString(flights.Sum(f => f.TotalPayloadLbs));
             AvgPayload = UnitsUtil.GetWeightString(flights.Average(f => f.TotalPayloadLbs));
 
-            AvgLandingFpm = $"{flights.Where(f => f.LandingFpm > -1).Average(f => f.LandingFpm):N0} fpm";
-            MinLandingFpm = $"{flights.Where(f => f.LandingFpm > -1).Min(f => f.LandingFpm):N0} fpm";
-            MaxLandingFpm = $"{flights.Where(f => f.LandingFpm > -1).Max(f => f.LandingFpm):N0} fpm";
+            AvgLandingFpm = $"{flights.Where(f => f.LandingFpm != null).Average(f => f.LandingFpm):N0}";
+            MinLandingFpm = $"{flights.Where(f => f.LandingFpm != null).Max(f => f.LandingFpm):N0}";
+            MaxLandingFpm = $"{flights.Where(f => f.LandingFpm != null).Min(f => f.LandingFpm):N0}";
 
             AircraftDistribution = CalculateAircraftDistribution(flights);
 

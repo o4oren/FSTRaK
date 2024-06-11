@@ -68,6 +68,13 @@
                     <Run Text="Average Flight Distance: "/><Run Text="{Binding AvgFlightDistance}"/><Run Text=" NM"/>
 
                     <LineBreak />
+                    <Run Text="Average landing v/s: "/><Run Text="{Binding AvgLandingFpm}"/><Run Text=" fpm"/>
+                    <LineBreak />
+                    <Run Text="Minimum landing v/s: "/><Run Text="{Binding MinLandingFpm}"/><Run Text=" fpm"/>
+                    <LineBreak />
+                    <Run Text="Maximum landing v/s: "/><Run Text="{Binding MaxLandingFpm}"/><Run Text=" fpm"/>
+
+                    <LineBreak />
                     <Run Text="Total Fuel Used: "/><Run Text="{Binding TotalFuelUsed}"/>
                     <LineBreak />
                     <Run Text="Average Fuel Used: "/><Run Text="{Binding AvgFuelUsed}"/>

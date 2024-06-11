@@ -5,7 +5,7 @@ using System.Text;
 
 namespace FSTRaK.Models.Entity
 {
-    internal class Airport
+    public class Airport
     {
         public string icao { set; get; }
         public string iata { set; get; }

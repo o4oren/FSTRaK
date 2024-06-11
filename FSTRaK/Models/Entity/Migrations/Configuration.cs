@@ -1,6 +1,10 @@
-﻿namespace FSTRaK.Migrations
+﻿using System.Linq;
+using FSTRaK.Models;
+using System.Runtime.Remoting.Contexts;
+
+namespace FSTRaK.Migrations
 {
-    using System;
+    using FSTRaK.Models;
     using System.Data.Entity;
     using System.Data.Entity.Migrations;
     using System.Data.SQLite.EF6.Migrations;
@@ -18,8 +22,24 @@
         {
             //  This method will be called after migrating to the latest version.
 
-            //  You can use the DbSet<T>.AddOrUpdate() helper extension method
-            //  to avoid creating duplicate seed data.
+            // this is for 1.6.5 - to be removed in a future update. Once it does, versions earlier than 1.6.5 may have flights without updated landingfpm
+            // update landing fpm for flights that don't have it
+            var flights = context.Flights.Include(f => f.FlightEvents).ToList();
+            foreach (var f in flights)
+            {
+                if (f.LandingFpm == null)
+                {
+                    foreach (var e in f.FlightEvents)
+                    {
+                        if (e is LandingEvent @event && ((LandingEvent)e).VerticalSpeed < 0)
+                        {
+                            f.LandingFpm = @event.VerticalSpeed;
+                        }
+                    }
+                    context.SaveChanges();
+                }
+            }
+
         }
     }
 }

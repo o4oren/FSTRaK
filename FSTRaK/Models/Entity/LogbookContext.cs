@@ -8,7 +8,7 @@ using System.Data.Entity.ModelConfiguration.Conventions;
 
 namespace FSTRaK.Models.Entity
 {
-    internal class LogbookContext : DbContext
+    public class LogbookContext : DbContext
     {
         public LogbookContext() : base("FSTrAkSqliteDatabase")
         {
