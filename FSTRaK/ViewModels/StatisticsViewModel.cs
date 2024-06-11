@@ -8,6 +8,7 @@ using FSTRaK.Utils;
 using System.Linq.Dynamic;
 using Serilog;
 using System.Windows.Media.Media3D;
+using FSTRaK.DataTypes;
 
 namespace FSTRaK.ViewModels
 {
@@ -251,18 +252,16 @@ namespace FSTRaK.ViewModels
             }
         }
 
-        private Dictionary<DateTime, int> _flightsPerMonth;
-        public Dictionary<DateTime, int> FlightsPerMonth
+        private TimePeriod _timePeriod = TimePeriod.Day;
+        public TimePeriod TimePeriod
         {
-            get => _flightsPerMonth;
+            get => _timePeriod;
             set
             {
-                _flightsPerMonth = value;
+                _timePeriod = value;
                 OnPropertyChanged();
             }
         }
-
-
 
         public StatisticsViewModel()
         {

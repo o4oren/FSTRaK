@@ -3,11 +3,22 @@
              xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
              xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006" 
              xmlns:d="http://schemas.microsoft.com/expression/blend/2008" 
-             xmlns:viewmodels="clr-namespace:FSTRaK.ViewModels" d:DataContext="{d:DesignInstance Type=viewmodels:StatisticsViewModel}"
+             xmlns:viewmodels="clr-namespace:FSTRaK.ViewModels"
+             xmlns:System="clr-namespace:System;assembly=mscorlib"
+             xmlns:dataTypes="clr-namespace:FSTRaK.DataTypes"
+             d:DataContext="{d:DesignInstance Type=viewmodels:StatisticsViewModel}"
              mc:Ignorable="d" 
              d:DesignHeight="450" d:DesignWidth="800"
              Loaded="OnLoaded"
              >
+    <UserControl.Resources>
+        <ObjectDataProvider x:Key="dataFromEnum" MethodName="GetValues"
+                            ObjectType="{x:Type System:Enum}">
+            <ObjectDataProvider.MethodParameters>
+                <x:Type TypeName="dataTypes:TimePeriod"/>
+            </ObjectDataProvider.MethodParameters>
+        </ObjectDataProvider>
+    </UserControl.Resources>
 
     <ScrollViewer VerticalScrollBarVisibility="Auto" HorizontalScrollBarVisibility="Auto">
         <Grid>
@@ -89,10 +100,20 @@
             </StackPanel>
 
             <Grid Grid.Row="2" Grid.Column="0" Grid.ColumnSpan="2" Margin="10,10,10,10">
-                <Label Style="{DynamicResource FSTrAkLabel}">
-                    Flights per day
-                </Label>
-                <WpfPlot x:Name="ArrFlightsPerDay" Margin="10,39,10,10" Grid.Column="0" MinHeight="240" />
+                <StackPanel Orientation="Vertical">
+                    <StackPanel Orientation="Horizontal" Margin="10" Height="30">
+                        <Label Style="{StaticResource FSTrAkLabel}" >Flights per</Label>
+                        <ComboBox FontFamily="{DynamicResource Slopes}" 
+                                  Foreground="{DynamicResource TextColor}" 
+                                  FontSize="24" 
+                                  Width="200"
+                                  ItemsSource="{Binding Source={StaticResource dataFromEnum}}" 
+                                  SelectedItem="{Binding TimePeriod}"/>
+                    </StackPanel>
+
+                    <WpfPlot x:Name="ArrFlightsPerDay" Margin="10,20,10,10" Grid.Column="0" MinHeight="240" />
+                </StackPanel>
+
             </Grid>
 
             <Grid Grid.Row="3" Grid.Column="0" Margin="10,10,10,10">

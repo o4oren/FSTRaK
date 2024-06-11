@@ -15,6 +15,7 @@ using System.Runtime.InteropServices.ComTypes;
 using Newtonsoft.Json.Linq;
 using Log = Serilog.Log;
 using System.Windows.Input;
+using FSTRaK.DataTypes;
 
 namespace FSTRaK.Views
 {
@@ -73,11 +74,12 @@ namespace FSTRaK.Views
                         break;
 
                     case "FlightsPerDay":
+                    case "TimePeriod":
                         var arrFlightsPerDay = ((StatisticsViewModel)DataContext).FlightsPerDay;
 
                         if (arrFlightsPerDay != null && arrFlightsPerDay.Any())
                         {
-                            GenerateHistogram(arrFlightsPerDay, ArrFlightsPerDay);
+                            GenerateHistogram(arrFlightsPerDay, ArrFlightsPerDay, ((StatisticsViewModel)DataContext).TimePeriod);
                         }
                         break;
 
@@ -125,15 +127,26 @@ namespace FSTRaK.Views
             chart.Refresh();
         }
 
-        private void GenerateHistogram(Dictionary<DateTime, double> data, WpfPlot chart)
+        private void GenerateHistogram(Dictionary<DateTime, double> data, WpfPlot chart, TimePeriod timePeriod)
         {
             var plt = chart.Plot;
-            
             plt.Clear();
             chart.Plot.Style(
                 figureBackground: Color.Transparent,
                 dataBackground: Color.Transparent
             );
+
+            if (timePeriod == TimePeriod.Month)
+            {
+                data = AggregateDataByMonth(data);
+            }
+
+
+            if (timePeriod == TimePeriod.Year)
+            {
+                data = AggregateDataByYear(data);
+            }
+
             double[] values = data.Values.ToArray();
             double[] timePoints = data.Keys.Select(d => d.ToOADate()).ToArray();
 
@@ -149,7 +162,15 @@ namespace FSTRaK.Views
             var xAxisMin = timePoints.Min() - 1;
             var xAxisMax = timePoints.Max() + 1;
 
-            plt.XAxis.DateTimeFormat(true);
+            if (timePeriod == TimePeriod.Month)
+            {
+                plt.XAxis.DateTimeFormat(true);
+            }
+            else
+            {
+                plt.XAxis.DateTimeFormat(false);
+            }
+            
             
             chart.Configuration.Pan = true;
             chart.Configuration.LockVerticalAxis = true;
@@ -172,7 +193,7 @@ namespace FSTRaK.Views
                 double xMin = plt.GetAxisLimits().XMin;
                 double xMax = plt.GetAxisLimits().XMax;
                 
-                Log.Information($"Zoom: {xMax - xMin}");
+                var zoomLevel = xMax - xMin;
 
                 if (xMin < xAxisMin)
                 {
@@ -194,6 +215,26 @@ namespace FSTRaK.Views
             TimeSpan duration = maxDay - minDay;
             int numberOfDays = duration.Days;
             return numberOfDays;
+        }
+
+        private Dictionary<DateTime, double> AggregateDataByYear(Dictionary<DateTime, double> data)
+        {
+            return data
+                .GroupBy(x => new DateTime(x.Key.Year, 1, 1))
+                .ToDictionary(
+                    g => g.Key,
+                    g => g.Sum(x => x.Value)
+                );
+        }
+
+        private Dictionary<DateTime, double> AggregateDataByMonth(Dictionary<DateTime, double> data)
+        {
+            return data
+                .GroupBy(x => new DateTime(x.Key.Year, x.Key.Month, 1))
+                .ToDictionary(
+                    g => g.Key,
+                    g => g.Sum(x => x.Value)
+                );
         }
     }
 }
