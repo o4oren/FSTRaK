@@ -12,6 +12,7 @@ using System.Timers;
 
 using FSTRaK.BusinessLogic.FlightManager;
 using FSTRaK.BusinessLogic.FlightManager.State;
+using Newtonsoft.Json.Linq;
 
 namespace FSTRaK.ViewModels
 {
@@ -68,13 +69,15 @@ namespace FSTRaK.ViewModels
                 {
                     if (value.FlightEvents.Count == 0)
                     {
-                        using var logbookContext = new LogbookContext();
-                        logbookContext.Flights.Attach(value);
-                        logbookContext.Entry(value).Collection(f => f.FlightEvents).Load();
+                        using (var logbookContext = new LogbookContext())
+                        {
+                            ObservableCollection<BaseFlightEvent> flightEvents = new ObservableCollection<BaseFlightEvent>(logbookContext.FlightEvents.Where(fe => fe.FlightId == value.Id).ToList());
+                            value.FlightEvents = flightEvents;
+                        }
                     }
                     _selectedFlight = value;
                     _flightDetailsViewModel.Flight = _selectedFlight;
-                    OnPropertyChanged(nameof(SelectedFlight));
+                    OnPropertyChanged();
                 }
                 catch (Exception ex)
                 {
@@ -142,10 +145,6 @@ namespace FSTRaK.ViewModels
                 }
             };
 
-            OnLoogbookLoadedCommand = new RelayCommand(o =>
-            {
-                LoadFlights();
-            });
 
             DeleteFlightCommand = new RelayCommand(o =>
             {
@@ -287,6 +286,28 @@ namespace FSTRaK.ViewModels
                     }
                 }
             });
+        }
+
+        internal async void OnLoad()
+        {
+            Log.Information("on load");
+            await LoadFlights(500);
+            Flight flight = new Flight();
+            using (var logbookContext = new LogbookContext())
+            {
+                if (SelectedFlight == null)
+                {
+                    var latestId = logbookContext.Flights.Max(f => f.Id);
+                    flight = Flights
+                        .SingleOrDefault(f => f.Id == latestId);
+                    SelectedFlight = flight;
+                }
+                else
+                {
+                    SelectedFlight = _selectedFlight;
+                }
+            }
+            
         }
     }
 }

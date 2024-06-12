@@ -1,4 +1,5 @@
 ﻿using System;
+using System.Windows;
 using System.Windows.Controls;
 using FSTRaK.ViewModels;
 
@@ -13,6 +14,14 @@ namespace FSTRaK.Views
         public LogbookView()
         {
             InitializeComponent();
+        }
+
+        private void LogbookView_OnLoaded(object sender, RoutedEventArgs e)
+        {
+            if (DataContext is LogbookViewModel viewModel)
+            {
+                viewModel.OnLoad();
+            }
         }
     }
 }
