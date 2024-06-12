@@ -21,11 +21,14 @@ internal sealed class SimConnectService : INotifyPropertyChanged
 {
     private const int ConnectionInterval = 10000;
     private const int WmUserSimconnect = 0x0402;
+    private const int DataInterval = 50;
     private const string MainMenuFlt = "flights\\other\\MainMenu.FLT";
     private SimConnect _simconnect = null;
 
     private HwndSource _gHs;
     private Timer _connectionTimer;
+    private Timer _dataTimer;
+
     private IntPtr _lHwnd;
 
     private bool _isConnected = false;
@@ -196,7 +199,7 @@ internal sealed class SimConnectService : INotifyPropertyChanged
 
         _gHs = HwndSource.FromHwnd(_lHwnd);
         _gHs?.AddHook(new HwndSourceHook(WndProc));
-
+        SetDataTimer();
         SetConnectionTimer();
         WaitForSimConnection();
     }
@@ -212,6 +215,23 @@ internal sealed class SimConnectService : INotifyPropertyChanged
         _connectionTimer = new Timer(ConnectionInterval);
         _connectionTimer.Elapsed += (sender, e) => ConnectToSimulator();
         _connectionTimer.AutoReset = true;
+    }
+
+    private void SetDataTimer()
+    {
+        _dataTimer = new Timer(DataInterval);
+        _dataTimer.Elapsed += (sender, e) => RequestFlightData();
+        _dataTimer.AutoReset = true;
+    }
+
+    private void StartGettingData()
+    {
+        _dataTimer.Start();
+    }
+
+    private void StopGettingData()
+    {
+        _dataTimer.Stop();
     }
 
     private void ConnectToSimulator()
@@ -353,10 +373,11 @@ internal sealed class SimConnectService : INotifyPropertyChanged
         _simconnect.OnRecvEventFilename += new SimConnect.RecvEventFilenameEventHandler(Simconnect_OnRecvFilename);
         _simconnect.OnRecvSystemState += new SimConnect.RecvSystemStateEventHandler(Simconnect_OnRecvSystemState);
 
+        StartGettingData();
         // Start getting data
-        _simconnect.RequestDataOnSimObject(Requests.FlightDataRequest, DataDefinitions.FlightData,
-            SimConnect.SIMCONNECT_OBJECT_ID_USER, SIMCONNECT_PERIOD.VISUAL_FRAME, SIMCONNECT_DATA_REQUEST_FLAG.CHANGED,
-            0u, 0u, 0u);
+        //_simconnect.RequestDataOnSimObject(Requests.FlightDataRequest, DataDefinitions.FlightData,
+        //    SimConnect.SIMCONNECT_OBJECT_ID_USER, SIMCONNECT_PERIOD.VISUAL_FRAME, SIMCONNECT_DATA_REQUEST_FLAG.CHANGED,
+        //    0u, 0u, 0u);
     }
 
     private void Simconnect_OnRecvSystemState(SimConnect sender, SIMCONNECT_RECV_SYSTEM_STATE data)
@@ -447,6 +468,7 @@ internal sealed class SimConnectService : INotifyPropertyChanged
 
         // Due to previous hanging after System.Runtime.InteropServices.COMException (0xC000014B) we will try to set IsConnected to false - and let it try to connect again.
         IsConnected = false;
+        StopGettingData();
         _connectionTimer.Start();
     }
 
@@ -478,6 +500,16 @@ internal sealed class SimConnectService : INotifyPropertyChanged
             SimConnect.SIMCONNECT_OBJECT_ID_USER, SIMCONNECT_PERIOD.ONCE, SIMCONNECT_DATA_REQUEST_FLAG.DEFAULT,
             0u, 0u, 0u);
         _simconnect.RequestSystemState(Requests.AircraftLoaded, "AircraftLoaded");
+    }
+
+    /// <summary>
+    /// Gets flight data from simconnect once
+    /// </summary>
+    public void RequestFlightData()
+    {
+        _simconnect.RequestDataOnSimObject(Requests.FlightDataRequest, DataDefinitions.FlightData,
+            SimConnect.SIMCONNECT_OBJECT_ID_USER, SIMCONNECT_PERIOD.ONCE, SIMCONNECT_DATA_REQUEST_FLAG.CHANGED,
+            0u, 0u, 0u);
     }
 
     private void Simconnect_OnRecvAirportList(SimConnect sender, SIMCONNECT_RECV_AIRPORT_LIST data)
@@ -529,6 +561,7 @@ internal sealed class SimConnectService : INotifyPropertyChanged
 
     public void Close()
     {
+        _dataTimer.Stop();
         if (_simconnect != null)
         {
             _simconnect.Dispose();
