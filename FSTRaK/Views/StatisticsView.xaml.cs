@@ -8,12 +8,6 @@ using ScottPlot;
 using FSTRaK.Utils;
 using System.Drawing;
 using Color = System.Drawing.Color;
-using ScottPlot.Renderable;
-using FSTRaK.BusinessLogic.VatsimService.VatsimModel;
-using Microsoft.VisualBasic.Logging;
-using System.Runtime.InteropServices.ComTypes;
-using Newtonsoft.Json.Linq;
-using Log = Serilog.Log;
 using System.Windows.Input;
 using FSTRaK.DataTypes;
 
@@ -162,22 +156,54 @@ namespace FSTRaK.Views
             var xAxisMin = timePoints.Min() - 1;
             var xAxisMax = timePoints.Max() + 1;
 
-            if (timePeriod == TimePeriod.Month)
+            if (timePeriod == TimePeriod.Day)
             {
-                plt.XAxis.DateTimeFormat(true);
+                plt.XAxis.TickLabelFormat("dd/MMM/yyyy", true);
+                plt.XAxis.SetZoomInLimit(14);
+                plt.SetAxisLimits(xAxisMax - 60, xAxisMax);
+
             }
-            else
+            else if (timePeriod == TimePeriod.Month)
             {
-                plt.XAxis.DateTimeFormat(false);
+                plt.XAxis.TickLabelFormat("MMM yyyy", true);
+
+                xAxisMin = timePoints.Min() - 30;
+                    xAxisMax = timePoints.Max() + 30;
+
+                    plt.SetAxisLimits(xAxisMax - 365, xAxisMax);
+                    plt.XAxis.SetZoomInLimit(12 * 31);
+
+                for (int i = 0; i < timePoints.Length; i++)
+                {
+                    DateTime month = data.Keys.ElementAt(i);
+                    int daysInMonth = DateTime.DaysInMonth(month.Year, month.Month);
+                    double monthWidth = daysInMonth; // Each day is one unit in OADate
+                    bar.BarWidth = monthWidth - 10; // Set the bar width
+                    
+
+                }
+
             }
-            
-            
+            else if (timePeriod == TimePeriod.Year)
+            {
+                plt.XAxis.TickLabelFormat("yyyy", true);
+                double yearWidth = 365; // Each day is one unit in OADate
+                bar.BarWidth = yearWidth - 100; // Set the bar width
+
+                xAxisMin = timePoints.Min() - 300;
+                xAxisMax = timePoints.Max() + 300;
+
+                plt.SetAxisLimits(xAxisMax - 365, xAxisMax);
+                plt.XAxis.SetZoomInLimit(10 * 365);
+                plt.SetAxisLimits(xAxisMax - (365 * 10), xAxisMax);
+            }
+
+
             chart.Configuration.Pan = true;
             chart.Configuration.LockVerticalAxis = true;
             chart.Configuration.Zoom = true;
-            plt.XAxis.SetZoomInLimit(14);
-            plt.XAxis.SetZoomOutLimit(CalculateNumberOfDays(data));
-            plt.SetAxisLimits(xAxisMax - 60, xAxisMax);
+            //plt.XAxis.SetZoomInLimit(14);
+            // plt.XAxis.SetZoomOutLimit(CalculateNumberOfDays(data));
 
             chart.MouseWheel += (sender, e) =>
             {
@@ -187,23 +213,23 @@ namespace FSTRaK.Views
                 }
             };
 
-            chart.AxesChanged += (s, e) =>
-            {
+            //chart.AxesChanged += (s, e) =>
+            //{
 
-                double xMin = plt.GetAxisLimits().XMin;
-                double xMax = plt.GetAxisLimits().XMax;
+            //    double xMin = plt.GetAxisLimits().XMin;
+            //    double xMax = plt.GetAxisLimits().XMax;
                 
-                var zoomLevel = xMax - xMin;
+            //    var zoomLevel = xMax - xMin;
 
-                if (xMin < xAxisMin)
-                {
-                    plt.SetAxisLimits(xAxisMin, xAxisMin + (xMax - xMin) + 1);
-                }
-                else if (xMax > xAxisMax)
-                {
-                    plt.SetAxisLimits(xAxisMax - (xMax - xMin) - 1, xAxisMax);
-                }
-            };
+            //    if (xMin < xAxisMin)
+            //    {
+            //        plt.SetAxisLimits(xAxisMin, xAxisMin + (xMax - xMin) + 1);
+            //    }
+            //    else if (xMax > xAxisMax)
+            //    {
+            //        plt.SetAxisLimits(xAxisMax - (xMax - xMin) - 1, xAxisMax);
+            //    }
+            //};
 
             chart.Refresh();
         }
@@ -236,5 +262,7 @@ namespace FSTRaK.Views
                     g => g.Sum(x => x.Value)
                 );
         }
+
+
     }
 }
