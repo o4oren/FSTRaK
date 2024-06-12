@@ -291,7 +291,7 @@ namespace FSTRaK.ViewModels
         internal async void OnLoad()
         {
             Log.Information("on load");
-            await LoadFlights(500);
+            await LoadFlights(0);
             Flight flight = new Flight();
             using (var logbookContext = new LogbookContext())
             {
@@ -304,7 +304,7 @@ namespace FSTRaK.ViewModels
                 }
                 else
                 {
-                    SelectedFlight = _selectedFlight;
+                    SelectedFlight = _selectedFlight; // not workig
                 }
             }
             
