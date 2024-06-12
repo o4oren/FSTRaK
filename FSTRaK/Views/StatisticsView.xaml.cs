@@ -194,8 +194,8 @@ namespace FSTRaK.Views
                 xAxisMax = timePoints.Max() + 300;
 
                 plt.SetAxisLimits(xAxisMax - 365, xAxisMax);
-                plt.XAxis.SetZoomInLimit(10 * 365);
-                plt.SetAxisLimits(xAxisMax - (365 * 10), xAxisMax);
+                plt.XAxis.SetZoomInLimit(12 * 365);
+                plt.SetAxisLimits(xAxisMax - (365 * 12), xAxisMax);
             }
 
 
