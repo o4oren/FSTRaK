@@ -159,6 +159,11 @@ namespace FSTRaK.ViewModels
             get { return MapProviderResolver.GetMapProvider(); }
         }
 
+        public bool IsMaptillerCMap
+        {
+            get => MapProvider is MapTilerMapTileLayer;
+        }
+
         private BoundingBox _viewPort;
         public BoundingBox ViewPort
         {

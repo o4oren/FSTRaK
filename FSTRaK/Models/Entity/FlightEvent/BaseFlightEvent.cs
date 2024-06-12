@@ -4,7 +4,7 @@ using System.ComponentModel.DataAnnotations.Schema;
 namespace FSTRaK.Models
 {
     [Table("FlightEvent")]
-    internal class BaseFlightEvent : BaseModel
+    public class BaseFlightEvent : BaseModel
     {
         [Column("ID")]
         public int Id { get; set; }

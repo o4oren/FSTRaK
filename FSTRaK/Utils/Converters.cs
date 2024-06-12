@@ -28,7 +28,7 @@ public class ResourceNameToGeometryConverter : IValueConverter
         {
             if (Application.Current.TryFindResource(pathDataKey) is Geometry pathGeometry)
             {
-                return pathGeometry.Clone();
+                return pathGeometry;
             }
         }
         return DependencyProperty.UnsetValue; // Indicates a failed conversion
@@ -49,7 +49,7 @@ public class ResourceNameToImageConverter : IValueConverter
         {
             if (Application.Current.TryFindResource(pathDataKey) is BitmapImage pathImage)
             {
-                return pathImage.Clone();
+                return pathImage;
             }
         }
         return DependencyProperty.UnsetValue; // Indicates a failed conversion

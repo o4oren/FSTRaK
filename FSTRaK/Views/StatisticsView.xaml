@@ -3,49 +3,60 @@
              xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
              xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006" 
              xmlns:d="http://schemas.microsoft.com/expression/blend/2008" 
-             xmlns:viewmodels="clr-namespace:FSTRaK.ViewModels" d:DataContext="{d:DesignInstance Type=viewmodels:StatisticsViewModel}"
+             xmlns:viewmodels="clr-namespace:FSTRaK.ViewModels"
+             xmlns:System="clr-namespace:System;assembly=mscorlib"
+             xmlns:dataTypes="clr-namespace:FSTRaK.DataTypes"
+             d:DataContext="{d:DesignInstance Type=viewmodels:StatisticsViewModel}"
              mc:Ignorable="d" 
              d:DesignHeight="450" d:DesignWidth="800"
              Loaded="OnLoaded"
              >
+    <UserControl.Resources>
+        <ObjectDataProvider x:Key="dataFromEnum" MethodName="GetValues"
+                            ObjectType="{x:Type System:Enum}">
+            <ObjectDataProvider.MethodParameters>
+                <x:Type TypeName="dataTypes:TimePeriod"/>
+            </ObjectDataProvider.MethodParameters>
+        </ObjectDataProvider>
+    </UserControl.Resources>
 
-    <Grid>
-        <Grid.ColumnDefinitions>
-            <ColumnDefinition Width="2*" />
-            <ColumnDefinition Width="2*" />
-            <ColumnDefinition Width="1*" />
-        </Grid.ColumnDefinitions>
-        <Grid.RowDefinitions>
-            <RowDefinition Height="Auto"/>
-            <RowDefinition Height="Auto" />
-            <RowDefinition />
-            <RowDefinition />
-        </Grid.RowDefinitions>
-        <StackPanel Orientation="Horizontal" Grid.Column="0" Grid.Row="0" Margin="10">
-            <Label Style="{StaticResource FSTrAkLabel}">By Airline</Label>
-            <ComboBox FontFamily="{DynamicResource Slopes}" 
+    <ScrollViewer VerticalScrollBarVisibility="Auto" HorizontalScrollBarVisibility="Auto">
+        <Grid>
+            <Grid.ColumnDefinitions>
+                <ColumnDefinition Width="2*" />
+                <ColumnDefinition Width="2*" />
+                <ColumnDefinition Width="1*" />
+            </Grid.ColumnDefinitions>
+            <Grid.RowDefinitions>
+                <RowDefinition Height="Auto"/>
+                <RowDefinition Height="Auto" />
+                <RowDefinition Height="Auto"/>
+                <RowDefinition />
+                <RowDefinition />
+            </Grid.RowDefinitions>
+            <StackPanel Orientation="Horizontal" Grid.Column="0" Grid.Row="0" Margin="10">
+                <Label Style="{StaticResource FSTrAkLabel}">By Airline</Label>
+                <ComboBox FontFamily="{DynamicResource Slopes}" 
                       Foreground="{DynamicResource TextColor}" 
                       FontSize="24" 
                       Width="200"
                       ItemsSource="{Binding Airlines}"
                       SelectedItem="{Binding AirlineFilter}"/>
-        </StackPanel>
-        <StackPanel Orientation="Horizontal" Grid.Column="1" Grid.Row="0" Margin="10">
-            <Label Style="{StaticResource FSTrAkLabel}" Margin="20 0 0 0">By Aircraft Type</Label>
-            <ComboBox FontFamily="{DynamicResource Slopes}" 
+            </StackPanel>
+            <StackPanel Orientation="Horizontal" Grid.Column="1" Grid.Row="0" Margin="10">
+                <Label Style="{StaticResource FSTrAkLabel}" Margin="20 0 0 0">By Aircraft Type</Label>
+                <ComboBox FontFamily="{DynamicResource Slopes}" 
                       Foreground="{DynamicResource TextColor}" 
                       FontSize="24" 
                       Width="200"
                       ItemsSource="{Binding AircraftTypes}"
                       SelectedItem="{Binding AircraftTypeFilter}"/>
-        </StackPanel>
+            </StackPanel>
 
+            <StackPanel Grid.Row="1" Grid.Column="0">
 
-
-        <StackPanel Grid.Row="1" Grid.Column="0">
-
-            <StackPanel Margin="10" >
-                <TextBlock 
+                <StackPanel Margin="10" >
+                    <TextBlock 
                     Foreground="{DynamicResource TextColor}"
                     FontSize="28"
                     Margin="10"
@@ -68,6 +79,13 @@
                     <Run Text="Average Flight Distance: "/><Run Text="{Binding AvgFlightDistance}"/><Run Text=" NM"/>
 
                     <LineBreak />
+                    <Run Text="Average landing v/s: "/><Run Text="{Binding AvgLandingFpm}"/><Run Text=" fpm"/>
+                    <LineBreak />
+                    <Run Text="Minimum landing v/s: "/><Run Text="{Binding MinLandingFpm}"/><Run Text=" fpm"/>
+                    <LineBreak />
+                    <Run Text="Maximum landing v/s: "/><Run Text="{Binding MaxLandingFpm}"/><Run Text=" fpm"/>
+
+                    <LineBreak />
                     <Run Text="Total Fuel Used: "/><Run Text="{Binding TotalFuelUsed}"/>
                     <LineBreak />
                     <Run Text="Average Fuel Used: "/><Run Text="{Binding AvgFuelUsed}"/>
@@ -77,38 +95,57 @@
                     <LineBreak />
                     <Run Text="Average Payload: "/><Run Text="{Binding AvgPayload}"/>
 
-                </TextBlock>
+                    </TextBlock>
+                </StackPanel>
             </StackPanel>
-        </StackPanel>
 
-        <Grid Grid.Row="2" Grid.Column="0" Margin="10,10,10,10">
-            <Label Style="{DynamicResource FSTrAkLabel}">
-                Top Aircraft
-            </Label>
-            <WpfPlot x:Name="AircraftDistributionChart" Margin="10,39,10,10" Grid.Column="0"/>
+            <Grid Grid.Row="2" Grid.Column="0" Grid.ColumnSpan="2" Margin="10,10,10,10">
+                <StackPanel Orientation="Vertical">
+                    <StackPanel Orientation="Horizontal" Margin="10" Height="30">
+                        <Label Style="{StaticResource FSTrAkLabel}" >Flights per</Label>
+                        <ComboBox FontFamily="{DynamicResource Slopes}" 
+                                  Foreground="{DynamicResource TextColor}" 
+                                  FontSize="24" 
+                                  Width="200"
+                                  ItemsSource="{Binding Source={StaticResource dataFromEnum}}" 
+                                  SelectedItem="{Binding TimePeriod}"/>
+                    </StackPanel>
+
+                    <WpfPlot x:Name="ArrFlightsPerDay" Margin="10,20,10,10" Grid.Column="0" MinHeight="240" />
+                </StackPanel>
+
+            </Grid>
+
+            <Grid Grid.Row="3" Grid.Column="0" Margin="10,10,10,10">
+                <Label Style="{DynamicResource FSTrAkLabel}" Width="200">
+                    Top Aircraft
+                </Label>
+                <WpfPlot x:Name="AircraftDistributionChart" Margin="10,39,10,10" Grid.Column="0" MinHeight="120" />
+            </Grid>
+
+            <Grid Grid.Row="3" Grid.Column="1" Margin="10,10,10,10" >
+                <Label Style="{DynamicResource FSTrAkLabel}" Width="200">
+                    Top Airlines
+                </Label>
+                <WpfPlot x:Name="AirlineDistributionChart" Margin="10,39,10,10" MinHeight="120" MinWidth="400"/>
+            </Grid>
+
+            <Grid Grid.Row="4" Grid.Column="0" Margin="10,10,10,10">
+                <Label Style="{DynamicResource FSTrAkLabel}" Width="200">
+                    Top Departure Airports
+                </Label>
+                <WpfPlot x:Name="DepDistributionChart" Margin="10,39,10,10" Grid.Column="0" MinHeight="120" MinWidth="400" />
+            </Grid>
+
+            <Grid Grid.Row="4" Grid.Column="1" Margin="10,10,10,10">
+                <Label Style="{DynamicResource FSTrAkLabel}" Width="200">
+                    Top Arrival Airports
+                </Label>
+                <WpfPlot x:Name="ArrDistributionChart" Margin="10,39,10,10" MinHeight="120" MinWidth="400" />
+            </Grid>
+
+
         </Grid>
-
-        <Grid Grid.Row="2" Grid.Column="1" Margin="10,10,10,10">
-            <Label Style="{DynamicResource FSTrAkLabel}">
-                Top Airlines
-            </Label>
-            <WpfPlot x:Name="AirlineDistributionChart" Margin="10,39,10,10"  />
-        </Grid>
-
-        <Grid Grid.Row="3" Grid.Column="0" Margin="10,10,10,10">
-            <Label Style="{DynamicResource FSTrAkLabel}">
-                Top Depatrure Airports
-            </Label>
-            <WpfPlot x:Name="DepDistributionChart" Margin="10,39,10,10" Grid.Column="0"/>
-        </Grid>
-
-        <Grid Grid.Row="3" Grid.Column="1" Margin="10,10,10,10">
-            <Label Style="{DynamicResource FSTrAkLabel}">
-                Top Arrival Airports
-            </Label>
-            <WpfPlot x:Name="ArrDistributionChart" Margin="10,39,10,10"  />
-        </Grid>
-
-
-    </Grid>
+    </ScrollViewer>
+ 
 </UserControl>

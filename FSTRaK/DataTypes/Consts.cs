@@ -13,4 +13,6 @@ namespace FSTRaK.DataTypes
         public static string RadioRadarImage = @"antenna-radar-64";
         public static string TowerRadarImage = @"tower-radar-64";
     }
+
+
 }

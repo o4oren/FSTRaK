@@ -68,7 +68,7 @@
     <GenerateManifests>true</GenerateManifests>
   </PropertyGroup>
   <PropertyGroup>
-    <SignManifests>true</SignManifests>
+    <SignManifests>false</SignManifests>
   </PropertyGroup>
   <PropertyGroup>
     <ApplicationIcon>FSTrAk.ico</ApplicationIcon>
@@ -160,6 +160,7 @@
     <Compile Include="Models\Entity\Flight.cs" />
     <Compile Include="Models\Entity\FlightEvent\BaseFlightEvent.cs" />
     <Compile Include="RelayCommand.cs" />
+    <Compile Include="Utils\CollectionUtils.cs" />
     <Compile Include="Utils\ColorUtil.cs" />
     <Compile Include="Utils\CoordinatesUtil.cs" />
     <Compile Include="Utils\ResourceUtil.cs" />
@@ -334,6 +335,19 @@
     <Resource Include="Resources\Images\radio-antenna-64.png" />
     <Resource Include="Resources\Images\tower-radar-64.png" />
     <Resource Include="Resources\Images\VATSIM_Logo_White_No_Tagline_500px.png" />
+    <Resource Include="Resources\Images\Aircraft\003884\A320-image.png" />
+    <Resource Include="Resources\Images\Aircraft\003884\A330-image.png" />
+    <Resource Include="Resources\Images\Aircraft\003884\A340-image.png" />
+    <Resource Include="Resources\Images\Aircraft\003884\B737-image.png" />
+    <Resource Include="Resources\Images\Aircraft\003884\B747-image.png" />
+    <Resource Include="Resources\Images\Aircraft\003884\B767-image.png" />
+    <Resource Include="Resources\Images\Aircraft\003884\B777-image.png" />
+    <Resource Include="Resources\Images\Aircraft\003884\B787-image.png" />
+    <Resource Include="Resources\Images\Aircraft\003884\C172-image.png" />
+    <Resource Include="Resources\Images\Aircraft\003884\DC3-image.png" />
+    <Resource Include="Resources\Images\Aircraft\003884\E195-image.png" />
+    <Resource Include="Resources\Images\Aircraft\003884\ERJ-image.png" />
+    <Resource Include="Resources\Images\Aircraft\003884\Helicopter-image.png" />
     <Content Include="System.Buffers.dll">
       <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
     </Content>

@@ -6,6 +6,13 @@ namespace FSTRaK.DataTypes
         Imperial,
         Metric
     }
+
+    public enum TimePeriod
+    {
+        Day,
+        Month,
+        Year
+    }
     internal class Settings
     {
     }

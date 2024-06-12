@@ -9,7 +9,9 @@ using System.Drawing;
 using System.Linq;
 using System.Windows;
 using System.Windows.Controls;
+using System.Windows.Navigation;
 using FSTRaK.Utils;
+using System.Diagnostics;
 
 namespace FSTRaK.Views
 {
@@ -125,13 +127,22 @@ namespace FSTRaK.Views
         public void ZoomToBounds(BoundingBox boundingBox)
         {
             var rect = LogbookMap.MapProjection.BoundingBoxToMapRect(boundingBox);
-            var scale = Math.Min(LogbookMap.ActualWidth / rect.Width, LogbookMap.ActualHeight / rect.Height);
-            var zoomLevel = ViewTransform.ScaleToZoomLevel(scale);
-            // Set new view
-            LogbookMap.TargetZoomLevel = Math.Floor(Math.Min(16, zoomLevel) - 0.5);
-            LogbookMap.TargetCenter = LogbookMap.MapProjection.MapToLocation(rect.Center);
-            LogbookMap.TargetHeading = 0d;
+            if (rect != null && !Double.IsInfinity(boundingBox.Width))
+            {
+                var scale = Math.Min(LogbookMap.ActualWidth / rect.Width, LogbookMap.ActualHeight / rect.Height);
+                var zoomLevel = ViewTransform.ScaleToZoomLevel(scale);
+                // Set new view
+                LogbookMap.TargetZoomLevel = Math.Floor(Math.Min(16, zoomLevel) - 0.5);
+                LogbookMap.TargetCenter = LogbookMap.MapProjection.MapToLocation(rect.Center);
+                LogbookMap.TargetHeading = 0d;
+            }
+
         }
 
+        private void Hyperlink_RequestNavigate(object sender, RequestNavigateEventArgs e)
+        {
+            Process.Start(new ProcessStartInfo(e.Uri.AbsoluteUri));
+            e.Handled = true;
+        }
     }
 }

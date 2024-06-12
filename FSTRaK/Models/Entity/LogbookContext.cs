@@ -8,11 +8,11 @@ using System.Data.Entity.ModelConfiguration.Conventions;
 
 namespace FSTRaK.Models.Entity
 {
-    internal class LogbookContext : DbContext
+    public class LogbookContext : DbContext
     {
         public LogbookContext() : base("FSTrAkSqliteDatabase")
         {
-            Database.SetInitializer(new MigrateDatabaseToLatestVersion<LogbookContext, FSTRaK.Migrations.Configuration>(true));
+            Database.SetInitializer(new MigrateDatabaseToLatestVersion<LogbookContext, Migrations.Configuration>(true));
             this.Database.Log = Log.Debug;
             this.Configuration.LazyLoadingEnabled = true;
             this.Configuration.ProxyCreationEnabled = true;

@@ -18,11 +18,16 @@ namespace FSTRaK.BusinessLogic.VatsimService
     internal class VatsimService : BaseModel
     {
         private Timer _connectionTimer;
-        private const int ConnectionInterval = 20 * 1000;
+        private const int ConnectionInterval = 60 * 1000;
+
+        public bool Started
+        {
+            get;
+            private set;
+        }
+
         private VatsimData _vatsimData;
-
         
-
         public VatsimData VatsimData
         {
             get => _vatsimData;
@@ -35,7 +40,6 @@ namespace FSTRaK.BusinessLogic.VatsimService
                 }
             }
         }
-
 
         public VatsimStaticData VatsimStaticData
         {
@@ -237,6 +241,7 @@ namespace FSTRaK.BusinessLogic.VatsimService
             Log.Information("Starting to poll VATSIM for Data");
             await GetVatsimData();
             _connectionTimer.Start();
+            Started = true;
         }
 
         public void Stop()
@@ -244,12 +249,14 @@ namespace FSTRaK.BusinessLogic.VatsimService
             Log.Information("Stopping to poll VATSIM");
             VatsimData = null;
             _connectionTimer.Stop();
+            Started = false;
         }
 
         private async Task GetVatsimData()
         {
             try
             {
+                Log.Debug("Fetching Vatsim Data");
                 using HttpClient client = new HttpClient();
                 string apiUrl = "https://data.vatsim.net/v3/vatsim-data.json";
                 HttpResponseMessage response = await client.GetAsync(apiUrl);

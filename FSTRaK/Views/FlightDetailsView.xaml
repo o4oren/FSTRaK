@@ -66,6 +66,13 @@
                 <map:MapItemsControl ItemsSource="{Binding MarkerList}" ItemContainerStyle="{StaticResource PushpinItemStyle}"/>
                 <TextBlock   FontSize="12" HorizontalAlignment="Right" VerticalAlignment="Bottom" Margin="5" Style="{StaticResource MapAttribution}"
                              utils:HyperlinkText.InlinesSource="{Binding MapProvider.Description}" />
+                <ContentControl HorizontalAlignment="Left" VerticalAlignment="Bottom" Margin="10 0 0 15" Width="45" Height="11" Visibility="{Binding IsMaptillerCMap, Converter={StaticResource BoolToVis}}">
+                    <Hyperlink NavigateUri="https://www.maptiler.com/"
+                               TextDecorations="None"
+                               RequestNavigate="Hyperlink_RequestNavigate">
+                        <ContentControl Content="{StaticResource MaptillerLogo}"/>
+                    </Hyperlink>
+                </ContentControl>
             </map:Map>
                 <StackPanel Orientation="Horizontal" Margin="10">
                 <StackPanel HorizontalAlignment="left" Visibility="{Binding IsShowFlightDetails, Converter={StaticResource BoolToVis}}">

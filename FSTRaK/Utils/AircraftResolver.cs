@@ -31,7 +31,8 @@ namespace FSTRaK.Utils
             "PA34", "B300", "B200", "B350", "C310"
         });
 
-        public static readonly List<string> Helicopter = new List<string>(new string[] { "B06", "H500", "H135", "EC45", "EC35", "H145", "H155", "BK-117C-2", "H125", "H275", "R44", "B47G", "R66", "B06", "B212", "UH1" });
+        public static readonly List<string> Helicopter = new List<string>(new string[] { "B06", "H500", "H135", "EC45", "EC35", "H145", "H160", "H155", "BK-117C-2", "H125", "H275", "R44", "B47G", "R66", "B06", "B212", "UH1" });
+        public static readonly List<string> Conc = new List<string>(new string[] { "CONC" });
 
         public static (string, double) GetAircraftIcon(Aircraft aircraft)
         {
@@ -107,6 +108,8 @@ namespace FSTRaK.Utils
                 return ("DC3", 0.6);
             if (Helicopter.Any(aircraftType.Contains))
                 return ("Helicopter", 0.6);
+            if (Conc.Any(aircraftType.Contains))
+                return ("Conc", 1.3);
 
             if (isNullIfNotFound)
                 return (null, 1);

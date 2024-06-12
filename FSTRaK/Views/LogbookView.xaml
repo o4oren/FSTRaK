@@ -8,7 +8,8 @@
              mc:Ignorable="d" 
              d:DesignHeight="450" d:DesignWidth="800"
              d:DataContext="{d:DesignInstance Type=viewmodels:LogbookViewModel}"
-             >
+             Loaded="LogbookView_OnLoaded"
+>
 
     <UserControl.Resources>
         <ResourceDictionary>
@@ -66,11 +67,6 @@
             <RowDefinition Height="*"/>
         </Grid.RowDefinitions>
 
-        <b:Interaction.Triggers>
-            <b:EventTrigger EventName="Loaded">
-                <b:InvokeCommandAction Command="{Binding OnLoogbookLoadedCommand}"/>
-            </b:EventTrigger>
-        </b:Interaction.Triggers>
         <TextBox Style="{DynamicResource FSTrAkTextBox}" 
                  Text="{Binding SearchText, 
             Mode=TwoWay, 

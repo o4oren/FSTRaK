@@ -214,9 +214,9 @@ namespace FSTRaK.ViewModels
             }
         }
 
-        private ObservableCollection<VatsimAicraft> _vatsimAircraftList = new();
+        private BindingList<VatsimAicraft> _vatsimAircraftList = new();
 
-        public ObservableCollection<VatsimAicraft> VatsimAircraftList
+        public BindingList<VatsimAicraft> VatsimAircraftList
         {
             get => _vatsimAircraftList;
             private set
@@ -229,8 +229,8 @@ namespace FSTRaK.ViewModels
             }
         }
 
-        private ObservableCollection<VatsimControlledAirport> _vatsimControlledAirports = new();
-        public ObservableCollection<VatsimControlledAirport> VatsimControlledAirports
+        private BindingList<VatsimControlledAirport> _vatsimControlledAirports = new();
+        public BindingList<VatsimControlledAirport> VatsimControlledAirports
         {
             get => _vatsimControlledAirports;
             private set
@@ -243,8 +243,8 @@ namespace FSTRaK.ViewModels
             }
         }
 
-        private ObservableCollection<VatsimControlledFir> _vatsimControlledFirs = new();
-        public ObservableCollection<VatsimControlledFir> VatsimControlledFirs
+        private BindingList<VatsimControlledFir> _vatsimControlledFirs = new();
+        public BindingList<VatsimControlledFir> VatsimControlledFirs
         {
             get => _vatsimControlledFirs;
             private set
@@ -257,8 +257,8 @@ namespace FSTRaK.ViewModels
             }
         }
 
-        private ObservableCollection<VatsimControlledUir> _vatsimControlledUirs = new();
-        public ObservableCollection<VatsimControlledUir> VatsimControlledUirs
+        private BindingList<VatsimControlledUir> _vatsimControlledUirs = new();
+        public BindingList<VatsimControlledUir> VatsimControlledUirs
         {
             get => _vatsimControlledUirs;
             private set
@@ -296,6 +296,12 @@ namespace FSTRaK.ViewModels
         }
 
         public MapTileLayerBase MapProvider => MapProviderResolver.GetMapProvider();
+
+        public bool IsMaptillerCMap
+        {
+            get => MapProvider is MapTilerMapTileLayer;
+        }
+
 
 
         private DateTime _lastUpdated = DateTime.Now;
@@ -372,30 +378,31 @@ namespace FSTRaK.ViewModels
 
         private async void ProcessVatsimAirports()
         {
-            var airportsList = new List<VatsimControlledAirport>();
+            var controlledAirportsDict = new Dictionary<string, VatsimControlledAirport>();
             await Task.Run(() =>
             {
-                var controlledAirportsDict = new Dictionary<string, VatsimControlledAirport>();
                 foreach (var controller in VatsimData.controllers)
                 {
+                    if (controller.callsign.Equals("DEN_I_APP"))
+                    {
+
+                    }
+
                     if (controller.facility == 2 || controller.facility == 3 || controller.facility == 4 || controller.facility == 5)
                     {
                         // Find airport
                         var callsignParts = controller.callsign.Split('_');
-                        if (controlledAirportsDict.ContainsKey(callsignParts[0]))
+                        var airport = _vatsimService.VatsimStaticData.Airports.Find(a => a.ICAO.Equals(callsignParts[0]) || a.IATA.Equals(callsignParts[0]));
+                        if (airport != null && controlledAirportsDict.TryGetValue(airport.ICAO, out var controlledAirport1))
                         {
-                            var airport = controlledAirportsDict[callsignParts[0]];
-                            airport.Controllers.Add(controller);
+                            controlledAirport1.Controllers.Add(controller);
                         }
                         else
                         {
-                            var airport = _vatsimService.VatsimStaticData.Airports.Find(a => a.ICAO.Equals(callsignParts[0]));
-                            if (airport != null)
-                            {
-                                var controlledAirport = new VatsimControlledAirport(airport);
-                                controlledAirport.Controllers.Add(controller);
-                                controlledAirportsDict.Add(controlledAirport.Airport.ICAO, controlledAirport);
-                            }
+                            if (airport == null) continue;
+                            var controlledAirport = new VatsimControlledAirport(airport);
+                            controlledAirport.Controllers.Add(controller);
+                            controlledAirportsDict.Add(controlledAirport.Airport.ICAO, controlledAirport);
                         }
                     }
                 }
@@ -502,15 +509,13 @@ namespace FSTRaK.ViewModels
                     }
                 }
 
-                airportsList.AddRange(controlledAirportsDict.Values.ToList());
             });
-
-            VatsimControlledAirports = new ObservableCollection<VatsimControlledAirport>(airportsList);
+            VatsimControlledAirports.ReplaceContent(controlledAirportsDict.Values.ToList());
         }
 
         private async void ProcessVatsimPilots()
         {
-            var newVatsimAircraftList = new ObservableCollection<VatsimAicraft>();
+            var newVatsimAircraftList = new List<VatsimAicraft>();
             await Task.Run(() =>
             {
                 foreach (var pilot in _vatsimData.pilots)
@@ -519,8 +524,7 @@ namespace FSTRaK.ViewModels
                     newVatsimAircraftList.Add(aircraft);
                 }
             });
-
-            VatsimAircraftList = newVatsimAircraftList;
+            VatsimAircraftList.ReplaceContent(newVatsimAircraftList);
         }
 
         private async void ProcessVatsimCtrFSS()
@@ -619,7 +623,6 @@ namespace FSTRaK.ViewModels
 
                                     vatsimControlledFir.Controllers.Add(controller);
                                 }
-
                             }
                         }
                         catch (Exception ex)
@@ -629,8 +632,9 @@ namespace FSTRaK.ViewModels
                     }
                 }
             });
-            VatsimControlledFirs = new ObservableCollection<VatsimControlledFir>(firsList);
-            VatsimControlledUirs = new ObservableCollection<VatsimControlledUir>(uirDict.Values.ToList());
+
+            VatsimControlledFirs.ReplaceContent(firsList);
+            VatsimControlledUirs.ReplaceContent(uirDict.Values.ToList());
         }
 
         private void FlightManagerOnPropertyChanged(object sender, PropertyChangedEventArgs e)
@@ -761,6 +765,7 @@ namespace FSTRaK.ViewModels
             public string IconResourse { get; set; }
             public string TooltipText { get; set; }
             public bool IsShowCircle { get; set; } = false;
+
 
             public Location Location
             {

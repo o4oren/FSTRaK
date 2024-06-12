@@ -55,7 +55,15 @@ namespace FSTRaK
         .CreateLogger();
         AppDomain.CurrentDomain.SetData("DataDirectory", PathUtil.GetApplicationLocalDataPath());
 
-        var assembly = System.Reflection.Assembly.GetExecutingAssembly();
+            // If upgrade - update settings upgrade the settings.
+            if (FSTRaK.Properties.Settings.Default.UpgradeRequired)
+            {
+                FSTRaK.Properties.Settings.Default.Upgrade();
+                FSTRaK.Properties.Settings.Default.UpgradeRequired = false;
+                FSTRaK.Properties.Settings.Default.Save();
+            }
+
+            var assembly = System.Reflection.Assembly.GetExecutingAssembly();
         FileVersionInfo fvi = FileVersionInfo.GetVersionInfo(assembly.Location);
         Log.Information($"FSTrAk {fvi.ProductVersion} Started.");
 
