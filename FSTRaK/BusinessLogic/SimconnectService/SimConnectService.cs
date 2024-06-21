@@ -41,7 +41,7 @@ internal sealed class SimConnectService : INotifyPropertyChanged
             if (value != _isConnected)
             {
                 _isConnected = value;
-                OnPropertyChanged(nameof(IsConnected));
+                OnPropertyChanged();
             }
         }
     }
@@ -56,7 +56,7 @@ internal sealed class SimConnectService : INotifyPropertyChanged
             if (value != _isInFlight)
             {
                 _isInFlight = value;
-                OnPropertyChanged(nameof(IsInFlight));
+                OnPropertyChanged();
                 IsCrashed = false; // Remove Crashed flag
             }
         }
@@ -92,7 +92,7 @@ internal sealed class SimConnectService : INotifyPropertyChanged
             if (value != _isCrashed)
             {
                 _isCrashed = value;
-                OnPropertyChanged(nameof(IsCrashed));
+                OnPropertyChanged();
             }
         }
     }
@@ -107,7 +107,7 @@ internal sealed class SimConnectService : INotifyPropertyChanged
             if (value != _loadedFlight)
             {
                 _loadedFlight = value;
-                OnPropertyChanged(nameof(LoadedFlight));
+                OnPropertyChanged();
             }
         }
     }
@@ -467,28 +467,46 @@ internal sealed class SimConnectService : INotifyPropertyChanged
         Log.Error($"Simconnect exception {data.dwException}");
 
         // Due to previous hanging after System.Runtime.InteropServices.COMException (0xC000014B) we will try to set IsConnected to false - and let it try to connect again.
-        IsConnected = false;
-        StopGettingData();
-        _connectionTimer.Start();
+        if (data.dwException is (uint)0xC000014B)
+        {
+            IsConnected = false;
+            StopGettingData();
+            Close();
+            _connectionTimer.Start();
+        }
     }
 
     private void Simconnect_OnRecvSimobjectData(SimConnect sender, SIMCONNECT_RECV_SIMOBJECT_DATA data)
     {
-        if (data.dwRequestID == (int)Requests.FlightDataRequest)
+        try
         {
-            FlightData = (FlightData)data.dwData[0];
-            // OnPropertyChanged(nameof(FlightData));
+            if (data.dwRequestID == (int)Requests.FlightDataRequest)
+            {
+                FlightData = (FlightData)data.dwData[0];
+                // OnPropertyChanged(nameof(FlightData));
+            }
+            else if (data.dwRequestID == (int)Requests.AircraftDataRequest)
+            {
+                AircraftData = (AircraftData)data.dwData[0];
+            }
         }
-        else if (data.dwRequestID == (int)Requests.AircraftDataRequest)
+        catch (COMException ex)
         {
-            AircraftData = (AircraftData)data.dwData[0];
+            HandleCOMException(ex);
         }
     }
 
     public void RequestNearestAirport()
     {
         NearestAirportDistance = double.MaxValue;
-        _simconnect.RequestFacilitiesList_EX1(SIMCONNECT_FACILITY_LIST_TYPE.AIRPORT, Requests.NearbyAirportsRequest);
+        try
+        {
+            _simconnect.RequestFacilitiesList_EX1(SIMCONNECT_FACILITY_LIST_TYPE.AIRPORT, Requests.NearbyAirportsRequest);
+        }
+        catch (COMException ex)
+        {
+            HandleCOMException(ex);
+        }
     }
 
     /// <summary>
@@ -496,10 +514,17 @@ internal sealed class SimConnectService : INotifyPropertyChanged
     /// </summary>
     public void RequestLoadedAircraft()
     {
-        _simconnect.RequestDataOnSimObject(Requests.AircraftDataRequest, DataDefinitions.AircraftData,
-            SimConnect.SIMCONNECT_OBJECT_ID_USER, SIMCONNECT_PERIOD.ONCE, SIMCONNECT_DATA_REQUEST_FLAG.DEFAULT,
-            0u, 0u, 0u);
-        _simconnect.RequestSystemState(Requests.AircraftLoaded, "AircraftLoaded");
+        try
+        {
+            _simconnect.RequestDataOnSimObject(Requests.AircraftDataRequest, DataDefinitions.AircraftData,
+                SimConnect.SIMCONNECT_OBJECT_ID_USER, SIMCONNECT_PERIOD.ONCE, SIMCONNECT_DATA_REQUEST_FLAG.DEFAULT,
+                0u, 0u, 0u);
+            _simconnect.RequestSystemState(Requests.AircraftLoaded, "AircraftLoaded");
+        }
+        catch (COMException ex)
+        {
+            HandleCOMException(ex);
+        }
     }
 
     /// <summary>
@@ -507,9 +532,16 @@ internal sealed class SimConnectService : INotifyPropertyChanged
     /// </summary>
     public void RequestFlightData()
     {
-        _simconnect.RequestDataOnSimObject(Requests.FlightDataRequest, DataDefinitions.FlightData,
-            SimConnect.SIMCONNECT_OBJECT_ID_USER, SIMCONNECT_PERIOD.ONCE, SIMCONNECT_DATA_REQUEST_FLAG.CHANGED,
-            0u, 0u, 0u);
+        try
+        {
+            _simconnect.RequestDataOnSimObject(Requests.FlightDataRequest, DataDefinitions.FlightData,
+                SimConnect.SIMCONNECT_OBJECT_ID_USER, SIMCONNECT_PERIOD.ONCE, SIMCONNECT_DATA_REQUEST_FLAG.CHANGED,
+                0u, 0u, 0u);
+        }
+        catch (COMException ex)
+        {
+            HandleCOMException(ex);
+        }
     }
 
     private void Simconnect_OnRecvAirportList(SimConnect sender, SIMCONNECT_RECV_AIRPORT_LIST data)
@@ -520,18 +552,22 @@ internal sealed class SimConnectService : INotifyPropertyChanged
 
             foreach (var a in data.rgData.Cast<SIMCONNECT_DATA_FACILITY_AIRPORT>())
             {
-                if(a.Icao.Length < 3 || a.Icao.Length > 4)
+                if (a.Icao.Length < 3 || a.Icao.Length > 4)
                     continue;
                 var airportCoord = new GeoCoordinate(a.Latitude, a.Longitude);
                 var distance = airportCoord.GetDistanceTo(myCoordinates);
                 if (distance < NearestAirportDistance)
                 {
                     NearestAirport = a.Icao;
-                        NearestAirportDistance = distance;
-                        Log.Information(
-                            $"Closest found airport is {NearestAirport} at {NearestAirportDistance} meters!");
+                    NearestAirportDistance = distance;
+                    Log.Information(
+                        $"Closest found airport is {NearestAirport} at {NearestAirportDistance} meters!");
                 }
             }
+        }
+        catch (COMException ex)
+        {
+            HandleCOMException(ex);
         }
         catch (Exception ex)
         {
@@ -552,13 +588,50 @@ internal sealed class SimConnectService : INotifyPropertyChanged
         // Continue and receive message.
         if (msg == WmUserSimconnect && _simconnect != null)
         {
-            _simconnect.ReceiveMessage();
-            handled = true;
+            try
+            {
+                _simconnect.ReceiveMessage();
+            }
+            catch (COMException ex)
+            {
+                HandleCOMException(ex);
+            }
+            finally
+            {
+                handled = true;
+            }
         }
 
         return (IntPtr)0;
     }
 
+    private void HandleCOMException(COMException ex)
+    {
+        // Log the error details
+        Log.Error($"COMException: {ex.Message} (HRESULT: {ex.ErrorCode})");
+
+        switch ((uint)ex.ErrorCode)
+        {
+            case 0xC000014B:
+                Log.Information("Connection to the simulator is closed due to an exception!");
+                Close();
+                IsConnected = false;
+                IsInFlight = false;
+                _connectionTimer.Start();
+                break;
+            case 0x80004005: // E_FAIL
+                Log.Error("Unspecified error occurred.");
+                break;
+            case 0x800706BA: // RPC_S_SERVER_UNAVAILABLE
+                Log.Error("The RPC server is unavailable. Please check the SimConnect connection.");
+                break;
+            default:
+                Log.Error("An unknown error occurred.");
+                break;
+        }
+    }
+
+    [MethodImpl(MethodImplOptions.Synchronized)]
     public void Close()
     {
         _dataTimer.Stop();
@@ -567,7 +640,6 @@ internal sealed class SimConnectService : INotifyPropertyChanged
             _simconnect.Dispose();
             _simconnect = null;
         }
-
         Log.Debug("SimConnect Disposed!");
     }
 }

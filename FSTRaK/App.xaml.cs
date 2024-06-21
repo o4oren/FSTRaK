@@ -11,6 +11,7 @@ using System.Windows.Threading;
 using FSTRaK.Utils;
 using Microsoft.Win32;
 using System.Diagnostics;
+using System.Runtime.InteropServices;
 using FSTRaK.BusinessLogic.SimconnectService;
 
 namespace FSTRaK
@@ -27,8 +28,6 @@ namespace FSTRaK
         protected override void OnStartup(StartupEventArgs e)
         {
             _mutex = new Mutex(true, AppName, out var createdNew);
-
-
 
             if (!createdNew)
             {
@@ -121,6 +120,7 @@ namespace FSTRaK
         void App_DispatcherUnhandledException(object sender, DispatcherUnhandledExceptionEventArgs e)
         {
             Log.Error(e.Exception, "Unhandled error occurred!");
+
             // Prevent default unhandled exception processing
             e.Handled = true;
         }
