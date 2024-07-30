@@ -39,24 +39,45 @@ namespace FSTRaK.BusinessLogic.FlightManager.State
                 AddFlightEvent(data, fe);
 
                 Context.ActiveFlight.EndTime = fe.Time;
-                if (Context.ActiveFlight.FlightEvents.FirstOrDefault(e => e is FlightStartedEvent) is FlightStartedEvent
+                // Use taxi out event if available, otherwise, use flightstarted for fuel and time calc.
+                if (
+                    Context.ActiveFlight.FlightEvents.FirstOrDefault(e => e is FlightStartedEvent) is FlightStartedEvent
                     startEvent)
                 {
-                    var flightTime = fe.Time - startEvent.Time;
-
-                    if (fe.FuelWeightLbs > 0)
+                    if (Context.ActiveFlight.FlightEvents.FirstOrDefault(e => e is TaxiOutEvent) is TaxiOutEvent taxiOutEvent)
                     {
-                        Context.ActiveFlight.TotalFuelUsed = startEvent.FuelWeightLbs - fe.FuelWeightLbs;
+                        var flightTime = fe.Time - taxiOutEvent.Time;
+
+                        if (fe.FuelWeightLbs > 0)
+                        {
+                            Context.ActiveFlight.TotalFuelUsed = taxiOutEvent.FuelWeightLbs - fe.FuelWeightLbs;
+                        }
+                        else
+                        {
+                            if (Context.ActiveFlight.FlightEvents.FirstOrDefault(e => e is ParkingEvent) is ParkingEvent parkingEvent)
+                            {
+                                Context.ActiveFlight.TotalFuelUsed = startEvent.FuelWeightLbs - parkingEvent.FuelWeightLbs;
+                            }
+                        }
+                        Context.ActiveFlight.FlightTime = flightTime;
                     }
                     else
                     {
-                        if (Context.ActiveFlight.FlightEvents.FirstOrDefault(e => e is ParkingEvent) is ParkingEvent parkingEvent)
-                        {
-                            Context.ActiveFlight.TotalFuelUsed = startEvent.FuelWeightLbs - parkingEvent.FuelWeightLbs;
-                        }
-                    }
+                        var flightTime = fe.Time - startEvent.Time;
 
-                    Context.ActiveFlight.FlightTime = flightTime;
+                        if (fe.FuelWeightLbs > 0)
+                        {
+                            Context.ActiveFlight.TotalFuelUsed = startEvent.FuelWeightLbs - fe.FuelWeightLbs;
+                        }
+                        else
+                        {
+                            if (Context.ActiveFlight.FlightEvents.FirstOrDefault(e => e is ParkingEvent) is ParkingEvent parkingEvent)
+                            {
+                                Context.ActiveFlight.TotalFuelUsed = startEvent.FuelWeightLbs - parkingEvent.FuelWeightLbs;
+                            }
+                        }
+                        Context.ActiveFlight.FlightTime = flightTime;
+                    }
                 }
 
                 Context.ActiveFlight.FlightDistanceNm = FlightPathLength(Context.ActiveFlight.FlightEvents) * Consts.MetersToNauticalMiles;
