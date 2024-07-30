@@ -24,7 +24,8 @@ namespace FSTRaK.BusinessLogic.FlightManager.State
         {
             var le = new LandingEvent()
             {
-                VerticalSpeed = landingData.VerticalSpeed
+                VerticalSpeed = landingData.VerticalSpeed,
+                FuelWeightLbs = landingData.FuelWeightLbs
             };
 
             if (landingData.VerticalSpeed < -500)
