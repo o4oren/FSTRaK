@@ -50,7 +50,16 @@ namespace FSTRaK.BusinessLogic.FlightManager.State
 
                         if (fe.FuelWeightLbs > 0)
                         {
-                            Context.ActiveFlight.TotalFuelUsed = taxiOutEvent.FuelWeightLbs - fe.FuelWeightLbs;
+                            if (Context.ActiveFlight.FlightEvents.FirstOrDefault(e => e is ParkingEvent) is ParkingEvent
+                                parkingEvent)
+                            {
+                                Context.ActiveFlight.TotalFuelUsed =
+                                    startEvent.FuelWeightLbs - parkingEvent.FuelWeightLbs;
+                            }
+                            else
+                            {
+                                Context.ActiveFlight.TotalFuelUsed = taxiOutEvent.FuelWeightLbs - fe.FuelWeightLbs;
+                            }
                         }
                         else
                         {

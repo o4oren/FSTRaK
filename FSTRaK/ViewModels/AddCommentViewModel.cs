@@ -8,10 +8,7 @@ using System.Windows;
 using FSTRaK.Models;
 using Serilog;
 using FSTRaK.Models.Entity;
-using System.Collections.ObjectModel;
-using System.Windows.Media.Media3D;
 using System.Data.Entity;
-using System.Runtime.Remoting.Contexts;
 
 namespace FSTRaK.ViewModels
 {
