@@ -346,12 +346,6 @@
         "Entry"
         {
         "MsmKey" = "8:_CA7940E10ECA91AF9FE58021F29CE6BF"
-        "OwnerKey" = "8:_A4D70056C78A158E7D851A2AC02B3CBB"
-        "MsmSig" = "8:_UNDEFINED"
-        }
-        "Entry"
-        {
-        "MsmKey" = "8:_CA7940E10ECA91AF9FE58021F29CE6BF"
         "OwnerKey" = "8:_808ACC71A32186B0DE4D4128A05F3F0F"
         "MsmSig" = "8:_UNDEFINED"
         }
@@ -431,18 +425,6 @@
         {
         "MsmKey" = "8:_FAAC18DC887E2F600C7770F8E850D028"
         "OwnerKey" = "8:_04BE6643365EAC60FBE1FDC8607C4D73"
-        "MsmSig" = "8:_UNDEFINED"
-        }
-        "Entry"
-        {
-        "MsmKey" = "8:_FAAC18DC887E2F600C7770F8E850D028"
-        "OwnerKey" = "8:_8FB48EC106A444373D9BAFE704BB9A44"
-        "MsmSig" = "8:_UNDEFINED"
-        }
-        "Entry"
-        {
-        "MsmKey" = "8:_FAAC18DC887E2F600C7770F8E850D028"
-        "OwnerKey" = "8:_7C9B6DCC0FD39A25A15C4834E931EF0C"
         "MsmSig" = "8:_UNDEFINED"
         }
         "Entry"
@@ -2048,15 +2030,15 @@
         {
         "Name" = "8:Microsoft Visual Studio"
         "ProductName" = "8:FSTrAk"
-        "ProductCode" = "8:{FD3AC782-E7B6-4AF1-8874-72D1D0FE37F9}"
-        "PackageCode" = "8:{30F8ACBF-FA2A-40D4-A54E-99F53FFAEB87}"
+        "ProductCode" = "8:{F3D2A5EC-1F12-4063-9BF4-E9010B2AE0EF}"
+        "PackageCode" = "8:{4ABE978E-FEBD-46B8-B638-C7DED45FD225}"
         "UpgradeCode" = "8:{DFB8349E-B81D-4481-9F4C-14C136E2FBD4}"
         "AspNetVersion" = "8:2.0.50727.0"
         "RestartWWWService" = "11:FALSE"
         "RemovePreviousVersions" = "11:TRUE"
         "DetectNewerInstalledVersion" = "11:TRUE"
         "InstallAllUsers" = "11:TRUE"
-        "ProductVersion" = "8:1.6.8"
+        "ProductVersion" = "8:1.6.9"
         "Manufacturer" = "8:FSTrAk"
         "ARPHELPTELEPHONE" = "8:"
         "ARPHELPLINK" = "8:"
@@ -2626,7 +2608,7 @@
             }
             "{5259A561-127C-4D43-A0A1-72F10C7B3BF8}:_8581586A4FC4400494EBCD574550E0A0"
             {
-            "SourcePath" = "8:"
+            "SourcePath" = "8:..\\FSTRaK\\obj\\x64\\Release\\FSTRaK.exe"
             "TargetName" = "8:"
             "Tag" = "8:"
             "Folder" = "8:_26CFFA3E4E6A4BE18B31D33970E8B9B7"
