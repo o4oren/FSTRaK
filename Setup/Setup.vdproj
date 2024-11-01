@@ -346,6 +346,12 @@
         "Entry"
         {
         "MsmKey" = "8:_CA7940E10ECA91AF9FE58021F29CE6BF"
+        "OwnerKey" = "8:_A4D70056C78A158E7D851A2AC02B3CBB"
+        "MsmSig" = "8:_UNDEFINED"
+        }
+        "Entry"
+        {
+        "MsmKey" = "8:_CA7940E10ECA91AF9FE58021F29CE6BF"
         "OwnerKey" = "8:_808ACC71A32186B0DE4D4128A05F3F0F"
         "MsmSig" = "8:_UNDEFINED"
         }
@@ -425,6 +431,18 @@
         {
         "MsmKey" = "8:_FAAC18DC887E2F600C7770F8E850D028"
         "OwnerKey" = "8:_04BE6643365EAC60FBE1FDC8607C4D73"
+        "MsmSig" = "8:_UNDEFINED"
+        }
+        "Entry"
+        {
+        "MsmKey" = "8:_FAAC18DC887E2F600C7770F8E850D028"
+        "OwnerKey" = "8:_8FB48EC106A444373D9BAFE704BB9A44"
+        "MsmSig" = "8:_UNDEFINED"
+        }
+        "Entry"
+        {
+        "MsmKey" = "8:_FAAC18DC887E2F600C7770F8E850D028"
+        "OwnerKey" = "8:_7C9B6DCC0FD39A25A15C4834E931EF0C"
         "MsmSig" = "8:_UNDEFINED"
         }
         "Entry"
@@ -2030,15 +2048,15 @@
         {
         "Name" = "8:Microsoft Visual Studio"
         "ProductName" = "8:FSTrAk"
-        "ProductCode" = "8:{F3D2A5EC-1F12-4063-9BF4-E9010B2AE0EF}"
-        "PackageCode" = "8:{4ABE978E-FEBD-46B8-B638-C7DED45FD225}"
+        "ProductCode" = "8:{C6A12871-4F7D-4A70-BD46-67483B209388}"
+        "PackageCode" = "8:{BE08DF79-271A-4C38-BD73-A72664BB2170}"
         "UpgradeCode" = "8:{DFB8349E-B81D-4481-9F4C-14C136E2FBD4}"
         "AspNetVersion" = "8:2.0.50727.0"
         "RestartWWWService" = "11:FALSE"
         "RemovePreviousVersions" = "11:TRUE"
         "DetectNewerInstalledVersion" = "11:TRUE"
-        "InstallAllUsers" = "11:TRUE"
-        "ProductVersion" = "8:1.6.9"
+        "InstallAllUsers" = "11:FALSE"
+        "ProductVersion" = "8:1.7.0"
         "Manufacturer" = "8:FSTrAk"
         "ARPHELPTELEPHONE" = "8:"
         "ARPHELPLINK" = "8:"
