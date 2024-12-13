@@ -433,11 +433,17 @@ internal sealed class SimConnectService : INotifyPropertyChanged
     private void UpdateInFlightState()
     {
         Log.Information($"Flight state updated : Loaded flight - {LoadedFlight}, Pause state: {PauseState}");
-        if (IsInFlight && PauseState == 1)
+        if (IsInFlight 
+            && (PauseState == 1 || PauseState == 8))
         {
             // Do nothing. This is to prevent enabling VR mid flight from ending the flight.
+            // Do nothing. PasueState 8 occurs with active pause. In 2024, it occurs after 9 when ending a flight.
         }
-        else if (!LoadedFlight.Equals(MainMenuFlt) && PauseState != 1)
+        else if (IsInFlight && PauseState == 9)
+        {
+            IsInFlight = false; // MSFS 2024 exit flight condition
+        }
+        else if (!LoadedFlight.Equals(MainMenuFlt) && PauseState != 1 && PauseState != 8)
         {
             IsInFlight = true;
         }
