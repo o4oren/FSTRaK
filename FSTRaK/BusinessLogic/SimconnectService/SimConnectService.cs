@@ -67,6 +67,7 @@ internal sealed class SimConnectService : INotifyPropertyChanged
     // PAUSE_STATE_FLAG_PAUSE_WITH_SOUND 2 // FSX Legacy Pause (not used anymore) 
     // PAUSE_STATE_FLAG_ACTIVE_PAUSE 4 // Pause was activated using the "Active Pause" Button 
     // PAUSE_STATE_FLAG_SIM_PAUSE 8 // Pause the player sim but traffic, multi, etc... will still run
+    // PAUSE_STATE_FLAG_SIM_PAUSE 9 // Fired by MSFS 2024 on back to main menu
     private uint _pauseState = 1;
 
     public uint PauseState
@@ -122,6 +123,21 @@ internal sealed class SimConnectService : INotifyPropertyChanged
             if (value != _loadedAircraft)
             {
                 _loadedAircraft = value;
+                OnPropertyChanged();
+            }
+        }
+    }
+
+    private bool _simStarted = false;
+
+    public bool SimStarted
+    {
+        get => _simStarted;
+        private set
+        {
+            if (value != _simStarted)
+            {
+                _simStarted = value;
                 OnPropertyChanged();
             }
         }
@@ -364,6 +380,8 @@ internal sealed class SimConnectService : INotifyPropertyChanged
         _simconnect.SubscribeToSystemEvent(Events.Pause, "Pause_EX1");
         _simconnect.SubscribeToSystemEvent(Events.Crashed, "Crashed");
         _simconnect.SubscribeToSystemEvent(Events.AircraftLoaded, "AircraftLoaded");
+        _simconnect.SubscribeToSystemEvent(Events.Sim, "Sim");
+
 
 
         // Register listeners on simconnect events
@@ -427,12 +445,16 @@ internal sealed class SimConnectService : INotifyPropertyChanged
             case (int)Events.AircraftLoaded:
                 // Do nothing, this is handled in OnRecvFileName;
                 break;
+            case (int)Events.Sim:
+                Log.Information($"Sim: {data.dwData}");
+                SimStarted = data.dwData == 1;
+                break;
         }
     }
 
     private void UpdateInFlightState()
     {
-        Log.Information($"Flight state updated : Loaded flight - {LoadedFlight}, Pause state: {PauseState}");
+        Log.Information($"Flight state updated : Loaded flight - {LoadedFlight}, Pause state: {PauseState}, SimStared: {SimStarted}");
         if (IsInFlight 
             && (PauseState == 1 || PauseState == 8))
         {
@@ -443,7 +465,11 @@ internal sealed class SimConnectService : INotifyPropertyChanged
         {
             IsInFlight = false; // MSFS 2024 exit flight condition
         }
-        else if (!LoadedFlight.Equals(MainMenuFlt) && PauseState != 1 && PauseState != 8)
+        else if (
+            !string.IsNullOrEmpty(LoadedFlight) 
+            && !LoadedFlight.Equals(MainMenuFlt) 
+            && PauseState != 1 
+            && PauseState != 8)
         {
             IsInFlight = true;
         }
@@ -583,7 +609,7 @@ internal sealed class SimConnectService : INotifyPropertyChanged
 
     private void OnPropertyChanged([CallerMemberName] string name = null)
     {
-        if (name.Equals(nameof(LoadedFlight)) || name.Equals(nameof(PauseState))) UpdateInFlightState();
+        if (name.Equals(nameof(LoadedFlight)) || name.Equals(nameof(PauseState)) || name.Equals(nameof(SimStarted))) UpdateInFlightState();
         PropertyChanged?.Invoke(this, new PropertyChangedEventArgs(name));
     }
 

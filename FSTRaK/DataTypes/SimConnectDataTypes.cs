@@ -77,7 +77,8 @@ namespace FSTRaK.DataTypes
         FlightLoaded,
         AircraftLoaded,
         Pause,
-        Crashed
+        Crashed,
+        Sim
     }
 
     [StructLayout(LayoutKind.Sequential, CharSet = CharSet.Ansi, Pack = 1)]
