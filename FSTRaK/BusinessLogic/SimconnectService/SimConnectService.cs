@@ -446,7 +446,7 @@ internal sealed class SimConnectService : INotifyPropertyChanged
                 // Do nothing, this is handled in OnRecvFileName;
                 break;
             case (int)Events.Sim:
-                Log.Information($"Sim: {data.dwData}");
+                Log.Debug($"Sim: {data.dwData}");
                 SimStarted = data.dwData == 1;
                 break;
         }
