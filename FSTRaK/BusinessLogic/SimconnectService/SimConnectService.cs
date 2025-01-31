@@ -472,13 +472,7 @@ internal sealed class SimConnectService : INotifyPropertyChanged
     private void UpdateInFlightState()
     {
         Log.Information($"Flight state updated : Loaded flight - {LoadedFlight}, Pause state: {PauseState}, SimStared: {SimStarted}, CameraState: {CameraState}");
-        if (IsInFlight 
-            && (PauseState == 1 || PauseState == 8))
-        {
-            // Do nothing. This is to prevent enabling VR mid flight from ending the flight.
-            // Do nothing. PasueState 8 occurs with active pause. In 2024, it occurs after 9 when ending a flight.
-        }
-        else if (CameraState == CameraState.Cockpit || CameraState == CameraState.External || CameraState == CameraState.Drone)
+        if (CameraState == CameraState.Cockpit || CameraState == CameraState.External || CameraState == CameraState.Drone)
         {
             IsInFlight = true; // MSFS 2024 start flight condition
         }
