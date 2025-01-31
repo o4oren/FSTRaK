@@ -1,6 +1,7 @@
 ﻿using System;
 using System.ComponentModel;
 using System.Device.Location;
+using System.Diagnostics;
 using System.Linq;
 using System.Runtime.CompilerServices;
 using System.Runtime.InteropServices;
@@ -58,6 +59,21 @@ internal sealed class SimConnectService : INotifyPropertyChanged
                 _isInFlight = value;
                 OnPropertyChanged();
                 IsCrashed = false; // Remove Crashed flag
+            }
+        }
+    }
+
+    private CameraState _cameraState;
+
+    public CameraState CameraState
+    {
+        get => _cameraState;
+        private set
+        {
+            if (value != _cameraState)
+            {
+                _cameraState = value;
+                OnPropertyChanged();
             }
         }
     }
@@ -381,6 +397,7 @@ internal sealed class SimConnectService : INotifyPropertyChanged
         _simconnect.SubscribeToSystemEvent(Events.Crashed, "Crashed");
         _simconnect.SubscribeToSystemEvent(Events.AircraftLoaded, "AircraftLoaded");
         _simconnect.SubscribeToSystemEvent(Events.Sim, "Sim");
+        _simconnect.SubscribeToSystemEvent(Events.View, "View");
 
 
 
@@ -454,12 +471,20 @@ internal sealed class SimConnectService : INotifyPropertyChanged
 
     private void UpdateInFlightState()
     {
-        Log.Information($"Flight state updated : Loaded flight - {LoadedFlight}, Pause state: {PauseState}, SimStared: {SimStarted}");
+        Log.Information($"Flight state updated : Loaded flight - {LoadedFlight}, Pause state: {PauseState}, SimStared: {SimStarted}, CameraState: {CameraState}");
         if (IsInFlight 
             && (PauseState == 1 || PauseState == 8))
         {
             // Do nothing. This is to prevent enabling VR mid flight from ending the flight.
             // Do nothing. PasueState 8 occurs with active pause. In 2024, it occurs after 9 when ending a flight.
+        }
+        else if (CameraState == CameraState.Cockpit || CameraState == CameraState.External || CameraState == CameraState.Drone)
+        {
+            IsInFlight = true; // MSFS 2024 start flight condition
+        }
+        else if (CameraState == CameraState.LoadingFlight3D2024 || CameraState == CameraState.MainMenu2024 || CameraState == CameraState.SomethingInLoadingProcess2024)
+        {
+            IsInFlight = false; // MSFS 2024 exit flight condition
         }
         else if (IsInFlight && PauseState == 9)
         {
@@ -477,6 +502,7 @@ internal sealed class SimConnectService : INotifyPropertyChanged
         {
             IsInFlight = false;
         }
+        Log.Information($"IsInFlight: {IsInFlight}");
     }
 
     private void simconnect_OnRecvQuit(SimConnect sender, SIMCONNECT_RECV data)
@@ -516,6 +542,8 @@ internal sealed class SimConnectService : INotifyPropertyChanged
             {
                 FlightData = (FlightData)data.dwData[0];
                 // OnPropertyChanged(nameof(FlightData));
+                // Update CameraState to determine if is in flight
+                CameraState = FlightData.CameraState;
             }
             else if (data.dwRequestID == (int)Requests.AircraftDataRequest)
             {
@@ -609,7 +637,10 @@ internal sealed class SimConnectService : INotifyPropertyChanged
 
     private void OnPropertyChanged([CallerMemberName] string name = null)
     {
-        if (name.Equals(nameof(LoadedFlight)) || name.Equals(nameof(PauseState)) || name.Equals(nameof(SimStarted))) UpdateInFlightState();
+        if (name.Equals(nameof(LoadedFlight)) || name.Equals(nameof(PauseState)) || name.Equals(nameof(SimStarted)) || name.Equals(nameof(CameraState)))
+        {
+            UpdateInFlightState();
+        }
         PropertyChanged?.Invoke(this, new PropertyChangedEventArgs(name));
     }
 
