@@ -2030,15 +2030,15 @@
         {
         "Name" = "8:Microsoft Visual Studio"
         "ProductName" = "8:FSTrAk"
-        "ProductCode" = "8:{60C608E5-024B-484B-A567-9285DAC9DFC8}"
-        "PackageCode" = "8:{C3475667-6DC9-4870-86FF-1B4653CCCD00}"
+        "ProductCode" = "8:{BEEC8E19-34E5-4EE2-9218-978DB8204774}"
+        "PackageCode" = "8:{99B68C56-3B7F-4704-85A7-F9C6166C8E98}"
         "UpgradeCode" = "8:{DFB8349E-B81D-4481-9F4C-14C136E2FBD4}"
         "AspNetVersion" = "8:2.0.50727.0"
         "RestartWWWService" = "11:FALSE"
         "RemovePreviousVersions" = "11:TRUE"
         "DetectNewerInstalledVersion" = "11:TRUE"
         "InstallAllUsers" = "11:FALSE"
-        "ProductVersion" = "8:2.0.2"
+        "ProductVersion" = "8:2.0.3"
         "Manufacturer" = "8:FSTrAk"
         "ARPHELPTELEPHONE" = "8:"
         "ARPHELPLINK" = "8:"
@@ -2608,7 +2608,7 @@
             }
             "{5259A561-127C-4D43-A0A1-72F10C7B3BF8}:_8581586A4FC4400494EBCD574550E0A0"
             {
-            "SourcePath" = "8:..\\FSTRaK\\obj\\x64\\Debug\\FSTRaK.exe"
+            "SourcePath" = "8:"
             "TargetName" = "8:"
             "Tag" = "8:"
             "Folder" = "8:_26CFFA3E4E6A4BE18B31D33970E8B9B7"
