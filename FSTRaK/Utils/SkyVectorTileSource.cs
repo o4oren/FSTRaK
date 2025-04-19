@@ -60,7 +60,7 @@ namespace FSTRaK.Utils
             {
                 UriTemplate = UriTemplate.Replace("{AIRAC}", _airac);
             }
-            // Fetching the 301 in this example: https://t.skyvector.com/V7pMh4xRihflnr61/301/2306/{z}/{x}/{y}.jpg
+            // Fetching the 301 in this example: https://t.skyvector.com/V7pMh4xRihf1nr61/301/2306/{z}/{x}/{y}.jpg
             // /https:\/\/t.skyvector.com\/.+\/(30\d)\/\d+\/\d+\/\d+\/\d+\.jpg/gm
              string pattern = @"https:\/\/t.skyvector.com\/.+\/(30\d)\/\d+\/\{z}\/{x}\/\{y}\.jpg";
              Match m = Regex.Match(UriTemplate, pattern);
