@@ -481,7 +481,7 @@ internal sealed class SimConnectService : INotifyPropertyChanged
             // Do nothing when these happen in flight.
 
         }
-        else if (CameraState == CameraState.Cockpit || CameraState == CameraState.External || CameraState == CameraState.Drone)
+        else if (CameraState == CameraState.Cockpit || CameraState == CameraState.External || CameraState == CameraState.Drone || CameraState == CameraState.Fixed || CameraState == CameraState.Environment)
         {
             IsInFlight = true; // MSFS 2024 start flight condition
         }
