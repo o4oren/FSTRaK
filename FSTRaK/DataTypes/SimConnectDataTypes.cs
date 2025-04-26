@@ -34,6 +34,7 @@ namespace FSTRaK.DataTypes
         LoadingFlight3D2024 = 30,
         MainMenu2024 = 32,
         InFlightMenu2024 = 29,
+        InFlightMenu2024_3 = 34,
         InFlightMenu2024_2 = 35,
         SomethingInLoadingProcess2024 = 36
 

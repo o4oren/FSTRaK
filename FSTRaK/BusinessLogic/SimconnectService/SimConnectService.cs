@@ -474,7 +474,7 @@ internal sealed class SimConnectService : INotifyPropertyChanged
         Log.Information($"Flight state updated : Loaded flight - {LoadedFlight}, Pause state: {PauseState}, SimStared: {SimStarted}, CameraState: {CameraState}");
         if (IsInFlight
             && (PauseState == 1 || PauseState == 8)
-            && (CameraState == CameraState.InFlightMenu2024 || CameraState == CameraState.InFlightMenu2024_2))
+            && (CameraState == CameraState.InFlightMenu2024 || CameraState == CameraState.InFlightMenu2024_2 || CameraState == CameraState.InFlightMenu2024_3))
         {
             // Do nothing. This is to prevent enabling VR mid flight from ending the flight.
             // Do nothing. PasueState 8 occurs with active pause. In 2024, it occurs after 9 when ending a flight.
