@@ -43,6 +43,30 @@ namespace FSTRaK.Utils
             return output;
         }
 
+        public static Location NormalizePoint(Location point, Location? prevPoint)
+        {
+            if (prevPoint != null)
+            {
+                double deltaLon = point.Longitude - prevPoint.Longitude;
+
+                // If jump is greater than 180 degrees, we assume it crossed the dateline
+                if (Math.Abs(deltaLon) > 180)
+                {
+                    // Determine direction of wrapping
+                    double wrapLon = deltaLon > 0 ? 360 : -360;
+
+                    // Insert interpolated point on other side of dateline
+                    var interpolated = new Location(
+                        (point.Latitude + prevPoint.Latitude) / 2,
+                        prevPoint.Longitude + wrapLon / 2
+                    );
+
+                    return interpolated;
+                }
+            }
+            return point;
+        }
+
         public static IEnumerable<Location> WrapPolygon(IEnumerable<Location> input)
         {
             var output = new List<Location>();
