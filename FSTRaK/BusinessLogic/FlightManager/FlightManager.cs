@@ -271,6 +271,15 @@ namespace FSTRaK.BusinessLogic.FlightManager
                         {
                             aircraft.Model = parts[1].Trim('"', ' ', '\t');
                         }
+
+                        if (parts[0].Trim() == "atc_id" && parts[1] != null)
+                        {
+                            var reg = parts[1].Trim('"', ' ', '\t');
+                            if(reg.Length > 0)
+                            {
+                                aircraft.TailNumber = reg;
+                            }
+                        }
                     }
                 }
                 Log.Information($"Enriched aircraft data from {filename}");
