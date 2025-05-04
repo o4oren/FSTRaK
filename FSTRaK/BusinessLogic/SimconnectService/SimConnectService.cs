@@ -292,13 +292,15 @@ internal sealed class SimConnectService : INotifyPropertyChanged
 
 
         // AIRCRAFT
-        _simconnect.AddToDataDefinition(DataDefinitions.AircraftData, "Title", null, SIMCONNECT_DATATYPE.STRING256, 0.0f,
+        _simconnect.AddToDataDefinition(DataDefinitions.AircraftData, "Title", null, SIMCONNECT_DATATYPE.STRING128, 0.0f,
             SimConnect.SIMCONNECT_UNUSED);
-        _simconnect.AddToDataDefinition(DataDefinitions.AircraftData, "ATC Airline", null, SIMCONNECT_DATATYPE.STRING256,
+        _simconnect.AddToDataDefinition(DataDefinitions.AircraftData, "Livery Name", null, SIMCONNECT_DATATYPE.STRING128, 0.0f,
+             SimConnect.SIMCONNECT_UNUSED);
+        _simconnect.AddToDataDefinition(DataDefinitions.AircraftData, "ATC Airline", null, SIMCONNECT_DATATYPE.STRING128,
             0.0f, SimConnect.SIMCONNECT_UNUSED);
         _simconnect.AddToDataDefinition(DataDefinitions.AircraftData, "ATC Model", null, SIMCONNECT_DATATYPE.STRING32,
             0.0f, SimConnect.SIMCONNECT_UNUSED);
-        _simconnect.AddToDataDefinition(DataDefinitions.AircraftData, "ATC Type", null, SIMCONNECT_DATATYPE.STRING256,
+        _simconnect.AddToDataDefinition(DataDefinitions.AircraftData, "ATC Type", null, SIMCONNECT_DATATYPE.STRING128,
             0.0f, SimConnect.SIMCONNECT_UNUSED);
         _simconnect.AddToDataDefinition(DataDefinitions.AircraftData, "ATC ID", null, SIMCONNECT_DATATYPE.STRING32, 0.0f,
             SimConnect.SIMCONNECT_UNUSED);
@@ -615,16 +617,17 @@ internal sealed class SimConnectService : INotifyPropertyChanged
 
             foreach (var a in data.rgData.Cast<SIMCONNECT_DATA_FACILITY_AIRPORT>())
             {
-                if (a.Icao.Length < 3 || a.Icao.Length > 4)
-                    continue;
-                var airportCoord = new GeoCoordinate(a.Latitude, a.Longitude);
-                var distance = airportCoord.GetDistanceTo(myCoordinates);
-                if (distance < NearestAirportDistance)
+                if (a.Ident.Length >= 3 && a.Ident.Length <= 4)
                 {
-                    NearestAirport = a.Icao;
-                    NearestAirportDistance = distance;
-                    Log.Information(
-                        $"Closest found airport is {NearestAirport} at {NearestAirportDistance} meters!");
+                    var airportCoord = new GeoCoordinate(a.Latitude, a.Longitude);
+                    var distance = airportCoord.GetDistanceTo(myCoordinates);
+                    if (distance < NearestAirportDistance)
+                    {
+                        NearestAirport = a.Ident;
+                        NearestAirportDistance = distance;
+                        Log.Information(
+                            $"Closest found airport is {NearestAirport} at {NearestAirportDistance} meters!");
+                    }
                 }
             }
         }

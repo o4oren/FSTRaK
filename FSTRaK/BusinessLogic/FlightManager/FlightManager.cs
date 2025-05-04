@@ -208,6 +208,7 @@ namespace FSTRaK.BusinessLogic.FlightManager
                             // delete aircraft if it doesn't have empty weight
                             aircraft = logbookContext.Aircraft.Create();
                             aircraft.Title = aircraftData.title.Trim();
+                            aircraft.Livery = aircraftData.liveryName.Trim();
                             aircraft.Manufacturer = aircraftData.atcType.Trim();
                             aircraft.Model = aircraftData.model.Trim();
                             aircraft.AircraftType = aircraftData.model.Trim();

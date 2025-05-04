@@ -92,13 +92,15 @@ namespace FSTRaK.DataTypes
     [StructLayout(LayoutKind.Sequential, CharSet = CharSet.Ansi, Pack = 1)]
     public struct AircraftData
     {
-        [MarshalAs(UnmanagedType.ByValTStr, SizeConst = 256)]
+        [MarshalAs(UnmanagedType.ByValTStr, SizeConst = 128)]
         public string title;
-        [MarshalAs(UnmanagedType.ByValTStr, SizeConst = 256)]
+        [MarshalAs(UnmanagedType.ByValTStr, SizeConst = 128)]
+        public string liveryName;
+        [MarshalAs(UnmanagedType.ByValTStr, SizeConst = 128)]
         public string airline;
         [MarshalAs(UnmanagedType.ByValTStr, SizeConst = 32)]
         public string model;
-        [MarshalAs(UnmanagedType.ByValTStr, SizeConst = 256)]
+        [MarshalAs(UnmanagedType.ByValTStr, SizeConst = 128)]
         public string atcType;
         [MarshalAs(UnmanagedType.ByValTStr, SizeConst = 32)]
         public string AtcId;

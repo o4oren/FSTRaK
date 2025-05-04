@@ -12,7 +12,9 @@ namespace FSTRaK.Models
         public int Id { get; set; }
 
         [Index(nameof(Title), IsUnique = true)]
-        public string Title { get; set; } 
+        public string Title { get; set; }
+        public string Livery { get; set; }
+
         public String AircraftType { get; set; }
 
         public String Category { get; set; }
