@@ -16,15 +16,16 @@ namespace FSTRaK.BusinessLogic.FlightManager.State
             this.IsMovementState = true;
             context.RequestNearestAirports(DataTypes.NearestAirportRequestType.Arrival);
 
-            ProcessLandingData(landingData);
+            ProcessLandingData(landingData, context);
 
         }
 
-        private void ProcessLandingData(FlightData landingData)
+        private void ProcessLandingData(FlightData landingData, FlightManager context)
         {
             var le = new LandingEvent()
             {
-                VerticalSpeed = landingData.VerticalSpeed
+                VerticalSpeed = landingData.VerticalSpeed,
+                FuelWeightLbs = landingData.FuelWeightLbs
             };
 
             if (landingData.VerticalSpeed < -500)
@@ -61,6 +62,8 @@ namespace FSTRaK.BusinessLogic.FlightManager.State
 
 
             AddFlightEvent(landingData, le);
+            context.ActiveFlight.LandingFpm = le.VerticalSpeed;
+
         }
 
         public override void ProcessFlightData(FlightData data)

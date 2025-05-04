@@ -30,7 +30,14 @@ namespace FSTRaK.DataTypes
         DroneTopDown = 19,
         Hangar = 21,
         Ground = 24,
-        FollowTrafficAircraft = 25
+        FollowTrafficAircraft = 25,
+        LoadingFlight3D2024 = 30,
+        MainMenu2024 = 32,
+        InFlightMenu2024 = 29,
+        InFlightMenu2024_3 = 34,
+        InFlightMenu2024_2 = 35,
+        SomethingInLoadingProcess2024 = 36
+
     }
 
     public enum CrashFlag
@@ -69,7 +76,7 @@ namespace FSTRaK.DataTypes
     public enum DataDefinitions
     {
         AircraftData,
-        FlightData,
+        FlightData
     }
 
     public enum Events
@@ -77,7 +84,9 @@ namespace FSTRaK.DataTypes
         FlightLoaded,
         AircraftLoaded,
         Pause,
-        Crashed
+        Crashed,
+        Sim,
+        View
     }
 
     [StructLayout(LayoutKind.Sequential, CharSet = CharSet.Ansi, Pack = 1)]

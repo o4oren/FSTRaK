@@ -79,9 +79,16 @@ namespace FSTRaK.BusinessLogic.FlightManager
             }
         }
 
-        private bool _simConnectInFlight = false;
-        public bool SimConnectInFlight { get => _simConnectInFlight;
-            set { if( _simConnectInFlight == value ) return; _simConnectInFlight = value; OnPropertyChanged(); } }
+        private bool _simConnectInFlight;
+        public bool SimConnectInFlight { 
+            get => _simConnectInFlight;
+            set
+            {
+                if( _simConnectInFlight == value ) return; 
+                _simConnectInFlight = value; 
+                OnPropertyChanged();
+            }
+        }
 
         private NearestAirportRequestType _nearestAirportRequestType = NearestAirportRequestType.Departure;
 
@@ -155,7 +162,10 @@ namespace FSTRaK.BusinessLogic.FlightManager
 
                 case nameof(_simConnectService.IsInFlight):
                     SimConnectInFlight = _simConnectService.IsInFlight;
-                    _simConnectService.RequestLoadedAircraft();
+                    if (!SimConnectInFlight && State is not SimNotInFlightState)
+                    {
+                        State = new SimNotInFlightState(this);
+                    }
                     break;
             }
         }
@@ -260,6 +270,15 @@ namespace FSTRaK.BusinessLogic.FlightManager
                         if (parts[0].Trim() == "icao_model")
                         {
                             aircraft.Model = parts[1].Trim('"', ' ', '\t');
+                        }
+
+                        if (parts[0].Trim() == "atc_id" && parts[1] != null)
+                        {
+                            var reg = parts[1].Trim('"', ' ', '\t');
+                            if(reg.Length > 0)
+                            {
+                                aircraft.TailNumber = reg;
+                            }
                         }
                     }
                 }

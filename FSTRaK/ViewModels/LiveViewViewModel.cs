@@ -119,7 +119,7 @@ namespace FSTRaK.ViewModels
             }
         }
 
-        private double _zoomLevel = 13;
+        private double _zoomLevel = 5;
         public double ZoomLevel
         {
             get => _zoomLevel;
@@ -700,7 +700,7 @@ namespace FSTRaK.ViewModels
                     {
                         ZoomLevel = 5;
                     }
-                    else if (_flightManager.State is FlightStartedState)
+                    else if (_flightManager.State is FlightStartedState { IsStarted: true })
                     {
                         ZoomLevel = 13;
                         IsCenterOnAirplane = true;

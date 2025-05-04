@@ -9,7 +9,7 @@ namespace FSTRaK.BusinessLogic.FlightManager.State
 {
     internal class FlightStartedState : AbstractState
     {
-        private Boolean _isStarted = false;
+        public Boolean IsStarted = false;
         private double _prevFuelQuantity = 0;
         private readonly Stopwatch _fuelingStopwatch;
 
@@ -30,14 +30,14 @@ namespace FSTRaK.BusinessLogic.FlightManager.State
         {
             // Only once in actual plane and not paused
             // This should only happen once per flight
-            if (!_isStarted)
+            if (!IsStarted && (IsCameraLive(data.CameraState) || data.CameraState == CameraState.InGameRtc))
             {
                 using var logbookContext = new LogbookContext();
                 var flight = logbookContext.Flights.Create();
                 Context.ActiveFlight = flight;
                 Context.RequestLoadedAircraft();
                 Context.RequestNearestAirports(NearestAirportRequestType.Departure);
-                _isStarted = true;
+                IsStarted = true;
                 logbookContext.Dispose();
                 Log.Information("Flight started!");
             }
