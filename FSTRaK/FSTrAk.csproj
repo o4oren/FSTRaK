@@ -159,6 +159,7 @@
     <Compile Include="Models\BaseModel.cs" />
     <Compile Include="Models\Entity\Flight.cs" />
     <Compile Include="Models\Entity\FlightEvent\BaseFlightEvent.cs" />
+    <Compile Include="Models\SQLiteConfiguration.cs" />
     <Compile Include="RelayCommand.cs" />
     <Compile Include="Utils\CollectionUtils.cs" />
     <Compile Include="Utils\ColorUtil.cs" />

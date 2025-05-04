@@ -822,7 +822,7 @@
             {
             "AssemblyRegister" = "3:1"
             "AssemblyIsInGAC" = "11:FALSE"
-            "AssemblyAsmDisplayName" = "8:Microsoft.FlightSimulator.SimConnect, Version=11.0.62651.3, Culture=neutral, processorArchitecture=AMD64"
+            "AssemblyAsmDisplayName" = "8:Microsoft.FlightSimulator.SimConnect, Version=12.1.0.0, Culture=neutral, processorArchitecture=AMD64"
                 "ScatterAssemblies"
                 {
                     "_10B8A968B1A1698B2B6923442A38D562"
@@ -2030,15 +2030,15 @@
         {
         "Name" = "8:Microsoft Visual Studio"
         "ProductName" = "8:FSTrAk"
-        "ProductCode" = "8:{56A14F2A-B59B-44EF-A177-869E5F720659}"
-        "PackageCode" = "8:{52F8B5C3-1426-4838-A640-B7CF193E0F18}"
+        "ProductCode" = "8:{C9565522-4A46-43BC-8E81-5937F40B0D9C}"
+        "PackageCode" = "8:{CB14DCBC-BD05-4A43-A2A0-D231B8FAA605}"
         "UpgradeCode" = "8:{DFB8349E-B81D-4481-9F4C-14C136E2FBD4}"
         "AspNetVersion" = "8:2.0.50727.0"
         "RestartWWWService" = "11:FALSE"
         "RemovePreviousVersions" = "11:TRUE"
         "DetectNewerInstalledVersion" = "11:TRUE"
         "InstallAllUsers" = "11:FALSE"
-        "ProductVersion" = "8:2.0.8"
+        "ProductVersion" = "8:3.0.0"
         "Manufacturer" = "8:FSTrAk"
         "ARPHELPTELEPHONE" = "8:"
         "ARPHELPLINK" = "8:"
@@ -2608,7 +2608,7 @@
             }
             "{5259A561-127C-4D43-A0A1-72F10C7B3BF8}:_8581586A4FC4400494EBCD574550E0A0"
             {
-            "SourcePath" = "8:"
+            "SourcePath" = "8:..\\FSTRaK\\obj\\x64\\Debug\\FSTRaK.exe"
             "TargetName" = "8:"
             "Tag" = "8:"
             "Folder" = "8:_26CFFA3E4E6A4BE18B31D33970E8B9B7"

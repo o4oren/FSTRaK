@@ -195,8 +195,16 @@ namespace FSTRaK.BusinessLogic.FlightManager
                     try
                     {
                         var aircraftData = _simConnectService.AircraftData;
-                        // If aircraft is already in the db, let's use the existing record.
-                        var aircraft = logbookContext.Aircraft.FirstOrDefault(a => a.Title.Trim() == aircraftData.title.Trim());
+                        Aircraft aircraft;
+                        // If aircraft is already in the db, let's use the existing record. If no livery name - not in condition
+                        if (string.IsNullOrEmpty(aircraftData.liveryName)) {
+                            aircraft = logbookContext.Aircraft.FirstOrDefault(a => a.Title.Trim() == aircraftData.title.Trim());
+                        }
+                        else
+                        {
+                            aircraft = logbookContext.Aircraft.FirstOrDefault(a => a.Title.Trim() == aircraftData.title.Trim() && (a.LiveryName == aircraftData.liveryName));
+                        }
+
                         if (aircraft != null)
                         {
                             aircraft.EmptyWeightLbs ??= aircraftData.EmptyWeightLbs;
@@ -208,7 +216,7 @@ namespace FSTRaK.BusinessLogic.FlightManager
                             // delete aircraft if it doesn't have empty weight
                             aircraft = logbookContext.Aircraft.Create();
                             aircraft.Title = aircraftData.title.Trim();
-                            aircraft.Livery = aircraftData.liveryName.Trim();
+                            aircraft.LiveryName = aircraftData.liveryName.Trim();
                             aircraft.Manufacturer = aircraftData.atcType.Trim();
                             aircraft.Model = aircraftData.model.Trim();
                             aircraft.AircraftType = aircraftData.model.Trim();
