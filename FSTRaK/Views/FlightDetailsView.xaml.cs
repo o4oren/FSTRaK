@@ -12,6 +12,7 @@ using System.Windows.Controls;
 using System.Windows.Navigation;
 using FSTRaK.Utils;
 using System.Diagnostics;
+using ScottPlot.Drawing.Colormaps;
 
 namespace FSTRaK.Views
 {
@@ -126,17 +127,31 @@ namespace FSTRaK.Views
 
         public void ZoomToBounds(BoundingBox boundingBox)
         {
-            var rect = LogbookMap.MapProjection.BoundingBoxToMapRect(boundingBox);
+            var rect = LogbookMap.MapProjection.BoundingBoxToMap(boundingBox);
             if (rect != null && !Double.IsInfinity(boundingBox.Width))
             {
-                var scale = Math.Min(LogbookMap.ActualWidth / rect.Width, LogbookMap.ActualHeight / rect.Height);
-                var zoomLevel = ViewTransform.ScaleToZoomLevel(scale);
-                // Set new view
-                LogbookMap.TargetZoomLevel = Math.Floor(Math.Min(16, zoomLevel) - 0.5);
-                LogbookMap.TargetCenter = LogbookMap.MapProjection.MapToLocation(rect.Center);
-                LogbookMap.TargetHeading = 0d;
-            }
+                // scale padding
 
+                double halfLat = (boundingBox.North - boundingBox.South);
+                double halfLon = (boundingBox.East - boundingBox.West);
+
+                var paddedNorth = boundingBox.Center.Latitude + halfLat;
+                var paddedSouth = boundingBox.Center.Latitude - halfLat;
+                var paddedEast = boundingBox.Center.Longitude + halfLon;
+                var paddedWest = boundingBox.Center.Longitude - halfLon;
+
+                paddedNorth = Math.Min(90, paddedNorth);
+                paddedSouth = Math.Max(-90, paddedSouth);
+                paddedEast = Math.Min(180, paddedEast);
+                paddedWest = Math.Max(-180, paddedWest);
+
+                var paddedBoundingBox = new BoundingBox(paddedSouth, paddedWest, paddedNorth, paddedEast);
+
+                LogbookMap.TargetHeading = 0d;
+                LogbookMap.TargetZoomLevel = 5;
+
+                LogbookMap.ZoomToBounds(paddedBoundingBox);
+            }
         }
 
         private void Hyperlink_RequestNavigate(object sender, RequestNavigateEventArgs e)

@@ -12,13 +12,13 @@ namespace FSTRaK.Utils
 
         }
 
-        protected override Task UpdateTileLayer(bool tileSourceChanged)
+        protected override Task UpdateTileLayerAsync(bool tileSourceChanged)
         {
             if (TileSource.UriTemplate.Contains("{ApiKey}"))
             {
                 TileSource.UriTemplate = TileSource.UriTemplate.Replace("{ApiKey}", MapTilerMapTileLayer.ApiKey);
             }
-            return base.UpdateTileLayer(tileSourceChanged);
+            return base.UpdateTileLayerAsync(tileSourceChanged);
         }
     }
 }

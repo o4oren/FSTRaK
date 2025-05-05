@@ -266,20 +266,20 @@ namespace FSTRaK.BusinessLogic.FlightManager
                     {
                         var parts = line.Split('=');
                         if (parts.Length <= 1) continue;
-                        if (parts[0].Trim() == "icao_type_designator")
-                        {
-                            aircraft.AircraftType = parts[1].Trim('"', ' ', '\t');
-                        }
+//                        if (parts[0].Trim() == "icao_type_designator")
+//                        {
+//                            aircraft.AircraftType = parts[1].Trim('"', ' ', '\t');
+//                        }
 
-                        if (parts[0].Trim() == "icao_manufacturer")
-                        {
-                            aircraft.Manufacturer = parts[1].Trim('"', ' ', '\t');
-                        }
+//                        if (parts[0].Trim() == "icao_manufacturer")
+//                        {
+//                            aircraft.Manufacturer = parts[1].Trim('"', ' ', '\t');
+//                        }
 
-                        if (parts[0].Trim() == "icao_model")
-                        {
-                            aircraft.Model = parts[1].Trim('"', ' ', '\t');
-                        }
+//                        if (parts[0].Trim() == "icao_model")
+//                        {
+//                            aircraft.Model = parts[1].Trim('"', ' ', '\t');
+//                        }
 
                         if (parts[0].Trim() == "atc_id" && parts[1] != null)
                         {
