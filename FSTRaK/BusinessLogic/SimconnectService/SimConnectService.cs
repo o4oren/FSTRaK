@@ -292,13 +292,13 @@ internal sealed class SimConnectService : INotifyPropertyChanged
 
 
         // AIRCRAFT
-        _simconnect.AddToDataDefinition(DataDefinitions.AircraftData, "Title", null, SIMCONNECT_DATATYPE.STRING128, 0.0f,
+        _simconnect.AddToDataDefinition(DataDefinitions.AircraftData, "Title", null, SIMCONNECT_DATATYPE.STRING256, 0.0f,
             SimConnect.SIMCONNECT_UNUSED);
-        _simconnect.AddToDataDefinition(DataDefinitions.AircraftData, "ATC Airline", null, SIMCONNECT_DATATYPE.STRING128,
+        _simconnect.AddToDataDefinition(DataDefinitions.AircraftData, "ATC Airline", null, SIMCONNECT_DATATYPE.STRIN256,
             0.0f, SimConnect.SIMCONNECT_UNUSED);
         _simconnect.AddToDataDefinition(DataDefinitions.AircraftData, "ATC Model", null, SIMCONNECT_DATATYPE.STRING32,
             0.0f, SimConnect.SIMCONNECT_UNUSED);
-        _simconnect.AddToDataDefinition(DataDefinitions.AircraftData, "ATC Type", null, SIMCONNECT_DATATYPE.STRING128,
+        _simconnect.AddToDataDefinition(DataDefinitions.AircraftData, "ATC Type", null, SIMCONNECT_DATATYPE.STRING256,
             0.0f, SimConnect.SIMCONNECT_UNUSED);
         _simconnect.AddToDataDefinition(DataDefinitions.AircraftData, "ATC ID", null, SIMCONNECT_DATATYPE.STRING32, 0.0f,
             SimConnect.SIMCONNECT_UNUSED);
@@ -310,7 +310,7 @@ internal sealed class SimConnectService : INotifyPropertyChanged
             SIMCONNECT_DATATYPE.INT32, 0.0f, SimConnect.SIMCONNECT_UNUSED);
         _simconnect.AddToDataDefinition(DataDefinitions.AircraftData, "EMPTY WEIGHT", "pounds",
             SIMCONNECT_DATATYPE.FLOAT64, 0.0f, SimConnect.SIMCONNECT_UNUSED);
-        _simconnect.AddToDataDefinition(DataDefinitions.AircraftData, "Livery Name", null, SIMCONNECT_DATATYPE.STRING128, 0.0f,
+        _simconnect.AddToDataDefinition(DataDefinitions.AircraftData, "Livery Name", null, SIMCONNECT_DATATYPE.STRING256, 0.0f,
             SimConnect.SIMCONNECT_UNUSED);
 
 
