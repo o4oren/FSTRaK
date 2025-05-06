@@ -294,7 +294,7 @@ internal sealed class SimConnectService : INotifyPropertyChanged
         // AIRCRAFT
         _simconnect.AddToDataDefinition(DataDefinitions.AircraftData, "Title", null, SIMCONNECT_DATATYPE.STRING256, 0.0f,
             SimConnect.SIMCONNECT_UNUSED);
-        _simconnect.AddToDataDefinition(DataDefinitions.AircraftData, "ATC Airline", null, SIMCONNECT_DATATYPE.STRIN256,
+        _simconnect.AddToDataDefinition(DataDefinitions.AircraftData, "ATC Airline", null, SIMCONNECT_DATATYPE.STRING256,
             0.0f, SimConnect.SIMCONNECT_UNUSED);
         _simconnect.AddToDataDefinition(DataDefinitions.AircraftData, "ATC Model", null, SIMCONNECT_DATATYPE.STRING32,
             0.0f, SimConnect.SIMCONNECT_UNUSED);
