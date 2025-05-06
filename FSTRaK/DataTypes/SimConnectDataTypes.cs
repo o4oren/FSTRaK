@@ -95,8 +95,6 @@ namespace FSTRaK.DataTypes
         [MarshalAs(UnmanagedType.ByValTStr, SizeConst = 128)]
         public string title;
         [MarshalAs(UnmanagedType.ByValTStr, SizeConst = 128)]
-        public string liveryName;
-        [MarshalAs(UnmanagedType.ByValTStr, SizeConst = 128)]
         public string airline;
         [MarshalAs(UnmanagedType.ByValTStr, SizeConst = 32)]
         public string model;
@@ -110,6 +108,9 @@ namespace FSTRaK.DataTypes
         public EngineType EngineType;
         public int NumberOfEngines;
         public double EmptyWeightLbs;
+
+        [MarshalAs(UnmanagedType.ByValTStr, SizeConst = 128)]
+        public string liveryName;
     }
 
     [StructLayout(LayoutKind.Sequential, CharSet = CharSet.Ansi, Pack = 1)]
