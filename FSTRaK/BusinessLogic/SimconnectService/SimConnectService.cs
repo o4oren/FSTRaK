@@ -1,7 +1,7 @@
 ﻿using System;
+using System.Collections.Generic;
 using System.ComponentModel;
 using System.Device.Location;
-using System.Diagnostics;
 using System.Linq;
 using System.Runtime.CompilerServices;
 using System.Runtime.InteropServices;
@@ -24,6 +24,8 @@ internal sealed class SimConnectService : INotifyPropertyChanged
     private const int WmUserSimconnect = 0x0402;
     private const int DataInterval = 50;
     private const string MainMenuFlt = "flights\\other\\MainMenu.FLT";
+    public const string MSFS2020 = "MSFS2020";
+    public const string MSFS2024 = "MSFS2024";
     private SimConnect _simconnect = null;
 
     private HwndSource _gHs;
@@ -42,6 +44,20 @@ internal sealed class SimConnectService : INotifyPropertyChanged
             if (value != _isConnected)
             {
                 _isConnected = value;
+                OnPropertyChanged();
+            }
+        }
+    }
+
+    private string _simVersion = null;
+    public string SimVersion
+    {
+        get => _simVersion;
+        private set
+        {
+            if (value != _simVersion)
+            {
+                _simVersion = value;
                 OnPropertyChanged();
             }
         }
@@ -410,10 +426,6 @@ internal sealed class SimConnectService : INotifyPropertyChanged
         _simconnect.OnRecvSystemState += new SimConnect.RecvSystemStateEventHandler(Simconnect_OnRecvSystemState);
 
         StartGettingData();
-        // Start getting data
-        //_simconnect.RequestDataOnSimObject(Requests.FlightDataRequest, DataDefinitions.FlightData,
-        //    SimConnect.SIMCONNECT_OBJECT_ID_USER, SIMCONNECT_PERIOD.VISUAL_FRAME, SIMCONNECT_DATA_REQUEST_FLAG.CHANGED,
-        //    0u, 0u, 0u);
     }
 
     private void Simconnect_OnRecvSystemState(SimConnect sender, SIMCONNECT_RECV_SYSTEM_STATE data)
@@ -423,12 +435,6 @@ internal sealed class SimConnectService : INotifyPropertyChanged
             LoadedFlight = data.szString;
             Log.Debug(LoadedFlight);
         } 
-// Disabled because this is returning with a partial path (starting from 'Simbojects')
-//        if (data.dwRequestID == (uint)Requests.AircraftLoaded)
-//        {
-//            LoadedAircraft = data.szString;
-//           Log.Debug(LoadedAircraft);
-//        }
     }
 
     private void Simconnect_OnRecvFilename(SimConnect sender, SIMCONNECT_RECV_EVENT_FILENAME data)
@@ -514,6 +520,7 @@ internal sealed class SimConnectService : INotifyPropertyChanged
         Log.Information("Connection to the simulator is closed!");
         Close();
         IsConnected = false;
+        SimVersion = null;
         _connectionTimer.Start();
     }
 
@@ -522,6 +529,7 @@ internal sealed class SimConnectService : INotifyPropertyChanged
         Log.Information("Connected to flight simulator!");
         _connectionTimer.Stop();
         IsConnected = true;
+        _simconnect.RequestFacilitiesList_EX1(SIMCONNECT_FACILITY_LIST_TYPE.AIRPORT, Requests.SimVersionRequest);
     }
 
     private void simconnect_OnRecvException(SimConnect sender, SIMCONNECT_RECV_EXCEPTION data)
@@ -610,33 +618,41 @@ internal sealed class SimConnectService : INotifyPropertyChanged
 
     private void Simconnect_OnRecvAirportList(SimConnect sender, SIMCONNECT_RECV_AIRPORT_LIST data)
     {
-        try
-        {
-            var myCoordinates = new GeoCoordinate(FlightData.Latitude, FlightData.Longitude);
 
-            foreach (var a in data.rgData.Cast<SIMCONNECT_DATA_FACILITY_AIRPORT>())
+        if ((Requests)data.dwRequestID == Requests.SimVersionRequest)
+        {
+            if(string.IsNullOrEmpty(SimVersion))
             {
-                if (a.Ident.Length >= 3 && a.Ident.Length <= 4)
-                {
-                    var airportCoord = new GeoCoordinate(a.Latitude, a.Longitude);
-                    var distance = airportCoord.GetDistanceTo(myCoordinates);
-                    if (distance < NearestAirportDistance)
-                    {
-                        NearestAirport = a.Ident;
-                        NearestAirportDistance = distance;
-                        Log.Information(
-                            $"Closest found airport is {NearestAirport} at {NearestAirportDistance} meters!");
-                    }
-                }
+                SimVersion = data.dwVersion >= 6 ?
+                    MSFS2024 :
+                    MSFS2020;
+                Console.WriteLine($"MSFS version = {SimVersion}");
             }
         }
-        catch (COMException ex)
+        
+        else if((Requests)data.dwRequestID == Requests.NearbyAirportsRequest)
         {
-            HandleCOMException(ex);
+            ProcessAirports(data.rgData.Cast<SIMCONNECT_DATA_FACILITY_AIRPORT>());
         }
-        catch (Exception ex)
+    }
+
+    private void ProcessAirports(IEnumerable<SIMCONNECT_DATA_FACILITY_AIRPORT> airports)
+    {
+        var myCoordinates = new GeoCoordinate(FlightData.Latitude, FlightData.Longitude);
+
+        foreach (var a in airports)
         {
-            Log.Error(ex, ex.Message);
+            if (a.Ident.Length is >= 3 and <= 4)
+            {
+                var airportCoord = new GeoCoordinate(a.Latitude, a.Longitude);
+                var distance = airportCoord.GetDistanceTo(myCoordinates);
+                if (distance < NearestAirportDistance)
+                {
+                    NearestAirport = a.Ident;
+                    NearestAirportDistance = distance;
+                    Log.Information($"Closest found airport is {NearestAirport} at {NearestAirportDistance} meters!");
+                }
+            }
         }
     }
 
@@ -685,6 +701,7 @@ internal sealed class SimConnectService : INotifyPropertyChanged
                 Close();
                 IsConnected = false;
                 IsInFlight = false;
+                SimVersion = null;
                 _connectionTimer.Start();
                 break;
             case 0x80004005: // E_FAIL
@@ -699,7 +716,7 @@ internal sealed class SimConnectService : INotifyPropertyChanged
         }
     }
 
-    [MethodImpl(MethodImplOptions.Synchronized)]
+        [MethodImpl(MethodImplOptions.Synchronized)]
     public void Close()
     {
         _dataTimer.Stop();

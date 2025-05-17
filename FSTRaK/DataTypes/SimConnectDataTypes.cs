@@ -2,7 +2,7 @@
 using System.Collections.Generic;
 using System.Linq;
 using System.Runtime.InteropServices;
-using FSTRaK.Models;
+using Microsoft.FlightSimulator.SimConnect;
 
 namespace FSTRaK.DataTypes
 {
@@ -70,7 +70,8 @@ namespace FSTRaK.DataTypes
         NearbyAirportsRequest,
         FlightLoaded,
         AircraftLoaded,
-        AircraftDataRequest
+        AircraftDataRequest,
+        SimVersionRequest
     }
 
     public enum DataDefinitions
@@ -176,6 +177,59 @@ namespace FSTRaK.DataTypes
         }
 
     }
+
+    public interface IAirportData
+    {
+        string Ident { get; }
+        double Latitude { get; }
+        double Longitude { get; }
+    }
+
+    [StructLayout(LayoutKind.Sequential, Pack = 1)]
+    public class AirportData2024 : IAirportData
+    {
+        [MarshalAs(UnmanagedType.ByValTStr, SizeConst = 9)]
+        private string _ident;
+
+        [MarshalAs(UnmanagedType.ByValTStr, SizeConst = 3)]
+        private string _region;
+
+        private double _latitude;
+        private double _longitude;
+
+        private double _altitude;
+
+        public string Ident => _ident;
+        public string Region => _region;
+
+        public double Latitude => _latitude;
+        public double Longitude => _longitude;
+        public double Altitude => _altitude;
+    }
+
+    [StructLayout(LayoutKind.Sequential, Pack = 1)]
+    public class AirportData2020 : IAirportData
+    {
+        [MarshalAs(UnmanagedType.ByValTStr, SizeConst = 6)]
+        private string _ident;
+
+        [MarshalAs(UnmanagedType.ByValTStr, SizeConst = 3)]
+        private string _region;
+
+        private double _latitude;
+        private double _longitude;
+
+        private double _altitude;
+
+        public string Ident => _ident;
+        public string Region => _region;
+
+        public double Latitude => _latitude;
+        public double Longitude => _longitude;
+        public double Altitude => _altitude;
+
+    }
+
     internal class SimConnectDataTypes
     {
          
