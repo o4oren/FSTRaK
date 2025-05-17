@@ -22,6 +22,9 @@ namespace FSTRaK.Migrations
         {
             //  This method will be called after migrating to the latest version.
 
+            // This is for 3.0.0 - remove the constraint on aircraft title - to be removed together with marking aircraft.title non index
+            context.Database.ExecuteSqlCommand("DROP INDEX IF EXISTS 'Aircraft_Title'");
+
             // this is for 1.6.5 - to be removed in a future update. Once it does, versions earlier than 1.6.5 may have flights without updated landingfpm
             // update landing fpm for flights that don't have it
             var flights = context.Flights.Include(f => f.FlightEvents).ToList();
@@ -39,7 +42,6 @@ namespace FSTRaK.Migrations
                     context.SaveChanges();
                 }
             }
-
         }
     }
 }

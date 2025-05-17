@@ -1,7 +1,7 @@
 ﻿using System;
+using System.Collections.Generic;
 using System.ComponentModel;
 using System.Device.Location;
-using System.Diagnostics;
 using System.Linq;
 using System.Runtime.CompilerServices;
 using System.Runtime.InteropServices;
@@ -24,6 +24,8 @@ internal sealed class SimConnectService : INotifyPropertyChanged
     private const int WmUserSimconnect = 0x0402;
     private const int DataInterval = 50;
     private const string MainMenuFlt = "flights\\other\\MainMenu.FLT";
+    public const string MSFS2020 = "MSFS2020";
+    public const string MSFS2024 = "MSFS2024";
     private SimConnect _simconnect = null;
 
     private HwndSource _gHs;
@@ -42,6 +44,20 @@ internal sealed class SimConnectService : INotifyPropertyChanged
             if (value != _isConnected)
             {
                 _isConnected = value;
+                OnPropertyChanged();
+            }
+        }
+    }
+
+    private string _simVersion = null;
+    public string SimVersion
+    {
+        get => _simVersion;
+        private set
+        {
+            if (value != _simVersion)
+            {
+                _simVersion = value;
                 OnPropertyChanged();
             }
         }
@@ -304,13 +320,14 @@ internal sealed class SimConnectService : INotifyPropertyChanged
             SimConnect.SIMCONNECT_UNUSED);
         _simconnect.AddToDataDefinition(DataDefinitions.AircraftData, "Category", null, SIMCONNECT_DATATYPE.STRING128,
             0.0f, SimConnect.SIMCONNECT_UNUSED);
-
         _simconnect.AddToDataDefinition(DataDefinitions.AircraftData, "ENGINE TYPE", "number", SIMCONNECT_DATATYPE.INT32,
             0.0f, SimConnect.SIMCONNECT_UNUSED);
         _simconnect.AddToDataDefinition(DataDefinitions.AircraftData, "NUMBER OF ENGINES", "number",
             SIMCONNECT_DATATYPE.INT32, 0.0f, SimConnect.SIMCONNECT_UNUSED);
         _simconnect.AddToDataDefinition(DataDefinitions.AircraftData, "EMPTY WEIGHT", "pounds",
             SIMCONNECT_DATATYPE.FLOAT64, 0.0f, SimConnect.SIMCONNECT_UNUSED);
+        _simconnect.AddToDataDefinition(DataDefinitions.AircraftData, "Livery Name", null, SIMCONNECT_DATATYPE.STRING256, 0.0f,
+            SimConnect.SIMCONNECT_UNUSED);
 
 
 
@@ -409,10 +426,6 @@ internal sealed class SimConnectService : INotifyPropertyChanged
         _simconnect.OnRecvSystemState += new SimConnect.RecvSystemStateEventHandler(Simconnect_OnRecvSystemState);
 
         StartGettingData();
-        // Start getting data
-        //_simconnect.RequestDataOnSimObject(Requests.FlightDataRequest, DataDefinitions.FlightData,
-        //    SimConnect.SIMCONNECT_OBJECT_ID_USER, SIMCONNECT_PERIOD.VISUAL_FRAME, SIMCONNECT_DATA_REQUEST_FLAG.CHANGED,
-        //    0u, 0u, 0u);
     }
 
     private void Simconnect_OnRecvSystemState(SimConnect sender, SIMCONNECT_RECV_SYSTEM_STATE data)
@@ -422,12 +435,6 @@ internal sealed class SimConnectService : INotifyPropertyChanged
             LoadedFlight = data.szString;
             Log.Debug(LoadedFlight);
         } 
-// Disabled because this is returning with a partial path (starting from 'Simbojects')
-//        if (data.dwRequestID == (uint)Requests.AircraftLoaded)
-//        {
-//            LoadedAircraft = data.szString;
-//           Log.Debug(LoadedAircraft);
-//        }
     }
 
     private void Simconnect_OnRecvFilename(SimConnect sender, SIMCONNECT_RECV_EVENT_FILENAME data)
@@ -513,6 +520,7 @@ internal sealed class SimConnectService : INotifyPropertyChanged
         Log.Information("Connection to the simulator is closed!");
         Close();
         IsConnected = false;
+        SimVersion = null;
         _connectionTimer.Start();
     }
 
@@ -521,6 +529,7 @@ internal sealed class SimConnectService : INotifyPropertyChanged
         Log.Information("Connected to flight simulator!");
         _connectionTimer.Stop();
         IsConnected = true;
+        _simconnect.RequestFacilitiesList_EX1(SIMCONNECT_FACILITY_LIST_TYPE.AIRPORT, Requests.SimVersionRequest);
     }
 
     private void simconnect_OnRecvException(SimConnect sender, SIMCONNECT_RECV_EXCEPTION data)
@@ -609,32 +618,41 @@ internal sealed class SimConnectService : INotifyPropertyChanged
 
     private void Simconnect_OnRecvAirportList(SimConnect sender, SIMCONNECT_RECV_AIRPORT_LIST data)
     {
-        try
-        {
-            var myCoordinates = new GeoCoordinate(FlightData.Latitude, FlightData.Longitude);
 
-            foreach (var a in data.rgData.Cast<SIMCONNECT_DATA_FACILITY_AIRPORT>())
+        if ((Requests)data.dwRequestID == Requests.SimVersionRequest)
+        {
+            if(string.IsNullOrEmpty(SimVersion))
             {
-                if (a.Icao.Length < 3 || a.Icao.Length > 4)
-                    continue;
+                SimVersion = data.dwVersion >= 6 ?
+                    MSFS2024 :
+                    MSFS2020;
+                Console.WriteLine($"MSFS version = {SimVersion}");
+            }
+        }
+        
+        else if((Requests)data.dwRequestID == Requests.NearbyAirportsRequest)
+        {
+            ProcessAirports(data.rgData.Cast<SIMCONNECT_DATA_FACILITY_AIRPORT>());
+        }
+    }
+
+    private void ProcessAirports(IEnumerable<SIMCONNECT_DATA_FACILITY_AIRPORT> airports)
+    {
+        var myCoordinates = new GeoCoordinate(FlightData.Latitude, FlightData.Longitude);
+
+        foreach (var a in airports)
+        {
+            if (a.Ident.Length is >= 3 and <= 4)
+            {
                 var airportCoord = new GeoCoordinate(a.Latitude, a.Longitude);
                 var distance = airportCoord.GetDistanceTo(myCoordinates);
                 if (distance < NearestAirportDistance)
                 {
-                    NearestAirport = a.Icao;
+                    NearestAirport = a.Ident;
                     NearestAirportDistance = distance;
-                    Log.Information(
-                        $"Closest found airport is {NearestAirport} at {NearestAirportDistance} meters!");
+                    Log.Information($"Closest found airport is {NearestAirport} at {NearestAirportDistance} meters!");
                 }
             }
-        }
-        catch (COMException ex)
-        {
-            HandleCOMException(ex);
-        }
-        catch (Exception ex)
-        {
-            Log.Error(ex, ex.Message);
         }
     }
 
@@ -683,6 +701,7 @@ internal sealed class SimConnectService : INotifyPropertyChanged
                 Close();
                 IsConnected = false;
                 IsInFlight = false;
+                SimVersion = null;
                 _connectionTimer.Start();
                 break;
             case 0x80004005: // E_FAIL
@@ -697,7 +716,7 @@ internal sealed class SimConnectService : INotifyPropertyChanged
         }
     }
 
-    [MethodImpl(MethodImplOptions.Synchronized)]
+        [MethodImpl(MethodImplOptions.Synchronized)]
     public void Close()
     {
         _dataTimer.Stop();
