@@ -184,6 +184,21 @@ namespace FSTRaK.ViewModels
             private set { }
         }
 
+        string _connectionText;
+
+        public string ConnectionText
+        {
+            get => _connectionText;
+            private set
+            {
+                if (_connectionText != value)
+                {
+                    _connectionText = value;
+                    OnPropertyChanged();
+                }
+            }
+        }
+
         string _state = "";
 
         public string State
@@ -708,6 +723,11 @@ namespace FSTRaK.ViewModels
 
                     State = _flightManager.State.Name;
 
+                    break;
+
+                case nameof(_flightManager.SimVersion):
+                case nameof(_flightManager.SimConnectIsConnected):
+                    ConnectionText = $"{(_flightManager.SimConnectIsConnected ? "Connected to " : "Not connected to sim")} {(_flightManager.SimVersion != null ? _flightManager.SimVersion : "")}";
                     break;
 
                 default:

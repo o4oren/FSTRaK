@@ -90,6 +90,30 @@ namespace FSTRaK.BusinessLogic.FlightManager
             }
         }
 
+        private bool _simConnectIsConnected;
+        public bool SimConnectIsConnected
+        {
+            get => _simConnectIsConnected;
+            set
+            {
+                if (_simConnectIsConnected == value) return;
+                _simConnectIsConnected = value;
+                OnPropertyChanged();
+            }
+        }
+
+        private string _simVersion;
+        public string SimVersion
+        {
+            get => _simVersion;
+            set
+            {
+                if (_simVersion == value) return;
+                _simVersion = value;
+                OnPropertyChanged();
+            }
+        }
+
         private NearestAirportRequestType _nearestAirportRequestType = NearestAirportRequestType.Departure;
 
         private void SimconnectService_OnPropertyChange(object sender, PropertyChangedEventArgs e)
@@ -167,6 +191,17 @@ namespace FSTRaK.BusinessLogic.FlightManager
                         State = new SimNotInFlightState(this);
                     }
                     break;
+
+                case nameof(_simConnectService.IsConnected):
+                    SimConnectIsConnected = _simConnectService.IsConnected;
+                    break;
+
+                case nameof(_simConnectService.SimVersion):
+                    SimVersion = _simConnectService.SimVersion;
+                    break;
+
+                default:
+                    break;
             }
         }
 
@@ -197,7 +232,7 @@ namespace FSTRaK.BusinessLogic.FlightManager
                         var aircraftData = _simConnectService.AircraftData;
                         Aircraft aircraft;
                         // If aircraft is already in the db, let's use the existing record. If no livery name - not in condition
-                        if (string.IsNullOrEmpty(aircraftData.liveryName)) {
+                        if (_simConnectService.SimVersion == SimConnectService.MSFS2020) {
                             aircraft = logbookContext.Aircraft.FirstOrDefault(a => a.Title.Trim() == aircraftData.title.Trim());
                         }
                         else
@@ -216,7 +251,7 @@ namespace FSTRaK.BusinessLogic.FlightManager
                             // delete aircraft if it doesn't have empty weight
                             aircraft = logbookContext.Aircraft.Create();
                             aircraft.Title = aircraftData.title.Trim();
-                            aircraft.LiveryName = aircraftData.liveryName.Trim();
+                            aircraft.LiveryName = _simConnectService.SimVersion == SimConnectService.MSFS2024 ? aircraftData.liveryName.Trim() : null;
                             aircraft.Manufacturer = aircraftData.atcType.Trim();
                             aircraft.Model = aircraftData.model.Trim();
                             aircraft.AircraftType = aircraftData.model.Trim();
