@@ -118,25 +118,25 @@
         "Entry"
         {
         "MsmKey" = "8:_3100F20D51D3E4B0339C45825CAB04FD"
-        "OwnerKey" = "8:_8FB48EC106A444373D9BAFE704BB9A44"
-        "MsmSig" = "8:_UNDEFINED"
-        }
-        "Entry"
-        {
-        "MsmKey" = "8:_3100F20D51D3E4B0339C45825CAB04FD"
         "OwnerKey" = "8:_FDAFB1CA1BF6479B9910ACDA81FDC596"
         "MsmSig" = "8:_UNDEFINED"
         }
         "Entry"
         {
         "MsmKey" = "8:_3100F20D51D3E4B0339C45825CAB04FD"
-        "OwnerKey" = "8:_C506FAE9A0354640A5AACADE05247EBA"
+        "OwnerKey" = "8:_CF11712203251C979F2A832FD5D7D9B0"
         "MsmSig" = "8:_UNDEFINED"
         }
         "Entry"
         {
         "MsmKey" = "8:_3100F20D51D3E4B0339C45825CAB04FD"
-        "OwnerKey" = "8:_CF11712203251C979F2A832FD5D7D9B0"
+        "OwnerKey" = "8:_8FB48EC106A444373D9BAFE704BB9A44"
+        "MsmSig" = "8:_UNDEFINED"
+        }
+        "Entry"
+        {
+        "MsmKey" = "8:_3100F20D51D3E4B0339C45825CAB04FD"
+        "OwnerKey" = "8:_C506FAE9A0354640A5AACADE05247EBA"
         "MsmSig" = "8:_UNDEFINED"
         }
         "Entry"
@@ -226,12 +226,6 @@
         "Entry"
         {
         "MsmKey" = "8:_4586026CF3EF3C2494F60DEA45B1AAEE"
-        "OwnerKey" = "8:_46D5262F7AC4837609E7CE1FDD3A02E0"
-        "MsmSig" = "8:_UNDEFINED"
-        }
-        "Entry"
-        {
-        "MsmKey" = "8:_4586026CF3EF3C2494F60DEA45B1AAEE"
         "OwnerKey" = "8:_BDD71666AC6D4B47812EE7ACF498F737"
         "MsmSig" = "8:_UNDEFINED"
         }
@@ -285,7 +279,7 @@
         }
         "Entry"
         {
-        "MsmKey" = "8:_60AA7F93BFB7458FA73342B8C9BD04C6"
+        "MsmKey" = "8:_5CB95CA1B51B4867BB998DD0AC046820"
         "OwnerKey" = "8:_UNDEFINED"
         "MsmSig" = "8:_UNDEFINED"
         }
@@ -557,12 +551,6 @@
         {
         "MsmKey" = "8:_9A57F3CBAB611E02CCC502B9E0C905E1"
         "OwnerKey" = "8:_8581586A4FC4400494EBCD574550E0A0"
-        "MsmSig" = "8:_UNDEFINED"
-        }
-        "Entry"
-        {
-        "MsmKey" = "8:_9A57F3CBAB611E02CCC502B9E0C905E1"
-        "OwnerKey" = "8:_46D5262F7AC4837609E7CE1FDD3A02E0"
         "MsmSig" = "8:_UNDEFINED"
         }
         "Entry"
@@ -892,6 +880,12 @@
         "Entry"
         {
         "MsmKey" = "8:_UNDEFINED"
+        "OwnerKey" = "8:_C0399746B13C43F38A0E89B609CF5330"
+        "MsmSig" = "8:_UNDEFINED"
+        }
+        "Entry"
+        {
+        "MsmKey" = "8:_UNDEFINED"
         "OwnerKey" = "8:_FDAFB1CA1BF6479B9910ACDA81FDC596"
         "MsmSig" = "8:_UNDEFINED"
         }
@@ -905,30 +899,6 @@
         {
         "MsmKey" = "8:_UNDEFINED"
         "OwnerKey" = "8:_C506FAE9A0354640A5AACADE05247EBA"
-        "MsmSig" = "8:_UNDEFINED"
-        }
-        "Entry"
-        {
-        "MsmKey" = "8:_UNDEFINED"
-        "OwnerKey" = "8:_C0399746B13C43F38A0E89B609CF5330"
-        "MsmSig" = "8:_UNDEFINED"
-        }
-        "Entry"
-        {
-        "MsmKey" = "8:_UNDEFINED"
-        "OwnerKey" = "8:_46D5262F7AC4837609E7CE1FDD3A02E0"
-        "MsmSig" = "8:_UNDEFINED"
-        }
-        "Entry"
-        {
-        "MsmKey" = "8:_UNDEFINED"
-        "OwnerKey" = "8:_C0399746B13C43F38A0E89B609CF5330"
-        "MsmSig" = "8:_UNDEFINED"
-        }
-        "Entry"
-        {
-        "MsmKey" = "8:_UNDEFINED"
-        "OwnerKey" = "8:_1FF5D5260FF97A332E2E58AA84C7C91A"
         "MsmSig" = "8:_UNDEFINED"
         }
         "Entry"
@@ -965,6 +935,12 @@
         {
         "MsmKey" = "8:_UNDEFINED"
         "OwnerKey" = "8:_4EA391409E504200806308AE4D9F35E0"
+        "MsmSig" = "8:_UNDEFINED"
+        }
+        "Entry"
+        {
+        "MsmKey" = "8:_UNDEFINED"
+        "OwnerKey" = "8:_3100F20D51D3E4B0339C45825CAB04FD"
         "MsmSig" = "8:_UNDEFINED"
         }
         "Entry"
@@ -1162,12 +1138,6 @@
         "Entry"
         {
         "MsmKey" = "8:_UNDEFINED"
-        "OwnerKey" = "8:_3100F20D51D3E4B0339C45825CAB04FD"
-        "MsmSig" = "8:_UNDEFINED"
-        }
-        "Entry"
-        {
-        "MsmKey" = "8:_UNDEFINED"
         "OwnerKey" = "8:_430C5177E837A787746E23B78C6C6338"
         "MsmSig" = "8:_UNDEFINED"
         }
@@ -1235,6 +1205,12 @@
         {
         "MsmKey" = "8:_UNDEFINED"
         "OwnerKey" = "8:_630FD8E22A81AFF5D8B327C82031CFA4"
+        "MsmSig" = "8:_UNDEFINED"
+        }
+        "Entry"
+        {
+        "MsmKey" = "8:_UNDEFINED"
+        "OwnerKey" = "8:_C0399746B13C43F38A0E89B609CF5330"
         "MsmSig" = "8:_UNDEFINED"
         }
     }
@@ -1618,11 +1594,6 @@
             "AssemblyAsmDisplayName" = "8:System.Data.SQLite, Version=1.0.119.0, Culture=neutral, PublicKeyToken=db937bc2d44ff139, processorArchitecture=MSIL"
                 "ScatterAssemblies"
                 {
-                    "_1FF5D5260FF97A332E2E58AA84C7C91A"
-                    {
-                    "Name" = "8:System.Data.SQLite.dll"
-                    "Attributes" = "3:512"
-                    }
                 }
             "SourcePath" = "8:System.Data.SQLite.dll"
             "TargetName" = "8:"
@@ -1866,11 +1837,6 @@
             "AssemblyAsmDisplayName" = "8:System.Data.SQLite.EF6, Version=1.0.119.0, Culture=neutral, PublicKeyToken=db937bc2d44ff139, processorArchitecture=MSIL"
                 "ScatterAssemblies"
                 {
-                    "_46D5262F7AC4837609E7CE1FDD3A02E0"
-                    {
-                    "Name" = "8:System.Data.SQLite.EF6.dll"
-                    "Attributes" = "3:512"
-                    }
                 }
             "SourcePath" = "8:System.Data.SQLite.EF6.dll"
             "TargetName" = "8:"
@@ -1952,10 +1918,10 @@
             "IsDependency" = "11:TRUE"
             "IsolateTo" = "8:"
             }
-            "{1FB2D0AE-D3B9-43D4-B9DD-F88EC61E35DE}:_60AA7F93BFB7458FA73342B8C9BD04C6"
+            "{1FB2D0AE-D3B9-43D4-B9DD-F88EC61E35DE}:_5CB95CA1B51B4867BB998DD0AC046820"
             {
-            "SourcePath" = "8:..\\FSTRaK\\Resources\\Data\\airports.json"
-            "TargetName" = "8:airports.json"
+            "SourcePath" = "8:..\\FSTRaK\\Resources\\Data\\airports.csv"
+            "TargetName" = "8:airports.csv"
             "Tag" = "8:"
             "Folder" = "8:_B36C97FD641544D891A60BCF79156393"
             "Condition" = "8:"

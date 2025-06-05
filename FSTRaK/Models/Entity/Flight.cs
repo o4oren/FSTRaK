@@ -70,7 +70,7 @@ namespace FSTRaK.Models
 
                     _departureAirportDetails = new Airport
                     {
-                        icao = DepartureAirport
+                        ident = DepartureAirport
                     };
                 }
                 return _departureAirportDetails;
@@ -97,7 +97,7 @@ namespace FSTRaK.Models
                     Log.Error($"Can't resolve {ArrivalAirport}");
                     _arrivalAirportDetails = new Airport
                     {
-                        icao = ArrivalAirport
+                        ident = ArrivalAirport
                     };
                 }
                 return _arrivalAirportDetails;

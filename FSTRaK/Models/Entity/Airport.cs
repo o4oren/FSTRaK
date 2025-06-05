@@ -7,22 +7,32 @@ namespace FSTRaK.Models.Entity
 {
     public class Airport
     {
-        public string icao { set; get; }
-        public string iata { set; get; }
+        // "id","ident","type","name","latitude_deg","longitude_deg","elevation_ft","continent","iso_country","iso_region","municipality","scheduled_service","icao_code","iata_code","gps_code","local_code","home_link","wikipedia_link","keywords"
+        public string ident {  get; set; }
         public string name { set; get; }
-        public string city { set; get; }
-        public string state { set; get; }
-        public string country { set; get; }
+        public string type { get; set; }
+        public double latitude_deg { set; get; }
+        public double longitude_deg { set; get; }
+        public int? elevation_ft { set; get; }
 
-        public int elevation { set; get; }
-        public double lat { set; get; }
-        public double lon { set; get; }
-        public string tz { set; get; }
+        public string continent { set; get; }
+        public string iso_country { set; get; }
+        public string iso_region { set; get; }
+        public string municipality { set; get; }
+
+        public string scheduled_service { set; get; }
+
+        public string icao_code { set; get; }
+        public string iata_code { set; get; }
+        public string local_code { set; get; }
+
+        public string home_link { set; get; }
+        public string wikipedia_link { set; get; }
 
         public string CountryName {  
             get
             {
-                var cultureInfo = new CultureInfo(country.ToLower());
+                var cultureInfo = new CultureInfo("en-US");
                 var ri = new RegionInfo(cultureInfo.Name);
                 return ri.EnglishName;
             }
@@ -31,14 +41,14 @@ namespace FSTRaK.Models.Entity
         public override string ToString()
         {
             if(string.IsNullOrEmpty(name)) {
-                return icao;
+                return ident;
             }
             StringBuilder sb = new StringBuilder();
-            sb.Append(city);
-            if (country == "US")
-                sb.Append(", ").Append($"{state}, USA");
+            sb.Append(municipality);
+            if (iso_country == "US")
+                sb.Append(", ").Append($"{iso_region.Split('-')[1]}, USA");
             else sb.Append(", ").Append(CountryName);
-            sb.Append($" ({icao})");
+            sb.Append($" ({ident})");
             return sb.ToString();
         }
     }
