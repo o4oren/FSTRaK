@@ -2,6 +2,7 @@
 using System.Globalization;
 using System.Linq;
 using System.Text;
+using static FSTRaK.BusinessLogic.VatsimService.VatsimModel.VatsimStaticData;
 
 namespace FSTRaK.Models.Entity
 {
@@ -28,11 +29,10 @@ namespace FSTRaK.Models.Entity
 
         public string home_link { set; get; }
         public string wikipedia_link { set; get; }
-
         public string CountryName {  
             get
             {
-                var cultureInfo = new CultureInfo("en-US");
+                var cultureInfo = new CultureInfo(iso_country.ToLower());
                 var ri = new RegionInfo(cultureInfo.Name);
                 return ri.EnglishName;
             }
