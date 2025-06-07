@@ -100,7 +100,7 @@ namespace FSTRaK.ViewModels
                 sb.Append(airport.municipality);
                 if (airport.iso_country == "US")
                 {
-                    sb.Append($", {airport.iso_region}");
+                    sb.Append($", {airport.iso_region.Replace("US-", "")}");
                     sb.Append(", USA ");
                 }
                 else
