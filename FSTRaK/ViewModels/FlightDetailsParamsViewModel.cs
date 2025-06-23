@@ -55,9 +55,9 @@ namespace FSTRaK.ViewModels
         public FlightDetailsParamsViewModel(Flight flight) : base()
         {
             Aircraft = flight.Aircraft;
-            DepartureAirport = AirportResolver.Instance.GetAirportByIcaoCode(flight.DepartureAirport);
+            DepartureAirport = AirportResolver.Instance.GetAirportByIdentCode(flight.DepartureAirport);
             DepartureAirportText = GetAirportText(DepartureAirport);
-            ArrivalAirport = AirportResolver.Instance.GetAirportByIcaoCode(flight.ArrivalAirport);
+            ArrivalAirport = AirportResolver.Instance.GetAirportByIdentCode(flight.ArrivalAirport);
             ArrivalAirportText = GetAirportText(ArrivalAirport);
             StartTime = flight.StartTime;
             EndTime = flight.EndTime;
@@ -88,19 +88,19 @@ namespace FSTRaK.ViewModels
         private string GetAirportText(Airport airport)
         {
             StringBuilder sb = new StringBuilder();
-            sb.Append(airport.icao);
-            if (!string.IsNullOrWhiteSpace(airport.iata))
-                sb.AppendLine($"/{airport.iata}");
+            sb.Append(airport.ident);
+            if (string.IsNullOrWhiteSpace(airport.icao_code))
+                sb.AppendLine($"/{airport.iata_code}");
             else sb.Append("\n");
 
             if (!string.IsNullOrEmpty(airport.name))
                 sb.Append($"{airport.name}, ");
-            if (!string.IsNullOrEmpty(airport.city))
+            if (!string.IsNullOrEmpty(airport.municipality))
             {
-                sb.Append(airport.city);
-                if (airport.country == "US")
+                sb.Append(airport.municipality);
+                if (airport.iso_country == "US")
                 {
-                    sb.Append($", {airport.state}");
+                    sb.Append($", {airport.iso_region.Replace("US-", "")}");
                     sb.Append(", USA ");
                 }
                 else
