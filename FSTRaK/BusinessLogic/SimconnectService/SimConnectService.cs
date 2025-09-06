@@ -88,7 +88,23 @@ internal sealed class SimConnectService : INotifyPropertyChanged
         {
             if (value != _cameraState)
             {
+                PreviousCameraState = _cameraState;
                 _cameraState = value;
+                OnPropertyChanged();
+            }
+        }
+    }
+
+    private CameraState _previousCameraState;
+
+    public CameraState PreviousCameraState
+    {
+        get => _previousCameraState;
+        private set
+        {
+            if (value != _previousCameraState)
+            {
+                _previousCameraState = value;
                 OnPropertyChanged();
             }
         }
@@ -481,8 +497,8 @@ internal sealed class SimConnectService : INotifyPropertyChanged
     private void UpdateInFlightState()
     {
         Log.Information($"Flight state updated : Loaded flight - {LoadedFlight}, Pause state: {PauseState}, SimStared: {SimStarted}, CameraState: {CameraState}");
-        if (IsInFlight
-            && (PauseState == 1 || PauseState == 8)
+        if (IsInFlight 
+            && (PauseState == 1 || PauseState == 8 || PauseState == 0)
             && (CameraState == CameraState.InFlightMenu2024 || CameraState == CameraState.InFlightMenu2024_2 || CameraState == CameraState.InFlightMenu2024_3))
         {
             // Do nothing. This is to prevent enabling VR mid flight from ending the flight.
@@ -494,18 +510,24 @@ internal sealed class SimConnectService : INotifyPropertyChanged
         {
             IsInFlight = true; // MSFS 2024 start flight condition
         }
-        else if (CameraState == CameraState.LoadingFlight3D2024 || CameraState == CameraState.MainMenu2024 || CameraState == CameraState.SomethingInLoadingProcess2024)
+        else if (CameraState == CameraState.LoadingFlight3D2024 || CameraState == CameraState.SomethingInLoadingProcess2024)
         {
             IsInFlight = false; // MSFS 2024 exit flight condition
+        }
+        else if (CameraState == CameraState.MainMenu2024) 
+        {
+            if(PreviousCameraState != CameraState.InFlightMenu2024_3) { 
+                IsInFlight = false; 
+            }
         }
         else if (IsInFlight && PauseState == 9)
         {
             IsInFlight = false; // MSFS 2024 exit flight condition
         }
         else if (
-            !string.IsNullOrEmpty(LoadedFlight) 
-            && !LoadedFlight.Equals(MainMenuFlt) 
-            && PauseState != 1 
+            !string.IsNullOrEmpty(LoadedFlight)
+            && !LoadedFlight.Equals(MainMenuFlt)
+            && PauseState != 1
             && PauseState != 8)
         {
             IsInFlight = true;

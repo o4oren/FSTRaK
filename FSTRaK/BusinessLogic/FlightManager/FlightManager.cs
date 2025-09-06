@@ -262,6 +262,7 @@ namespace FSTRaK.BusinessLogic.FlightManager
                             aircraft.Category = aircraftData.Category;
                             aircraft.EmptyWeightLbs = aircraftData.EmptyWeightLbs;
                             EnrichAircraftDataFromFile(aircraft);
+                            ResolveManufactorerAndModel(aircraft);
 
                             // Capitalize manufacturer name correctly.
                             var cultureInfo = new CultureInfo("en-US");
@@ -283,6 +284,71 @@ namespace FSTRaK.BusinessLogic.FlightManager
                 }
 
             });
+        }
+
+        private void ResolveManufactorerAndModel(Aircraft aircraft)
+        {
+            if(aircraft.Manufacturer.Length > 10)
+            {
+                var m = aircraft.Manufacturer.ToLower();
+                if (m.Contains("boeing"))
+                {
+                    aircraft.Manufacturer = "Boeing";
+                }
+                else if (m.Contains("airbus"))
+                {
+                    aircraft.Manufacturer = "Airbus";
+                }
+                else if (m.Contains("cessna"))
+                {
+                    aircraft.Manufacturer = "Cessna";
+                }
+                else if (m.Contains("piper"))
+                {
+                    aircraft.Manufacturer = "Piper";
+                }
+            }
+
+            if (aircraft.AircraftType.Length > 10)
+            {
+                var m = aircraft.AircraftType.ToLower();
+                if (m.Contains("B738"))
+                {
+                    aircraft.AircraftType = "B738";
+                    aircraft.Model = "B737-800";
+                }
+                else if (m.Contains("B737"))
+                {
+                    aircraft.AircraftType = "B737";
+                    aircraft.Model = "B737-700";
+
+                }
+
+                else if (m.Contains("B739"))
+                {
+                    aircraft.AircraftType = "B739";
+                    aircraft.Model = "B737-900";
+
+                }
+                else if (m.Contains("A319"))
+                {
+                    aircraft.AircraftType = "A319";
+                    aircraft.Model = "A319-200";
+
+                }
+                else if (m.Contains("A320"))
+                {
+                    aircraft.AircraftType = "A320";
+                    aircraft.Model = "A320-200";
+
+                }
+                else if (m.Contains("A20N"))
+                {
+                    aircraft.AircraftType = "A20N";
+                    aircraft.Model = "A320 Neo";
+
+                }
+            }
         }
 
         private void EnrichAircraftDataFromFile(Aircraft aircraft)

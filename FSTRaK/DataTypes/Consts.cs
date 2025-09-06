@@ -1,4 +1,6 @@
 ﻿
+using System.Collections.Generic;
+
 namespace FSTRaK.DataTypes
 {
     public class Consts
@@ -12,7 +14,12 @@ namespace FSTRaK.DataTypes
         public static string RadarImage = @"radar-64";
         public static string RadioRadarImage = @"antenna-radar-64";
         public static string TowerRadarImage = @"tower-radar-64";
-    }
 
-
+        public static Dictionary<string, string>  ManufacturersDict = new Dictionary<string, string>
+        {
+            { "airbus", "Airbus" },
+            { "boeing", "Boeing" },
+            { "cessna", "Cessna" }
+        };
+    };
 }
