@@ -348,6 +348,12 @@ namespace FSTRaK.BusinessLogic.FlightManager
                     aircraft.Model = "A320 Neo";
 
                 }
+                else if (m.Contains("C172.0"))
+                {
+                    aircraft.AircraftType = "C172";
+                    aircraft.Model = "C172";
+
+                }
             }
         }
 

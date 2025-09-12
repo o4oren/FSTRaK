@@ -496,8 +496,12 @@ internal sealed class SimConnectService : INotifyPropertyChanged
 
     private void UpdateInFlightState()
     {
-        Log.Information($"Flight state updated : Loaded flight - {LoadedFlight}, Pause state: {PauseState}, SimStared: {SimStarted}, CameraState: {CameraState}");
-        if (IsInFlight 
+        Log.Information($"Flight state updated : Pause state: {PauseState}, SimStared: {SimStarted}, Is in flight: {IsInFlight}, CameraState: {CameraState}");
+        if(IsInFlight && !IsConnected)
+        {
+            IsInFlight = false;
+        }
+        else if (IsInFlight 
             && (PauseState == 1 || PauseState == 8 || PauseState == 0)
             && (CameraState == CameraState.InFlightMenu2024 || CameraState == CameraState.InFlightMenu2024_2 || CameraState == CameraState.InFlightMenu2024_3))
         {
@@ -528,7 +532,8 @@ internal sealed class SimConnectService : INotifyPropertyChanged
             !string.IsNullOrEmpty(LoadedFlight)
             && !LoadedFlight.Equals(MainMenuFlt)
             && PauseState != 1
-            && PauseState != 8)
+            && PauseState != 8
+            && PauseState != 9)
         {
             IsInFlight = true;
         }
