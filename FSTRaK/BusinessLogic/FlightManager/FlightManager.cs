@@ -293,20 +293,20 @@ namespace FSTRaK.BusinessLogic.FlightManager
         {
             if(aircraft.Manufacturer.Length > 10)
             {
-                var m = aircraft.Manufacturer.ToLower();
-                if (m.Contains("boeing"))
+                var m = aircraft.Manufacturer.ToUpper();
+                if (m.Contains("BOEING"))
                 {
                     aircraft.Manufacturer = "Boeing";
                 }
-                else if (m.Contains("airbus"))
+                else if (m.Contains("AIRBUS"))
                 {
                     aircraft.Manufacturer = "Airbus";
                 }
-                else if (m.Contains("cessna"))
+                else if (m.Contains("CESSNA"))
                 {
                     aircraft.Manufacturer = "Cessna";
                 }
-                else if (m.Contains("piper"))
+                else if (m.Contains("PIPER"))
                 {
                     aircraft.Manufacturer = "Piper";
                 }
@@ -314,7 +314,7 @@ namespace FSTRaK.BusinessLogic.FlightManager
 
             if (aircraft.AircraftType.Length > 10)
             {
-                var m = aircraft.AircraftType.ToLower();
+                var m = aircraft.AircraftType.ToUpper();
                 if (m.Contains("B738"))
                 {
                     aircraft.AircraftType = "B738";
@@ -351,10 +351,16 @@ namespace FSTRaK.BusinessLogic.FlightManager
                     aircraft.Model = "A320 Neo";
 
                 }
-                else if (m.Contains("C172.0"))
+                else if (m.Contains("C172"))
                 {
                     aircraft.AircraftType = "C172";
                     aircraft.Model = "C172";
+
+                }
+                else if (m.Contains("C152"))
+                {
+                    aircraft.AircraftType = "C152";
+                    aircraft.Model = "C152";
 
                 }
             }
