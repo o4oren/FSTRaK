@@ -261,7 +261,10 @@ namespace FSTRaK.BusinessLogic.FlightManager
                             aircraft.EngineType = aircraftData.EngineType;
                             aircraft.Category = aircraftData.Category;
                             aircraft.EmptyWeightLbs = aircraftData.EmptyWeightLbs;
-                            EnrichAircraftDataFromFile(aircraft);
+                            if (_simConnectService.SimVersion == SimConnectService.MSFS2020) 
+                            {
+                                EnrichAircraftDataFromFile(aircraft);
+                            }
                             ResolveManufactorerAndModel(aircraft);
 
                             // Capitalize manufacturer name correctly.
