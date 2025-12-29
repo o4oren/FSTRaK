@@ -26,16 +26,17 @@ namespace FSTRaK.ViewModels
         public RelayCommand OpenAddCommentPopupCommand { get; set; }
         public RelayCommand OpenEditAircraftPopupCommand { get; set; }
         public RelayCommand CloseEditAircraftPopupCommand { get; set; }
-        
+
         private FlightDetailsViewModel _flightDetailsViewModel;
 
-        public FlightDetailsViewModel FlightDetailsViewModel { 
+        public FlightDetailsViewModel FlightDetailsViewModel
+        {
             get => _flightDetailsViewModel;
-            private set 
-            { 
+            private set
+            {
                 _flightDetailsViewModel = value;
                 OnPropertyChanged();
-            } 
+            }
         }
 
         private bool _showAddCommentPopup = false;
@@ -53,7 +54,9 @@ namespace FSTRaK.ViewModels
         public ObservableCollection<Flight> Flights { get; set; }
 
         private Flight _selectedFlight;
-        public Flight SelectedFlight { get 
+        public Flight SelectedFlight
+        {
+            get
             {
                 if (_selectedFlight == null)
                 {
@@ -61,7 +64,7 @@ namespace FSTRaK.ViewModels
                 }
 
                 return _selectedFlight;
-            } 
+            }
             set
             {
                 if (value == null || _selectedFlight == value) return;
@@ -83,19 +86,20 @@ namespace FSTRaK.ViewModels
                 {
                     Log.Error(ex, "Exception fetching Flights!");
                 }
-            } 
+            }
         }
 
         private EditAircraftViewModel _editAircraftViewModel;
         public EditAircraftViewModel EditAircraftViewModel
         {
             get => _editAircraftViewModel;
-            set {
-            if (value != null && _editAircraftViewModel != value) 
+            set
             {
-                _editAircraftViewModel = value;
-                OnPropertyChanged();
-            }
+                if (value != null && _editAircraftViewModel != value)
+                {
+                    _editAircraftViewModel = value;
+                    OnPropertyChanged();
+                }
             }
         }
 
@@ -113,15 +117,15 @@ namespace FSTRaK.ViewModels
             }
         }
 
-        public LogbookViewModel() 
+        public LogbookViewModel()
         {
             Flights = new ObservableCollection<Flight>();
             _flightDetailsViewModel = new FlightDetailsViewModel();
             _typingTimer = new System.Timers.Timer(500);
 
-            _flightManager.PropertyChanged += async (s,e) =>
+            _flightManager.PropertyChanged += async (s, e) =>
             {
-                if(e.PropertyName.Equals(nameof(_flightManager.State)) && (_flightManager.State is FlightEndedState))
+                if (e.PropertyName.Equals(nameof(_flightManager.State)) && (_flightManager.State is FlightEndedState))
                 {
                     using (var logbookContext = new LogbookContext())
                     {
@@ -170,14 +174,14 @@ namespace FSTRaK.ViewModels
 
             OpenEditAircraftPopupCommand = new RelayCommand(o =>
             {
-                
+
                 var editAircraftViewModel = new EditAircraftViewModel(SelectedFlight.Aircraft)
                 {
                     IsShow = true
                 };
                 editAircraftViewModel.PropertyChanged += (sender, args) =>
                 {
-                    if(editAircraftViewModel.WasUpdated)
+                    if (editAircraftViewModel.WasUpdated)
                         LoadFlights();
                 };
                 EditAircraftViewModel = editAircraftViewModel;
@@ -206,8 +210,8 @@ namespace FSTRaK.ViewModels
         }
 
         private string _searchText;
-        public string SearchText 
-        { 
+        public string SearchText
+        {
             get => _searchText;
             set
             {
@@ -217,7 +221,7 @@ namespace FSTRaK.ViewModels
                 // Actual search is in the typingTimerElapsed event handler.
             }
         }
-    
+
 
         private Task LoadFlights()
         {
@@ -253,7 +257,7 @@ namespace FSTRaK.ViewModels
 
         private Task SearchFlights()
         {
-            if(SearchText == null || SearchText.Equals(string.Empty))
+            if (SearchText == null || SearchText.Equals(string.Empty))
                 return LoadFlights();
 
             return Task.Run(() => {
@@ -262,7 +266,7 @@ namespace FSTRaK.ViewModels
                     try
                     {
                         var flights = logbookContext.Flights
-                        .Where(f => 
+                        .Where(f =>
                             f.DepartureAirport.ToLower().Equals(SearchText.ToLower())
                             || f.ArrivalAirport.ToLower().Equals(SearchText.ToLower())
                             || f.Aircraft.Title.ToLower().Contains(SearchText.ToLower())
@@ -307,7 +311,7 @@ namespace FSTRaK.ViewModels
                     SelectedFlight = _selectedFlight; // not workig
                 }
             }
-            
+
         }
     }
 }
