@@ -15,10 +15,13 @@ namespace FSTRaK.Models
         public string Title { get; set; } = "";
         public string LiveryName { get; set; }
 
+        [Index(nameof(AircraftType))]
         public String AircraftType { get; set; }
 
         public String Category { get; set; }
         public String Manufacturer { get; set; }
+        
+        [Index(nameof(Airline))]
         public String Airline { get ; set; }
         public String Model { get; set; }
         public String TailNumber { get; set; }
