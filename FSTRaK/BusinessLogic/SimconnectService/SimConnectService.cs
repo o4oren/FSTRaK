@@ -728,7 +728,7 @@ internal sealed class SimConnectService : INotifyPropertyChanged
     {
         // Log the error details
         Log.Error($"COMException: {ex.Message} (HRESULT: {ex.ErrorCode})");
-
+        // existing handling...
         switch ((uint)ex.ErrorCode)
         {
             case 0xC000014B:
@@ -747,6 +747,7 @@ internal sealed class SimConnectService : INotifyPropertyChanged
                 break;
             default:
                 Log.Error("An unknown error occurred.");
+                Log.Error(ex, "COMException thrown. HResult: {HResult:X8}, ErrorCode: {ErrorCode}", ex.HResult, ex.ErrorCode);
                 break;
         }
     }
