@@ -68,23 +68,28 @@ namespace FSTRaK.ViewModels
             set
             {
                 if (value == null || _selectedFlight == value) return;
-                try
+                _selectedFlight = value;
+                _flightDetailsViewModel.Flight = _selectedFlight;
+                OnPropertyChanged();
+
+                if (value.FlightEvents.Count == 0)
                 {
-                    if (value.FlightEvents.Count == 0)
+                    Task.Run(() =>
                     {
-                        using (var logbookContext = new LogbookContext())
+                        try
                         {
-                            ObservableCollection<BaseFlightEvent> flightEvents = new ObservableCollection<BaseFlightEvent>(logbookContext.FlightEvents.Where(fe => fe.FlightId == value.Id).ToList());
-                            value.FlightEvents = flightEvents;
+                            using (var logbookContext = new LogbookContext())
+                            {
+                                var flightEvents = new ObservableCollection<BaseFlightEvent>(
+                                    logbookContext.FlightEvents.Where(fe => fe.FlightId == value.Id).ToList());
+                                App.Current.Dispatcher.Invoke(() => value.FlightEvents = flightEvents);
+                            }
                         }
-                    }
-                    _selectedFlight = value;
-                    _flightDetailsViewModel.Flight = _selectedFlight;
-                    OnPropertyChanged();
-                }
-                catch (Exception ex)
-                {
-                    Log.Error(ex, "Exception fetching Flights!");
+                        catch (Exception ex)
+                        {
+                            Log.Error(ex, "Exception fetching flight events!");
+                        }
+                    });
                 }
             }
         }
@@ -201,6 +206,8 @@ namespace FSTRaK.ViewModels
             });
 
             _typingTimer.Elapsed += _typingTimer_Elapsed;
+
+            LoadFlights();
         }
 
         private void _typingTimer_Elapsed(object sender, ElapsedEventArgs e)
@@ -275,8 +282,7 @@ namespace FSTRaK.ViewModels
                             || f.Aircraft.TailNumber.ToLower().StartsWith(SearchText.ToLower())
                         )
                         .OrderByDescending(f => f.Id)
-                        .Include(f => f.Aircraft)
-                        .Include(f => f.FlightEvents);
+                        .Include(f => f.Aircraft);
 
                         App.Current.Dispatcher.Invoke((Action)delegate
                         {
@@ -292,26 +298,10 @@ namespace FSTRaK.ViewModels
             });
         }
 
-        internal async void OnLoad()
+        internal void OnLoad()
         {
-            Log.Information("on load");
-            await LoadFlights(0);
-            Flight flight = new Flight();
-            using (var logbookContext = new LogbookContext())
-            {
-                if (SelectedFlight == null)
-                {
-                    var latestId = logbookContext.Flights.Max(f => f.Id);
-                    flight = Flights
-                        .SingleOrDefault(f => f.Id == latestId);
-                    SelectedFlight = flight;
-                }
-                else
-                {
-                    SelectedFlight = _selectedFlight; // not workig
-                }
-            }
-
+            if (_selectedFlight == null)
+                SelectedFlight = Flights.FirstOrDefault();
         }
     }
 }
