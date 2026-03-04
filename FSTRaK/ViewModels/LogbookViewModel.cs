@@ -82,7 +82,12 @@ namespace FSTRaK.ViewModels
                             {
                                 var flightEvents = new ObservableCollection<BaseFlightEvent>(
                                     logbookContext.FlightEvents.Where(fe => fe.FlightId == value.Id).ToList());
-                                App.Current.Dispatcher.Invoke(() => value.FlightEvents = flightEvents);
+                                App.Current.Dispatcher.Invoke(() =>
+                                {
+                                    value.FlightEvents = flightEvents;
+                                    if (_selectedFlight == value)
+                                        _flightDetailsViewModel.OnFlightEventsLoaded();
+                                });
                             }
                         }
                         catch (Exception ex)
@@ -121,6 +126,8 @@ namespace FSTRaK.ViewModels
                 }
             }
         }
+
+        private Task _initialLoadTask;
 
         public LogbookViewModel()
         {
@@ -207,7 +214,7 @@ namespace FSTRaK.ViewModels
 
             _typingTimer.Elapsed += _typingTimer_Elapsed;
 
-            App.DbWarmupTask.ContinueWith(_ => LoadFlights());
+            _initialLoadTask = App.DbWarmupTask.ContinueWith(_ => LoadFlights()).Unwrap();
         }
 
         private void _typingTimer_Elapsed(object sender, ElapsedEventArgs e)
@@ -300,8 +307,21 @@ namespace FSTRaK.ViewModels
 
         internal void OnLoad()
         {
-            if (_selectedFlight == null)
+            if (_selectedFlight != null) return;
+
+            if (_initialLoadTask.IsCompleted)
+            {
                 SelectedFlight = Flights.FirstOrDefault();
+            }
+            else
+            {
+                _initialLoadTask.ContinueWith(_ =>
+                    App.Current.Dispatcher.Invoke(() =>
+                    {
+                        if (_selectedFlight == null)
+                            SelectedFlight = Flights.FirstOrDefault();
+                    }));
+            }
         }
     }
 }
