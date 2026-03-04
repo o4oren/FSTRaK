@@ -80,8 +80,9 @@ namespace FSTRaK.BusinessLogic.FlightManager.State
 
         private bool IsCameraLive(CameraState currentCameraState)
         {
-            return currentCameraState is CameraState.Cockpit or CameraState.Drone or CameraState.External
-                or CameraState.Drone;
+            return currentCameraState is CameraState.Cockpit or CameraState.External or CameraState.Drone
+                or CameraState.Fixed or CameraState.SixDof or CameraState.Environment
+                or CameraState.FollowTrafficAircraft;
         }
 
     }

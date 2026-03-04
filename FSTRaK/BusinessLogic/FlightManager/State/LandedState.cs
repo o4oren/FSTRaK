@@ -58,7 +58,7 @@ namespace FSTRaK.BusinessLogic.FlightManager.State
             }
 
             // TODO future handling of pitch
-            Log.Information($"Parked! Flaps: {le.FlapsPosition}, with {le.FuelWeightLbs} Lbs of fuel.");
+            Log.Information($"Landed! Flaps: {le.FlapsPosition}, VS: {le.VerticalSpeed:F0} fpm, with {le.FuelWeightLbs} Lbs of fuel.");
 
 
             AddFlightEvent(landingData, le);
