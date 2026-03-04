@@ -1,4 +1,4 @@
-﻿using FSTRaK.Models;
+using FSTRaK.Models;
 using FSTRaK.Models.Entity;
 using Serilog;
 using System;
@@ -72,7 +72,7 @@ namespace FSTRaK.ViewModels
                 _flightDetailsViewModel.Flight = _selectedFlight;
                 OnPropertyChanged();
 
-                if (value.FlightEvents.Count == 0)
+                if ((value.FlightEvents?.Count ?? 0) == 0)
                 {
                     Task.Run(() =>
                     {

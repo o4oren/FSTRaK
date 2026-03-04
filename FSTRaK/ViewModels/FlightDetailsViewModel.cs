@@ -1,4 +1,4 @@
-﻿
+
 
 using FSTRaK.DataTypes;
 using FSTRaK.Models;
@@ -23,7 +23,10 @@ namespace FSTRaK.ViewModels
             {
                 if (_flight == value) return;
                 _flight = value;
-                FlightPath = new ObservableCollection<Location>(_flight.FlightEvents
+                if (_flight == null) return;
+
+                var events = _flight.FlightEvents ?? Enumerable.Empty<BaseFlightEvent>();
+                FlightPath = new ObservableCollection<Location>(events
                     .OrderBy(e => e.Id)
                     .Select(e => new Location(e.Latitude, e.Longitude)));
 
@@ -37,9 +40,13 @@ namespace FSTRaK.ViewModels
                     maxLat = Math.Max(maxLat, coords.Latitude);
                 });
 
-                var boundingBox = new BoundingBox(minLat, minLon, maxLat, maxLon);
-                Log.Debug($"Zoom to {boundingBox.Center} {boundingBox.Width}");
-                ViewPort = boundingBox;
+                // Only set ViewPort when we have valid bounds (at least one point); otherwise leave previous or skip
+                if (FlightPath.Count > 0)
+                {
+                    var boundingBox = new BoundingBox(minLat, minLon, maxLat, maxLon);
+                    Log.Debug($"Zoom to {boundingBox.Center} {boundingBox.Width}");
+                    ViewPort = boundingBox;
+                }
 
                 ScoreboardText = _flight.GetScoreDetails();
 
@@ -47,8 +54,10 @@ namespace FSTRaK.ViewModels
 
                 GeneratePushpins();
 
-                OnPropertyChanged();
+                OnPropertyChanged(nameof(Flight));
                 OnPropertyChanged(nameof(FlightPath));
+                OnPropertyChanged(nameof(ViewPort));
+                OnPropertyChanged(nameof(ScoreboardText));
                 OnPropertyChanged(nameof(AltSpeedGroundAltDictionary));
             }
         }
@@ -93,11 +102,14 @@ namespace FSTRaK.ViewModels
             GeneratePushpins();
 
             OnPropertyChanged(nameof(FlightPath));
+            OnPropertyChanged(nameof(ViewPort));
+            OnPropertyChanged(nameof(ScoreboardText));
             OnPropertyChanged(nameof(AltSpeedGroundAltDictionary));
         }
 
         private void GeneratePushpins()
         {
+            if (_flight?.FlightEvents == null) return;
             var markerEvents = _flight.FlightEvents.Where(e => e is ScoringEvent || e is TakeoffEvent).ToList();
 
             // Clear adjacent landings
@@ -130,7 +142,7 @@ namespace FSTRaK.ViewModels
             }
         }
 
-        public ObservableCollection<Location> FlightPath { get; private set; }
+        public ObservableCollection<Location> FlightPath { get; private set; } = new ObservableCollection<Location>();
 
         private ObservableCollection<FlightEventPushpin> _markerList = new ObservableCollection<FlightEventPushpin>();
 
@@ -148,8 +160,9 @@ namespace FSTRaK.ViewModels
         {
             get 
             {
-                // Building a dictionary where keys are the timestamp and values are arrays of ground speed altitude and ground altitude.
                 var altSpeedGroundDictionary = new Dictionary<double, double[]>();
+                if (_flight?.FlightEvents == null) return altSpeedGroundDictionary;
+                // Building a dictionary where keys are the timestamp and values are arrays of ground speed altitude and ground altitude.
                 var movementTime = _flight.FlightEvents.FirstOrDefault(e => e is TaxiOutEvent);
                 if (movementTime == null) return altSpeedGroundDictionary;
                 {
