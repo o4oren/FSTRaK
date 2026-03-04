@@ -23,6 +23,8 @@ namespace FSTRaK
     {
         private static Mutex _mutex = null;
 
+        internal static Task DbWarmupTask { get; private set; } = Task.CompletedTask;
+
         const string AppName = "FSTrAk";
 
         protected override void OnStartup(StartupEventArgs e)
@@ -66,7 +68,7 @@ namespace FSTRaK
         FileVersionInfo fvi = FileVersionInfo.GetVersionInfo(assembly.Location);
         Log.Information($"FSTrAk {fvi.ProductVersion} Started.");
 
-            Task.Run(() =>
+            DbWarmupTask = Task.Run(() =>
         {
             using var logbookContext = new LogbookContext();
             try
@@ -101,7 +103,7 @@ namespace FSTRaK
             ResourceUtil.SetTheme(FSTRaK.Properties.Settings.Default.Theme);
             ResourceUtil.SetFont(FSTRaK.Properties.Settings.Default.FontName);
 
-            var _ = AirportResolver.Instance;
+            Task.Run(() => { var _ = AirportResolver.Instance; });
 
     }
   

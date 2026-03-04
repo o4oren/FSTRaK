@@ -207,7 +207,7 @@ namespace FSTRaK.ViewModels
 
             _typingTimer.Elapsed += _typingTimer_Elapsed;
 
-            LoadFlights();
+            App.DbWarmupTask.ContinueWith(_ => LoadFlights());
         }
 
         private void _typingTimer_Elapsed(object sender, ElapsedEventArgs e)
