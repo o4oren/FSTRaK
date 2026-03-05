@@ -83,13 +83,13 @@ namespace FSTRaK.Views
                 case "AltSpeedGroundAltDictionary":
                     var altSpeedGroundSeries = ((FlightDetailsViewModel)DataContext).AltSpeedGroundAltDictionary;
 
-                    if (altSpeedGroundSeries != null)
+                    AltSpeedChart.Plot.Clear();
+                    if (altSpeedGroundSeries != null && altSpeedGroundSeries.Count > 0)
                     {
                         var timeX = altSpeedGroundSeries.Keys.ToArray();
                         var altY = altSpeedGroundSeries.Values.Select(v => v[0]).ToArray();
                         var speedY = altSpeedGroundSeries.Values.Select(v => v[1]).ToArray();
                         var groundAltY = altSpeedGroundSeries.Values.Select(v => v[2]).ToArray();
-                        AltSpeedChart.Plot.Clear();
 
                         var altPlot = AltSpeedChart.Plot.AddScatter(timeX, altY);
                         altPlot.Label ="Altitude";
@@ -116,6 +116,10 @@ namespace FSTRaK.Views
                         var legend = AltSpeedChart.Plot.Legend();
                         legend.Location = Alignment.UpperLeft;
 
+                        AltSpeedChart.Refresh();
+                    }
+                    else
+                    {
                         AltSpeedChart.Refresh();
                     }
                     break;
