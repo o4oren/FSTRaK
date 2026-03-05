@@ -51,17 +51,6 @@ namespace FSTRaK.ViewModels
             }
         }
 
-        private bool _isLoadingFlights;
-        public bool IsLoadingFlights
-        {
-            get => _isLoadingFlights;
-            private set
-            {
-                _isLoadingFlights = value;
-                OnPropertyChanged();
-            }
-        }
-
         public ObservableCollection<Flight> Flights { get; set; }
 
         private Flight _selectedFlight;
@@ -275,7 +264,6 @@ namespace FSTRaK.ViewModels
         }
         private Task LoadFlights(int delay)
         {
-            IsLoadingFlights = true;
             return Task.Run(() => {
 
                 Thread.Sleep(delay);
@@ -292,13 +280,11 @@ namespace FSTRaK.ViewModels
                         {
                             Flights = new ObservableCollection<Flight>(flights);
                             OnPropertyChanged(nameof(Flights));
-                            IsLoadingFlights = false;
                         });
                     }
                     catch (Exception ex)
                     {
                         Log.Error(ex, "Unhandled error occurred!");
-                        System.Windows.Application.Current.Dispatcher.Invoke(() => IsLoadingFlights = false);
                     }
                 }
             });
@@ -309,7 +295,6 @@ namespace FSTRaK.ViewModels
             if (SearchText == null || SearchText.Equals(string.Empty))
                 return LoadFlights();
 
-            IsLoadingFlights = true;
             return Task.Run(() => {
                 using (var logbookContext = new LogbookContext())
                 {
@@ -331,13 +316,11 @@ namespace FSTRaK.ViewModels
                         {
                             Flights = new ObservableCollection<Flight>(flights);
                             OnPropertyChanged(nameof(Flights));
-                            IsLoadingFlights = false;
                         });
                     }
                     catch (Exception ex)
                     {
                         Log.Error(ex, "Exception fetching Flights!");
-                        App.Current.Dispatcher.Invoke(() => IsLoadingFlights = false);
                     }
                 }
             });
