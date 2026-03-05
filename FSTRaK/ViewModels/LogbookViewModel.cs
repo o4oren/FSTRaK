@@ -72,8 +72,10 @@ namespace FSTRaK.ViewModels
                 _flightDetailsViewModel.Flight = _selectedFlight;
                 OnPropertyChanged();
 
-                if ((value.FlightEvents?.Count ?? 0) == 0)
+                var flight = value;
+                if ((flight.FlightEvents?.Count ?? 0) == 0)
                 {
+                    Log.Debug("SelectedFlight: starting async event load for flight {FlightId}", flight.Id);
                     Task.Run(() =>
                     {
                         try
@@ -81,20 +83,39 @@ namespace FSTRaK.ViewModels
                             using (var logbookContext = new LogbookContext())
                             {
                                 var flightEvents = new ObservableCollection<BaseFlightEvent>(
-                                    logbookContext.FlightEvents.Where(fe => fe.FlightId == value.Id).ToList());
+                                    logbookContext.FlightEvents.Where(fe => fe.FlightId == flight.Id).ToList());
+                                Log.Debug("SelectedFlight: loaded {Count} events for flight {FlightId}", flightEvents.Count, flight.Id);
                                 App.Current.Dispatcher.Invoke(() =>
                                 {
-                                    value.FlightEvents = flightEvents;
-                                    if (_selectedFlight == value)
-                                        _flightDetailsViewModel.OnFlightEventsLoaded();
+                                    flight.FlightEvents = flightEvents;
+                                    if (_selectedFlight == flight)
+                                    {
+                                        Log.Debug("SelectedFlight: calling OnFlightEventsLoaded for flight {FlightId}", flight.Id);
+                                        try
+                                        {
+                                            _flightDetailsViewModel.OnFlightEventsLoaded();
+                                        }
+                                        catch (Exception innerEx)
+                                        {
+                                            Log.Error(innerEx, "Exception in OnFlightEventsLoaded for flight {FlightId}!", flight.Id);
+                                        }
+                                    }
+                                    else
+                                    {
+                                        Log.Debug("SelectedFlight: skipping OnFlightEventsLoaded — selected flight changed (expected {Expected}, actual {Actual})", flight.Id, _selectedFlight?.Id);
+                                    }
                                 });
                             }
                         }
                         catch (Exception ex)
                         {
-                            Log.Error(ex, "Exception fetching flight events!");
+                            Log.Error(ex, "Exception fetching flight events for flight {FlightId}!", flight.Id);
                         }
                     });
+                }
+                else
+                {
+                    Log.Debug("SelectedFlight: flight {FlightId} already has {Count} events loaded", flight.Id, flight.FlightEvents.Count);
                 }
             }
         }

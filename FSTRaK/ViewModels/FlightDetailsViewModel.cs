@@ -65,6 +65,9 @@ namespace FSTRaK.ViewModels
         {
             if (_flight == null) return;
 
+            Log.Debug("OnFlightEventsLoaded: flight {FlightId}, {EventCount} events",
+                _flight.Id, _flight.FlightEvents?.Count ?? 0);
+
             FlightPath.Clear();
             foreach (var loc in _flight.FlightEvents
                 .OrderBy(e => e.Id)
@@ -72,6 +75,8 @@ namespace FSTRaK.ViewModels
             {
                 FlightPath.Add(loc);
             }
+
+            Log.Debug("OnFlightEventsLoaded: FlightPath has {Count} points", FlightPath.Count);
 
             if (FlightPath.Count > 0)
             {
@@ -88,6 +93,7 @@ namespace FSTRaK.ViewModels
             }
 
             ScoreboardText = _flight.GetScoreDetails();
+            Log.Debug("OnFlightEventsLoaded: ScoreboardText = '{Score}'", ScoreboardText);
             FlightDetailsParamsViewModel = new FlightDetailsParamsViewModel(_flight);
             GeneratePushpins();
 
