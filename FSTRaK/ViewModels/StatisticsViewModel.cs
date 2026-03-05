@@ -564,10 +564,9 @@ namespace FSTRaK.ViewModels
 
         private static Dictionary<DateTime, int> CalculateFlightsPerMonth(List<Flight> flights)
         {
-            // TODO
             return flights
-                .GroupBy(f => f.StartTime.Date)
-                .ToDictionary(g => g.Key, g => g.Count());
+                .GroupBy(f => new { f.StartTime.Year, f.StartTime.Month })
+                .ToDictionary(g => new DateTime(g.Key.Year, g.Key.Month, 1), g => g.Count());
         }
 
         private static Dictionary<string, double> CalculateAirlineDistribution(List<Flight> flights)
