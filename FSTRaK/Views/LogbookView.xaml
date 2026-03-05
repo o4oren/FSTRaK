@@ -17,6 +17,8 @@
                 <ResourceDictionary Source="../Resources/AircraftIconsDictionary.xaml"/>
                 <ResourceDictionary Source="../Resources/MapProvidersDictionary.xaml"/>
             </ResourceDictionary.MergedDictionaries>
+
+            <BooleanToVisibilityConverter x:Key="BoolToVis"/>
             <DataTemplate DataType="{x:Type viewmodels:FlightDetailsViewModel}" >
                 <views:FlightDetailsView/>
             </DataTemplate>
@@ -158,6 +160,36 @@
                     </DataTemplate>
                 </ListView.ItemTemplate>
             </ListView>
+
+            <!-- Loading spinner overlay -->
+            <Border Grid.Row="1" Grid.Column="0"
+                    Width="280"
+                    Visibility="{Binding IsLoadingFlights, Converter={StaticResource BoolToVis}}"
+                    Background="#80000000"
+                    CornerRadius="0 0 0 5">
+                <Ellipse Width="48" Height="48"
+                         Stroke="{DynamicResource TextColor}"
+                         StrokeThickness="4"
+                         StrokeDashArray="3 1"
+                         RenderTransformOrigin="0.5,0.5">
+                    <Ellipse.RenderTransform>
+                        <RotateTransform x:Name="SpinnerRotate" Angle="0"/>
+                    </Ellipse.RenderTransform>
+                    <Ellipse.Triggers>
+                        <EventTrigger RoutedEvent="Loaded">
+                            <BeginStoryboard>
+                                <Storyboard RepeatBehavior="Forever">
+                                    <DoubleAnimation
+                                        Storyboard.TargetName="SpinnerRotate"
+                                        Storyboard.TargetProperty="Angle"
+                                        From="0" To="360"
+                                        Duration="0:0:1"/>
+                                </Storyboard>
+                            </BeginStoryboard>
+                        </EventTrigger>
+                    </Ellipse.Triggers>
+                </Ellipse>
+            </Border>
 
             <views:EditAircraftPopupView
                 x:Name="EditAircraftPopupView"
