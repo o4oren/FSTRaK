@@ -36,6 +36,7 @@ namespace FSTRaK.ViewModels
                 else
                 {
                     // Clear stale data from previous flight while events load async
+                    _altSpeedGroundAltDictionary = null;
                     FlightPath.Clear();
                     MarkerList.Clear();
                     ScoreboardText = "";
@@ -68,6 +69,7 @@ namespace FSTRaK.ViewModels
             Log.Debug("OnFlightEventsLoaded: flight {FlightId}, {EventCount} events",
                 _flight.Id, _flight.FlightEvents?.Count ?? 0);
 
+            _altSpeedGroundAltDictionary = null;
             FlightPath.Clear();
             foreach (var loc in _flight.FlightEvents
                 .OrderBy(e => e.Id)
@@ -135,6 +137,8 @@ namespace FSTRaK.ViewModels
             }
         }
 
+        private Dictionary<double, double[]> _altSpeedGroundAltDictionary;
+
         public ObservableCollection<Location> FlightPath { get; private set; } = new ObservableCollection<Location>();
 
         private ObservableCollection<FlightEventPushpin> _markerList = new ObservableCollection<FlightEventPushpin>();
@@ -151,8 +155,10 @@ namespace FSTRaK.ViewModels
 
         public Dictionary<double, double[]> AltSpeedGroundAltDictionary
         {
-            get 
+            get
             {
+                if (_altSpeedGroundAltDictionary != null) return _altSpeedGroundAltDictionary;
+
                 var altSpeedGroundDictionary = new Dictionary<double, double[]>();
                 if (_flight?.FlightEvents == null) return altSpeedGroundDictionary;
                 // Building a dictionary where keys are the timestamp and values are arrays of ground speed altitude and ground altitude.
@@ -172,7 +178,8 @@ namespace FSTRaK.ViewModels
                     }
                 }
 
-                return altSpeedGroundDictionary;
+                _altSpeedGroundAltDictionary = altSpeedGroundDictionary;
+                return _altSpeedGroundAltDictionary;
             }
         }
 

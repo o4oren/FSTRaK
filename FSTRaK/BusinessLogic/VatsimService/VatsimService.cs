@@ -77,7 +77,7 @@ namespace FSTRaK.BusinessLogic.VatsimService
             }
             catch (Exception ex)
             {
-                Console.WriteLine($"Error reading or parsing GeoJSON file: {ex.Message}");
+                Log.Error(ex, "Error reading or parsing GeoJSON file");
             }
         }
 

@@ -109,6 +109,8 @@ namespace FSTRaK.Views
 
         private void CloseMainWindow()
         {
+            if (DataContext is ViewModels.MainWindowViewModel vm)
+                vm.SaveSettings();
             _notifyIcon.Dispose();
             Close();
         }

@@ -66,8 +66,8 @@
                 <TextBox FontFamily="{DynamicResource Slopes}" Foreground="{DynamicResource TextColor}" Background="{DynamicResource ControlBackgroundColorBrush}" FontSize="20" Text="{Binding BingApiKey}" TextWrapping="Wrap" Height="100" Width="200">
                 </TextBox>
                 <StackPanel.ToolTip>
-                    Bing map require an API Key. 
-                    Please see https://docs.maptiler.com/cloud/api.
+                    Bing map require an API Key.
+                    Please see https://learn.microsoft.com/en-us/bingmaps/getting-started/bing-maps-dev-center-help/getting-a-bing-maps-key
                 </StackPanel.ToolTip>
             </StackPanel>
 
@@ -76,9 +76,8 @@
                 <TextBox FontFamily="{DynamicResource Slopes}" Foreground="{DynamicResource TextColor}" Background="{DynamicResource ControlBackgroundColorBrush}" FontSize="20" Text="{Binding MapTilerApiKey}" TextWrapping="Wrap" Height="100" Width="200">
                 </TextBox>
                 <StackPanel.ToolTip>
-                    Maptiler maps require an API Key. 
-                    Please see the instructions at 
-                    https://learn.microsoft.com/en-us/bingmaps/getting-started/bing-maps-dev-center-help/getting-a-bing-maps-key
+                    Maptiler maps require an API Key.
+                    Please see the instructions at https://docs.maptiler.com/cloud/api.
                 </StackPanel.ToolTip>
             </StackPanel>
 
