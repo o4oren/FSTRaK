@@ -10,18 +10,18 @@ namespace FSTRaK.Utils
 {
     internal class ResourceUtil
     {
+        //                                                    Nav   Title Label Ctrl  Text  List  Hdr   Small
         private static readonly Dictionary<string, double[]> FontSizes = new Dictionary<string, double[]>
         {
-            //                         Nav   Title Label Ctrl  Text  List  Hdr   Small
-            ["Slopes"]             = { 34,   30,   28,   24,   22,   20,   18,   16 },
-            ["Arial"]              = { 24,   22,   20,   18,   17,   15,   14,   12 },
-            ["Segoe UI"]           = { 24,   22,   20,   18,   17,   15,   14,   12 },
-            ["Georgia"]            = { 24,   22,   20,   18,   17,   15,   14,   12 },
-            ["Consolas"]           = { 22,   20,   18,   16,   15,   14,   13,   11 },
-            ["Comic Sans MS"]     = { 24,   22,   20,   18,   16,   15,   14,   12 },
-            ["Palatino Linotype"] = { 24,   22,   20,   18,   17,   15,   14,   12 },
-            ["Bahnschrift"]        = { 24,   22,   20,   18,   17,   15,   14,   12 },
-            ["Ink Free"]           = { 28,   26,   24,   20,   19,   17,   16,   14 },
+            { "Slopes",            new double[] { 34,   30,   28,   24,   22,   20,   18,   16 } },
+            { "Arial",             new double[] { 24,   22,   20,   18,   17,   15,   14,   12 } },
+            { "Segoe UI",          new double[] { 24,   22,   20,   18,   17,   15,   14,   12 } },
+            { "Georgia",           new double[] { 24,   22,   20,   18,   17,   15,   14,   12 } },
+            { "Consolas",          new double[] { 22,   20,   18,   16,   15,   14,   13,   11 } },
+            { "Comic Sans MS",    new double[] { 24,   22,   20,   18,   16,   15,   14,   12 } },
+            { "Palatino Linotype", new double[] { 24,   22,   20,   18,   17,   15,   14,   12 } },
+            { "Bahnschrift",       new double[] { 24,   22,   20,   18,   17,   15,   14,   12 } },
+            { "Ink Free",          new double[] { 28,   26,   24,   20,   19,   17,   16,   14 } },
         };
 
         public static readonly string[] AvailableFonts = {
