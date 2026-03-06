@@ -1,4 +1,4 @@
-﻿using FSTRaK.Utils;
+using FSTRaK.Utils;
 using MapControl;
 using MapControl.Caching;
 using System;
@@ -73,8 +73,7 @@ namespace FSTRaK.Views
             };
 
             // Initialize MapControl global settings
-            var bingApiKey = Properties.Settings.Default.BingApiKey;
-            BingMapsTileLayer.ApiKey = bingApiKey;
+            AzureMapsMapTileLayer.ApiKey = Properties.Settings.Default.BingApiKey;
 
             var maptillerApiKey = Properties.Settings.Default.MapTilerApiKey;
             MapTilerMapTileLayer.ApiKey = maptillerApiKey;

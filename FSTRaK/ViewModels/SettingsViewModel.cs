@@ -28,7 +28,7 @@ namespace FSTRaK.ViewModels
                     Properties.Settings.Default.MapTileProvider = _selectedMapProvider;
 
                     var mapProvider = Application.Current.TryFindResource(_selectedMapProvider);
-                    if (mapProvider is BingMapsTileLayer)
+                    if (mapProvider is AzureMapsMapTileLayer)
                         IsShowBingApiKeyField = true;
                     else
                         IsShowBingApiKeyField = false;
@@ -51,7 +51,7 @@ namespace FSTRaK.ViewModels
             {
                 _bingApiKey = value;
                 Properties.Settings.Default.BingApiKey = _bingApiKey;
-                BingMapsTileLayer.ApiKey = _bingApiKey;
+                AzureMapsMapTileLayer.ApiKey = _bingApiKey;
                 OnPropertyChanged();
             }
         }

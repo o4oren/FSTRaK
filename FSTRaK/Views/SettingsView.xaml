@@ -62,12 +62,12 @@
             </StackPanel>
 
             <StackPanel Orientation="Horizontal" Margin="10" Visibility="{Binding IsShowBingApiKeyField, Converter={StaticResource BoolToVis}}" ToolTipService.ShowDuration="5000">
-                <Label  Style="{DynamicResource FSTrAkLabel}" Width="250">Bing API Key</Label>
+                <Label  Style="{DynamicResource FSTrAkLabel}" Width="250">Azure Maps Key</Label>
                 <TextBox FontFamily="{DynamicResource CurrentFont}" Foreground="{DynamicResource TextColor}" Background="{DynamicResource ControlBackgroundColorBrush}" FontSize="{DynamicResource ListFontSize}" Text="{Binding BingApiKey}" TextWrapping="Wrap" Height="100" Width="200">
                 </TextBox>
                 <StackPanel.ToolTip>
-                    Bing map require an API Key.
-                    Please see https://learn.microsoft.com/en-us/bingmaps/getting-started/bing-maps-dev-center-help/getting-a-bing-maps-key
+                    Azure Maps require a subscription key.
+                    Please see https://learn.microsoft.com/en-us/azure/azure-maps/how-to-manage-authentication
                 </StackPanel.ToolTip>
             </StackPanel>
 
