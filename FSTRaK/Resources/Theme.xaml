@@ -1,4 +1,4 @@
-﻿<ResourceDictionary xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+<ResourceDictionary xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
                     xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml" xmlns:map="clr-namespace:MapControl;assembly=MapControl.WPF" xmlns:system="clr-namespace:System;assembly=mscorlib">
 
 
@@ -92,6 +92,16 @@
     <SolidColorBrush x:Key="ListViewItemBackgroundBrush" Color="white"/>
     <SolidColorBrush x:Key="ListViewBackgroundBrush" Color="white"/>
     <SolidColorBrush x:Key="OverlayBackgroundBrush" Color="black"/>
+    <SolidColorBrush x:Key="SelectedItemBackgroundBrush" Color="{DynamicResource PrimaryMid}"/>
+    <SolidColorBrush x:Key="TextBoxBackgroundBrush" Color="{DynamicResource ControlLightColor}"/>
+
+    <Color x:Key="FocusBorderColor">#003884</Color>
+    <SolidColorBrush x:Key="FocusBorderColorBrush" Color="{DynamicResource FocusBorderColor}"/>
+
+    <SolidColorBrush x:Key="FlightPathColorBrush" Color="#CC2200"/>
+    <SolidColorBrush x:Key="FlightPathStrokeBrush" Color="#880000"/>
+    <SolidColorBrush x:Key="MapPinStrokeBrush" Color="#F5DEB3"/>
+    <SolidColorBrush x:Key="SelectedItemForegroundBrush" Color="OrangeRed"/>
 
     
 
@@ -740,7 +750,7 @@
                             <Setter TargetName="Border" Property="BorderBrush" Value="{DynamicResource SilverGradient}"/>
                         </Trigger>
                         <Trigger Property="IsKeyboardFocused" Value="True">
-                            <Setter TargetName="Border" Property="BorderBrush" Value="purple"/>
+                            <Setter TargetName="Border" Property="BorderBrush" Value="{DynamicResource FocusBorderColorBrush}"/>
                         </Trigger>
                     </ControlTemplate.Triggers>
                 </ControlTemplate>
@@ -761,7 +771,7 @@
             <Setter.Value>
                 <ControlTemplate TargetType="{x:Type ContextMenu}">
                     <Border x:Name="Border"
-                            Background="White"
+                            Background="{DynamicResource TextBoxBackgroundBrush}"
                             BorderThickness="1"
                             Padding="10"
                             CornerRadius="5"
@@ -775,14 +785,14 @@
         </Setter>
     </Style>
     <Style TargetType="{x:Type MenuItem}">
-        <Setter Property="Background" Value="White" />
+        <Setter Property="Background" Value="{DynamicResource TextBoxBackgroundBrush}" />
         <Setter Property="FontFamily" Value="{DynamicResource Slopes}" />
         <Setter Property="FontSize" Value="18" />
-        <Setter Property="Foreground" Value="{StaticResource TextColor}" />
+        <Setter Property="Foreground" Value="{DynamicResource TextColor}" />
         <Setter Property="Template">
             <Setter.Value>
                 <ControlTemplate TargetType="{x:Type MenuItem}">
-                    <Border x:Name="Bd" Padding="17,5,17,5" BorderBrush="Transparent" BorderThickness="1" Background="White" SnapsToDevicePixels="True" CornerRadius="2">
+                    <Border x:Name="Bd" Padding="17,5,17,5" BorderBrush="Transparent" BorderThickness="1" Background="{DynamicResource TextBoxBackgroundBrush}" SnapsToDevicePixels="True" CornerRadius="2">
                         <ContentPresenter x:Name="ContentPresenter"  Content="{TemplateBinding Header}"  ContentSource="Header" Margin="{TemplateBinding Padding}" RecognizesAccessKey="True" SnapsToDevicePixels="{TemplateBinding SnapsToDevicePixels}" Uid="ContentPresenter_33"/>
                     </Border>
                     <ControlTemplate.Triggers>
@@ -826,7 +836,7 @@
             </Grid.RowDefinitions>
             <Border Grid.RowSpan="1"
             CornerRadius="2"
-            Background="#F0F0F0" />
+            Background="{DynamicResource PrimaryLightBrush}" />
             <Track x:Name="PART_Track"
            IsDirectionReversed="true">
                 <Track.Thumb>
@@ -849,7 +859,7 @@
             </Grid.ColumnDefinitions>
             <Border Grid.ColumnSpan="3"
             CornerRadius="2"
-            Background="#F0F0F0" />
+            Background="{DynamicResource PrimaryLightBrush}" />
 
             <Track x:Name="PART_Track"
            IsDirectionReversed="False">

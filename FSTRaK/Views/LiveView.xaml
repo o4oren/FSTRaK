@@ -1,4 +1,4 @@
-﻿<UserControl x:Class="FSTRaK.Views.LiveView"
+<UserControl x:Class="FSTRaK.Views.LiveView"
              xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
              xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
              xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006" 
@@ -210,13 +210,13 @@
                          Margin="-16"
                          Visibility="{Binding Path=IsShowAirplane, Converter={StaticResource BoolToVis}}"
             >
-                <Path x:Name="AirplaneGeometry" Fill="Red" Stroke="DarkRed" StrokeThickness="1"/>
+                <Path x:Name="AirplaneGeometry" Fill="{DynamicResource FlightPathColorBrush}" Stroke="{DynamicResource FlightPathStrokeBrush}" StrokeThickness="1"/>
                 <map:MapContentControl.RenderTransform>
                     <RotateTransform CenterX="16" CenterY="16" Angle="{Binding Heading, Mode=OneWay}" />
                 </map:MapContentControl.RenderTransform>
             </map:MapContentControl>
-            <map:MapPolyline Locations="{Binding FlightPath}" Stroke="Red" StrokeThickness="2" StrokeLineJoin="round"/>
-            <map:MapPolyline Locations="{Binding LastSegmentLine}" Stroke="Red" StrokeThickness="2" Visibility="{Binding Path=IsShowAirplane, Converter={StaticResource BoolToVis}}"/>
+            <map:MapPolyline Locations="{Binding FlightPath}" Stroke="{DynamicResource FlightPathColorBrush}" StrokeThickness="2" StrokeLineJoin="round"/>
+            <map:MapPolyline Locations="{Binding LastSegmentLine}" Stroke="{DynamicResource FlightPathColorBrush}" StrokeThickness="2" Visibility="{Binding Path=IsShowAirplane, Converter={StaticResource BoolToVis}}"/>
 
         </map:Map>
 
@@ -254,7 +254,7 @@
 
                 <StackPanel Orientation="Vertical">
                     <Image Source="/Resources/Images/VATSIM_Logo_White_No_Tagline_500px.png" Width="32" />
-                    <TextBlock Foreground="White">Pilots</TextBlock>
+                    <TextBlock Foreground="{DynamicResource SuperBrightTextColor}">Pilots</TextBlock>
                 </StackPanel>
             </ToggleButton>
             <ToggleButton Style="{StaticResource MapToggleButton}" 
@@ -269,7 +269,7 @@
                 </b:Interaction.Triggers>
                 <StackPanel Orientation="Vertical">
                     <Image Source="/Resources/Images/VATSIM_Logo_White_No_Tagline_500px.png" Width="32" />
-                    <TextBlock Foreground="White">Airports</TextBlock>
+                    <TextBlock Foreground="{DynamicResource SuperBrightTextColor}">Airports</TextBlock>
                 </StackPanel>
             </ToggleButton>
             <ToggleButton Style="{StaticResource MapToggleButton}" 
@@ -284,7 +284,7 @@
                 </b:Interaction.Triggers>
                 <StackPanel Orientation="Vertical">
                     <Image Source="/Resources/Images/VATSIM_Logo_White_No_Tagline_500px.png" Width="32" />
-                    <TextBlock Foreground="White">FIRs</TextBlock>
+                    <TextBlock Foreground="{DynamicResource SuperBrightTextColor}">FIRs</TextBlock>
                 </StackPanel>
             </ToggleButton>
         </StackPanel>
