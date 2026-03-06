@@ -4,6 +4,7 @@ using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 using System.Windows;
+using System.Windows.Media;
 
 namespace FSTRaK.Utils
 {
@@ -11,22 +12,31 @@ namespace FSTRaK.Utils
     {
         public static void SetFont(string fontName)
         {
-            var themeDictionary = Application.Current.Resources.MergedDictionaries[0];
-            themeDictionary.Remove("ThemeFontName");
-            themeDictionary.Remove("HeaderFontSize");
-            themeDictionary.Remove("TextFontSize");
+            var res = Application.Current.Resources;
 
             if (fontName == "Slopes")
             {
-                themeDictionary.Add("ThemeFontName", fontName);
-                themeDictionary.Add("HeaderFontSize", 18.0);
-                themeDictionary.Add("TextFontSize", 22.0);
-            } 
+                res["CurrentFont"] = res["Slopes"] as FontFamily;
+                res["NavFontSize"] = 34.0;
+                res["TitleFontSize"] = 30.0;
+                res["LabelFontSize"] = 28.0;
+                res["ControlFontSize"] = 24.0;
+                res["TextFontSize"] = 22.0;
+                res["ListFontSize"] = 20.0;
+                res["HeaderFontSize"] = 18.0;
+                res["SmallFontSize"] = 16.0;
+            }
             else if (fontName == "Arial")
             {
-                themeDictionary.Add("ThemeFontName", fontName);
-                themeDictionary.Add("HeaderFontSize", 14.0);
-                themeDictionary.Add("TextFontSize", 17.0);
+                res["CurrentFont"] = new FontFamily("Arial");
+                res["NavFontSize"] = 24.0;
+                res["TitleFontSize"] = 22.0;
+                res["LabelFontSize"] = 20.0;
+                res["ControlFontSize"] = 18.0;
+                res["TextFontSize"] = 17.0;
+                res["ListFontSize"] = 15.0;
+                res["HeaderFontSize"] = 14.0;
+                res["SmallFontSize"] = 12.0;
             }
         }
 
