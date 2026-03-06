@@ -1,4 +1,4 @@
-﻿
+
 
 using System.Collections;
 using System.Windows;
@@ -195,7 +195,7 @@ namespace FSTRaK.ViewModels
 
 
 
-        public ObservableCollection<string> Fonts { get; set; } = new ObservableCollection<string>(new []{"Slopes", "Arial"});
+        public ObservableCollection<string> Fonts { get; set; } = new ObservableCollection<string>(ResourceUtil.AvailableFonts);
         private string _fontName = "Slopes";
         public string FontName
         {

@@ -10,34 +10,44 @@ namespace FSTRaK.Utils
 {
     internal class ResourceUtil
     {
+        private static readonly Dictionary<string, double[]> FontSizes = new Dictionary<string, double[]>
+        {
+            //                         Nav   Title Label Ctrl  Text  List  Hdr   Small
+            ["Slopes"]             = { 34,   30,   28,   24,   22,   20,   18,   16 },
+            ["Arial"]              = { 24,   22,   20,   18,   17,   15,   14,   12 },
+            ["Segoe UI"]           = { 24,   22,   20,   18,   17,   15,   14,   12 },
+            ["Georgia"]            = { 24,   22,   20,   18,   17,   15,   14,   12 },
+            ["Consolas"]           = { 22,   20,   18,   16,   15,   14,   13,   11 },
+            ["Comic Sans MS"]     = { 24,   22,   20,   18,   16,   15,   14,   12 },
+            ["Palatino Linotype"] = { 24,   22,   20,   18,   17,   15,   14,   12 },
+            ["Bahnschrift"]        = { 24,   22,   20,   18,   17,   15,   14,   12 },
+            ["Ink Free"]           = { 28,   26,   24,   20,   19,   17,   16,   14 },
+        };
+
+        public static readonly string[] AvailableFonts = {
+            "Slopes", "Arial", "Segoe UI", "Georgia", "Consolas",
+            "Comic Sans MS", "Palatino Linotype", "Bahnschrift", "Ink Free"
+        };
+
         public static void SetFont(string fontName)
         {
-            var res = Application.Current.Resources;
+            if (!FontSizes.ContainsKey(fontName)) return;
 
-            if (fontName == "Slopes")
-            {
-                res["CurrentFont"] = res["Slopes"] as FontFamily;
-                res["NavFontSize"] = 34.0;
-                res["TitleFontSize"] = 30.0;
-                res["LabelFontSize"] = 28.0;
-                res["ControlFontSize"] = 24.0;
-                res["TextFontSize"] = 22.0;
-                res["ListFontSize"] = 20.0;
-                res["HeaderFontSize"] = 18.0;
-                res["SmallFontSize"] = 16.0;
-            }
-            else if (fontName == "Arial")
-            {
-                res["CurrentFont"] = new FontFamily("Arial");
-                res["NavFontSize"] = 24.0;
-                res["TitleFontSize"] = 22.0;
-                res["LabelFontSize"] = 20.0;
-                res["ControlFontSize"] = 18.0;
-                res["TextFontSize"] = 17.0;
-                res["ListFontSize"] = 15.0;
-                res["HeaderFontSize"] = 14.0;
-                res["SmallFontSize"] = 12.0;
-            }
+            var res = Application.Current.Resources;
+            var sizes = FontSizes[fontName];
+
+            res["CurrentFont"] = fontName == "Slopes"
+                ? res["Slopes"] as FontFamily
+                : new FontFamily(fontName);
+
+            res["NavFontSize"] = sizes[0];
+            res["TitleFontSize"] = sizes[1];
+            res["LabelFontSize"] = sizes[2];
+            res["ControlFontSize"] = sizes[3];
+            res["TextFontSize"] = sizes[4];
+            res["ListFontSize"] = sizes[5];
+            res["HeaderFontSize"] = sizes[6];
+            res["SmallFontSize"] = sizes[7];
         }
 
         public static void SetTheme(string themeName)
