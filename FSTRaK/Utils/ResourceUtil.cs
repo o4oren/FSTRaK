@@ -1,4 +1,4 @@
-﻿using System;
+using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Text;
@@ -32,18 +32,21 @@ namespace FSTRaK.Utils
 
         public static void SetTheme(string themeName)
         {
-            var appDictionary = Application.Current.Resources.MergedDictionaries;
-            Application.Current.Resources.MergedDictionaries.Remove(appDictionary[0]);
+            var mergedDicts = Application.Current.Resources.MergedDictionaries;
 
+            ResourceDictionary newTheme;
             if (themeName == "Normal")
             {
-                Application.Current.Resources.MergedDictionaries.Add(new ResourceDictionary() { Source = new Uri("/Resources/Theme.xaml", UriKind.Relative) });
+                newTheme = new ResourceDictionary() { Source = new Uri("/Resources/Theme.xaml", UriKind.Relative) };
             }
             else if (themeName == "Dark")
             {
-                Application.Current.Resources.MergedDictionaries.Add(new ResourceDictionary() { Source = new Uri("/Resources/DarkTheme.xaml", UriKind.Relative) });
-
+                newTheme = new ResourceDictionary() { Source = new Uri("/Resources/DarkTheme.xaml", UriKind.Relative) };
             }
+            else return;
+
+            mergedDicts.RemoveAt(0);
+            mergedDicts.Insert(0, newTheme);
         }
     }
 }
