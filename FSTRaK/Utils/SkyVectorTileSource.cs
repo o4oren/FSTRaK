@@ -66,13 +66,12 @@ namespace FSTRaK.Utils
              Match m = Regex.Match(UriTemplate, pattern);
              int newZoomLevel = zoomLevel;
 
-            if (m.Groups.Count > 0)
+            if (m.Success && m.Groups.Count > 1)
             {
                  var chartTypeString = m.Groups[1].Value;
                  var chartTypeNumber = int.Parse(chartTypeString);
                  newZoomLevel = 23 + 301 - chartTypeNumber - (2 * zoomLevel);
             }
-            var uri = base.GetUri(column, row, newZoomLevel);
             return base.GetUri(column, row, newZoomLevel);
         }
     }

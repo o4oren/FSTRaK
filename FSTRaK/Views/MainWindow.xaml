@@ -1,4 +1,4 @@
-﻿<Window x:Class="FSTRaK.Views.MainWindow"
+<Window x:Class="FSTRaK.Views.MainWindow"
         xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
         xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
         xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
@@ -63,7 +63,7 @@
                             <Path Fill="{DynamicResource LogoFillBursh}" Data="{StaticResource logo}" />
                         </Canvas>
                     </Canvas>
-                    <Label FontSize="30" FontWeight="Bold" Foreground="{DynamicResource TextColor}" FontFamily="{DynamicResource Slopes}" HorizontalAlignment="Center" VerticalAlignment="Center">FSTrAk</Label>
+                    <Label FontSize="{DynamicResource TitleFontSize}" FontWeight="Bold" Foreground="{DynamicResource TextColor}" FontFamily="{DynamicResource CurrentFont}" HorizontalAlignment="Center" VerticalAlignment="Center">FSTrAk</Label>
 
                 </StackPanel>
             </Border>

@@ -88,7 +88,23 @@ internal sealed class SimConnectService : INotifyPropertyChanged
         {
             if (value != _cameraState)
             {
+                PreviousCameraState = _cameraState;
                 _cameraState = value;
+                OnPropertyChanged();
+            }
+        }
+    }
+
+    private CameraState _previousCameraState;
+
+    public CameraState PreviousCameraState
+    {
+        get => _previousCameraState;
+        private set
+        {
+            if (value != _previousCameraState)
+            {
+                _previousCameraState = value;
                 OnPropertyChanged();
             }
         }
@@ -480,9 +496,13 @@ internal sealed class SimConnectService : INotifyPropertyChanged
 
     private void UpdateInFlightState()
     {
-        Log.Information($"Flight state updated : Loaded flight - {LoadedFlight}, Pause state: {PauseState}, SimStared: {SimStarted}, CameraState: {CameraState}");
-        if (IsInFlight
-            && (PauseState == 1 || PauseState == 8)
+        Log.Information($"Flight state updated : Pause state: {PauseState}, SimStared: {SimStarted}, Is in flight: {IsInFlight}, CameraState: {CameraState}");
+        if(IsInFlight && !IsConnected)
+        {
+            IsInFlight = false;
+        }
+        else if (IsInFlight 
+            && (PauseState == 1 || PauseState == 8 || PauseState == 0)
             && (CameraState == CameraState.InFlightMenu2024 || CameraState == CameraState.InFlightMenu2024_2 || CameraState == CameraState.InFlightMenu2024_3))
         {
             // Do nothing. This is to prevent enabling VR mid flight from ending the flight.
@@ -490,23 +510,36 @@ internal sealed class SimConnectService : INotifyPropertyChanged
             // Do nothing when these happen in flight.
 
         }
-        else if (CameraState == CameraState.Cockpit || CameraState == CameraState.External || CameraState == CameraState.Drone || CameraState == CameraState.Fixed || CameraState == CameraState.Environment)
+        else if (CameraState == CameraState.Cockpit 
+            || CameraState == CameraState.External 
+            || CameraState == CameraState.Drone 
+            || CameraState == CameraState.Fixed 
+            || CameraState == CameraState.Environment 
+            || CameraState == CameraState.SixDof
+            || CameraState == CameraState.FollowTrafficAircraft)
         {
             IsInFlight = true; // MSFS 2024 start flight condition
         }
-        else if (CameraState == CameraState.LoadingFlight3D2024 || CameraState == CameraState.MainMenu2024 || CameraState == CameraState.SomethingInLoadingProcess2024)
+        else if (CameraState == CameraState.LoadingFlight3D2024 || CameraState == CameraState.SomethingInLoadingProcess2024)
         {
             IsInFlight = false; // MSFS 2024 exit flight condition
+        }
+        else if (CameraState == CameraState.MainMenu2024) 
+        {
+            if(PreviousCameraState != CameraState.InFlightMenu2024_3) { 
+                IsInFlight = false; 
+            }
         }
         else if (IsInFlight && PauseState == 9)
         {
             IsInFlight = false; // MSFS 2024 exit flight condition
         }
         else if (
-            !string.IsNullOrEmpty(LoadedFlight) 
-            && !LoadedFlight.Equals(MainMenuFlt) 
-            && PauseState != 1 
-            && PauseState != 8)
+            !string.IsNullOrEmpty(LoadedFlight)
+            && !LoadedFlight.Equals(MainMenuFlt)
+            && PauseState != 1
+            && PauseState != 8
+            && PauseState != 9)
         {
             IsInFlight = true;
         }
@@ -695,7 +728,7 @@ internal sealed class SimConnectService : INotifyPropertyChanged
     {
         // Log the error details
         Log.Error($"COMException: {ex.Message} (HRESULT: {ex.ErrorCode})");
-
+        // existing handling...
         switch ((uint)ex.ErrorCode)
         {
             case 0xC000014B:
@@ -714,6 +747,7 @@ internal sealed class SimConnectService : INotifyPropertyChanged
                 break;
             default:
                 Log.Error("An unknown error occurred.");
+                Log.Error(ex, "COMException thrown. HResult: {HResult:X8}, ErrorCode: {ErrorCode}", ex.HResult, ex.ErrorCode);
                 break;
         }
     }

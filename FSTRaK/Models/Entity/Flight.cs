@@ -135,6 +135,9 @@ namespace FSTRaK.Models
         {
             var scoringEvents = GetScoringEvents();
             Score = MathUtils.Clamp(100 + scoringEvents.Sum(e => e.ScoreDelta), 0, 110);
+            var landingEvent = scoringEvents.OfType<LandingEvent>().FirstOrDefault();
+            if (landingEvent != null)
+                LandingFpm = landingEvent.VerticalSpeed;
         }
 
         private List<ScoringEvent> GetScoringEvents()
@@ -157,7 +160,6 @@ namespace FSTRaK.Models
                     if(se is LandingEvent @event)
                     {
                         builder.AppendLine($"{@event.LandingRate} {se.EventName} {se.ScoreDelta} Points");
-                        LandingFpm = @event.VerticalSpeed;
                     }
                     else
                     {

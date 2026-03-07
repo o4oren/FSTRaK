@@ -19,7 +19,8 @@ namespace FSTRaK.BusinessLogic.FlightManager.State
         }
         public override void ProcessFlightData(FlightData data)
         {
-            if ((data.GroundVelocity > 40 && data.MinThrottlePosition(Context.ActiveFlight.Aircraft.NumberOfEngines) > 75) || data.SimOnGround != 1)
+            if (Context.ActiveFlight.Aircraft != null &&
+                ((data.GroundVelocity > 40 && data.MinThrottlePosition(Context.ActiveFlight.Aircraft.NumberOfEngines) > 75) || data.SimOnGround != 1))
             {
                 Context.State = new TakeoffRollState(Context);
                 return;
@@ -28,7 +29,7 @@ namespace FSTRaK.BusinessLogic.FlightManager.State
             //engines off and no movement or parking brakes - or helicopter and a higher max rpm (because it takes long to spool down) - end flight
             if ((data.GroundVelocity < 2 && data.ParkingBrakesSet == 1 && data.MaxEngineRpmPct() < 5)
                 || (data.GroundVelocity < 2 && data.MaxEngineRpmPct() < 2)
-                || Context.ActiveFlight.Aircraft.Category.Equals("Helicopter") && data.MaxEngineRpmPct() < 15)
+                || (Context.ActiveFlight.Aircraft?.Category.Equals("Helicopter") == true && data.MaxEngineRpmPct() < 15))
             {
                 var pe = new ParkingEvent
                 {

@@ -1,4 +1,4 @@
-﻿using FSTRaK.Utils;
+using FSTRaK.Utils;
 using MapControl;
 using MapControl.Caching;
 using System;
@@ -7,6 +7,7 @@ using System.Windows.Forms;
 using System.Windows.Input;
 using FSTRaK.BusinessLogic.FlightManager;
 using Application = System.Windows.Application;
+using System.Threading.Tasks;
 
 namespace FSTRaK.Views
 {
@@ -72,14 +73,13 @@ namespace FSTRaK.Views
             };
 
             // Initialize MapControl global settings
-            var bingApiKey = Properties.Settings.Default.BingApiKey;
-            BingMapsTileLayer.ApiKey = bingApiKey;
+            AzureMapsMapTileLayer.ApiKey = Properties.Settings.Default.BingApiKey;
 
             var maptillerApiKey = Properties.Settings.Default.MapTilerApiKey;
             MapTilerMapTileLayer.ApiKey = maptillerApiKey;
 
             ImageLoader.HttpClient.DefaultRequestHeaders.Add("User-Agent", "FSTrAk - Flight Simulator logbook and tracker");
-            TileImageLoader.Cache = new SQLiteCache(PathUtil.GetApplicationLocalDataPath());
+            Task.Run(() => TileImageLoader.Cache = new SQLiteCache(PathUtil.GetApplicationLocalDataPath()));
 
             if (Properties.Settings.Default.IsStartMinimized)
             {
@@ -108,6 +108,8 @@ namespace FSTRaK.Views
 
         private void CloseMainWindow()
         {
+            if (DataContext is ViewModels.MainWindowViewModel vm)
+                vm.SaveSettings();
             _notifyIcon.Dispose();
             Close();
         }

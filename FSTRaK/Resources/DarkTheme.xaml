@@ -1,9 +1,6 @@
-﻿<ResourceDictionary xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
-                    xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml" xmlns:map="clr-namespace:MapControl;assembly=MapControl.WPF" xmlns:system="clr-namespace:System;assembly=mscorlib">
+<ResourceDictionary xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+                    xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml" xmlns:map="clr-namespace:MapControl;assembly=MapControl.WPF">
 
-
-    <!-- Font params -->
-    <system:String x:Key="ThemeFontName">Slopes</system:String>
 
 
     <!--Chart Colors-->
@@ -78,9 +75,12 @@
     <SolidColorBrush x:Key="MainWindowBackground" Color="{DynamicResource PrimaryMidDark}"/>
     <SolidColorBrush x:Key="TopBarBackground" Color="{DynamicResource PrimaryBright}"/>
 
-    <SolidColorBrush x:Key="TextColor" Color="{DynamicResource HeaderTopColor}"/>
-    <SolidColorBrush x:Key="UnselectedTextColor" Color="{DynamicResource ControlMediumColor}"/>
-    <SolidColorBrush x:Key="BrightTextColor" Color="{DynamicResource BrightInDarkMode}"/>
+    <Color x:Key="TextOnDark">#D4E4F5</Color>
+    <Color x:Key="SecondaryTextOnDark">#6B9AB8</Color>
+
+    <SolidColorBrush x:Key="TextColor" Color="{DynamicResource TextOnDark}"/>
+    <SolidColorBrush x:Key="UnselectedTextColor" Color="{DynamicResource SecondaryTextOnDark}"/>
+    <SolidColorBrush x:Key="BrightTextColor" Color="{DynamicResource TextOnDark}"/>
     <SolidColorBrush x:Key="SuperBrightTextColor" Color="{DynamicResource BorderLightColor}"/>
 
     <SolidColorBrush x:Key="MidBorderBrush" Color="{DynamicResource PrimaryMid}"/>
@@ -95,6 +95,15 @@
     <SolidColorBrush x:Key="BorderLightColorBrush" Color="{DynamicResource BorderLightColor}"/>
     <SolidColorBrush x:Key="BorderMidColorBrush" Color="{DynamicResource BorderMediumColor}"/>
     <SolidColorBrush x:Key="OverlayBackgroundBrush" Color="{DynamicResource HeaderTopColor}"/>
+
+    <Color x:Key="ApplicationBackground">#0F1A29</Color>
+    <Color x:Key="FocusBorderColor">#4A90D9</Color>
+    <SolidColorBrush x:Key="FocusBorderColorBrush" Color="{DynamicResource FocusBorderColor}"/>
+
+    <SolidColorBrush x:Key="FlightPathColorBrush" Color="#FF6B6B"/>
+    <SolidColorBrush x:Key="FlightPathStrokeBrush" Color="#CC4444"/>
+    <SolidColorBrush x:Key="MapPinStrokeBrush" Color="#FFD580"/>
+    <SolidColorBrush x:Key="SelectedItemForegroundBrush" Color="#FF8C69"/>
 
 
     <Color x:Key="CloseButtonColor">Red</Color>
@@ -236,9 +245,9 @@
 
     <Style x:Key="GlobalFont" TargetType="{x:Type Control}">
         <Setter Property="FontFamily"
-                Value="{DynamicResource Slopes}" />
+                Value="{DynamicResource CurrentFont}" />
         <Setter Property="FontSize"
-                Value="22" />
+                Value="{DynamicResource TextFontSize}" />
         <Setter Property="Foreground"
                 Value="{StaticResource TextColor}" />
     </Style>
@@ -318,9 +327,9 @@
                                            Text="{TemplateBinding Property=Content}" 
                                            VerticalAlignment="Center" HorizontalAlignment="Center" 
                                            Margin="5,5,10,5" 
-                                           FontSize="34"
+                                           FontSize="{DynamicResource NavFontSize}"
                                            FontWeight="Bold"
-                                           FontFamily="{DynamicResource Slopes}"
+                                           FontFamily="{DynamicResource CurrentFont}"
                                            Foreground="{StaticResource UnselectedTextColor}"/>
                             </Border>
                         </Grid>
@@ -358,9 +367,9 @@
                                        Text="{TemplateBinding Property=Content}" 
                                        VerticalAlignment="Center" HorizontalAlignment="Center"
                                        Foreground="{StaticResource BrightTextColor}"
-                                       FontSize="24"
+                                       FontSize="{DynamicResource ControlFontSize}"
                                        Margin="7"
-                                       FontFamily="{DynamicResource Slopes}"
+                                       FontFamily="{DynamicResource CurrentFont}"
                                        TextWrapping="Wrap"
                                        MinWidth="200"/>
                         </Grid>
@@ -408,8 +417,8 @@
            x:Key="FSTrAkLabel">
         <Style.Setters>
             <Setter Property="Background" Value="Transparent" />
-            <Setter Property="FontFamily" Value="{DynamicResource Slopes}"/>
-            <Setter Property="FontSize" Value="28" />
+            <Setter Property="FontFamily" Value="{DynamicResource CurrentFont}"/>
+            <Setter Property="FontSize" Value="{DynamicResource LabelFontSize}" />
             <Setter Property="Foreground" Value="{StaticResource TextColor}" />
         </Style.Setters>
     </Style>
@@ -543,7 +552,7 @@
                         </ContentPresenter>
                         <TextBox x:Name="PART_EditableTextBox"
                    Style="{x:Null}"
-                   FontFamily="{DynamicResource Slopes}"
+                   FontFamily="{DynamicResource CurrentFont}"
                    Template="{StaticResource ComboBoxTextBox}"
                    HorizontalAlignment="Left"
                    VerticalAlignment="Bottom"
@@ -612,9 +621,9 @@
         <Setter Property="SnapsToDevicePixels"
           Value="true" />
         <Setter Property="FontFamily"
-          Value="{DynamicResource Slopes}" />
+          Value="{DynamicResource CurrentFont}" />
         <Setter Property="FontSize"
-          Value="20" />
+          Value="{DynamicResource ListFontSize}" />
         <Setter Property="OverridesDefaultStyle"
           Value="true" />
         <Setter Property="Template">
@@ -733,7 +742,7 @@
                             Margin="10 0 10 0" 
                                  BorderThickness="0"
                                  BorderBrush="Transparent" 
-                                 FontFamily="{DynamicResource Slopes}" FontSize="22" Foreground="{DynamicResource TextColor}"
+                                 FontFamily="{DynamicResource CurrentFont}" FontSize="{DynamicResource TextFontSize}" Foreground="{DynamicResource TextColor}"
                                  Text="{Binding RelativeSource={RelativeSource TemplatedParent}, Path=Text, UpdateSourceTrigger=PropertyChanged}"
                                  Background="{DynamicResource TextBoxBackgroundBrush}"
                                  />
@@ -743,7 +752,7 @@
                             <Setter TargetName="Border" Property="BorderBrush" Value="{DynamicResource SilverGradient}"/>
                         </Trigger>
                         <Trigger Property="IsKeyboardFocused" Value="True">
-                            <Setter TargetName="Border" Property="BorderBrush" Value="purple"/>
+                            <Setter TargetName="Border" Property="BorderBrush" Value="{DynamicResource FocusBorderColorBrush}"/>
                         </Trigger>
                     </ControlTemplate.Triggers>
                 </ControlTemplate>
@@ -779,13 +788,13 @@
     </Style>
     <Style TargetType="{x:Type MenuItem}">
         <Setter Property="Background" Value="{DynamicResource TextBoxBackgroundBrush}" />
-        <Setter Property="FontFamily" Value="{DynamicResource Slopes}" />
-        <Setter Property="FontSize" Value="18" />
+        <Setter Property="FontFamily" Value="{DynamicResource CurrentFont}" />
+        <Setter Property="FontSize" Value="{DynamicResource HeaderFontSize}" />
         <Setter Property="Foreground" Value="{StaticResource TextColor}" />
         <Setter Property="Template">
             <Setter.Value>
                 <ControlTemplate TargetType="{x:Type MenuItem}">
-                    <Border x:Name="Bd" Padding="17,5,17,5" BorderBrush="Transparent" BorderThickness="1" Background="White" SnapsToDevicePixels="True" CornerRadius="2">
+                    <Border x:Name="Bd" Padding="17,5,17,5" BorderBrush="Transparent" BorderThickness="1" Background="{DynamicResource TextBoxBackgroundBrush}" SnapsToDevicePixels="True" CornerRadius="2">
                         <ContentPresenter x:Name="ContentPresenter"  Content="{TemplateBinding Header}"  ContentSource="Header" Margin="{TemplateBinding Padding}" RecognizesAccessKey="True" SnapsToDevicePixels="{TemplateBinding SnapsToDevicePixels}" Uid="ContentPresenter_33"/>
                     </Border>
                     <ControlTemplate.Triggers>
@@ -926,7 +935,8 @@
            TargetType="TextBlock">
         <Setter Property="Background" Value="{StaticResource BrightTextColor}"></Setter>
         <Setter Property="Opacity" Value="0.7" />
-        <Setter Property="FontSize" Value="30" />
+        <Setter Property="FontFamily" Value="Segoe UI" />
+        <Setter Property="FontSize" Value="12" />
 
     </Style>
 </ResourceDictionary>

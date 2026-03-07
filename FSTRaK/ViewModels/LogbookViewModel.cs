@@ -1,4 +1,4 @@
-﻿using FSTRaK.Models;
+using FSTRaK.Models;
 using FSTRaK.Models.Entity;
 using Serilog;
 using System;
@@ -26,16 +26,17 @@ namespace FSTRaK.ViewModels
         public RelayCommand OpenAddCommentPopupCommand { get; set; }
         public RelayCommand OpenEditAircraftPopupCommand { get; set; }
         public RelayCommand CloseEditAircraftPopupCommand { get; set; }
-        
+
         private FlightDetailsViewModel _flightDetailsViewModel;
 
-        public FlightDetailsViewModel FlightDetailsViewModel { 
+        public FlightDetailsViewModel FlightDetailsViewModel
+        {
             get => _flightDetailsViewModel;
-            private set 
-            { 
+            private set
+            {
                 _flightDetailsViewModel = value;
                 OnPropertyChanged();
-            } 
+            }
         }
 
         private bool _showAddCommentPopup = false;
@@ -53,7 +54,9 @@ namespace FSTRaK.ViewModels
         public ObservableCollection<Flight> Flights { get; set; }
 
         private Flight _selectedFlight;
-        public Flight SelectedFlight { get 
+        public Flight SelectedFlight
+        {
+            get
             {
                 if (_selectedFlight == null)
                 {
@@ -61,41 +64,73 @@ namespace FSTRaK.ViewModels
                 }
 
                 return _selectedFlight;
-            } 
+            }
             set
             {
                 if (value == null || _selectedFlight == value) return;
-                try
+                _selectedFlight = value;
+                _flightDetailsViewModel.Flight = _selectedFlight;
+                OnPropertyChanged();
+
+                var flight = value;
+                if ((flight.FlightEvents?.Count ?? 0) == 0)
                 {
-                    if (value.FlightEvents.Count == 0)
+                    Log.Debug("SelectedFlight: starting async event load for flight {FlightId}", flight.Id);
+                    Task.Run(() =>
                     {
-                        using (var logbookContext = new LogbookContext())
+                        try
                         {
-                            ObservableCollection<BaseFlightEvent> flightEvents = new ObservableCollection<BaseFlightEvent>(logbookContext.FlightEvents.Where(fe => fe.FlightId == value.Id).ToList());
-                            value.FlightEvents = flightEvents;
+                            using (var logbookContext = new LogbookContext())
+                            {
+                                var flightEvents = new ObservableCollection<BaseFlightEvent>(
+                                    logbookContext.FlightEvents.Where(fe => fe.FlightId == flight.Id).ToList());
+                                Log.Debug("SelectedFlight: loaded {Count} events for flight {FlightId}", flightEvents.Count, flight.Id);
+                                App.Current.Dispatcher.Invoke(() =>
+                                {
+                                    flight.FlightEvents = flightEvents;
+                                    if (_selectedFlight == flight)
+                                    {
+                                        Log.Debug("SelectedFlight: calling OnFlightEventsLoaded for flight {FlightId}", flight.Id);
+                                        try
+                                        {
+                                            _flightDetailsViewModel.OnFlightEventsLoaded();
+                                        }
+                                        catch (Exception innerEx)
+                                        {
+                                            Log.Error(innerEx, "Exception in OnFlightEventsLoaded for flight {FlightId}!", flight.Id);
+                                        }
+                                    }
+                                    else
+                                    {
+                                        Log.Debug("SelectedFlight: skipping OnFlightEventsLoaded — selected flight changed (expected {Expected}, actual {Actual})", flight.Id, _selectedFlight?.Id);
+                                    }
+                                });
+                            }
                         }
-                    }
-                    _selectedFlight = value;
-                    _flightDetailsViewModel.Flight = _selectedFlight;
-                    OnPropertyChanged();
+                        catch (Exception ex)
+                        {
+                            Log.Error(ex, "Exception fetching flight events for flight {FlightId}!", flight.Id);
+                        }
+                    });
                 }
-                catch (Exception ex)
+                else
                 {
-                    Log.Error(ex, "Exception fetching Flights!");
+                    Log.Debug("SelectedFlight: flight {FlightId} already has {Count} events loaded", flight.Id, flight.FlightEvents.Count);
                 }
-            } 
+            }
         }
 
         private EditAircraftViewModel _editAircraftViewModel;
         public EditAircraftViewModel EditAircraftViewModel
         {
             get => _editAircraftViewModel;
-            set {
-            if (value != null && _editAircraftViewModel != value) 
+            set
             {
-                _editAircraftViewModel = value;
-                OnPropertyChanged();
-            }
+                if (value != null && _editAircraftViewModel != value)
+                {
+                    _editAircraftViewModel = value;
+                    OnPropertyChanged();
+                }
             }
         }
 
@@ -113,15 +148,17 @@ namespace FSTRaK.ViewModels
             }
         }
 
-        public LogbookViewModel() 
+        private Task _initialLoadTask;
+
+        public LogbookViewModel()
         {
             Flights = new ObservableCollection<Flight>();
             _flightDetailsViewModel = new FlightDetailsViewModel();
             _typingTimer = new System.Timers.Timer(500);
 
-            _flightManager.PropertyChanged += async (s,e) =>
+            _flightManager.PropertyChanged += async (s, e) =>
             {
-                if(e.PropertyName.Equals(nameof(_flightManager.State)) && (_flightManager.State is FlightEndedState))
+                if (e.PropertyName.Equals(nameof(_flightManager.State)) && (_flightManager.State is FlightEndedState))
                 {
                     using (var logbookContext = new LogbookContext())
                     {
@@ -170,14 +207,14 @@ namespace FSTRaK.ViewModels
 
             OpenEditAircraftPopupCommand = new RelayCommand(o =>
             {
-                
+
                 var editAircraftViewModel = new EditAircraftViewModel(SelectedFlight.Aircraft)
                 {
                     IsShow = true
                 };
                 editAircraftViewModel.PropertyChanged += (sender, args) =>
                 {
-                    if(editAircraftViewModel.WasUpdated)
+                    if (editAircraftViewModel.WasUpdated)
                         LoadFlights();
                 };
                 EditAircraftViewModel = editAircraftViewModel;
@@ -197,6 +234,8 @@ namespace FSTRaK.ViewModels
             });
 
             _typingTimer.Elapsed += _typingTimer_Elapsed;
+
+            _initialLoadTask = App.DbWarmupTask.ContinueWith(_ => LoadFlights()).Unwrap();
         }
 
         private void _typingTimer_Elapsed(object sender, ElapsedEventArgs e)
@@ -206,8 +245,8 @@ namespace FSTRaK.ViewModels
         }
 
         private string _searchText;
-        public string SearchText 
-        { 
+        public string SearchText
+        {
             get => _searchText;
             set
             {
@@ -217,7 +256,7 @@ namespace FSTRaK.ViewModels
                 // Actual search is in the typingTimerElapsed event handler.
             }
         }
-    
+
 
         private Task LoadFlights()
         {
@@ -253,7 +292,7 @@ namespace FSTRaK.ViewModels
 
         private Task SearchFlights()
         {
-            if(SearchText == null || SearchText.Equals(string.Empty))
+            if (SearchText == null || SearchText.Equals(string.Empty))
                 return LoadFlights();
 
             return Task.Run(() => {
@@ -262,7 +301,7 @@ namespace FSTRaK.ViewModels
                     try
                     {
                         var flights = logbookContext.Flights
-                        .Where(f => 
+                        .Where(f =>
                             f.DepartureAirport.ToLower().Equals(SearchText.ToLower())
                             || f.ArrivalAirport.ToLower().Equals(SearchText.ToLower())
                             || f.Aircraft.Title.ToLower().Contains(SearchText.ToLower())
@@ -271,8 +310,7 @@ namespace FSTRaK.ViewModels
                             || f.Aircraft.TailNumber.ToLower().StartsWith(SearchText.ToLower())
                         )
                         .OrderByDescending(f => f.Id)
-                        .Include(f => f.Aircraft)
-                        .Include(f => f.FlightEvents);
+                        .Include(f => f.Aircraft);
 
                         App.Current.Dispatcher.Invoke((Action)delegate
                         {
@@ -288,26 +326,23 @@ namespace FSTRaK.ViewModels
             });
         }
 
-        internal async void OnLoad()
+        internal void OnLoad()
         {
-            Log.Information("on load");
-            await LoadFlights(0);
-            Flight flight = new Flight();
-            using (var logbookContext = new LogbookContext())
+            if (_selectedFlight != null) return;
+
+            if (_initialLoadTask.IsCompleted)
             {
-                if (SelectedFlight == null)
-                {
-                    var latestId = logbookContext.Flights.Max(f => f.Id);
-                    flight = Flights
-                        .SingleOrDefault(f => f.Id == latestId);
-                    SelectedFlight = flight;
-                }
-                else
-                {
-                    SelectedFlight = _selectedFlight; // not workig
-                }
+                SelectedFlight = Flights.FirstOrDefault();
             }
-            
+            else
+            {
+                _initialLoadTask.ContinueWith(_ =>
+                    App.Current.Dispatcher.Invoke(() =>
+                    {
+                        if (_selectedFlight == null)
+                            SelectedFlight = Flights.FirstOrDefault();
+                    }));
+            }
         }
     }
 }

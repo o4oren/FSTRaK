@@ -36,12 +36,15 @@ namespace FSTRaK.ViewModels
             }
         }
 
-        public double Height { 
+        public double Height {
             get => Properties.Settings.Default.Height;
             set
             {
                 if(value > 449)
+                {
                     Properties.Settings.Default.Height = value;
+                    OnPropertyChanged();
+                }
             }
         }
 
@@ -52,7 +55,10 @@ namespace FSTRaK.ViewModels
             set
             {
                 if(value > 599)
+                {
                     Properties.Settings.Default.Width = value;
+                    OnPropertyChanged();
+                }
             }
         }
 
@@ -95,6 +101,11 @@ namespace FSTRaK.ViewModels
             {
                 ActiveView = _settingsViewModel;
             });
+        }
+
+        public void SaveSettings()
+        {
+            _settingsViewModel.SaveSettings();
         }
     }
 }
