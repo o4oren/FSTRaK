@@ -268,6 +268,7 @@ namespace FSTRaK.BusinessLogic.FlightManager
                             }
                             AircraftResolver.ResolveManufacturerAndModel(aircraft);
 
+
                             // Capitalize manufacturer name correctly.
                             var cultureInfo = new CultureInfo("en-US");
                             var textInfo = cultureInfo.TextInfo;
@@ -288,6 +289,78 @@ namespace FSTRaK.BusinessLogic.FlightManager
                 }
 
             });
+        }
+
+        // PSEUDOCODE / PLAN
+        // 1. Guard against null aircraft.
+        // 2. Normalize and inspect Manufacturer: if present and appears long/unfriendly, match known substrings
+        //    (e.g. "BOEING", "AIRBUS", "CESSNA", "PIPER") and replace with a tidy canonical name.
+        // 3. Normalize and inspect AircraftType: if present and appears long/unfriendly, try a list of known
+        //    code -> (type, model) mappings and apply the first match.
+        // 4. Do not overwrite values when inputs are null/whitespace or no mapping is found.
+        // 5. Keep logic simple, readable and easy to extend (mappings arrays).
+
+        private void ResolveManufactorerAndModel(Aircraft aircraft)
+        {
+            if (aircraft == null) return;
+
+            // Normalize and map manufacturer if it's likely verbose/messy
+            if (!string.IsNullOrWhiteSpace(aircraft.Manufacturer) && aircraft.Manufacturer.Length > 10)
+            {
+                var m = aircraft.Manufacturer.ToUpperInvariant();
+
+                var manufacturerMappings = new (string Key, string Canonical)[]
+                {
+                    ("BOEING", "Boeing"),
+                    ("AIRBUS", "Airbus"),
+                    ("CESSNA", "Cessna"),
+                    ("PIPER", "Piper")
+                };
+
+                foreach (var (key, canonical) in manufacturerMappings)
+                {
+                    if (m.Contains(key))
+                    {
+                        aircraft.Manufacturer = canonical;
+                        break;
+                    }
+                }
+            }
+
+            // Normalize and map aircraft type -> standardized type and model
+            if (!string.IsNullOrWhiteSpace(aircraft.AircraftType) && aircraft.AircraftType.Length > 10)
+            {
+                var t = aircraft.AircraftType.ToUpperInvariant();
+
+                var typeMappings = new (string Key, string Type, string Model)[]
+                {
+                    ("B738", "B738", "B737-800"),
+                    ("B737", "B737", "B737-700"),
+                    ("B739", "B739", "B737-900"),
+                    ("B772", "B772", "B777-200ER"),
+                    ("B77W", "B77W", "B777-300ER"),
+                    ("B77F", "B77F", "B777 Freighter"),
+                    ("B77L", "B77L", "B777-300LR"),
+                    ("B788", "B788", "B787-800"),
+                    ("B789", "B789", "B787-900"),
+                    ("B78X", "B78X", "B787-1000"),
+                    ("A319", "A319", "A319-200"),
+                    ("A320", "A320", "A320-200"),
+                    ("A20N", "A20N", "A320 Neo"),
+                    ("C172", "C172", "C172"),
+                    ("C152", "C152", "C152")
+                };
+
+                foreach (var (key, type, model) in typeMappings)
+                {
+                    if (t.Contains(key))
+                    {
+                        aircraft.AircraftType = type;
+                        aircraft.Model = model;
+                        break;
+                    }
+                }
+            }
         }
 
         private void EnrichAircraftDataFromFile(Aircraft aircraft)
