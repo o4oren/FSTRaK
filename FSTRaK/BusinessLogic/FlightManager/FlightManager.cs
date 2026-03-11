@@ -10,6 +10,7 @@ using System.Linq;
 using System.Globalization;
 using FSTRaK.BusinessLogic.FlightManager.State;
 using FSTRaK.BusinessLogic.SimconnectService;
+using FSTRaK.Utils;
 using FSTRaK.Models;
 
 namespace FSTRaK.BusinessLogic.FlightManager
@@ -261,11 +262,12 @@ namespace FSTRaK.BusinessLogic.FlightManager
                             aircraft.EngineType = aircraftData.EngineType;
                             aircraft.Category = aircraftData.Category;
                             aircraft.EmptyWeightLbs = aircraftData.EmptyWeightLbs;
-                            if (_simConnectService.SimVersion == SimConnectService.MSFS2020) 
+                            if (_simConnectService.SimVersion == SimConnectService.MSFS2020)
                             {
                                 EnrichAircraftDataFromFile(aircraft);
                             }
-                            ResolveManufactorerAndModel(aircraft);
+                            AircraftResolver.ResolveManufacturerAndModel(aircraft);
+
 
                             // Capitalize manufacturer name correctly.
                             var cultureInfo = new CultureInfo("en-US");
