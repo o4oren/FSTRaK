@@ -21,9 +21,7 @@ namespace FSTRaK.Utils
                     if (exeDir == null) return;
                     var resolved = Path.Combine(exeDir, "Resources", "Data", value);
                     Log.Debug("MBTiles resolved path: {Path}, exists: {Exists}", resolved, File.Exists(resolved));
-                    MBTilesLocalServer.Start();
-                    var key = MBTilesLocalServer.Register(resolved);
-                    TileSource = new MBTilesTileSource(key);
+                    TileSource = new MBTilesTileSource(resolved);
                 }
                 else
                 {

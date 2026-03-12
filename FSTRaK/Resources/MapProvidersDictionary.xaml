@@ -174,7 +174,7 @@
         FilePath="CVFR.mbtiles"
         SourceName="AIPIsraelCVFR"
         Description="© AIP Israel"
-        MinZoomLevel="7" MaxZoomLevel="14"
+        MinZoomLevel="0" MaxZoomLevel="20"
         UpdateWhileViewportChanging="true"
         x:Shared="false"/>
     <utils:MBTilesMapTileLayer
@@ -182,7 +182,7 @@
         FilePath="LSA.mbtiles"
         SourceName="AIPIsraelLSA"
         Description="© AIP Israel"
-        MinZoomLevel="7" MaxZoomLevel="14"
+        MinZoomLevel="0" MaxZoomLevel="20"
         UpdateWhileViewportChanging="true"
         x:Shared="false"/>
     <utils:MBTilesMapTileLayer
@@ -190,7 +190,7 @@
         FilePath="ATS Routes.mbtiles"
         SourceName="AIPIsraelATSRoutes"
         Description="© AIP Israel"
-        MinZoomLevel="7" MaxZoomLevel="14"
+        MinZoomLevel="0" MaxZoomLevel="20"
         UpdateWhileViewportChanging="true"
         x:Shared="false"/>
     <utils:MBTilesMapTileLayer
@@ -198,7 +198,7 @@
         FilePath="Helicopter Routes.mbtiles"
         SourceName="AIPIsraelHelicopterRoutes"
         Description="© AIP Israel"
-        MinZoomLevel="7" MaxZoomLevel="14"
+        MinZoomLevel="0" MaxZoomLevel="20"
         UpdateWhileViewportChanging="true"
         x:Shared="false"/>
 </ResourceDictionary>
