@@ -2,17 +2,16 @@
 title: 'AIP Israel MBTiles Map Layers'
 slug: 'aip-israel-mbtiles-map-layers'
 created: '2026-03-12'
-status: 'completed-with-bugfix'
+status: 'completed'
 stepsCompleted: [1, 2, 3, 4]
 tech_stack: ['.NET Framework 4.7.2', 'C#', 'WPF', 'XAML.MapControl.WPF 13.4', 'System.Data.SQLite 1.0.119']
 files_to_modify:
   - 'FSTRaK/Resources/Data/' (add 4 .mbtiles files)
   - 'FSTRaK/Utils/MBTilesTileSource.cs' (new)
   - 'FSTRaK/Utils/MBTilesMapTileLayer.cs' (new)
-  - 'FSTRaK/Utils/MBTilesLocalServer.cs' (new - added during bugfix)
   - 'FSTRaK/Resources/MapProvidersDictionary.xaml'
   - 'FSTRaK/FSTrAk.csproj'
-code_patterns: ['MapTileLayer subclass', 'local HTTP tile server (HttpListener)', 'TileSource GetUri returning localhost URI', 'CLR property wiring TileSource', 'exe-relative resource path', 'None CopyToOutputDirectory']
+code_patterns: ['MapTileLayer subclass', 'TileSource LoadImageAsync override', 'CLR property wiring TileSource', 'exe-relative resource path', 'None CopyToOutputDirectory']
 test_patterns: ['manual only']
 ---
 
@@ -58,7 +57,7 @@ Implement two new classes — `MBTilesTileSource` (reads tiles directly from a l
 - **Map tile layer auto-discovery** — `SettingsViewModel` constructor enumerates `MapProvidersDictionary.xaml` and adds any `MapTileLayerBase` or `WmsImageLayer` resource to the dropdown automatically. Adding XAML entries is sufficient — no settings code changes needed.
 - **`MapProviderResolver.GetMapProvider()`** — returns any `MapTileLayerBase` subclass by resource key; no changes needed.
 - **Runtime path to data files** — use `System.IO.Path.GetDirectoryName(System.Reflection.Assembly.GetExecutingAssembly().Location)` then `Path.Combine(..., "Resources", "Data", filename)`. Same pattern as `AirportResolver.LoadAirportsJson()`.
-- **`TileSource.LoadImageAsync(int zoomLevel, int column, int row)`** — confirmed virtual override in XAML.MapControl 13.4. When `GetUri` returns `null`, MapControl calls this overload. Returns `Task<ImageSource>`. Signature verified against MapControl source.
+- **`TileSource.LoadImageAsync(int column, int row, int zoomLevel)`** — confirmed virtual override in XAML.MapControl 13.4. When `GetUri` returns `null`, MapControl calls this overload. Returns `Task<ImageSource>`. Parameter order matches `GetUri`: `(int column, int row, int zoomLevel)` — verified against `SkyVectorTileSource`.
 - **TMS Y-flip** — MBTiles stores tiles in TMS (Y-axis inverted vs. XYZ/Google). Convert before querying: `tmsRow = (1 << zoomLevel) - 1 - row`.
 - **Per-request SQLiteConnection** — open a new connection, query, close per tile request. No shared connection, no lock. Local file overhead is negligible; avoids threading concerns entirely.
 - **Existing `MapTileLayer` subclass pattern** — see `SkyVectorMapTileLayer` (sets `TileSource` in constructor) and `MapTilerMapTileLayer` (overrides `UpdateTileLayerAsync`). Our pattern sets `TileSource` in the `FilePath` property setter instead.
@@ -82,7 +81,7 @@ Implement two new classes — `MBTilesTileSource` (reads tiles directly from a l
 - **Per-request SQLiteConnection**: Open, query, close for each tile request. No shared state, no threading issues, negligible overhead for local SQLite.
 - **No new NuGet dependencies**: `System.Data.SQLite` (v1.0.119) is already referenced in the project.
 - **`x:Shared="false"` on all XAML entries**: Required so each map view gets its own `MBTilesMapTileLayer` instance — same as all existing providers.
-- **Zoom range `7–14`**: Default starting point for AIP Israel charts. Can be adjusted after inspecting actual tile coverage in the files.
+- **Zoom range `0–20`**: Wide range ensures tiles render at all zoom levels. MapControl only requests tiles for zoom levels that exist in the MBTiles file; missing zoom levels gracefully return null (blank tiles).
 - **`FilePath` as CLR string property**: Set by XAML attribute after construction. Setter resolves full path immediately and assigns `TileSource`. No DependencyProperty needed since no binding or animation required.
 
 ---
@@ -122,16 +121,17 @@ Implement two new classes — `MBTilesTileSource` (reads tiles directly from a l
                 _filePath = filePath;
             }
 
-            public override Uri GetUri(int zoomLevel, int column, int row) => null;
+            public override Uri GetUri(int column, int row, int zoomLevel) => null;
 
-            public override async Task<ImageSource> LoadImageAsync(int zoomLevel, int column, int row)
+            public override async Task<ImageSource> LoadImageAsync(int column, int row, int zoomLevel)
             {
                 if (!File.Exists(_filePath))
                     return null;
 
                 var tmsRow = (1 << zoomLevel) - 1 - row;
 
-                using (var connection = new SQLiteConnection($"Data Source={_filePath};Version=3;Read Only=True;"))
+                var csb = new SQLiteConnectionStringBuilder { DataSource = _filePath, ReadOnly = true, Version = 3 };
+                using (var connection = new SQLiteConnection(csb.ToString()))
                 {
                     await connection.OpenAsync();
                     using (var cmd = connection.CreateCommand())
@@ -146,20 +146,20 @@ Implement two new classes — `MBTilesTileSource` (reads tiles directly from a l
                             return null;
 
                         var data = (byte[])result;
-                        var bmp = new BitmapImage();
-                        bmp.BeginInit();
-                        bmp.StreamSource = new MemoryStream(data);
-                        bmp.CacheOption = BitmapCacheOption.OnLoad;
-                        bmp.EndInit();
-                        bmp.Freeze();
-                        return bmp;
+                        using (var ms = new MemoryStream(data))
+                        {
+                            var decoder = BitmapDecoder.Create(ms, BitmapCreateOptions.PreservePixelFormat, BitmapCacheOption.OnLoad);
+                            var frame = decoder.Frames[0];
+                            frame.Freeze();
+                            return frame;
+                        }
                     }
                 }
             }
         }
     }
     ```
-  - Notes: `bmp.Freeze()` is required — `BitmapImage` must be frozen before crossing thread boundaries in WPF. `Read Only=True` in connection string prevents SQLite from creating WAL/journal files next to the `.mbtiles` file.
+  - Notes: `frame.Freeze()` is required — `ImageSource` must be frozen before crossing thread boundaries in WPF. `BitmapDecoder.Create` is used instead of `BitmapImage` for thread safety on ThreadPool threads. `SQLiteConnectionStringBuilder` is used instead of string interpolation for paths containing semicolons. `Read Only=True` in connection string prevents SQLite from creating WAL/journal files next to the `.mbtiles` file.
 
 - [x] **Task 3: Create `MBTilesMapTileLayer.cs`**
   - File: `FSTRaK/Utils/MBTilesMapTileLayer.cs`
@@ -184,8 +184,13 @@ Implement two new classes — `MBTilesTileSource` (reads tiles directly from a l
                     if (!string.IsNullOrEmpty(value))
                     {
                         var exeDir = Path.GetDirectoryName(Assembly.GetExecutingAssembly().Location);
+                        if (exeDir == null) return;
                         var resolved = Path.Combine(exeDir, "Resources", "Data", value);
                         TileSource = new MBTilesTileSource(resolved);
+                    }
+                    else
+                    {
+                        TileSource = null;
                     }
                 }
             }
@@ -203,7 +208,7 @@ Implement two new classes — `MBTilesTileSource` (reads tiles directly from a l
         FilePath="CVFR.mbtiles"
         SourceName="AIPIsraelCVFR"
         Description="© AIP Israel"
-        MinZoomLevel="7" MaxZoomLevel="14"
+        MinZoomLevel="0" MaxZoomLevel="20"
         UpdateWhileViewportChanging="true"
         x:Shared="false"/>
     <utils:MBTilesMapTileLayer
@@ -211,7 +216,7 @@ Implement two new classes — `MBTilesTileSource` (reads tiles directly from a l
         FilePath="LSA.mbtiles"
         SourceName="AIPIsraelLSA"
         Description="© AIP Israel"
-        MinZoomLevel="7" MaxZoomLevel="14"
+        MinZoomLevel="0" MaxZoomLevel="20"
         UpdateWhileViewportChanging="true"
         x:Shared="false"/>
     <utils:MBTilesMapTileLayer
@@ -219,7 +224,7 @@ Implement two new classes — `MBTilesTileSource` (reads tiles directly from a l
         FilePath="ATS Routes.mbtiles"
         SourceName="AIPIsraelATSRoutes"
         Description="© AIP Israel"
-        MinZoomLevel="7" MaxZoomLevel="14"
+        MinZoomLevel="0" MaxZoomLevel="20"
         UpdateWhileViewportChanging="true"
         x:Shared="false"/>
     <utils:MBTilesMapTileLayer
@@ -227,7 +232,7 @@ Implement two new classes — `MBTilesTileSource` (reads tiles directly from a l
         FilePath="Helicopter Routes.mbtiles"
         SourceName="AIPIsraelHelicopterRoutes"
         Description="© AIP Israel"
-        MinZoomLevel="7" MaxZoomLevel="14"
+        MinZoomLevel="0" MaxZoomLevel="20"
         UpdateWhileViewportChanging="true"
         x:Shared="false"/>
     ```
@@ -289,7 +294,7 @@ Implement two new classes — `MBTilesTileSource` (reads tiles directly from a l
 ### Dependencies
 
 - `System.Data.SQLite` v1.0.119 — already in project. No new NuGet packages required.
-- `XAML.MapControl.WPF` v13.4 — `TileSource.LoadImageAsync(int zoomLevel, int column, int row)` confirmed as virtual override point; returns `Task<ImageSource>`; called when `GetUri` returns `null`.
+- `XAML.MapControl.WPF` v13.4 — `TileSource.LoadImageAsync(int column, int row, int zoomLevel)` confirmed as virtual override point; returns `Task<ImageSource>`; called when `GetUri` returns `null`. Parameter order is `(column, row, zoomLevel)` matching MapControl 13.4 convention.
 - 4 `.mbtiles` files — available at `~/Downloads/layers/`; committed to `FSTRaK/Resources/Data/` as part of Task 1.
 
 ### Testing Strategy
@@ -307,11 +312,10 @@ Manual testing only (no automated test infrastructure in this project).
 ### Notes
 
 - **Future TODO — OSM overlay**: A more advanced UX would hardcode OSM as a silent base layer beneath the selected MBTiles chart in `LiveView.xaml` and `LogbookView.xaml`, providing geographic context outside Israel's chart coverage. Deferred — current implementation keeps charts standalone.
-- **Future TODO — Replace HTTP server with direct LoadImageAsync**: The current `MBTilesLocalServer` (HttpListener) approach was a workaround for MapControl 13.4 not supporting the `LoadImageAsync` fallback when `GetUri` returns null. When upgrading XAML.MapControl.WPF to a version where this fallback is implemented, replace `MBTilesLocalServer` + the localhost URI approach with a direct `LoadImageAsync(int zoomLevel, int column, int row)` override in `MBTilesTileSource`. This eliminates HTTP overhead, redundant memory caching by MapControl, the port race condition, and the lack of cancellation support.
 - **TMS Y-flip is mandatory** — without `tmsRow = (1 << zoomLevel) - 1 - row`, tiles appear in wrong vertical positions. This is a requirement of the MBTiles spec; confirmed critical in brainstorming.
 - **File names with spaces** (`ATS Routes.mbtiles`, `Helicopter Routes.mbtiles`) — `Path.Combine` handles spaces correctly; no special quoting or escaping needed.
 - **`Read Only=True` in connection string** — prevents SQLite from creating `-wal` and `-shm` journal files alongside the `.mbtiles` files in `Resources/Data/`. Important for keeping the output directory clean.
-- **`bmp.Freeze()` is required** — WPF requires `ImageSource` objects to be frozen before use across threads. MapControl's tile scheduler operates on background threads; forgetting `Freeze()` causes a `InvalidOperationException` at runtime.
+- **`frame.Freeze()` is required** — WPF requires `ImageSource` objects to be frozen before use across threads. MapControl's tile scheduler operates on background threads; forgetting `Freeze()` causes an `InvalidOperationException` at runtime. `BitmapDecoder.Create` is used instead of `BitmapImage` for thread safety on ThreadPool threads.
 - **Setup.vdproj update (manual, post-dev)**: After validating in a dev build, add 4 file entries to `Setup/Setup.vdproj` via Visual Studio's Setup project UI (Add → Project Output / File). Target the `Resources\Data` application folder. Same structure as existing `airports.csv` entry. `.vdproj` requires unique GUIDs per entry — best generated by VS rather than manually.
 
 ## Review Notes
@@ -327,15 +331,14 @@ Manual testing only (no automated test infrastructure in this project).
 
 ## Post-Implementation Bugfix — Blank Map
 
-**Root cause:** `TileSource.LoadImageAsync` fallback (called when `GetUri` returns null) was not implemented in XAML.MapControl.WPF 13.4. That fallback was added in a later version. Returning null from `GetUri` caused MapControl to silently skip all tiles.
+**Symptom:** Selecting any AIP Israel map provider showed a blank white map at default zoom levels.
 
-**Discovery method:** Added diagnostic logging — `resolved path: exists: true` appeared but `LoadImageAsync called:` never appeared, confirming the method was never invoked.
+**Root cause:** `MinZoomLevel="7"` was too restrictive. The map's default zoom level when viewing a large area (e.g., all of Israel) is below 7, so MapControl never requested tiles. Tiles only appeared when zoomed in close enough to reach zoom level 7+.
 
-**Fix (commit `ead2707`):** Replaced `LoadImageAsync` override with a local `HttpListener` tile server (`MBTilesLocalServer.cs`). `MBTilesTileSource.GetUri` now returns `http://localhost:{port}/mbtiles/{key}/{z}/{x}/{y}`. MapControl fetches tiles via its standard HTTP path. The server reads tile bytes from SQLite and serves them synchronously per request.
+**Misdiagnosis (reverted):** Initially diagnosed as `LoadImageAsync` not being called by MapControl 13.4 when `GetUri` returns null. An `HttpListener`-based local tile server (`MBTilesLocalServer.cs`) was built as a workaround. This was unnecessary — `LoadImageAsync` works correctly in MapControl 13.4.
 
-**Files changed:**
-- `FSTRaK/Utils/MBTilesLocalServer.cs` — new: `HttpListener` on random free port, ConcurrentDictionary of file paths keyed by hash, TMS Y-flip applied server-side
-- `FSTRaK/Utils/MBTilesTileSource.cs` — simplified: only `GetUri` override returning localhost URI; all SQLite logic moved to server
-- `FSTRaK/Utils/MBTilesMapTileLayer.cs` — calls `MBTilesLocalServer.Start()` and `Register()` in `FilePath` setter
+**Fix:** Changed `MinZoomLevel="0" MaxZoomLevel="20"` on all 4 XAML entries. Reverted to the original direct `LoadImageAsync` approach. Removed `MBTilesLocalServer.cs`.
 
-**Note:** `GetUri` parameter order is `(int column, int row, int zoomLevel)` matching `SkyVectorTileSource` — this is the MapControl 13.4 convention (parameter order was changed in a later MapControl version).
+**Lesson learned:**
+- `GetUri` and `LoadImageAsync` parameter order in MapControl 13.4 is `(int column, int row, int zoomLevel)` — NOT `(int zoomLevel, int column, int row)`. Since all params are `int`, the compiler won't catch a mismatch. Verified against `SkyVectorTileSource`.
+- `MinZoomLevel` on `MapTileLayer` controls which zoom levels trigger tile requests. Setting it too high prevents tiles from appearing at default/overview zoom levels.
