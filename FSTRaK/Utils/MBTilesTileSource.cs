@@ -5,6 +5,7 @@ using System.Threading.Tasks;
 using System.Windows.Media;
 using System.Windows.Media.Imaging;
 using MapControl;
+using Serilog;
 
 namespace FSTRaK.Utils
 {
@@ -21,6 +22,8 @@ namespace FSTRaK.Utils
 
         public override async Task<ImageSource> LoadImageAsync(int zoomLevel, int column, int row)
         {
+            Log.Debug("MBTiles LoadImageAsync called: z={Z} x={X} y={Y} file={File}", zoomLevel, column, row, _filePath);
+
             if (!File.Exists(_filePath))
                 return null;
 
