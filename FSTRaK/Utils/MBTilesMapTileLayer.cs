@@ -1,7 +1,6 @@
 using System.IO;
 using System.Reflection;
 using MapControl;
-using Serilog;
 
 namespace FSTRaK.Utils
 {
@@ -20,7 +19,6 @@ namespace FSTRaK.Utils
                     var exeDir = Path.GetDirectoryName(Assembly.GetExecutingAssembly().Location);
                     if (exeDir == null) return;
                     var resolved = Path.Combine(exeDir, "Resources", "Data", value);
-                    Log.Debug("MBTiles resolved path: {Path}, exists: {Exists}", resolved, File.Exists(resolved));
                     TileSource = new MBTilesTileSource(resolved);
                 }
                 else
