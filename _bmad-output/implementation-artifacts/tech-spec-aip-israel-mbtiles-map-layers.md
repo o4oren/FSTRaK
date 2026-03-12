@@ -2,7 +2,7 @@
 title: 'AIP Israel MBTiles Map Layers'
 slug: 'aip-israel-mbtiles-map-layers'
 created: '2026-03-12'
-status: 'ready-for-dev'
+status: 'completed'
 stepsCompleted: [1, 2, 3, 4]
 tech_stack: ['.NET Framework 4.7.2', 'C#', 'WPF', 'XAML.MapControl.WPF 13.4', 'System.Data.SQLite 1.0.119']
 files_to_modify:
@@ -90,7 +90,7 @@ Implement two new classes — `MBTilesTileSource` (reads tiles directly from a l
 
 ### Tasks
 
-- [ ] **Task 1: Copy MBTiles files into project**
+- [x] **Task 1: Copy MBTiles files into project**
   - File: `FSTRaK/Resources/Data/`
   - Action: Copy all 4 files from `~/Downloads/layers/` into `FSTRaK/Resources/Data/`:
     - `CVFR.mbtiles`
@@ -98,7 +98,7 @@ Implement two new classes — `MBTilesTileSource` (reads tiles directly from a l
     - `ATS Routes.mbtiles`
     - `Helicopter Routes.mbtiles`
 
-- [ ] **Task 2: Create `MBTilesTileSource.cs`**
+- [x] **Task 2: Create `MBTilesTileSource.cs`**
   - File: `FSTRaK/Utils/MBTilesTileSource.cs`
   - Action: Create new class with the following implementation:
     ```csharp
@@ -160,7 +160,7 @@ Implement two new classes — `MBTilesTileSource` (reads tiles directly from a l
     ```
   - Notes: `bmp.Freeze()` is required — `BitmapImage` must be frozen before crossing thread boundaries in WPF. `Read Only=True` in connection string prevents SQLite from creating WAL/journal files next to the `.mbtiles` file.
 
-- [ ] **Task 3: Create `MBTilesMapTileLayer.cs`**
+- [x] **Task 3: Create `MBTilesMapTileLayer.cs`**
   - File: `FSTRaK/Utils/MBTilesMapTileLayer.cs`
   - Action: Create new class with the following implementation:
     ```csharp
@@ -193,7 +193,7 @@ Implement two new classes — `MBTilesTileSource` (reads tiles directly from a l
     ```
   - Notes: Path resolution uses `Assembly.GetExecutingAssembly().Location` — same pattern as `AirportResolver`. For Debug builds this resolves to `bin/x64/Debug/Resources/Data/`. For Release builds: `bin/x64/Release/Resources/Data/`. Accepts just a filename (e.g. `"CVFR.mbtiles"`) — full-path values also work since `MBTilesTileSource` checks `File.Exists`.
 
-- [ ] **Task 4: Register 4 providers in `MapProvidersDictionary.xaml`**
+- [x] **Task 4: Register 4 providers in `MapProvidersDictionary.xaml`**
   - File: `FSTRaK/Resources/MapProvidersDictionary.xaml`
   - Action: Append the following 4 entries before the closing `</ResourceDictionary>` tag. The `xmlns:utils` namespace is already declared.
     ```xml
@@ -231,7 +231,7 @@ Implement two new classes — `MBTilesTileSource` (reads tiles directly from a l
         x:Shared="false"/>
     ```
 
-- [ ] **Task 5: Update `FSTRaK.csproj`**
+- [x] **Task 5: Update `FSTRaK.csproj`**
   - File: `FSTRaK/FSTrAk.csproj`
   - Action A — Add 2 `<Compile>` entries in the Utils block (after line ~178, alongside `SkyVectorTileSource.cs`):
     ```xml
@@ -256,27 +256,27 @@ Implement two new classes — `MBTilesTileSource` (reads tiles directly from a l
 
 ### Acceptance Criteria
 
-- [ ] **AC1 — Providers appear in settings dropdown**
+- [x] **AC1 — Providers appear in settings dropdown**
   - Given the app is built and running, and the Settings view is opened
   - When the map provider dropdown is expanded
   - Then all four options are present: "AIP Israel CVFR", "AIP Israel LSA", "AIP Israel ATS Routes", "AIP Israel Helicopter Routes"
 
-- [ ] **AC2 — Chart tiles render correctly**
+- [x] **AC2 — Chart tiles render correctly**
   - Given an AIP Israel provider is selected in Settings and the app is restarted or the map refreshed
   - When the Live map or Logbook replay map is panned over Israel at zoom level 8–14
   - Then aviation chart tiles render at the correct positions (no vertical mirroring or offset), the map does not crash, and no exceptions appear in the Visual Studio Output window
 
-- [ ] **AC3 — Graceful degradation when file missing**
+- [x] **AC3 — Graceful degradation when file missing**
   - Given an AIP Israel provider is selected but the corresponding `.mbtiles` file is absent from `{exe_dir}/Resources/Data/`
   - When the map view is opened and tiles are requested
   - Then the map displays empty tiles (blank/transparent) without throwing an exception or crashing the app
 
-- [ ] **AC4 — No regressions on existing providers**
+- [x] **AC4 — No regressions on existing providers**
   - Given any pre-existing map provider (OpenStreetMap, SkyVector VFR, MapTiler, Azure Maps, etc.) is selected
   - When the map view is used normally
   - Then it behaves identically to before this change (tiles load, no errors)
 
-- [ ] **AC5 — Settings persist across restart**
+- [x] **AC5 — Settings persist across restart**
   - Given "AIP Israel CVFR" is selected as the map provider and settings are saved (or the app exits normally)
   - When the app is restarted
   - Then the map loads with "AIP Israel CVFR" as the active provider
@@ -311,3 +311,14 @@ Manual testing only (no automated test infrastructure in this project).
 - **`Read Only=True` in connection string** — prevents SQLite from creating `-wal` and `-shm` journal files alongside the `.mbtiles` files in `Resources/Data/`. Important for keeping the output directory clean.
 - **`bmp.Freeze()` is required** — WPF requires `ImageSource` objects to be frozen before use across threads. MapControl's tile scheduler operates on background threads; forgetting `Freeze()` causes a `InvalidOperationException` at runtime.
 - **Setup.vdproj update (manual, post-dev)**: After validating in a dev build, add 4 file entries to `Setup/Setup.vdproj` via Visual Studio's Setup project UI (Add → Project Output / File). Target the `Resources\Data` application folder. Same structure as existing `airports.csv` entry. `.vdproj` requires unique GUIDs per entry — best generated by VS rather than manually.
+
+## Review Notes
+
+- Adversarial review completed (auto-fix)
+- Findings: 5 total, 5 fixed, 0 skipped
+- Resolution approach: auto-fix
+- F1 (Critical): Replaced `BitmapImage` with `BitmapDecoder.Create` — safe on ThreadPool threads, no Dispatcher required
+- F2 (Important): Wrapped `MemoryStream` in `using` block — eliminates per-tile memory leak
+- F3 (Important): Replaced string-interpolated connection string with `SQLiteConnectionStringBuilder` — safe for paths containing semicolons
+- F4 (Important): Added null guard on `exeDir` before `Path.Combine` in `MBTilesMapTileLayer`
+- F5 (Low): `FilePath` setter now clears `TileSource` when set to null/empty

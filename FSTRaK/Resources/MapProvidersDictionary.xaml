@@ -168,4 +168,37 @@
         Description="© [OpenAIP](https://www.openaip.net)"
         UpdateWhileViewportChanging="true"
         x:Shared="false"/ -->
+
+    <utils:MBTilesMapTileLayer
+        x:Key="AIP Israel CVFR"
+        FilePath="CVFR.mbtiles"
+        SourceName="AIPIsraelCVFR"
+        Description="© AIP Israel"
+        MinZoomLevel="7" MaxZoomLevel="14"
+        UpdateWhileViewportChanging="true"
+        x:Shared="false"/>
+    <utils:MBTilesMapTileLayer
+        x:Key="AIP Israel LSA"
+        FilePath="LSA.mbtiles"
+        SourceName="AIPIsraelLSA"
+        Description="© AIP Israel"
+        MinZoomLevel="7" MaxZoomLevel="14"
+        UpdateWhileViewportChanging="true"
+        x:Shared="false"/>
+    <utils:MBTilesMapTileLayer
+        x:Key="AIP Israel ATS Routes"
+        FilePath="ATS Routes.mbtiles"
+        SourceName="AIPIsraelATSRoutes"
+        Description="© AIP Israel"
+        MinZoomLevel="7" MaxZoomLevel="14"
+        UpdateWhileViewportChanging="true"
+        x:Shared="false"/>
+    <utils:MBTilesMapTileLayer
+        x:Key="AIP Israel Helicopter Routes"
+        FilePath="Helicopter Routes.mbtiles"
+        SourceName="AIPIsraelHelicopterRoutes"
+        Description="© AIP Israel"
+        MinZoomLevel="7" MaxZoomLevel="14"
+        UpdateWhileViewportChanging="true"
+        x:Shared="false"/>
 </ResourceDictionary>
