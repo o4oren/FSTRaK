@@ -17,16 +17,16 @@ namespace FSTRaK.Utils
                 _filePath = value;
                 if (!string.IsNullOrEmpty(value))
                 {
-                    // F4: Guard against null exeDir (e.g. if Location returns empty string)
                     var exeDir = Path.GetDirectoryName(Assembly.GetExecutingAssembly().Location);
                     if (exeDir == null) return;
                     var resolved = Path.Combine(exeDir, "Resources", "Data", value);
                     Log.Debug("MBTiles resolved path: {Path}, exists: {Exists}", resolved, File.Exists(resolved));
-                    TileSource = new MBTilesTileSource(resolved);
+                    MBTilesLocalServer.Start();
+                    var key = MBTilesLocalServer.Register(resolved);
+                    TileSource = new MBTilesTileSource(key);
                 }
                 else
                 {
-                    // F5: Clear TileSource when FilePath is reset to null/empty
                     TileSource = null;
                 }
             }
