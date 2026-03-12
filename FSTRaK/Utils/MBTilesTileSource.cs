@@ -65,9 +65,11 @@ namespace FSTRaK.Utils
                     if (minZoomTiles.Count == 0)
                         return;
 
-                    // For each zoom level below minzoom, compute which parent tiles contain actual tiles
+                    // Only generate placeholders for zoom levels close to minzoom (within 3 levels).
+                    // At very low zoom levels, a single tile covers continents — useless as an indicator.
                     _placeholderTiles = new Dictionary<int, HashSet<long>>();
-                    for (var z = 0; z < _minZoom; z++)
+                    var lowestPlaceholderZoom = Math.Max(0, _minZoom - 3);
+                    for (var z = lowestPlaceholderZoom; z < _minZoom; z++)
                     {
                         var diff = _minZoom - z;
                         var set = new HashSet<long>();
