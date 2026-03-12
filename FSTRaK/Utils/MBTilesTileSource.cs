@@ -1,6 +1,7 @@
 using System;
 using System.Data.SQLite;
 using System.IO;
+using System.Threading;
 using System.Threading.Tasks;
 using System.Windows.Media;
 using System.Windows.Media.Imaging;
@@ -20,7 +21,7 @@ namespace FSTRaK.Utils
 
         public override Uri GetUri(int zoomLevel, int column, int row) => null;
 
-        public override async Task<ImageSource> LoadImageAsync(int zoomLevel, int column, int row)
+        public override async Task<ImageSource> LoadImageAsync(int zoomLevel, int column, int row, CancellationToken cancellationToken)
         {
             Log.Debug("MBTiles LoadImageAsync called: z={Z} x={X} y={Y} file={File}", zoomLevel, column, row, _filePath);
 
