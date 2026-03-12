@@ -2,16 +2,17 @@
 title: 'AIP Israel MBTiles Map Layers'
 slug: 'aip-israel-mbtiles-map-layers'
 created: '2026-03-12'
-status: 'completed'
+status: 'completed-with-bugfix'
 stepsCompleted: [1, 2, 3, 4]
 tech_stack: ['.NET Framework 4.7.2', 'C#', 'WPF', 'XAML.MapControl.WPF 13.4', 'System.Data.SQLite 1.0.119']
 files_to_modify:
   - 'FSTRaK/Resources/Data/' (add 4 .mbtiles files)
   - 'FSTRaK/Utils/MBTilesTileSource.cs' (new)
   - 'FSTRaK/Utils/MBTilesMapTileLayer.cs' (new)
+  - 'FSTRaK/Utils/MBTilesLocalServer.cs' (new - added during bugfix)
   - 'FSTRaK/Resources/MapProvidersDictionary.xaml'
   - 'FSTRaK/FSTrAk.csproj'
-code_patterns: ['MapTileLayer subclass', 'TileSource LoadImageAsync override', 'CLR property wiring TileSource', 'exe-relative resource path', 'None CopyToOutputDirectory']
+code_patterns: ['MapTileLayer subclass', 'local HTTP tile server (HttpListener)', 'TileSource GetUri returning localhost URI', 'CLR property wiring TileSource', 'exe-relative resource path', 'None CopyToOutputDirectory']
 test_patterns: ['manual only']
 ---
 
@@ -322,3 +323,18 @@ Manual testing only (no automated test infrastructure in this project).
 - F3 (Important): Replaced string-interpolated connection string with `SQLiteConnectionStringBuilder` — safe for paths containing semicolons
 - F4 (Important): Added null guard on `exeDir` before `Path.Combine` in `MBTilesMapTileLayer`
 - F5 (Low): `FilePath` setter now clears `TileSource` when set to null/empty
+
+## Post-Implementation Bugfix — Blank Map
+
+**Root cause:** `TileSource.LoadImageAsync` fallback (called when `GetUri` returns null) was not implemented in XAML.MapControl.WPF 13.4. That fallback was added in a later version. Returning null from `GetUri` caused MapControl to silently skip all tiles.
+
+**Discovery method:** Added diagnostic logging — `resolved path: exists: true` appeared but `LoadImageAsync called:` never appeared, confirming the method was never invoked.
+
+**Fix (commit `ead2707`):** Replaced `LoadImageAsync` override with a local `HttpListener` tile server (`MBTilesLocalServer.cs`). `MBTilesTileSource.GetUri` now returns `http://localhost:{port}/mbtiles/{key}/{z}/{x}/{y}`. MapControl fetches tiles via its standard HTTP path. The server reads tile bytes from SQLite and serves them synchronously per request.
+
+**Files changed:**
+- `FSTRaK/Utils/MBTilesLocalServer.cs` — new: `HttpListener` on random free port, ConcurrentDictionary of file paths keyed by hash, TMS Y-flip applied server-side
+- `FSTRaK/Utils/MBTilesTileSource.cs` — simplified: only `GetUri` override returning localhost URI; all SQLite logic moved to server
+- `FSTRaK/Utils/MBTilesMapTileLayer.cs` — calls `MBTilesLocalServer.Start()` and `Register()` in `FilePath` setter
+
+**Note:** `GetUri` parameter order is `(int column, int row, int zoomLevel)` matching `SkyVectorTileSource` — this is the MapControl 13.4 convention (parameter order was changed in a later MapControl version).
