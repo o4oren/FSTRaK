@@ -110,13 +110,11 @@ namespace FSTRaK.Utils
 
         private static int FindFreePort()
         {
-            using (var listener = new TcpListener(IPAddress.Loopback, 0))
-            {
-                listener.Start();
-                var port = ((IPEndPoint)listener.LocalEndpoint).Port;
-                listener.Stop();
-                return port;
-            }
+            var listener = new TcpListener(IPAddress.Loopback, 0);
+            listener.Start();
+            var port = ((IPEndPoint)listener.LocalEndpoint).Port;
+            listener.Stop();
+            return port;
         }
     }
 }
