@@ -11,7 +11,7 @@ files_to_modify:
   - 'FSTRaK/Utils/MBTilesMapTileLayer.cs' (new)
   - 'FSTRaK/Resources/MapProvidersDictionary.xaml'
   - 'FSTRaK/FSTrAk.csproj'
-code_patterns: ['MapTileLayer subclass', 'TileSource LoadImageAsync override', 'CLR property wiring TileSource', 'exe-relative resource path', 'None CopyToOutputDirectory']
+code_patterns: ['MapTileLayer subclass', 'TileSource LoadImageAsync override', 'MBTiles metadata-driven placeholder tiles', 'CLR property wiring TileSource', 'exe-relative resource path', 'None CopyToOutputDirectory']
 test_patterns: ['manual only']
 ---
 
@@ -27,12 +27,12 @@ FSTRaK has no way to display Israeli aviation charts (AIP Israel) as selectable 
 
 ### Solution
 
-Implement two new classes — `MBTilesTileSource` (reads tiles directly from a local MBTiles SQLite file via `LoadImageAsync` override) and `MBTilesMapTileLayer` (a `MapTileLayer` subclass with a `FilePath` CLR property) — and register 4 AIP Israel chart entries in `MapProvidersDictionary.xaml`. The 4 `.mbtiles` files live in `FSTRaK/Resources/Data/`, are declared in `FSTRaK.csproj` with `CopyToOutputDirectory`, and are accessed at runtime from `{exe_dir}/Resources/Data/` — the same pattern as `airports.csv`.
+Implement two new classes — `MBTilesTileSource` (reads tiles directly from a local MBTiles SQLite file via `LoadImageAsync` override, with low-zoom placeholder tiles based on MBTiles metadata bounds) and `MBTilesMapTileLayer` (a `MapTileLayer` subclass with a `FilePath` CLR property) — and register 4 AIP Israel chart entries in `MapProvidersDictionary.xaml`. The 4 `.mbtiles` files live in `FSTRaK/Resources/Data/`, are declared in `FSTRaK.csproj` with `CopyToOutputDirectory`, and are accessed at runtime from `{exe_dir}/Resources/Data/` — the same pattern as `airports.csv`.
 
 ### Scope
 
 **In Scope:**
-- `MBTilesTileSource : TileSource` — SQLite direct read, TMS Y-flip, per-request connection, graceful null return if file missing
+- `MBTilesTileSource : TileSource` — SQLite direct read, TMS Y-flip, per-request connection, graceful null return if file missing, semi-transparent placeholder tiles at zoom levels below MBTiles `minzoom` using metadata `bounds` for geographic overlap detection
 - `MBTilesMapTileLayer : MapTileLayer` — CLR `FilePath` string property that wires `MBTilesTileSource`; path resolved relative to exe directory
 - 4 entries in `MapProvidersDictionary.xaml`: AIP Israel CVFR, AIP Israel LSA, AIP Israel ATS Routes, AIP Israel Helicopter Routes
 - Copy 4 `.mbtiles` files from `~/Downloads/layers/` into `FSTRaK/Resources/Data/`
@@ -81,7 +81,8 @@ Implement two new classes — `MBTilesTileSource` (reads tiles directly from a l
 - **Per-request SQLiteConnection**: Open, query, close for each tile request. No shared state, no threading issues, negligible overhead for local SQLite.
 - **No new NuGet dependencies**: `System.Data.SQLite` (v1.0.119) is already referenced in the project.
 - **`x:Shared="false"` on all XAML entries**: Required so each map view gets its own `MBTilesMapTileLayer` instance — same as all existing providers.
-- **Zoom range `0–20`**: Wide range ensures tiles render at all zoom levels. MapControl only requests tiles for zoom levels that exist in the MBTiles file; missing zoom levels gracefully return null (blank tiles).
+- **Zoom range `0–20`**: Wide range ensures tile requests at all zoom levels. At zoom levels below the MBTiles file's `minzoom`, `MBTilesTileSource` returns semi-transparent placeholder tiles for tiles overlapping the chart's geographic bounds. At zoom levels within the file's range, real chart tiles are served. Above `maxzoom`, null is returned (blank tiles).
+- **Placeholder tiles from MBTiles metadata**: `MBTilesTileSource` reads `minzoom`, `maxzoom`, and `bounds` from the MBTiles `metadata` table at construction time. When a tile request falls below `minzoom`, the tile's geographic extent is computed from its (column, row, zoomLevel) using Web Mercator math and checked against `bounds`. Overlapping tiles get a 256×256 semi-transparent light blue rectangle rendered via `DrawingVisual` + `RenderTargetBitmap`.
 - **`FilePath` as CLR string property**: Set by XAML attribute after construction. Setter resolves full path immediately and assigns `TileSource`. No DependencyProperty needed since no binding or animation required.
 
 ---
@@ -100,66 +101,14 @@ Implement two new classes — `MBTilesTileSource` (reads tiles directly from a l
 
 - [x] **Task 2: Create `MBTilesTileSource.cs`**
   - File: `FSTRaK/Utils/MBTilesTileSource.cs`
-  - Action: Create new class with the following implementation:
-    ```csharp
-    using System;
-    using System.Data.SQLite;
-    using System.IO;
-    using System.Threading.Tasks;
-    using System.Windows.Media;
-    using System.Windows.Media.Imaging;
-    using MapControl;
-
-    namespace FSTRaK.Utils
-    {
-        public class MBTilesTileSource : TileSource
-        {
-            private readonly string _filePath;
-
-            public MBTilesTileSource(string filePath)
-            {
-                _filePath = filePath;
-            }
-
-            public override Uri GetUri(int column, int row, int zoomLevel) => null;
-
-            public override async Task<ImageSource> LoadImageAsync(int column, int row, int zoomLevel)
-            {
-                if (!File.Exists(_filePath))
-                    return null;
-
-                var tmsRow = (1 << zoomLevel) - 1 - row;
-
-                var csb = new SQLiteConnectionStringBuilder { DataSource = _filePath, ReadOnly = true, Version = 3 };
-                using (var connection = new SQLiteConnection(csb.ToString()))
-                {
-                    await connection.OpenAsync();
-                    using (var cmd = connection.CreateCommand())
-                    {
-                        cmd.CommandText = "SELECT tile_data FROM tiles WHERE zoom_level=@z AND tile_column=@col AND tile_row=@row";
-                        cmd.Parameters.AddWithValue("@z", zoomLevel);
-                        cmd.Parameters.AddWithValue("@col", column);
-                        cmd.Parameters.AddWithValue("@row", tmsRow);
-
-                        var result = await cmd.ExecuteScalarAsync();
-                        if (result == null || result == DBNull.Value)
-                            return null;
-
-                        var data = (byte[])result;
-                        using (var ms = new MemoryStream(data))
-                        {
-                            var decoder = BitmapDecoder.Create(ms, BitmapCreateOptions.PreservePixelFormat, BitmapCacheOption.OnLoad);
-                            var frame = decoder.Frames[0];
-                            frame.Freeze();
-                            return frame;
-                        }
-                    }
-                }
-            }
-        }
-    }
-    ```
-  - Notes: `frame.Freeze()` is required — `ImageSource` must be frozen before crossing thread boundaries in WPF. `BitmapDecoder.Create` is used instead of `BitmapImage` for thread safety on ThreadPool threads. `SQLiteConnectionStringBuilder` is used instead of string interpolation for paths containing semicolons. `Read Only=True` in connection string prevents SQLite from creating WAL/journal files next to the `.mbtiles` file.
+  - Action: Create new class. Key behaviors:
+    - Constructor reads MBTiles `metadata` table (`minzoom`, `maxzoom`, `bounds`) for placeholder tile support
+    - `GetUri` returns `null` so MapControl falls through to `LoadImageAsync`
+    - `LoadImageAsync` queries tiles table; if no tile found AND zoom < `minzoom` AND tile geographically overlaps `bounds`, returns a semi-transparent placeholder tile (light blue rectangle via `DrawingVisual` + `RenderTargetBitmap`)
+    - Tile-to-geographic overlap uses standard Web Mercator tile→lon/lat conversion
+    - `BitmapDecoder.Create` for thread-safe image decoding; `SQLiteConnectionStringBuilder` for safe connection strings
+    - All `ImageSource` objects are `Freeze()`d for cross-thread WPF use
+  - See `FSTRaK/Utils/MBTilesTileSource.cs` for full implementation.
 
 - [x] **Task 3: Create `MBTilesMapTileLayer.cs`**
   - File: `FSTRaK/Utils/MBTilesMapTileLayer.cs`
@@ -287,6 +236,12 @@ Implement two new classes — `MBTilesTileSource` (reads tiles directly from a l
   - When the app is restarted
   - Then the map loads with "AIP Israel CVFR" as the active provider
 
+- [ ] **AC6 — Placeholder tiles visible at low zoom**
+  - Given an AIP Israel provider is selected
+  - When the map is zoomed out below the chart's minimum tile zoom level (e.g., zoom 0–6)
+  - Then a semi-transparent blue overlay appears over the geographic area covered by the chart, indicating where to zoom in for detail
+  - And when zoomed in past the minimum zoom level, real chart tiles replace the placeholder
+
 ---
 
 ## Additional Context
@@ -308,6 +263,7 @@ Manual testing only (no automated test infrastructure in this project).
 5. Delete or rename `CVFR.mbtiles` from output `Resources/Data/`, select "AIP Israel CVFR" in settings, verify empty map with no crash (AC3).
 6. Switch back to OpenStreetMap, SkyVector VFR, and MapTiler — verify all still work normally (AC4).
 7. Select "AIP Israel LSA", close and reopen the app, verify it loads with LSA selected (AC5).
+8. Select "AIP Israel CVFR", zoom out to world view (zoom ~3–5). Verify semi-transparent blue overlay appears over Israel region. Zoom in past level 7 — verify real tiles replace the placeholder smoothly (AC6).
 
 ### Notes
 
@@ -315,6 +271,7 @@ Manual testing only (no automated test infrastructure in this project).
 - **TMS Y-flip is mandatory** — without `tmsRow = (1 << zoomLevel) - 1 - row`, tiles appear in wrong vertical positions. This is a requirement of the MBTiles spec; confirmed critical in brainstorming.
 - **File names with spaces** (`ATS Routes.mbtiles`, `Helicopter Routes.mbtiles`) — `Path.Combine` handles spaces correctly; no special quoting or escaping needed.
 - **`Read Only=True` in connection string** — prevents SQLite from creating `-wal` and `-shm` journal files alongside the `.mbtiles` files in `Resources/Data/`. Important for keeping the output directory clean.
+- **MBTiles metadata table** — `MBTilesTileSource` reads `minzoom`, `maxzoom`, and `bounds` (format: `west,south,east,north` in WGS84 degrees) at construction. These drive the placeholder tile logic. If metadata is missing or malformed, placeholders are skipped gracefully (no crash, just blank tiles at low zoom).
 - **`frame.Freeze()` is required** — WPF requires `ImageSource` objects to be frozen before use across threads. MapControl's tile scheduler operates on background threads; forgetting `Freeze()` causes an `InvalidOperationException` at runtime. `BitmapDecoder.Create` is used instead of `BitmapImage` for thread safety on ThreadPool threads.
 - **Setup.vdproj update (manual, post-dev)**: After validating in a dev build, add 4 file entries to `Setup/Setup.vdproj` via Visual Studio's Setup project UI (Add → Project Output / File). Target the `Resources\Data` application folder. Same structure as existing `airports.csv` entry. `.vdproj` requires unique GUIDs per entry — best generated by VS rather than manually.
 
@@ -342,3 +299,15 @@ Manual testing only (no automated test infrastructure in this project).
 **Lesson learned:**
 - `GetUri` and `LoadImageAsync` parameter order in MapControl 13.4 is `(int column, int row, int zoomLevel)` — NOT `(int zoomLevel, int column, int row)`. Since all params are `int`, the compiler won't catch a mismatch. Verified against `SkyVectorTileSource`.
 - `MinZoomLevel` on `MapTileLayer` controls which zoom levels trigger tile requests. Setting it too high prevents tiles from appearing at default/overview zoom levels.
+
+## Enhancement — Low-Zoom Placeholder Tiles
+
+**Problem:** MBTiles files only contain tiles at specific zoom ranges (e.g., CVFR: 7–12). When zoomed out below the minimum, the map showed blank white — users couldn't tell where the chart coverage was located.
+
+**Solution:** `MBTilesTileSource` reads `minzoom`, `maxzoom`, and `bounds` from the MBTiles `metadata` table at construction. When `LoadImageAsync` is called at a zoom level below `minzoom` and the requested tile geographically overlaps the chart's `bounds`, it returns a 256×256 semi-transparent light blue placeholder tile. This gives users a visual indicator of where chart coverage exists, inviting them to zoom in for detail.
+
+**Implementation details:**
+- Geographic overlap: tile extent computed from (column, row, zoomLevel) using standard Web Mercator tile→lon/lat math, then checked for rectangle intersection with metadata bounds
+- Placeholder rendering: `DrawingVisual` + `RenderTargetBitmap` — lightweight, no external image file needed
+- Color: `rgba(70, 130, 180, 80)` fill with `rgba(70, 130, 180, 120)` 1px border (steel blue, semi-transparent)
+- Graceful fallback: if metadata is missing or unparseable, `_metadataLoaded` stays false and no placeholders are generated
