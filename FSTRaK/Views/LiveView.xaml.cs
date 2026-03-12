@@ -94,8 +94,10 @@ namespace FSTRaK.Views
 
             if (provider is IOverlayMapTileLayer)
             {
-                xMap.MapLayer = Application.Current.Resources["OpenStreetMap"] as MapTileLayerBase;
-                xMap.Children.Insert(0, provider);
+                var osmBase = Application.Current.Resources["OpenStreetMap"] as MapTileLayerBase;
+                xMap.MapLayer = osmBase;
+                var baseIndex = xMap.Children.IndexOf(osmBase);
+                xMap.Children.Insert(baseIndex + 1, provider);
                 _currentOverlayLayer = provider;
             }
             else
