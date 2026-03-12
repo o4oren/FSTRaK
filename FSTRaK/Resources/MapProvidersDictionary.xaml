@@ -91,7 +91,7 @@
         MaxZoomLevel="11"
         UpdateWhileViewportChanging="true"
         x:Shared="false"/>
-    <map:MapTileLayer
+    <utils:OverlayMapTileLayer
         x:Key="DFS (German VFR charts)"
         TileSource="https://secais.dfs.de/static-maps/icao500/tiles/{z}/{x}/{y}.png"
         SourceName="DFSCharts"

@@ -4,7 +4,7 @@ using MapControl;
 
 namespace FSTRaK.Utils
 {
-    public class MBTilesMapTileLayer : MapTileLayer
+    public class MBTilesMapTileLayer : MapTileLayer, IOverlayMapTileLayer
     {
         private string _filePath;
 

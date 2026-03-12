@@ -312,9 +312,27 @@ namespace FSTRaK.ViewModels
 
         public MapTileLayerBase MapProvider => MapProviderResolver.GetMapProvider();
 
+        public string MapAttributionText
+        {
+            get
+            {
+                var provider = MapProvider;
+                if (provider is IOverlayMapTileLayer)
+                    return provider.Description + " | Base map: © [OpenStreetMap contributors](http://www.openstreetmap.org/copyright)";
+                return provider?.Description;
+            }
+        }
+
         public bool IsMaptillerCMap
         {
             get => MapProvider is MapTilerMapTileLayer;
+        }
+
+        public void NotifyMapProviderChanged()
+        {
+            OnPropertyChanged(nameof(MapProvider));
+            OnPropertyChanged(nameof(MapAttributionText));
+            OnPropertyChanged(nameof(IsMaptillerCMap));
         }
 
 
