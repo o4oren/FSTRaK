@@ -111,6 +111,12 @@
         }
         "Entry"
         {
+        "MsmKey" = "8:_2C9C434CCDE74C7BB78F9F2BC4D158F1"
+        "OwnerKey" = "8:_UNDEFINED"
+        "MsmSig" = "8:_UNDEFINED"
+        }
+        "Entry"
+        {
         "MsmKey" = "8:_2CC9C943FE768D33CFBBFF40814E8A01"
         "OwnerKey" = "8:_8581586A4FC4400494EBCD574550E0A0"
         "MsmSig" = "8:_UNDEFINED"
@@ -471,6 +477,12 @@
         }
         "Entry"
         {
+        "MsmKey" = "8:_8EE1B4AB3B474BAC8F504E7AB405DF2D"
+        "OwnerKey" = "8:_UNDEFINED"
+        "MsmSig" = "8:_UNDEFINED"
+        }
+        "Entry"
+        {
         "MsmKey" = "8:_8FB48EC106A444373D9BAFE704BB9A44"
         "OwnerKey" = "8:_FE175F79EDBFA3E8E216C50223DB67F1"
         "MsmSig" = "8:_UNDEFINED"
@@ -563,6 +575,12 @@
         {
         "MsmKey" = "8:_945ED46EF3D609F97E26B75A7AA0AFD0"
         "OwnerKey" = "8:_8581586A4FC4400494EBCD574550E0A0"
+        "MsmSig" = "8:_UNDEFINED"
+        }
+        "Entry"
+        {
+        "MsmKey" = "8:_9A1D189301E242989B96FE635E47E100"
+        "OwnerKey" = "8:_UNDEFINED"
         "MsmSig" = "8:_UNDEFINED"
         }
         "Entry"
@@ -706,6 +724,12 @@
         "Entry"
         {
         "MsmKey" = "8:_C0399746B13C43F38A0E89B609CF5330"
+        "OwnerKey" = "8:_UNDEFINED"
+        "MsmSig" = "8:_UNDEFINED"
+        }
+        "Entry"
+        {
+        "MsmKey" = "8:_C2E7826BC5D443488B7CB7BD4A387EFF"
         "OwnerKey" = "8:_UNDEFINED"
         "MsmSig" = "8:_UNDEFINED"
         }
@@ -1736,6 +1760,26 @@
             "IsDependency" = "11:TRUE"
             "IsolateTo" = "8:"
             }
+            "{1FB2D0AE-D3B9-43D4-B9DD-F88EC61E35DE}:_2C9C434CCDE74C7BB78F9F2BC4D158F1"
+            {
+            "SourcePath" = "8:..\\FSTRaK\\Resources\\Data\\CVFR.mbtiles"
+            "TargetName" = "8:CVFR.mbtiles"
+            "Tag" = "8:"
+            "Folder" = "8:_B36C97FD641544D891A60BCF79156393"
+            "Condition" = "8:"
+            "Transitive" = "11:FALSE"
+            "Vital" = "11:TRUE"
+            "ReadOnly" = "11:FALSE"
+            "Hidden" = "11:FALSE"
+            "System" = "11:FALSE"
+            "Permanent" = "11:FALSE"
+            "SharedLegacy" = "11:FALSE"
+            "PackageAs" = "3:1"
+            "Register" = "3:1"
+            "Exclude" = "11:FALSE"
+            "IsDependency" = "11:FALSE"
+            "IsolateTo" = "8:"
+            }
             "{9F6F8455-1EF1-4B85-886A-4223BCC8E7F7}:_2CC9C943FE768D33CFBBFF40814E8A01"
             {
             "AssemblyRegister" = "3:1"
@@ -2391,6 +2435,26 @@
             "IsDependency" = "11:TRUE"
             "IsolateTo" = "8:"
             }
+            "{1FB2D0AE-D3B9-43D4-B9DD-F88EC61E35DE}:_8EE1B4AB3B474BAC8F504E7AB405DF2D"
+            {
+            "SourcePath" = "8:..\\FSTRaK\\Resources\\Data\\LSA.mbtiles"
+            "TargetName" = "8:LSA.mbtiles"
+            "Tag" = "8:"
+            "Folder" = "8:_B36C97FD641544D891A60BCF79156393"
+            "Condition" = "8:"
+            "Transitive" = "11:FALSE"
+            "Vital" = "11:TRUE"
+            "ReadOnly" = "11:FALSE"
+            "Hidden" = "11:FALSE"
+            "System" = "11:FALSE"
+            "Permanent" = "11:FALSE"
+            "SharedLegacy" = "11:FALSE"
+            "PackageAs" = "3:1"
+            "Register" = "3:1"
+            "Exclude" = "11:FALSE"
+            "IsDependency" = "11:FALSE"
+            "IsolateTo" = "8:"
+            }
             "{9F6F8455-1EF1-4B85-886A-4223BCC8E7F7}:_8FB48EC106A444373D9BAFE704BB9A44"
             {
             "AssemblyRegister" = "3:1"
@@ -2502,6 +2566,26 @@
             "Register" = "3:1"
             "Exclude" = "11:FALSE"
             "IsDependency" = "11:TRUE"
+            "IsolateTo" = "8:"
+            }
+            "{1FB2D0AE-D3B9-43D4-B9DD-F88EC61E35DE}:_9A1D189301E242989B96FE635E47E100"
+            {
+            "SourcePath" = "8:..\\FSTRaK\\Resources\\Data\\Helicopter Routes.mbtiles"
+            "TargetName" = "8:Helicopter Routes.mbtiles"
+            "Tag" = "8:"
+            "Folder" = "8:_B36C97FD641544D891A60BCF79156393"
+            "Condition" = "8:"
+            "Transitive" = "11:FALSE"
+            "Vital" = "11:TRUE"
+            "ReadOnly" = "11:FALSE"
+            "Hidden" = "11:FALSE"
+            "System" = "11:FALSE"
+            "Permanent" = "11:FALSE"
+            "SharedLegacy" = "11:FALSE"
+            "PackageAs" = "3:1"
+            "Register" = "3:1"
+            "Exclude" = "11:FALSE"
+            "IsDependency" = "11:FALSE"
             "IsolateTo" = "8:"
             }
             "{9F6F8455-1EF1-4B85-886A-4223BCC8E7F7}:_9A57F3CBAB611E02CCC502B9E0C905E1"
@@ -2831,6 +2915,26 @@
             "TargetName" = "8:"
             "Tag" = "8:"
             "Folder" = "8:_26CFFA3E4E6A4BE18B31D33970E8B9B7"
+            "Condition" = "8:"
+            "Transitive" = "11:FALSE"
+            "Vital" = "11:TRUE"
+            "ReadOnly" = "11:FALSE"
+            "Hidden" = "11:FALSE"
+            "System" = "11:FALSE"
+            "Permanent" = "11:FALSE"
+            "SharedLegacy" = "11:FALSE"
+            "PackageAs" = "3:1"
+            "Register" = "3:1"
+            "Exclude" = "11:FALSE"
+            "IsDependency" = "11:FALSE"
+            "IsolateTo" = "8:"
+            }
+            "{1FB2D0AE-D3B9-43D4-B9DD-F88EC61E35DE}:_C2E7826BC5D443488B7CB7BD4A387EFF"
+            {
+            "SourcePath" = "8:..\\FSTRaK\\Resources\\Data\\ATS Routes.mbtiles"
+            "TargetName" = "8:ATS Routes.mbtiles"
+            "Tag" = "8:"
+            "Folder" = "8:_B36C97FD641544D891A60BCF79156393"
             "Condition" = "8:"
             "Transitive" = "11:FALSE"
             "Vital" = "11:TRUE"
@@ -3346,15 +3450,15 @@
         {
         "Name" = "8:Microsoft Visual Studio"
         "ProductName" = "8:FSTrAk"
-        "ProductCode" = "8:{88436923-246A-4B4A-9384-CE5E26D24859}"
-        "PackageCode" = "8:{F2463E73-B7B2-4468-B648-AE5063E8FD49}"
+        "ProductCode" = "8:{C06C862B-171E-403E-B0CE-6E0DF621BA13}"
+        "PackageCode" = "8:{89CF530C-B223-406A-86F2-78DAB3038C4A}"
         "UpgradeCode" = "8:{DFB8349E-B81D-4481-9F4C-14C136E2FBD4}"
         "AspNetVersion" = "8:2.0.50727.0"
         "RestartWWWService" = "11:FALSE"
         "RemovePreviousVersions" = "11:TRUE"
         "DetectNewerInstalledVersion" = "11:TRUE"
         "InstallAllUsers" = "11:FALSE"
-        "ProductVersion" = "8:3.1.1"
+        "ProductVersion" = "8:3.2.0"
         "Manufacturer" = "8:FSTrAk"
         "ARPHELPTELEPHONE" = "8:"
         "ARPHELPLINK" = "8:"
