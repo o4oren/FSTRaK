@@ -174,6 +174,10 @@
     <Compile Include="Utils\AircraftResolver.cs" />
     <Compile Include="Utils\Converters.cs" />
     <Compile Include="Utils\MapTilerMapTileLayer.cs" />
+    <Compile Include="Utils\IOverlayMapTileLayer.cs" />
+    <Compile Include="Utils\OverlayMapTileLayer.cs" />
+    <Compile Include="Utils\MBTilesMapTileLayer.cs" />
+    <Compile Include="Utils\MBTilesTileSource.cs" />
     <Compile Include="Utils\SkyVectorMapTileLayer.cs" />
     <Compile Include="Utils\SkyVectorTileSource.cs" />
     <Compile Include="Utils\StringUtil.cs" />
@@ -373,6 +377,18 @@
       <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
     </Content>
     <None Include="Resources\Data\airports.csv">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </None>
+    <None Include="Resources\Data\CVFR.mbtiles">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </None>
+    <None Include="Resources\Data\LSA.mbtiles">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </None>
+    <None Include="Resources\Data\ATS Routes.mbtiles">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </None>
+    <None Include="Resources\Data\Helicopter Routes.mbtiles">
       <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
     </None>
     <None Include="Resources\Images\FSTrAk-Icon.xcf" />

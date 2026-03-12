@@ -48,9 +48,8 @@
 
             <Grid Grid.Row="1" HorizontalAlignment="Stretch" VerticalAlignment="Stretch">
 
-                <map:Map x:Name="LogbookMap" 
-                 MapLayer="{Binding MapProvider}" 
-                 ZoomLevel="3" 
+                <map:Map x:Name="LogbookMap"
+                 ZoomLevel="3"
                  Center="51,0"
                  MapProjection="{DynamicResource WebMercatorProjection}"
                  Margin="10,10,10,10"
@@ -64,8 +63,11 @@
                         Visibility="{Binding IsShowPath, Converter={StaticResource BoolToVis}}"
                         />
                 <map:MapItemsControl ItemsSource="{Binding MarkerList}" ItemContainerStyle="{StaticResource PushpinItemStyle}"/>
-                <TextBlock   FontSize="12" HorizontalAlignment="Right" VerticalAlignment="Bottom" Margin="5" Style="{DynamicResource MapAttribution}"
-                             utils:HyperlinkText.InlinesSource="{Binding MapProvider.Description}" />
+                <StackPanel Orientation="Horizontal" HorizontalAlignment="Right" VerticalAlignment="Bottom" Margin="5">
+                    <TextBlock FontSize="12" Style="{DynamicResource MapAttribution}"
+                               utils:HyperlinkText.InlinesSource="{Binding MapAttributionText}" />
+                    <TextBlock FontSize="12" Foreground="Red" FontWeight="Bold" Margin="8,0,0,0" Text="Not for navigational use" />
+                </StackPanel>
                 <ContentControl HorizontalAlignment="Left" VerticalAlignment="Bottom" Margin="10 0 0 15" Width="45" Height="11" Visibility="{Binding IsMaptillerCMap, Converter={StaticResource BoolToVis}}">
                     <Hyperlink NavigateUri="https://www.maptiler.com/"
                                TextDecorations="None"

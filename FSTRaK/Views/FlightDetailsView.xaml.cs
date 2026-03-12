@@ -1,4 +1,4 @@
-﻿using FSTRaK.ViewModels;
+using FSTRaK.ViewModels;
 using MapControl;
 using ScottPlot;
 using ScottPlot.Plottable;
@@ -21,6 +21,8 @@ namespace FSTRaK.Views
     /// </summary>
     public partial class FlightDetailsView : UserControl
     {
+        private MapTileLayerBase _currentOverlayLayer;
+
         public FlightDetailsView()
         {
             InitializeComponent();
@@ -38,13 +40,13 @@ namespace FSTRaK.Views
             AltSpeedChart.Plot.YAxis2.Label("Ground Speed");
             AltSpeedChart.Plot.YAxis2.Ticks(true);
 
-            
+
             var legend = AltSpeedChart.Plot.Legend();
 
             legend.FontBold = true;
 
             legend.FontColor = graphColor;
-                
+
             legend.FillColor = Color.Transparent;
             legend.OutlineColor = graphColor;
             AltSpeedChart.Plot.Style(ScottPlot.Style.Black);
@@ -58,16 +60,56 @@ namespace FSTRaK.Views
             AltSpeedChart.Plot.YAxis.Color(graphColor);
             AltSpeedChart.Plot.YAxis2.Color(graphColor);
 
-            
-
+            Properties.Settings.Default.PropertyChanged += OnSettingsPropertyChanged;
+            UpdateMapLayers();
         }
 
         private void OnUnLoaded(object s, RoutedEventArgs e)
         {
             ((FlightDetailsViewModel)DataContext).PropertyChanged -= DataModel_OnPropertyChange;
 
+            Properties.Settings.Default.PropertyChanged -= OnSettingsPropertyChanged;
+            if (_currentOverlayLayer != null)
+            {
+                LogbookMap.Children.Remove(_currentOverlayLayer);
+                _currentOverlayLayer = null;
+            }
         }
 
+        private void OnSettingsPropertyChanged(object sender, PropertyChangedEventArgs e)
+        {
+            if (e.PropertyName == "MapTileProvider")
+            {
+                var vm = DataContext as FlightDetailsViewModel;
+                vm?.NotifyMapProviderChanged();
+            }
+        }
+
+        private void UpdateMapLayers()
+        {
+            var vm = DataContext as FlightDetailsViewModel;
+            var provider = vm?.MapProvider;
+            if (provider == null) return;
+
+            if (_currentOverlayLayer != null)
+            {
+                LogbookMap.Children.Remove(_currentOverlayLayer);
+                _currentOverlayLayer = null;
+            }
+
+            if (provider is IOverlayMapTileLayer)
+            {
+                var osmBase = Application.Current.Resources["OpenStreetMap"] as MapTileLayerBase;
+                LogbookMap.MapLayer = osmBase;
+                var baseIndex = LogbookMap.Children.IndexOf(osmBase);
+                LogbookMap.Children.Insert(baseIndex + 1, provider);
+                _currentOverlayLayer = provider;
+            }
+            else
+            {
+                LogbookMap.MapLayer = provider;
+            }
+        }
 
         private void DataModel_OnPropertyChange(object sender, PropertyChangedEventArgs e)
         {
@@ -79,6 +121,9 @@ namespace FSTRaK.Views
                     {
                         ZoomToBounds(viewPort);
                     }
+                    break;
+                case "MapProvider":
+                    UpdateMapLayers();
                     break;
                 case "AltSpeedGroundAltDictionary":
                     var altSpeedGroundSeries = ((FlightDetailsViewModel)DataContext).AltSpeedGroundAltDictionary;
