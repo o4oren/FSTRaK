@@ -1,6 +1,6 @@
 using System;
+using System.Collections.Generic;
 using System.Data.SQLite;
-using System.Globalization;
 using System.IO;
 using System.Threading.Tasks;
 using System.Windows;
@@ -15,20 +15,15 @@ namespace FSTRaK.Utils
     {
         private readonly string _filePath;
         private int _minZoom;
-        private int _maxZoom;
-        private double _boundsWest;
-        private double _boundsEast;
-        private double _boundsSouth;
-        private double _boundsNorth;
-        private bool _metadataLoaded;
+        private Dictionary<int, HashSet<long>> _placeholderTiles;
 
         public MBTilesTileSource(string filePath)
         {
             _filePath = filePath;
-            LoadMetadata();
+            LoadPlaceholderIndex();
         }
 
-        private void LoadMetadata()
+        private void LoadPlaceholderIndex()
         {
             if (!File.Exists(_filePath))
                 return;
@@ -39,45 +34,59 @@ namespace FSTRaK.Utils
                 using (var connection = new SQLiteConnection(csb.ToString()))
                 {
                     connection.Open();
+
+                    // Read minzoom from metadata
                     using (var cmd = connection.CreateCommand())
                     {
-                        cmd.CommandText = "SELECT name, value FROM metadata WHERE name IN ('minzoom','maxzoom','bounds')";
+                        cmd.CommandText = "SELECT value FROM metadata WHERE name = 'minzoom'";
+                        var result = cmd.ExecuteScalar() as string;
+                        if (result == null || !int.TryParse(result, out _minZoom) || _minZoom <= 0)
+                            return;
+                    }
+
+                    // Query all tile coordinates at minzoom
+                    var minZoomTiles = new List<(int col, int xyzRow)>();
+                    using (var cmd = connection.CreateCommand())
+                    {
+                        cmd.CommandText = "SELECT DISTINCT tile_column, tile_row FROM tiles WHERE zoom_level = @z";
+                        cmd.Parameters.AddWithValue("@z", _minZoom);
                         using (var reader = cmd.ExecuteReader())
                         {
                             while (reader.Read())
                             {
-                                var name = reader.GetString(0);
-                                var value = reader.GetString(1);
-                                switch (name)
-                                {
-                                    case "minzoom":
-                                        int.TryParse(value, out _minZoom);
-                                        break;
-                                    case "maxzoom":
-                                        int.TryParse(value, out _maxZoom);
-                                        break;
-                                    case "bounds":
-                                        var parts = value.Split(',');
-                                        if (parts.Length == 4)
-                                        {
-                                            double.TryParse(parts[0], NumberStyles.Float, CultureInfo.InvariantCulture, out _boundsWest);
-                                            double.TryParse(parts[1], NumberStyles.Float, CultureInfo.InvariantCulture, out _boundsSouth);
-                                            double.TryParse(parts[2], NumberStyles.Float, CultureInfo.InvariantCulture, out _boundsEast);
-                                            double.TryParse(parts[3], NumberStyles.Float, CultureInfo.InvariantCulture, out _boundsNorth);
-                                        }
-                                        break;
-                                }
+                                var col = reader.GetInt32(0);
+                                var tmsRow = reader.GetInt32(1);
+                                var xyzRow = (1 << _minZoom) - 1 - tmsRow;
+                                minZoomTiles.Add((col, xyzRow));
                             }
                         }
                     }
+
+                    if (minZoomTiles.Count == 0)
+                        return;
+
+                    // For each zoom level below minzoom, compute which parent tiles contain actual tiles
+                    _placeholderTiles = new Dictionary<int, HashSet<long>>();
+                    for (var z = 0; z < _minZoom; z++)
+                    {
+                        var diff = _minZoom - z;
+                        var set = new HashSet<long>();
+                        foreach (var (col, xyzRow) in minZoomTiles)
+                        {
+                            var parentCol = col >> diff;
+                            var parentRow = xyzRow >> diff;
+                            set.Add(((long)parentCol << 32) | (uint)parentRow);
+                        }
+                        _placeholderTiles[z] = set;
+                    }
+
+                    Log.Debug("MBTiles placeholder index built: minZoom={MinZoom}, {Count} tiles at minzoom",
+                        _minZoom, minZoomTiles.Count);
                 }
-                _metadataLoaded = _minZoom > 0 && _boundsWest != 0;
-                Log.Debug("MBTiles metadata: minZoom={MinZoom}, maxZoom={MaxZoom}, bounds=({W},{S},{E},{N})",
-                    _minZoom, _maxZoom, _boundsWest, _boundsSouth, _boundsEast, _boundsNorth);
             }
             catch (Exception ex)
             {
-                Log.Warning(ex, "Failed to load MBTiles metadata from {Path}", _filePath);
+                Log.Warning(ex, "Failed to load MBTiles placeholder index from {Path}", _filePath);
             }
         }
 
@@ -114,8 +123,10 @@ namespace FSTRaK.Utils
                         }
                     }
 
-                    // No tile data — if below min zoom and tile overlaps bounds, show placeholder
-                    if (_metadataLoaded && zoomLevel < _minZoom && TileOverlapsBounds(column, row, zoomLevel))
+                    // No tile data — if below min zoom, check if this tile is a parent of actual tiles
+                    if (_placeholderTiles != null &&
+                        _placeholderTiles.TryGetValue(zoomLevel, out var tiles) &&
+                        tiles.Contains(((long)column << 32) | (uint)row))
                     {
                         return CreatePlaceholderTile();
                     }
@@ -125,26 +136,12 @@ namespace FSTRaK.Utils
             }
         }
 
-        private bool TileOverlapsBounds(int column, int row, int zoomLevel)
-        {
-            var n = 1 << zoomLevel;
-            var tileWest = column * 360.0 / n - 180.0;
-            var tileEast = (column + 1) * 360.0 / n - 180.0;
-            // Row 0 is top (north) in XYZ/slippy convention
-            var tileNorth = Math.Atan(Math.Sinh(Math.PI * (1 - 2.0 * row / n))) * 180.0 / Math.PI;
-            var tileSouth = Math.Atan(Math.Sinh(Math.PI * (1 - 2.0 * (row + 1) / n))) * 180.0 / Math.PI;
-
-            return tileEast > _boundsWest && tileWest < _boundsEast &&
-                   tileNorth > _boundsSouth && tileSouth < _boundsNorth;
-        }
-
         private static ImageSource CreatePlaceholderTile()
         {
             const int size = 256;
             var visual = new DrawingVisual();
             using (var dc = visual.RenderOpen())
             {
-                // Semi-transparent light blue fill
                 dc.DrawRectangle(
                     new SolidColorBrush(Color.FromArgb(80, 70, 130, 180)),
                     new Pen(new SolidColorBrush(Color.FromArgb(120, 70, 130, 180)), 1),

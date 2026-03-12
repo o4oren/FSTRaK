@@ -32,7 +32,7 @@ Implement two new classes — `MBTilesTileSource` (reads tiles directly from a l
 ### Scope
 
 **In Scope:**
-- `MBTilesTileSource : TileSource` — SQLite direct read, TMS Y-flip, per-request connection, graceful null return if file missing, semi-transparent placeholder tiles at zoom levels below MBTiles `minzoom` using metadata `bounds` for geographic overlap detection
+- `MBTilesTileSource : TileSource` — SQLite direct read, TMS Y-flip, per-request connection, graceful null return if file missing, semi-transparent placeholder tiles at zoom levels below MBTiles `minzoom` using precomputed parent tile index from actual tile coverage
 - `MBTilesMapTileLayer : MapTileLayer` — CLR `FilePath` string property that wires `MBTilesTileSource`; path resolved relative to exe directory
 - 4 entries in `MapProvidersDictionary.xaml`: AIP Israel CVFR, AIP Israel LSA, AIP Israel ATS Routes, AIP Israel Helicopter Routes
 - Copy 4 `.mbtiles` files from `~/Downloads/layers/` into `FSTRaK/Resources/Data/`
@@ -82,7 +82,7 @@ Implement two new classes — `MBTilesTileSource` (reads tiles directly from a l
 - **No new NuGet dependencies**: `System.Data.SQLite` (v1.0.119) is already referenced in the project.
 - **`x:Shared="false"` on all XAML entries**: Required so each map view gets its own `MBTilesMapTileLayer` instance — same as all existing providers.
 - **Zoom range `0–20`**: Wide range ensures tile requests at all zoom levels. At zoom levels below the MBTiles file's `minzoom`, `MBTilesTileSource` returns semi-transparent placeholder tiles for tiles overlapping the chart's geographic bounds. At zoom levels within the file's range, real chart tiles are served. Above `maxzoom`, null is returned (blank tiles).
-- **Placeholder tiles from MBTiles metadata**: `MBTilesTileSource` reads `minzoom`, `maxzoom`, and `bounds` from the MBTiles `metadata` table at construction time. When a tile request falls below `minzoom`, the tile's geographic extent is computed from its (column, row, zoomLevel) using Web Mercator math and checked against `bounds`. Overlapping tiles get a 256×256 semi-transparent light blue rectangle rendered via `DrawingVisual` + `RenderTargetBitmap`.
+- **Placeholder tiles from actual tile coverage**: At construction, `MBTilesTileSource` reads `minzoom` from metadata, then queries all distinct tile coordinates at that zoom level. For each zoom level below `minzoom`, it precomputes which parent tiles (via bit-shift: `col >> diff, row >> diff`) contain actual chart tiles. This produces a `Dictionary<int, HashSet<long>>` keyed by zoom level. At runtime, placeholder requests are a simple HashSet lookup — no geographic math needed. This gives pixel-perfect coverage matching the actual tile footprint rather than an oversized bounding box.
 - **`FilePath` as CLR string property**: Set by XAML attribute after construction. Setter resolves full path immediately and assigns `TileSource`. No DependencyProperty needed since no binding or animation required.
 
 ---
@@ -102,10 +102,10 @@ Implement two new classes — `MBTilesTileSource` (reads tiles directly from a l
 - [x] **Task 2: Create `MBTilesTileSource.cs`**
   - File: `FSTRaK/Utils/MBTilesTileSource.cs`
   - Action: Create new class. Key behaviors:
-    - Constructor reads MBTiles `metadata` table (`minzoom`, `maxzoom`, `bounds`) for placeholder tile support
+    - Constructor reads `minzoom` from metadata, queries all tile coordinates at minzoom, and precomputes parent tile indices for each lower zoom level via bit-shifting
     - `GetUri` returns `null` so MapControl falls through to `LoadImageAsync`
-    - `LoadImageAsync` queries tiles table; if no tile found AND zoom < `minzoom` AND tile geographically overlaps `bounds`, returns a semi-transparent placeholder tile (light blue rectangle via `DrawingVisual` + `RenderTargetBitmap`)
-    - Tile-to-geographic overlap uses standard Web Mercator tile→lon/lat conversion
+    - `LoadImageAsync` queries tiles table; if no tile found AND the requested tile is in the precomputed parent set, returns a semi-transparent placeholder tile (light blue rectangle via `DrawingVisual` + `RenderTargetBitmap`)
+    - Parent tile lookup is O(1) HashSet check — no geographic math at runtime
     - `BitmapDecoder.Create` for thread-safe image decoding; `SQLiteConnectionStringBuilder` for safe connection strings
     - All `ImageSource` objects are `Freeze()`d for cross-thread WPF use
   - See `FSTRaK/Utils/MBTilesTileSource.cs` for full implementation.
@@ -271,7 +271,7 @@ Manual testing only (no automated test infrastructure in this project).
 - **TMS Y-flip is mandatory** — without `tmsRow = (1 << zoomLevel) - 1 - row`, tiles appear in wrong vertical positions. This is a requirement of the MBTiles spec; confirmed critical in brainstorming.
 - **File names with spaces** (`ATS Routes.mbtiles`, `Helicopter Routes.mbtiles`) — `Path.Combine` handles spaces correctly; no special quoting or escaping needed.
 - **`Read Only=True` in connection string** — prevents SQLite from creating `-wal` and `-shm` journal files alongside the `.mbtiles` files in `Resources/Data/`. Important for keeping the output directory clean.
-- **MBTiles metadata table** — `MBTilesTileSource` reads `minzoom`, `maxzoom`, and `bounds` (format: `west,south,east,north` in WGS84 degrees) at construction. These drive the placeholder tile logic. If metadata is missing or malformed, placeholders are skipped gracefully (no crash, just blank tiles at low zoom).
+- **MBTiles placeholder index** — `MBTilesTileSource` reads `minzoom` from metadata and queries actual tile coordinates at that zoom level to build a parent tile index. The `bounds` metadata field is not used (too coarse at low zoom levels). If metadata or tile query fails, placeholders are skipped gracefully (no crash, just blank tiles at low zoom).
 - **`frame.Freeze()` is required** — WPF requires `ImageSource` objects to be frozen before use across threads. MapControl's tile scheduler operates on background threads; forgetting `Freeze()` causes an `InvalidOperationException` at runtime. `BitmapDecoder.Create` is used instead of `BitmapImage` for thread safety on ThreadPool threads.
 - **Setup.vdproj update (manual, post-dev)**: After validating in a dev build, add 4 file entries to `Setup/Setup.vdproj` via Visual Studio's Setup project UI (Add → Project Output / File). Target the `Resources\Data` application folder. Same structure as existing `airports.csv` entry. `.vdproj` requires unique GUIDs per entry — best generated by VS rather than manually.
 
@@ -304,10 +304,12 @@ Manual testing only (no automated test infrastructure in this project).
 
 **Problem:** MBTiles files only contain tiles at specific zoom ranges (e.g., CVFR: 7–12). When zoomed out below the minimum, the map showed blank white — users couldn't tell where the chart coverage was located.
 
-**Solution:** `MBTilesTileSource` reads `minzoom`, `maxzoom`, and `bounds` from the MBTiles `metadata` table at construction. When `LoadImageAsync` is called at a zoom level below `minzoom` and the requested tile geographically overlaps the chart's `bounds`, it returns a 256×256 semi-transparent light blue placeholder tile. This gives users a visual indicator of where chart coverage exists, inviting them to zoom in for detail.
+**Solution:** At construction, `MBTilesTileSource` reads `minzoom` from metadata, queries all distinct tile coordinates at that zoom level, and precomputes a parent tile index for each lower zoom level using bit-shifting (`col >> diff, row >> diff`). When `LoadImageAsync` is called below `minzoom` and the requested tile is in the precomputed set, it returns a semi-transparent placeholder tile.
 
 **Implementation details:**
-- Geographic overlap: tile extent computed from (column, row, zoomLevel) using standard Web Mercator tile→lon/lat math, then checked for rectangle intersection with metadata bounds
-- Placeholder rendering: `DrawingVisual` + `RenderTargetBitmap` — lightweight, no external image file needed
+- Parent tile index: `Dictionary<int, HashSet<long>>` keyed by zoom level; each entry contains the set of parent tiles that cover actual chart tiles. Built once at construction from actual minzoom tile coordinates — not from metadata bounds
+- Bit-shift math: a tile at (col, row, minzoom) has parent at zoom z: `(col >> (minzoom-z), row >> (minzoom-z))`. TMS→XYZ row conversion applied before shifting
+- Placeholder rendering: `DrawingVisual` + `RenderTargetBitmap` — lightweight 256×256 tile, no external image file
 - Color: `rgba(70, 130, 180, 80)` fill with `rgba(70, 130, 180, 120)` 1px border (steel blue, semi-transparent)
-- Graceful fallback: if metadata is missing or unparseable, `_metadataLoaded` stays false and no placeholders are generated
+- Graceful fallback: if metadata or tile query fails, `_placeholderTiles` stays null and no placeholders are generated
+- **Why not metadata bounds:** The original approach used the `bounds` field from MBTiles metadata for geographic overlap. At low zoom levels, tiles cover huge geographic areas (a zoom-4 tile spans ~45° of longitude), so bounds-based overlap produced far too many placeholder tiles. The parent tile index approach gives pixel-perfect coverage matching the actual tile footprint
