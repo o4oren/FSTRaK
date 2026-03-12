@@ -307,6 +307,7 @@ Manual testing only (no automated test infrastructure in this project).
 ### Notes
 
 - **Future TODO — OSM overlay**: A more advanced UX would hardcode OSM as a silent base layer beneath the selected MBTiles chart in `LiveView.xaml` and `LogbookView.xaml`, providing geographic context outside Israel's chart coverage. Deferred — current implementation keeps charts standalone.
+- **Future TODO — Replace HTTP server with direct LoadImageAsync**: The current `MBTilesLocalServer` (HttpListener) approach was a workaround for MapControl 13.4 not supporting the `LoadImageAsync` fallback when `GetUri` returns null. When upgrading XAML.MapControl.WPF to a version where this fallback is implemented, replace `MBTilesLocalServer` + the localhost URI approach with a direct `LoadImageAsync(int zoomLevel, int column, int row)` override in `MBTilesTileSource`. This eliminates HTTP overhead, redundant memory caching by MapControl, the port race condition, and the lack of cancellation support.
 - **TMS Y-flip is mandatory** — without `tmsRow = (1 << zoomLevel) - 1 - row`, tiles appear in wrong vertical positions. This is a requirement of the MBTiles spec; confirmed critical in brainstorming.
 - **File names with spaces** (`ATS Routes.mbtiles`, `Helicopter Routes.mbtiles`) — `Path.Combine` handles spaces correctly; no special quoting or escaping needed.
 - **`Read Only=True` in connection string** — prevents SQLite from creating `-wal` and `-shm` journal files alongside the `.mbtiles` files in `Resources/Data/`. Important for keeping the output directory clean.
