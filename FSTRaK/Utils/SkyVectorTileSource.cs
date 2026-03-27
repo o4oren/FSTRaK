@@ -12,42 +12,43 @@ namespace FSTRaK.Utils
     {
 
         private static string _airac;
-        private static HttpClient httpClient = new()
-        {
-            BaseAddress = new Uri("https://skyvector.com/api/chartDataFPL"),
-        };
+        private static string _tileServerKey;
+        private static readonly HttpClient httpClient = new HttpClient();
 
         public SkyVectorTileSource() : base()
         {
-            if (_airac == null)
+            if (_airac == null || _tileServerKey == null)
             {
                 try
                 {
-                    var airacTask = GetAiracFromSkyVector();
-                    airacTask.Wait();
-                    _airac = airacTask.Result;
-                    Log.Information("Updated SkyVector Airac to " + _airac);
+                    var apiTask = FetchSkyVectorApiData();
+                    apiTask.Wait();
+                    (_airac, _tileServerKey) = apiTask.Result;
+                    Log.Information("Updated SkyVector AIRAC to {Airac}, tile server key: {Key}", _airac, _tileServerKey);
                 }
                 catch (Exception ex)
                 {
-                    Log.Error(ex, "An error occured during airac fetch");
-                    // best effort - use current month - 1
+                    Log.Error(ex, "An error occurred during SkyVector API fetch");
+                    // Best effort fallback
                     var lastMonth = DateTime.Now.AddMonths(-1);
-                    var yearPart = lastMonth.Year - 2000;
-                    var cycle = lastMonth.Month;
-                    _airac = $"{yearPart:D2}{cycle:D2}";
-                    Log.Information("Could not update SkyVector Airac. Falling back to: " + _airac);
+                    _airac = $"{lastMonth.Year - 2000:D2}{lastMonth.Month:D2}";
+                    _tileServerKey = null;
+                    Log.Information("Could not update SkyVector data. Falling back to AIRAC: {Airac}", _airac);
                 }
             }
         }
 
-        private async Task<string> GetAiracFromSkyVector()
+        private async Task<(string airac, string tileServerKey)> FetchSkyVectorApiData()
         {
-            var skyVectorChartData = httpClient.GetStringAsync("");
-            skyVectorChartData.Wait();
-            var jsonObject = System.Text.Json.JsonSerializer.Deserialize<JsonElement>(skyVectorChartData.Result);
-            var edition = jsonObject.GetProperty("edition");
-            return edition.ToString();
+            var json = await httpClient.GetStringAsync("https://skyvector.com/api/chartDataFPL");
+            var jsonObject = System.Text.Json.JsonSerializer.Deserialize<JsonElement>(json);
+            var airac = jsonObject.GetProperty("edition").ToString();
+            // tileservers is a comma-separated list of base URLs; take the first
+            var tileServersRaw = jsonObject.GetProperty("tileservers").ToString();
+            var firstServer = tileServersRaw.Split(',')[0].Trim();
+            // Extract the key: last path segment of https://t.skyvector.com/{key}
+            var key = firstServer.TrimEnd('/').Split('/')[^1];
+            return (airac, key);
         }
 
         /// <summary>
@@ -57,20 +58,19 @@ namespace FSTRaK.Utils
         public override Uri GetUri(int column, int row, int zoomLevel)
         {
             if (UriTemplate.Contains("{AIRAC}"))
-            {
                 UriTemplate = UriTemplate.Replace("{AIRAC}", _airac);
-            }
-            // Fetching the 301 in this example: https://t.skyvector.com/V7pMh4xRihf1nr61/301/2306/{z}/{x}/{y}.jpg
-            // /https:\/\/t.skyvector.com\/.+\/(30\d)\/\d+\/\d+\/\d+\/\d+\.jpg/gm
-             string pattern = @"https:\/\/t.skyvector.com\/.+\/(30\d)\/\d+\/\{z}\/{x}\/\{y}\.jpg";
-             Match m = Regex.Match(UriTemplate, pattern);
-             int newZoomLevel = zoomLevel;
+
+            if (_tileServerKey != null && UriTemplate.Contains("{TILEKEY}"))
+                UriTemplate = UriTemplate.Replace("{TILEKEY}", _tileServerKey);
+
+            string pattern = @"https:\/\/t.skyvector.com\/.+\/(30\d)\/\d+\/\{z}\/{x}\/\{y}\.jpg";
+            Match m = Regex.Match(UriTemplate, pattern);
+            int newZoomLevel = zoomLevel;
 
             if (m.Success && m.Groups.Count > 1)
             {
-                 var chartTypeString = m.Groups[1].Value;
-                 var chartTypeNumber = int.Parse(chartTypeString);
-                 newZoomLevel = 23 + 301 - chartTypeNumber - (2 * zoomLevel);
+                var chartTypeNumber = int.Parse(m.Groups[1].Value);
+                newZoomLevel = 23 + 301 - chartTypeNumber - (2 * zoomLevel);
             }
             return base.GetUri(column, row, newZoomLevel);
         }
