@@ -120,8 +120,8 @@
     <SolidColorBrush x:Key="VatsimFriendAicraftColorBrush" Color="#355E3B"/>
     <SolidColorBrush x:Key="VatsimAppCircleFillBrush" Color="#F78CA2" />
     <SolidColorBrush x:Key="VatsimAppCircleStrokeBrush" Color="#7D0A0A"/>
-    <SolidColorBrush x:Key="VatsimTraconFillBrush" Color="#4DA6FF" />
-    <SolidColorBrush x:Key="VatsimTraconStrokeBrush" Color="#003380"/>
+    <SolidColorBrush x:Key="VatsimTraconFillBrush" Color="#F78CA2" />
+    <SolidColorBrush x:Key="VatsimTraconStrokeBrush" Color="#7D0A0A"/>
     <SolidColorBrush x:Key="VatsimFirFillBrush" Color="#91C8E4" />
     <SolidColorBrush x:Key="VatsimFirStrokeBrush" Color="#080658"/>
     <SolidColorBrush x:Key="VatsimFirTextBrush" Color="#080658"/>
