@@ -1,4 +1,4 @@
-﻿using System;
+using System;
 using System.Net.Http;
 using System.Text.Json;
 using System.Text.RegularExpressions;
@@ -10,68 +10,99 @@ namespace FSTRaK.Utils
 {
     public class SkyVectorTileSource : TileSource
     {
-
         private static string _airac;
-        private static HttpClient httpClient = new()
-        {
-            BaseAddress = new Uri("https://skyvector.com/api/chartDataFPL"),
-        };
+        private static string _tileServerKey;
+        private static DateTime _validTo = DateTime.MinValue;
+        private static readonly HttpClient httpClient = new HttpClient();
+
+        // Preserves the original template with {AIRAC}/{TILEKEY} placeholders
+        // so it can be re-resolved after a refresh.
+        private string _templateWithPlaceholders;
 
         public SkyVectorTileSource() : base()
         {
-            if (_airac == null)
+            RefreshIfExpired();
+        }
+
+        private void RefreshIfExpired()
+        {
+            if (_airac != null && _tileServerKey != null && DateTime.UtcNow < _validTo)
+                return;
+
+            try
             {
-                try
+                var apiTask = FetchSkyVectorApiData();
+                apiTask.Wait();
+                (_airac, _tileServerKey, _validTo) = apiTask.Result;
+                Log.Information("Updated SkyVector AIRAC to {Airac}, tile server key: {Key}, valid to: {ValidTo}",
+                    _airac, _tileServerKey, _validTo);
+            }
+            catch (Exception ex)
+            {
+                Log.Error(ex, "An error occurred during SkyVector API fetch");
+                if (_airac == null)
                 {
-                    var airacTask = GetAiracFromSkyVector();
-                    airacTask.Wait();
-                    _airac = airacTask.Result;
-                    Log.Information("Updated SkyVector Airac to " + _airac);
-                }
-                catch (Exception ex)
-                {
-                    Log.Error(ex, "An error occured during airac fetch");
-                    // best effort - use current month - 1
+                    // First-run fallback; if we already have data from a previous fetch, keep it
                     var lastMonth = DateTime.Now.AddMonths(-1);
-                    var yearPart = lastMonth.Year - 2000;
-                    var cycle = lastMonth.Month;
-                    _airac = $"{yearPart:D2}{cycle:D2}";
-                    Log.Information("Could not update SkyVector Airac. Falling back to: " + _airac);
+                    _airac = $"{lastMonth.Year - 2000:D2}{lastMonth.Month:D2}";
+                    _tileServerKey = null;
+                    _validTo = DateTime.UtcNow.AddDays(1); // retry tomorrow
+                    Log.Information("Could not fetch SkyVector data. Falling back to AIRAC: {Airac}", _airac);
                 }
             }
         }
 
-        private async Task<string> GetAiracFromSkyVector()
+        private async Task<(string airac, string tileServerKey, DateTime validTo)> FetchSkyVectorApiData()
         {
-            var skyVectorChartData = httpClient.GetStringAsync("");
-            skyVectorChartData.Wait();
-            var jsonObject = System.Text.Json.JsonSerializer.Deserialize<JsonElement>(skyVectorChartData.Result);
-            var edition = jsonObject.GetProperty("edition");
-            return edition.ToString();
+            var json = await httpClient.GetStringAsync("https://skyvector.com/api/chartDataFPL");
+            var jsonObject = JsonSerializer.Deserialize<JsonElement>(json);
+
+            var airac = jsonObject.GetProperty("edition").ToString();
+
+            var tileServersRaw = jsonObject.GetProperty("tileservers").ToString();
+            var firstServer = tileServersRaw.Split(',')[0].Trim();
+            var key = firstServer.TrimEnd('/').Split('/')[^1];
+
+            // Parse validto: "2026-04-16 09:01:00" (UTC)
+            DateTime validTo = DateTime.UtcNow.AddDays(28); // safe fallback
+            if (jsonObject.TryGetProperty("validto", out var validToToken) &&
+                DateTime.TryParse(validToToken.GetString(), out var parsed))
+            {
+                validTo = DateTime.SpecifyKind(parsed, DateTimeKind.Utc);
+            }
+
+            return (airac, key, validTo);
         }
 
         /// <summary>
         /// Gets the image Uri for the specified tile indices and zoom level.
-        /// Replaces zoomLevel with skyvector compatible zoomLevel
+        /// Replaces zoomLevel with SkyVector-compatible zoom level and resolves
+        /// {AIRAC} and {TILEKEY} placeholders, refreshing from the API when expired.
         /// </summary>
         public override Uri GetUri(int column, int row, int zoomLevel)
         {
-            if (UriTemplate.Contains("{AIRAC}"))
-            {
-                UriTemplate = UriTemplate.Replace("{AIRAC}", _airac);
-            }
-            // Fetching the 301 in this example: https://t.skyvector.com/V7pMh4xRihf1nr61/301/2306/{z}/{x}/{y}.jpg
-            // /https:\/\/t.skyvector.com\/.+\/(30\d)\/\d+\/\d+\/\d+\/\d+\.jpg/gm
-             string pattern = @"https:\/\/t.skyvector.com\/.+\/(30\d)\/\d+\/\{z}\/{x}\/\{y}\.jpg";
-             Match m = Regex.Match(UriTemplate, pattern);
-             int newZoomLevel = zoomLevel;
+            // Capture original template once; UriTemplate is set by MapProvidersDictionary.xaml
+            if (_templateWithPlaceholders == null)
+                _templateWithPlaceholders = UriTemplate;
+
+            // Re-check expiry; no-op when still valid
+            RefreshIfExpired();
+
+            // Resolve placeholders into UriTemplate so base.GetUri can use it
+            UriTemplate = _templateWithPlaceholders
+                .Replace("{AIRAC}", _airac ?? "")
+                .Replace("{TILEKEY}", _tileServerKey ?? "");
+
+            string pattern = @"https://t\.skyvector\.com/.+/(30\d)/\d+/\{z\}/\{x\}/\{y\}\.jpg";
+            Match m = Regex.Match(UriTemplate, pattern);
+            int newZoomLevel = zoomLevel;
 
             if (m.Success && m.Groups.Count > 1)
             {
-                 var chartTypeString = m.Groups[1].Value;
-                 var chartTypeNumber = int.Parse(chartTypeString);
-                 newZoomLevel = 23 + 301 - chartTypeNumber - (2 * zoomLevel);
+                var chartTypeNumber = int.Parse(m.Groups[1].Value);
+                newZoomLevel = 23 + 301 - chartTypeNumber - (2 * zoomLevel);
             }
+
             return base.GetUri(column, row, newZoomLevel);
         }
     }
