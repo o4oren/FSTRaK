@@ -20,7 +20,7 @@ namespace FSTRaK.BusinessLogic.VatsimService
 {
     internal class VatsimService : BaseModel
     {
-        private Timer _connectionTimer;
+        private System.Timers.Timer _connectionTimer;
         private const int ConnectionInterval = 60 * 1000;
 
         public bool Started
@@ -68,7 +68,7 @@ namespace FSTRaK.BusinessLogic.VatsimService
         private VatsimService()
         {
             VatsimStaticData = new VatsimStaticData();
-            _connectionTimer = new Timer(ConnectionInterval);
+            _connectionTimer = new System.Timers.Timer(ConnectionInterval);
             _connectionTimer.Elapsed += async (sender, e) => await GetVatsimData();
             _connectionTimer.AutoReset = true;
             // Constructor runs single-threaded; no lock needed here.
