@@ -1,9 +1,9 @@
 using System;
 using System.Net.Http;
-using System.Text.Json;
 using System.Text.RegularExpressions;
 using System.Threading.Tasks;
 using MapControl;
+using Newtonsoft.Json.Linq;
 using Serilog;
 
 namespace FSTRaK.Utils
@@ -64,21 +64,19 @@ namespace FSTRaK.Utils
         private static async Task<(string airac, string tileServerKey, DateTime validTo)> FetchSkyVectorApiData()
         {
             var json = await httpClient.GetStringAsync("https://skyvector.com/api/chartDataFPL");
-            var jsonObject = JsonSerializer.Deserialize<JsonElement>(json);
+            var jsonObject = JObject.Parse(json);
 
-            var airac = jsonObject.GetProperty("edition").ToString();
+            var airac = jsonObject["edition"].ToString();
 
-            var tileServersRaw = jsonObject.GetProperty("tileservers").ToString();
+            var tileServersRaw = jsonObject["tileservers"].ToString();
             var firstServer = tileServersRaw.Split(',')[0].Trim();
             var splitParts = firstServer.TrimEnd('/').Split('/');
             var key = splitParts[splitParts.Length - 1];
 
             DateTime validTo = DateTime.UtcNow.AddDays(28);
-            if (jsonObject.TryGetProperty("validto", out var validToToken) &&
-                DateTime.TryParse(validToToken.GetString(), out var parsed))
-            {
+            var validToStr = jsonObject["validto"]?.ToString();
+            if (DateTime.TryParse(validToStr, out var parsed))
                 validTo = DateTime.SpecifyKind(parsed, DateTimeKind.Utc);
-            }
 
             return (airac, key, validTo);
         }
