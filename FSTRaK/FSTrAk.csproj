@@ -130,6 +130,7 @@
     <Compile Include="BusinessLogic\VatsimService\VatsimModel\Pilot.cs" />
     <Compile Include="BusinessLogic\VatsimService\VatsimModel\VatsimData.cs" />
     <Compile Include="BusinessLogic\VatsimService\VatsimModel\VatsimStaticData.cs" />
+    <Compile Include="BusinessLogic\VatsimService\DataFileUpdateService.cs" />
     <Compile Include="BusinessLogic\VatsimService\VatsimService.cs" />
     <Compile Include="DataTypes\Consts.cs" />
     <Compile Include="DataTypes\LandingRate.cs" />
@@ -370,12 +371,7 @@
     <Resource Include="FSTrAk.ico">
       <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
     </Resource>
-    <Content Include="Resources\Data\Boundaries.geojson">
-      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
-    </Content>
-    <Content Include="Resources\Data\VATSpy.dat">
-      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
-    </Content>
+
     <None Include="Resources\Data\airports.csv">
       <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
     </None>

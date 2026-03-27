@@ -88,11 +88,32 @@
                 </map:MapItemsControl.ItemTemplate>
             </map:MapItemsControl>
 
-            <!--  Vatsim Airports -->
+            <!--  Vatsim TRACON polygons -->
             <map:MapItemsControl ItemsSource="{Binding VatsimControlledAirports}" Visibility="{Binding IsShowVatsimAirports, Converter={StaticResource BoolToVis}}">
                 <map:MapItemsControl.ItemTemplate>
                     <DataTemplate>
-                            <map:MapPolygon 
+                        <map:MapPanel Visibility="{Binding IsShowTraconPolygon, Converter={StaticResource BoolToVis}}">
+                            <map:MapItemsControl ItemsSource="{Binding TraconPolygons}">
+                                <map:MapItemsControl.ItemTemplate>
+                                    <DataTemplate>
+                                        <map:MapPolygon
+                                            Stroke="{DynamicResource VatsimTraconStrokeBrush}"
+                                            Fill="{DynamicResource VatsimTraconFillBrush}"
+                                            Opacity="0.35"
+                                            Locations="{Binding}"/>
+                                    </DataTemplate>
+                                </map:MapItemsControl.ItemTemplate>
+                            </map:MapItemsControl>
+                        </map:MapPanel>
+                    </DataTemplate>
+                </map:MapItemsControl.ItemTemplate>
+            </map:MapItemsControl>
+
+            <!--  Vatsim Airports - 80km circle fallback when no TRACON polygon available -->
+            <map:MapItemsControl ItemsSource="{Binding VatsimControlledAirports}" Visibility="{Binding IsShowVatsimAirports, Converter={StaticResource BoolToVis}}">
+                <map:MapItemsControl.ItemTemplate>
+                    <DataTemplate>
+                            <map:MapPolygon
                                 Stroke="{DynamicResource VatsimAppCircleStrokeBrush}"
                                 Fill="{DynamicResource VatsimAppCircleFillBrush}"
                                 Opacity="0.3"

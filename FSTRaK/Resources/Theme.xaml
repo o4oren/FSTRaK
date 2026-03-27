@@ -95,9 +95,9 @@
     <Color x:Key="FocusBorderColor">#003884</Color>
     <SolidColorBrush x:Key="FocusBorderColorBrush" Color="{DynamicResource FocusBorderColor}"/>
 
-    <SolidColorBrush x:Key="FlightPathColorBrush" Color="#CC2200"/>
-    <SolidColorBrush x:Key="FlightPathStrokeBrush" Color="#880000"/>
-    <SolidColorBrush x:Key="MapPinStrokeBrush" Color="#F5DEB3"/>
+    <SolidColorBrush x:Key="FlightPathColorBrush" Color="Red"/>
+    <SolidColorBrush x:Key="FlightPathStrokeBrush" Color="DarkRed"/>
+    <SolidColorBrush x:Key="MapPinStrokeBrush" Color="Wheat"/>
     <SolidColorBrush x:Key="SelectedItemForegroundBrush" Color="OrangeRed"/>
 
     
@@ -120,11 +120,13 @@
     <SolidColorBrush x:Key="VatsimFriendAicraftColorBrush" Color="#355E3B"/>
     <SolidColorBrush x:Key="VatsimAppCircleFillBrush" Color="#F78CA2" />
     <SolidColorBrush x:Key="VatsimAppCircleStrokeBrush" Color="#7D0A0A"/>
+    <SolidColorBrush x:Key="VatsimTraconFillBrush" Color="#F78CA2" />
+    <SolidColorBrush x:Key="VatsimTraconStrokeBrush" Color="#7D0A0A"/>
     <SolidColorBrush x:Key="VatsimFirFillBrush" Color="#91C8E4" />
     <SolidColorBrush x:Key="VatsimFirStrokeBrush" Color="#080658"/>
     <SolidColorBrush x:Key="VatsimFirTextBrush" Color="#080658"/>
-    <SolidColorBrush x:Key="VatsimUirFillBrush" Color="#90EE90"/>
-    <SolidColorBrush x:Key="VatsimUirStrokeBrush" Color="#90EE90"/>
+    <SolidColorBrush x:Key="VatsimUirFillBrush" Color="LightGreen"/>
+    <SolidColorBrush x:Key="VatsimUirStrokeBrush" Color="LightGreen"/>
     <SolidColorBrush x:Key="VatsimUirTextBrush" Color="#355E3B"/>
 
 

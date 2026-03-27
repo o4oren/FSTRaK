@@ -1,77 +1,115 @@
-﻿using System;
+using System;
 using System.Net.Http;
-using System.Text.Json;
 using System.Text.RegularExpressions;
 using System.Threading.Tasks;
 using MapControl;
+using Newtonsoft.Json.Linq;
 using Serilog;
 
 namespace FSTRaK.Utils
 {
     public class SkyVectorTileSource : TileSource
     {
-
         private static string _airac;
-        private static HttpClient httpClient = new()
-        {
-            BaseAddress = new Uri("https://skyvector.com/api/chartDataFPL"),
-        };
+        private static string _tileServerKey;
+        private static DateTime _validTo = DateTime.MinValue;
+        private static bool _fetchInProgress;
+        private static readonly HttpClient httpClient = new HttpClient();
+
+        // Preserves the original template with {AIRAC}/{TILEKEY} placeholders
+        // so it can be re-resolved after a refresh.
+        private string _templateWithPlaceholders;
 
         public SkyVectorTileSource() : base()
         {
-            if (_airac == null)
+            // Kick off background fetch without blocking — tiles will resolve
+            // once data arrives; until then GetUri returns null (no tiles shown).
+            if (_airac == null || (_tileServerKey == null && !_fetchInProgress))
+                StartBackgroundFetch();
+        }
+
+        private static void StartBackgroundFetch()
+        {
+            _fetchInProgress = true;
+            Task.Run(async () =>
             {
                 try
                 {
-                    var airacTask = GetAiracFromSkyVector();
-                    airacTask.Wait();
-                    _airac = airacTask.Result;
-                    Log.Information("Updated SkyVector Airac to " + _airac);
+                    var result = await FetchSkyVectorApiData();
+                    _airac = result.airac;
+                    _tileServerKey = result.tileServerKey;
+                    _validTo = result.validTo;
+                    Log.Information("Updated SkyVector AIRAC to {Airac}, tile server key: {Key}, valid to: {ValidTo}",
+                        _airac, _tileServerKey, _validTo);
                 }
                 catch (Exception ex)
                 {
-                    Log.Error(ex, "An error occured during airac fetch");
-                    // best effort - use current month - 1
-                    var lastMonth = DateTime.Now.AddMonths(-1);
-                    var yearPart = lastMonth.Year - 2000;
-                    var cycle = lastMonth.Month;
-                    _airac = $"{yearPart:D2}{cycle:D2}";
-                    Log.Information("Could not update SkyVector Airac. Falling back to: " + _airac);
+                    Log.Error(ex, "An error occurred during SkyVector API fetch");
+                    if (_airac == null)
+                    {
+                        var lastMonth = DateTime.Now.AddMonths(-1);
+                        _airac = $"{lastMonth.Year - 2000:D2}{lastMonth.Month:D2}";
+                        _tileServerKey = null;
+                        _validTo = DateTime.UtcNow.AddDays(1);
+                        Log.Information("Could not fetch SkyVector data. Falling back to AIRAC: {Airac}", _airac);
+                    }
                 }
-            }
+                finally
+                {
+                    _fetchInProgress = false;
+                }
+            });
         }
 
-        private async Task<string> GetAiracFromSkyVector()
+        private static async Task<(string airac, string tileServerKey, DateTime validTo)> FetchSkyVectorApiData()
         {
-            var skyVectorChartData = httpClient.GetStringAsync("");
-            skyVectorChartData.Wait();
-            var jsonObject = System.Text.Json.JsonSerializer.Deserialize<JsonElement>(skyVectorChartData.Result);
-            var edition = jsonObject.GetProperty("edition");
-            return edition.ToString();
+            var json = await httpClient.GetStringAsync("https://skyvector.com/api/chartDataFPL");
+            var jsonObject = JObject.Parse(json);
+
+            var airac = jsonObject["edition"].ToString();
+
+            var tileServersRaw = jsonObject["tileservers"].ToString();
+            var firstServer = tileServersRaw.Split(',')[0].Trim();
+            var splitParts = firstServer.TrimEnd('/').Split('/');
+            var key = splitParts[splitParts.Length - 1];
+
+            DateTime validTo = DateTime.UtcNow.AddDays(28);
+            var validToStr = jsonObject["validto"]?.ToString();
+            if (DateTime.TryParse(validToStr, out var parsed))
+                validTo = DateTime.SpecifyKind(parsed, DateTimeKind.Utc);
+
+            return (airac, key, validTo);
         }
 
-        /// <summary>
-        /// Gets the image Uri for the specified tile indices and zoom level.
-        /// Replaces zoomLevel with skyvector compatible zoomLevel
-        /// </summary>
         public override Uri GetUri(int column, int row, int zoomLevel)
         {
-            if (UriTemplate.Contains("{AIRAC}"))
-            {
-                UriTemplate = UriTemplate.Replace("{AIRAC}", _airac);
-            }
-            // Fetching the 301 in this example: https://t.skyvector.com/V7pMh4xRihf1nr61/301/2306/{z}/{x}/{y}.jpg
-            // /https:\/\/t.skyvector.com\/.+\/(30\d)\/\d+\/\d+\/\d+\/\d+\.jpg/gm
-             string pattern = @"https:\/\/t.skyvector.com\/.+\/(30\d)\/\d+\/\{z}\/{x}\/\{y}\.jpg";
-             Match m = Regex.Match(UriTemplate, pattern);
-             int newZoomLevel = zoomLevel;
+            // Capture original template once
+            if (_templateWithPlaceholders == null)
+                _templateWithPlaceholders = UriTemplate;
+
+            // Kick off a refresh in background if data has expired
+            if (_airac != null && _tileServerKey != null
+                && DateTime.UtcNow >= _validTo && !_fetchInProgress)
+                StartBackgroundFetch();
+
+            // Data not yet available — return null (MapControl skips null URIs)
+            if (_airac == null || _tileServerKey == null)
+                return null;
+
+            UriTemplate = _templateWithPlaceholders
+                .Replace("{AIRAC}", _airac)
+                .Replace("{TILEKEY}", _tileServerKey);
+
+            string pattern = @"https://t\.skyvector\.com/.+/(30\d)/\d+/\{z\}/\{x\}/\{y\}\.jpg";
+            Match m = Regex.Match(UriTemplate, pattern);
+            int newZoomLevel = zoomLevel;
 
             if (m.Success && m.Groups.Count > 1)
             {
-                 var chartTypeString = m.Groups[1].Value;
-                 var chartTypeNumber = int.Parse(chartTypeString);
-                 newZoomLevel = 23 + 301 - chartTypeNumber - (2 * zoomLevel);
+                var chartTypeNumber = int.Parse(m.Groups[1].Value);
+                newZoomLevel = 23 + 301 - chartTypeNumber - (2 * zoomLevel);
             }
+
             return base.GetUri(column, row, newZoomLevel);
         }
     }

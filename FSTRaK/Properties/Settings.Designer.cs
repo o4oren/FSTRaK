@@ -226,5 +226,41 @@ namespace FSTRaK.Properties {
                 this["UpgradeRequired"] = value;
             }
         }
+
+        [global::System.Configuration.UserScopedSettingAttribute()]
+        [global::System.Diagnostics.DebuggerNonUserCodeAttribute()]
+        [global::System.Configuration.DefaultSettingValueAttribute("")]
+        public string FirBoundaryReleaseTag {
+            get {
+                return ((string)(this["FirBoundaryReleaseTag"]));
+            }
+            set {
+                this["FirBoundaryReleaseTag"] = value;
+            }
+        }
+
+        [global::System.Configuration.UserScopedSettingAttribute()]
+        [global::System.Diagnostics.DebuggerNonUserCodeAttribute()]
+        [global::System.Configuration.DefaultSettingValueAttribute("")]
+        public string TraconBoundaryReleaseTag {
+            get {
+                return ((string)(this["TraconBoundaryReleaseTag"]));
+            }
+            set {
+                this["TraconBoundaryReleaseTag"] = value;
+            }
+        }
+
+        [global::System.Configuration.UserScopedSettingAttribute()]
+        [global::System.Diagnostics.DebuggerNonUserCodeAttribute()]
+        [global::System.Configuration.DefaultSettingValueAttribute("")]
+        public string VatSpyLastUpdated {
+            get {
+                return ((string)(this["VatSpyLastUpdated"]));
+            }
+            set {
+                this["VatSpyLastUpdated"] = value;
+            }
+        }
     }
 }

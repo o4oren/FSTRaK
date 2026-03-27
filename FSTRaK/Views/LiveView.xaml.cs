@@ -33,8 +33,7 @@ namespace FSTRaK.Views
 
         private void OnLoaded(object sender, RoutedEventArgs re)
         {
-            var geometry = Application.Current.Resources[((LiveViewViewModel)DataContext).AirplaneIcon];
-            AirplaneGeometry.Data = (System.Windows.Media.Geometry)geometry;
+            SetAirplaneGeometry(((LiveViewViewModel)DataContext).AirplaneIcon);
 
             ((LiveViewViewModel)DataContext).PropertyChanged += OnViewModelPropertyChanged;
 
@@ -62,8 +61,7 @@ namespace FSTRaK.Views
             switch (e.PropertyName)
             {
                 case "AirplaneIcon":
-                    var geometry = Application.Current.Resources[((LiveViewViewModel)DataContext).AirplaneIcon];
-                    AirplaneGeometry.Data = (System.Windows.Media.Geometry)geometry;
+                    SetAirplaneGeometry(((LiveViewViewModel)DataContext).AirplaneIcon);
                     break;
                 case "MapProvider":
                     UpdateMapLayers();
@@ -78,6 +76,14 @@ namespace FSTRaK.Views
                 var vm = DataContext as LiveViewViewModel;
                 vm?.NotifyMapProviderChanged();
             }
+        }
+
+        private void SetAirplaneGeometry(string iconKey)
+        {
+            if (string.IsNullOrEmpty(iconKey)) return;
+            var geometry = Application.Current.Resources[iconKey] as System.Windows.Media.Geometry;
+            if (geometry != null)
+                AirplaneGeometry.Data = geometry;
         }
 
         private void UpdateMapLayers()
