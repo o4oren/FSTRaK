@@ -61,7 +61,9 @@ namespace FSTRaK.Utils
 
             var tileServersRaw = jsonObject.GetProperty("tileservers").ToString();
             var firstServer = tileServersRaw.Split(',')[0].Trim();
-            var key = firstServer.TrimEnd('/').Split('/')[^1];
+            // FIX: Avoid using C# 8.0 index-from-end operator for compatibility
+            var splitParts = firstServer.TrimEnd('/').Split('/');
+            var key = splitParts[splitParts.Length - 1];
 
             // Parse validto: "2026-04-16 09:01:00" (UTC)
             DateTime validTo = DateTime.UtcNow.AddDays(28); // safe fallback
