@@ -13,6 +13,7 @@ using Microsoft.Win32;
 using System.Diagnostics;
 using System.Runtime.InteropServices;
 using FSTRaK.BusinessLogic.SimconnectService;
+using FSTRaK.BusinessLogic.VatsimService;
 
 namespace FSTRaK
 {
@@ -104,6 +105,15 @@ namespace FSTRaK
             ResourceUtil.SetFont(FSTRaK.Properties.Settings.Default.FontName);
 
             Task.Run(() => { var _ = AirportResolver.Instance; });
+
+            _ = Task.Run(async () =>
+            {
+                var updateService = new DataFileUpdateService(() =>
+                {
+                    VatsimService.Instance.ReloadDataFiles();
+                });
+                await updateService.UpdateDataFilesAsync();
+            });
 
     }
   

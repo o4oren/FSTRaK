@@ -525,19 +525,35 @@ namespace FSTRaK.ViewModels
                         }
                     }
 
-                    // create approach circle locations
+                    // create approach area: use TRACON polygon if available, else fall back to 80km circle
                     if (isIncludeApp)
                     {
-                        int numberOfVertices = 80; // Adjust as needed for smoothness
-                        double radius = 80;
-                        airport.IsShowCircle = true;
-                        airport.CircleLocations = new LocationCollection();
-                        for (int i = 0; i < numberOfVertices; i++)
+                        var appController = airport.Controllers.First(c => c.facility == 5);
+                        var traconPrefix = appController.callsign.Split('_')[0];
+
+                        // The TRACON GeoJSON "suffix" field is a geographic qualifier (e.g. "N", "S"),
+                        // not the VATSIM facility type ("APP"/"DEP"). Look up by prefix only;
+                        // GetTraconPolygons will check suffix-specific entries when the GeoJSON has them.
+                        var traconPolygons = _vatsimService.GetTraconPolygons(traconPrefix, null);
+                        if (traconPolygons.Count > 0)
                         {
-                            double angle = (i * 2 * Math.PI) / numberOfVertices;
-                            double latitude = airport.Airport.Latitude + (radius / 111.32) * Math.Sin(angle); // 1 degree of latitude is approximately 111.32 km
-                            double longitude = airport.Airport.Longitude + (radius / (111.32 * Math.Cos(47.6097 * (Math.PI / 180)))) * Math.Cos(angle);
-                            airport.CircleLocations.Add(new Location(latitude, longitude));
+                            airport.TraconPolygons = traconPolygons;
+                            airport.IsShowCircle = false;
+                        }
+                        else
+                        {
+                            // Fallback: 80km circle
+                            int numberOfVertices = 80;
+                            double radius = 80;
+                            airport.IsShowCircle = true;
+                            airport.CircleLocations = new LocationCollection();
+                            for (int i = 0; i < numberOfVertices; i++)
+                            {
+                                double angle = (i * 2 * Math.PI) / numberOfVertices;
+                                double latitude = airport.Airport.Latitude + (radius / 111.32) * Math.Sin(angle);
+                                double longitude = airport.Airport.Longitude + (radius / (111.32 * Math.Cos(47.6097 * (Math.PI / 180)))) * Math.Cos(angle);
+                                airport.CircleLocations.Add(new Location(latitude, longitude));
+                            }
                         }
                     }
                 }
@@ -803,7 +819,8 @@ namespace FSTRaK.ViewModels
             public string IconResourse { get; set; }
             public string TooltipText { get; set; }
             public bool IsShowCircle { get; set; } = false;
-
+            public List<LocationCollection> TraconPolygons { get; set; }
+            public bool IsShowTraconPolygon => TraconPolygons != null && TraconPolygons.Count > 0;
 
             public Location Location
             {
