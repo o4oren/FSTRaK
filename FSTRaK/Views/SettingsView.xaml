@@ -81,6 +81,39 @@
                 </StackPanel.ToolTip>
             </StackPanel>
 
+            <StackPanel Orientation="Horizontal" Margin="10">
+                <Label Style="{DynamicResource FSTrAkLabel}" Width="250">Map Overlays</Label>
+            </StackPanel>
+
+            <StackPanel Orientation="Horizontal" Margin="10" ToolTipService.ShowDuration="5000">
+                <Label Style="{DynamicResource FSTrAkLabel}" Width="250">Chart Overlay</Label>
+                <ComboBox FontFamily="{DynamicResource CurrentFont}"
+                          Foreground="{DynamicResource TextColor}"
+                          FontSize="{DynamicResource ControlFontSize}"
+                          Width="200"
+                          ItemsSource="{Binding ChartOverlayProviders}"
+                          SelectedItem="{Binding SelectedChartOverlayProvider}"/>
+                <StackPanel.ToolTip>
+                    Select an aviation chart overlay (FAA, DFS, Israel AIP) to display above the base map
+                </StackPanel.ToolTip>
+            </StackPanel>
+
+            <StackPanel Orientation="Horizontal" Margin="10" ToolTipService.ShowDuration="5000">
+                <Label Style="{DynamicResource FSTrAkLabel}" Width="250">OpenAIP Overlay</Label>
+                <CheckBox Style="{DynamicResource SettingsCheckbox}" FontFamily="{DynamicResource CurrentFont}" FontSize="{DynamicResource ListFontSize}" VerticalAlignment="Center" IsChecked="{Binding IsOpenAipEnabled, Mode=TwoWay}"/>
+                <StackPanel.ToolTip>
+                    Enable OpenAIP airspace and aeronautical data overlay
+                </StackPanel.ToolTip>
+            </StackPanel>
+
+            <StackPanel Orientation="Horizontal" Margin="10" Visibility="{Binding IsShowOpenAipApiKeyField, Converter={StaticResource BoolToVis}}" ToolTipService.ShowDuration="5000">
+                <Label Style="{DynamicResource FSTrAkLabel}" Width="250">OpenAIP API Key</Label>
+                <TextBox FontFamily="{DynamicResource CurrentFont}" Foreground="{DynamicResource TextColor}" Background="{DynamicResource ControlBackgroundColorBrush}" FontSize="{DynamicResource ListFontSize}" Text="{Binding OpenAipApiKey}" TextWrapping="Wrap" Height="100" Width="200"/>
+                <StackPanel.ToolTip>
+                    OpenAIP requires a free API key. Register at https://www.openaip.net
+                </StackPanel.ToolTip>
+            </StackPanel>
+
             <StackPanel Orientation="Horizontal" Margin="10" ToolTipService.ShowDuration="5000">
                 <Label Style="{DynamicResource FSTrAkLabel}" Width="250">Units</Label>
                 <ComboBox FontFamily="{DynamicResource CurrentFont}" Foreground="{DynamicResource TextColor}" FontSize="{DynamicResource ControlFontSize}" Width="200"

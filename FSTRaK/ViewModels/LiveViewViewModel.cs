@@ -316,10 +316,14 @@ namespace FSTRaK.ViewModels
         {
             get
             {
-                var provider = MapProvider;
-                if (provider is IOverlayMapTileLayer)
-                    return provider.Description + " | Base map: © [OpenStreetMap contributors](http://www.openstreetmap.org/copyright)";
-                return provider?.Description;
+                var parts = new System.Collections.Generic.List<string>();
+                var baseProvider = MapProviderResolver.GetMapProvider();
+                if (baseProvider?.Description != null) parts.Add(baseProvider.Description);
+                if (Properties.Settings.Default.IsOpenAipEnabled)
+                    parts.Add("© [OpenAIP](https://www.openaip.net)");
+                var chartProvider = MapProviderResolver.GetChartOverlayProvider();
+                if (chartProvider?.Description != null) parts.Add(chartProvider.Description);
+                return string.Join(" | ", parts);
             }
         }
 

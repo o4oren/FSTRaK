@@ -262,5 +262,41 @@ namespace FSTRaK.Properties {
                 this["VatSpyLastUpdated"] = value;
             }
         }
+
+        [global::System.Configuration.UserScopedSettingAttribute()]
+        [global::System.Diagnostics.DebuggerNonUserCodeAttribute()]
+        [global::System.Configuration.DefaultSettingValueAttribute("None")]
+        public string ChartOverlayProvider {
+            get {
+                return ((string)(this["ChartOverlayProvider"]));
+            }
+            set {
+                this["ChartOverlayProvider"] = value;
+            }
+        }
+
+        [global::System.Configuration.UserScopedSettingAttribute()]
+        [global::System.Diagnostics.DebuggerNonUserCodeAttribute()]
+        [global::System.Configuration.DefaultSettingValueAttribute("False")]
+        public bool IsOpenAipEnabled {
+            get {
+                return ((bool)(this["IsOpenAipEnabled"]));
+            }
+            set {
+                this["IsOpenAipEnabled"] = value;
+            }
+        }
+
+        [global::System.Configuration.UserScopedSettingAttribute()]
+        [global::System.Diagnostics.DebuggerNonUserCodeAttribute()]
+        [global::System.Configuration.DefaultSettingValueAttribute("")]
+        public string OpenAipApiKey {
+            get {
+                return ((string)(this["OpenAipApiKey"]));
+            }
+            set {
+                this["OpenAipApiKey"] = value;
+            }
+        }
     }
 }

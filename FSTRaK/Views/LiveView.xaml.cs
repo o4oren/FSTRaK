@@ -23,7 +23,8 @@ namespace FSTRaK.Views
     /// </summary>
     public partial class LiveView : System.Windows.Controls.UserControl
     {
-        private MapTileLayerBase _currentOverlayLayer;
+        private MapTileLayerBase _currentOpenAipLayer;
+        private MapTileLayerBase _currentChartLayer;
 
         public LiveView()
         {
@@ -35,10 +36,11 @@ namespace FSTRaK.Views
         {
             SetAirplaneGeometry(((LiveViewViewModel)DataContext).AirplaneIcon);
 
-            ((LiveViewViewModel)DataContext).PropertyChanged += OnViewModelPropertyChanged;
-
             Properties.Settings.Default.PropertyChanged += OnSettingsPropertyChanged;
             UpdateMapLayers();
+            ((LiveViewViewModel)DataContext).NotifyMapProviderChanged();
+
+            ((LiveViewViewModel)DataContext).PropertyChanged += OnViewModelPropertyChanged;
         }
 
         private void OnUnLoaded(object sender, RoutedEventArgs e)
@@ -47,10 +49,15 @@ namespace FSTRaK.Views
                 vm.PropertyChanged -= OnViewModelPropertyChanged;
 
             Properties.Settings.Default.PropertyChanged -= OnSettingsPropertyChanged;
-            if (_currentOverlayLayer != null)
+            if (_currentOpenAipLayer != null)
             {
-                xMap.Children.Remove(_currentOverlayLayer);
-                _currentOverlayLayer = null;
+                xMap.Children.Remove(_currentOpenAipLayer);
+                _currentOpenAipLayer = null;
+            }
+            if (_currentChartLayer != null)
+            {
+                xMap.Children.Remove(_currentChartLayer);
+                _currentChartLayer = null;
             }
         }
 
@@ -71,7 +78,9 @@ namespace FSTRaK.Views
 
         private void OnSettingsPropertyChanged(object sender, PropertyChangedEventArgs e)
         {
-            if (e.PropertyName == "MapTileProvider")
+            if (e.PropertyName == "MapTileProvider" ||
+                e.PropertyName == "ChartOverlayProvider" ||
+                e.PropertyName == "IsOpenAipEnabled")
             {
                 var vm = DataContext as LiveViewViewModel;
                 vm?.NotifyMapProviderChanged();
@@ -88,28 +97,7 @@ namespace FSTRaK.Views
 
         private void UpdateMapLayers()
         {
-            var vm = DataContext as LiveViewViewModel;
-            var provider = vm?.MapProvider;
-            if (provider == null) return;
-
-            if (_currentOverlayLayer != null)
-            {
-                xMap.Children.Remove(_currentOverlayLayer);
-                _currentOverlayLayer = null;
-            }
-
-            if (provider is IOverlayMapTileLayer)
-            {
-                var osmBase = Application.Current.Resources["OpenStreetMap"] as MapTileLayerBase;
-                xMap.MapLayer = osmBase;
-                var baseIndex = xMap.Children.IndexOf(osmBase);
-                xMap.Children.Insert(baseIndex + 1, provider);
-                _currentOverlayLayer = provider;
-            }
-            else
-            {
-                xMap.MapLayer = provider;
-            }
+            MapLayerHelper.UpdateMapLayers(xMap, ref _currentOpenAipLayer, ref _currentChartLayer);
         }
 
         private void Hyperlink_RequestNavigate(object sender, RequestNavigateEventArgs e)

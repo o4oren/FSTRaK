@@ -170,13 +170,13 @@
         x:Shared="false"/>
 
 
-    <!-- map:MapTileLayer
+    <utils:OpenAipMapTileLayer
         x:Key="OpenAIP"
-        TileSource="https://api.tiles.openaip.net/api/data/openaip/{z}/{x}/{y}.png?apiKey=[]"
+        TileSource="https://api.tiles.openaip.net/api/data/openaip/{z}/{x}/{y}.png?apiKey={ApiKey}"
         SourceName="OpenAIP"
         Description="© [OpenAIP](https://www.openaip.net)"
         UpdateWhileViewportChanging="true"
-        x:Shared="false"/ -->
+        x:Shared="false"/>
 
     <utils:MBTilesMapTileLayer
         x:Key="AIP Israel CVFR"
