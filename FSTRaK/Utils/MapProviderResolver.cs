@@ -14,5 +14,18 @@ namespace FSTRaK.Utils
 
             return Application.Current.Resources["OpenStreetMap"] as MapTileLayerBase;
         }
+
+        public static MapTileLayerBase GetChartOverlayProvider()
+        {
+            var key = Properties.Settings.Default.ChartOverlayProvider;
+            if (string.IsNullOrEmpty(key) || key == "None") return null;
+            return Application.Current.Resources[key] as MapTileLayerBase;
+        }
+
+        public static MapTileLayerBase GetOpenAipLayer()
+        {
+            if (!Properties.Settings.Default.IsOpenAipEnabled) return null;
+            return Application.Current.Resources["OpenAIP"] as MapTileLayerBase;
+        }
     }
 }

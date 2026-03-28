@@ -16,6 +16,8 @@ namespace FSTRaK.ViewModels
     internal class SettingsViewModel : BaseViewModel
     {
         public ObservableCollection<string> MapProviders { get; set; }
+        public ObservableCollection<string> ChartOverlayProviders { get; set; }
+
         private string _selectedMapProvider = "OpenStreetMap";
         public string SelectedMapProvider
         {
@@ -99,6 +101,58 @@ namespace FSTRaK.ViewModels
             private set
             {
                 _isShowMapTilerApiKeyField = value;
+                OnPropertyChanged();
+            }
+        }
+
+        private string _selectedChartOverlayProvider = "None";
+        public string SelectedChartOverlayProvider
+        {
+            get => _selectedChartOverlayProvider;
+            set
+            {
+                if (value != null && value != _selectedChartOverlayProvider)
+                {
+                    _selectedChartOverlayProvider = value;
+                    Properties.Settings.Default.ChartOverlayProvider = _selectedChartOverlayProvider;
+                }
+                OnPropertyChanged();
+            }
+        }
+
+        private bool _isOpenAipEnabled;
+        public bool IsOpenAipEnabled
+        {
+            get => _isOpenAipEnabled;
+            set
+            {
+                _isOpenAipEnabled = value;
+                Properties.Settings.Default.IsOpenAipEnabled = _isOpenAipEnabled;
+                IsShowOpenAipApiKeyField = _isOpenAipEnabled;
+                OnPropertyChanged();
+            }
+        }
+
+        private string _openAipApiKey = "";
+        public string OpenAipApiKey
+        {
+            get => _openAipApiKey;
+            set
+            {
+                _openAipApiKey = value;
+                Properties.Settings.Default.OpenAipApiKey = _openAipApiKey;
+                OpenAipMapTileLayer.ApiKey = _openAipApiKey;
+                OnPropertyChanged();
+            }
+        }
+
+        private bool _isShowOpenAipApiKeyField = false;
+        public bool IsShowOpenAipApiKeyField
+        {
+            get => _isShowOpenAipApiKeyField;
+            private set
+            {
+                _isShowOpenAipApiKeyField = value;
                 OnPropertyChanged();
             }
         }
@@ -248,17 +302,27 @@ namespace FSTRaK.ViewModels
             {
                 Source = new System.Uri("pack://application:,,,/Resources/MapProvidersDictionary.xaml", uriKind: System.UriKind.Absolute)
             };
-            var layers = new ObservableCollection<string>();
+            var layers = new System.Collections.Generic.List<string>();
+            var chartLayers = new System.Collections.Generic.List<string>();
 
             foreach (DictionaryEntry provider in mapProviders)
             {
-                if (provider.Value is MapTileLayerBase
-                    || provider.Value is WmsImageLayer)
+                if (provider.Value is IOverlayMapTileLayer)
+                {
+                    chartLayers.Add(provider.Key.ToString());
+                }
+                else if (provider.Value is OpenAipMapTileLayer)
+                {
+                    // OpenAIP is handled separately — exclude from both dropdowns
+                }
+                else if (provider.Value is MapTileLayerBase || provider.Value is WmsImageLayer)
                 {
                     layers.Add(provider.Key.ToString());
                 }
             }
             MapProviders = new ObservableCollection<string>(layers.OrderBy(l => l));
+            ChartOverlayProviders = new ObservableCollection<string>(
+                new[] { "None" }.Concat(chartLayers.OrderBy(l => l)));
         }
 
         public void SettingsView_OnLoaded()
@@ -276,6 +340,10 @@ namespace FSTRaK.ViewModels
             Theme = Properties.Settings.Default.Theme;
 
             VatsimId = Properties.Settings.Default.VatsimId;
+
+            SelectedChartOverlayProvider = Properties.Settings.Default.ChartOverlayProvider;
+            IsOpenAipEnabled = Properties.Settings.Default.IsOpenAipEnabled;
+            OpenAipApiKey = Properties.Settings.Default.OpenAipApiKey;
         }
 
         public void SaveSettings()

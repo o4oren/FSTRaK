@@ -77,6 +77,7 @@ namespace FSTRaK.Views
 
             var maptillerApiKey = Properties.Settings.Default.MapTilerApiKey;
             MapTilerMapTileLayer.ApiKey = maptillerApiKey;
+            OpenAipMapTileLayer.ApiKey = Properties.Settings.Default.OpenAipApiKey;
 
             ImageLoader.HttpClient.DefaultRequestHeaders.Add("User-Agent", "FSTrAk - Flight Simulator logbook and tracker");
             Task.Run(() => TileImageLoader.Cache = new SQLiteCache(PathUtil.GetApplicationLocalDataPath()));
