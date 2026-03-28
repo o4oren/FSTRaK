@@ -508,14 +508,11 @@ namespace FSTRaK.BusinessLogic.VatsimService
                 if (firBoundary.Count == 0)
                     throw new Exception("No FIR was found for " + controller.callsign);
 
-                string postfix = controller.callsign.Split('_').LastOrDefault();
-                string oceanic = postfix is "FSS" ? "1" : "0";
-
                 GeoJsonFeature fir;
                 if (!firBoundary[0].Boundary.Equals(string.Empty))
-                    fir = FirBoundaries.Features.FirstOrDefault(feature => feature.Properties.id.Equals(firBoundary[0].Boundary) && feature.Properties.oceanic.Equals(oceanic));
+                    fir = FirBoundaries.Features.FirstOrDefault(feature => feature.Properties.id.Equals(firBoundary[0].Boundary));
                 else
-                    fir = FirBoundaries.Features.FirstOrDefault(feature => feature.Properties.id.Equals(firBoundary[0].ICAO) && feature.Properties.oceanic.Equals(oceanic));
+                    fir = FirBoundaries.Features.FirstOrDefault(feature => feature.Properties.id.Equals(firBoundary[0].ICAO));
 
                 if (fir != null)
                 {
