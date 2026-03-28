@@ -36,10 +36,11 @@ namespace FSTRaK.Views
         {
             SetAirplaneGeometry(((LiveViewViewModel)DataContext).AirplaneIcon);
 
-            ((LiveViewViewModel)DataContext).PropertyChanged += OnViewModelPropertyChanged;
-
             Properties.Settings.Default.PropertyChanged += OnSettingsPropertyChanged;
             UpdateMapLayers();
+            ((LiveViewViewModel)DataContext).NotifyMapProviderChanged();
+
+            ((LiveViewViewModel)DataContext).PropertyChanged += OnViewModelPropertyChanged;
         }
 
         private void OnUnLoaded(object sender, RoutedEventArgs e)
@@ -97,8 +98,6 @@ namespace FSTRaK.Views
         private void UpdateMapLayers()
         {
             MapLayerHelper.UpdateMapLayers(xMap, ref _currentOpenAipLayer, ref _currentChartLayer);
-            var vm = DataContext as LiveViewViewModel;
-            vm?.NotifyMapProviderChanged();
         }
 
         private void Hyperlink_RequestNavigate(object sender, RequestNavigateEventArgs e)

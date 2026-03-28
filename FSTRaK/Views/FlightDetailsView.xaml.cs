@@ -32,8 +32,6 @@ namespace FSTRaK.Views
 
         private void OnLoaded(object s, RoutedEventArgs e)
         {
-            ((FlightDetailsViewModel)DataContext).PropertyChanged += DataModel_OnPropertyChange;
-
             var graphColor = ColorUtil.GetDrawingColorFromResource("BorderLightColor");
 
             AltSpeedChart.Plot.XAxis.DateTimeFormat(true);
@@ -63,6 +61,9 @@ namespace FSTRaK.Views
 
             Properties.Settings.Default.PropertyChanged += OnSettingsPropertyChanged;
             UpdateMapLayers();
+            ((FlightDetailsViewModel)DataContext).NotifyMapProviderChanged();
+
+            ((FlightDetailsViewModel)DataContext).PropertyChanged += DataModel_OnPropertyChange;
         }
 
         private void OnUnLoaded(object s, RoutedEventArgs e)
@@ -96,8 +97,6 @@ namespace FSTRaK.Views
         private void UpdateMapLayers()
         {
             MapLayerHelper.UpdateMapLayers(LogbookMap, ref _currentOpenAipLayer, ref _currentChartLayer);
-            var vm = DataContext as FlightDetailsViewModel;
-            vm?.NotifyMapProviderChanged();
         }
 
         private void DataModel_OnPropertyChange(object sender, PropertyChangedEventArgs e)
