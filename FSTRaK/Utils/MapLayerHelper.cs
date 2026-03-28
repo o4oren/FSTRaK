@@ -26,23 +26,24 @@ namespace FSTRaK.Utils
             if (baseLayer == null) return;
             map.MapLayer = baseLayer;
 
+            // Determine insertion point: just after the base layer
+            var baseIndex = map.Children.IndexOf(baseLayer);
+            var insertAt = baseIndex >= 0 ? baseIndex + 1 : 0;
+
             // Insert OpenAIP above base
             var openAipLayer = MapProviderResolver.GetOpenAipLayer();
             if (openAipLayer != null)
             {
-                var baseIndex = map.Children.IndexOf(baseLayer);
-                if (baseIndex >= 0)
-                    map.Children.Insert(baseIndex + 1, openAipLayer);
-                else
-                    map.Children.Add(openAipLayer);
+                map.Children.Insert(insertAt, openAipLayer);
                 currentOpenAipLayer = openAipLayer;
+                insertAt++;
             }
 
-            // Insert chart overlay as topmost layer
+            // Insert chart overlay above OpenAIP (or above base)
             var chartLayer = MapProviderResolver.GetChartOverlayProvider();
             if (chartLayer != null)
             {
-                map.Children.Add(chartLayer);
+                map.Children.Insert(insertAt, chartLayer);
                 currentChartLayer = chartLayer;
             }
         }
