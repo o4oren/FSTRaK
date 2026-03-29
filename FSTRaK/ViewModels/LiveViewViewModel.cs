@@ -459,11 +459,17 @@ namespace FSTRaK.ViewModels
             EnableNetworkItemCommand = new RelayCommand(o =>
             {
                 if (ActiveNetwork == NetworkType.None) return;
-                if (!_isShowPilots) ClearIvaoAircraft();
-                if (!_isShowAtc) ClearIvaoAtc();
-                if (!IsShowVatsimAircraft) VatsimAircraftList.Clear();
-                if (!IsShowVatsimAirports) VatsimControlledAirports.Clear();
-                if (!IsShowVatsimFirs) { VatsimControlledFirs.Clear(); VatsimControlledUirs.Clear(); }
+                if (ActiveNetwork == NetworkType.Ivao)
+                {
+                    if (!_isShowPilots) ClearIvaoAircraft();
+                    if (!_isShowAtc) ClearIvaoAtc();
+                }
+                else if (ActiveNetwork == NetworkType.Vatsim)
+                {
+                    if (!IsShowVatsimAircraft) VatsimAircraftList.Clear();
+                    if (!IsShowVatsimAirports) VatsimControlledAirports.Clear();
+                    if (!IsShowVatsimFirs) { VatsimControlledFirs.Clear(); VatsimControlledUirs.Clear(); }
+                }
                 if (IsShowPilots || IsShowAtc)
                     StartActiveNetwork();
             });
@@ -534,12 +540,13 @@ namespace FSTRaK.ViewModels
 
         private async void ProcessIvaoPilots()
         {
-            if (_ivaoService.IvaoData?.pilots == null) return;
-            var newList = new System.Collections.Generic.List<IvaoAircraft>();
+            var data = _ivaoService.IvaoData;
+            if (data?.pilots == null) return;
             var myId = Properties.Settings.Default.IvaoId;
+            var newList = new System.Collections.Generic.List<IvaoAircraft>();
             await Task.Run(() =>
             {
-                foreach (var pilot in _ivaoService.IvaoData.pilots)
+                foreach (var pilot in data.pilots)
                 {
                     if (!string.IsNullOrEmpty(myId) && pilot.userId.ToString() == myId) continue;
                     if (pilot.lastTrack == null) continue;
@@ -551,11 +558,12 @@ namespace FSTRaK.ViewModels
 
         private async void ProcessIvaoAtc()
         {
-            if (_ivaoService.IvaoData?.atcEntries == null) return;
+            var data = _ivaoService.IvaoData;
+            if (data?.atcEntries == null) return;
             var newList = new System.Collections.Generic.List<IvaoAtcItem>();
             await Task.Run(() =>
             {
-                foreach (var atc in _ivaoService.IvaoData.atcEntries)
+                foreach (var atc in data.atcEntries)
                 {
                     if (atc.atcPosition?.airport == null && atc.subcenter == null) continue;
                     newList.Add(new IvaoAtcItem(atc));
