@@ -118,6 +118,8 @@ namespace FSTRaK.ViewModels
                 {
                     _activeNetwork = value;
                     OnPropertyChanged();
+                    OnPropertyChanged(nameof(IsShowIvaoPilots));
+                    OnPropertyChanged(nameof(IsShowIvaoAtc));
                 }
             }
         }
@@ -136,6 +138,7 @@ namespace FSTRaK.ViewModels
                         IsShowVatsimAircraft = value;
                     }
                     OnPropertyChanged();
+                    OnPropertyChanged(nameof(IsShowIvaoPilots));
                 }
             }
         }
@@ -155,9 +158,13 @@ namespace FSTRaK.ViewModels
                         IsShowVatsimFirs = value;
                     }
                     OnPropertyChanged();
+                    OnPropertyChanged(nameof(IsShowIvaoAtc));
                 }
             }
         }
+
+        public bool IsShowIvaoPilots => _activeNetwork == NetworkType.Ivao && _isShowPilots;
+        public bool IsShowIvaoAtc => _activeNetwork == NetworkType.Ivao && _isShowAtc;
 
         private string _airplaneIcon = "";
 

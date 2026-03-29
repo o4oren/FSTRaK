@@ -229,11 +229,11 @@
             </map:MapItemsControl>
 
             <!-- IVAO Aircraft -->
-            <map:MapItemsControl ItemsSource="{Binding IvaoAircraftList}" Visibility="{Binding IsShowPilots, Converter={StaticResource BoolToVis}}">
+            <map:MapItemsControl ItemsSource="{Binding IvaoAircraftList}" Visibility="{Binding IsShowIvaoPilots, Converter={StaticResource BoolToVis}}">
                 <map:MapItemsControl.ItemContainerStyle>
                     <Style TargetType="map:MapItem">
                         <Setter Property="Location" Value="{Binding Location}"/>
-                        <Setter Property="Margin" Value="-16 -16 0 0"/>
+                        <Setter Property="Margin" Value="-12 -12 0 0"/>
                     </Style>
                 </map:MapItemsControl.ItemContainerStyle>
                 <map:MapItemsControl.ItemTemplate>
@@ -267,7 +267,7 @@
             </map:MapItemsControl>
 
             <!-- IVAO ATC polygons -->
-            <map:MapItemsControl ItemsSource="{Binding IvaoAtcList}" Visibility="{Binding IsShowAtc, Converter={StaticResource BoolToVis}}">
+            <map:MapItemsControl ItemsSource="{Binding IvaoAtcList}" Visibility="{Binding IsShowIvaoAtc, Converter={StaticResource BoolToVis}}">
                 <map:MapItemsControl.ItemTemplate>
                     <DataTemplate>
                         <map:MapPanel>
@@ -282,7 +282,7 @@
             </map:MapItemsControl>
 
             <!-- IVAO ATC icons -->
-            <map:MapItemsControl ItemsSource="{Binding IvaoAtcList}" Visibility="{Binding IsShowAtc, Converter={StaticResource BoolToVis}}">
+            <map:MapItemsControl ItemsSource="{Binding IvaoAtcList}" Visibility="{Binding IsShowIvaoAtc, Converter={StaticResource BoolToVis}}">
                 <map:MapItemsControl.ItemContainerStyle>
                     <Style TargetType="map:MapItem">
                         <Setter Property="Location" Value="{Binding Location}"/>
@@ -353,7 +353,7 @@
             <!-- Network selector -->
             <StackPanel Orientation="Horizontal" HorizontalAlignment="Right" Margin="0,4,0,0">
                 <ToggleButton Style="{DynamicResource MapToggleButton}"
-                              IsChecked="{Binding ActiveNetwork, Converter={StaticResource EnumToBoolConverter}, ConverterParameter=Vatsim}">
+                              IsChecked="{Binding ActiveNetwork, Converter={StaticResource EnumToBoolConverter}, ConverterParameter=Vatsim, Mode=OneWay}">
                     <b:Interaction.Triggers>
                         <b:EventTrigger EventName="Click">
                             <b:InvokeCommandAction Command="{Binding SelectNetworkCommand}"
@@ -363,7 +363,7 @@
                     <TextBlock Foreground="{DynamicResource SuperBrightTextColor}" FontSize="11" FontWeight="Bold">VATSIM</TextBlock>
                 </ToggleButton>
                 <ToggleButton Style="{DynamicResource MapToggleButton}"
-                              IsChecked="{Binding ActiveNetwork, Converter={StaticResource EnumToBoolConverter}, ConverterParameter=Ivao}">
+                              IsChecked="{Binding ActiveNetwork, Converter={StaticResource EnumToBoolConverter}, ConverterParameter=Ivao, Mode=OneWay}">
                     <b:Interaction.Triggers>
                         <b:EventTrigger EventName="Click">
                             <b:InvokeCommandAction Command="{Binding SelectNetworkCommand}"
