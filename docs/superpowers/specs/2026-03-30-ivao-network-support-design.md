@@ -162,15 +162,63 @@ The flightsim.to page could not be fetched automatically (403). The owner should
 2. **Map providers** — the listing likely still references outdated map options; update to reflect current providers (FAA ArcGIS, OpenAIP, SkyVector VFR/IFR, OpenTopoMap, Bing, MapTiler, AIP Israel)
 3. **MSFS 2024** — confirm compatibility with both MSFS 2020 and MSFS 2024
 
-Suggested description excerpt (to be merged with existing listing copy):
+Full updated listing copy (replace existing flightsim.to description entirely):
 
-> FSTRaK now supports both **VATSIM and IVAO** live networks. Switch between networks directly on the live map to see pilots and ATC positions in real time. Supports VATSIM FIR/UIR/TRACON boundaries and IVAO ATC control polygons.
->
-> Map providers include FAA ArcGIS sectional and IFR charts, OpenAIP, SkyVector VFR/IFR, OpenTopoMap, Bing Maps, MapTiler, and AIP Israel MBTiles — switchable on the fly.
->
-> Compatible with **Microsoft Flight Simulator 2020 and 2024**.
+---
 
-> **Note to spec reviewer:** Paste the current flightsim.to description text into this spec so the full updated copy can be drafted before implementation is complete.
+**Description**
+
+FSTrAk is a modern flight tracker and logbook for MSFS 2020 and 2024.
+
+FSTrAk aims to be a no-frills, install-and-let-it-run experience — it requires no manual intervention. FSTrAk monitors your simulator silently, detects when a flight is started, tracks it on a map, and persists it to a local database when it is complete.
+
+---
+
+**Installation**
+
+Unzip the file and run the installer.
+
+---
+
+**Database**
+
+FSTrAk saves data as an SQLite database called FSTrAk.db in your %appdata% folder (usually C:\Users\[username]\AppData\Local\FSTRaK).
+You can back up this file. Although upgrading and uninstalling does not delete this folder, backing up the file periodically is recommended.
+
+---
+
+**Features**
+
+- Automatic silent start-up
+- Automatic flight tracking (hands-free experience)
+- Option (default) to save only complete flights — i.e. flight ended in parking state, with engines off and parking brake set, after having flown
+- Live flight tracking with a moving map
+- **VATSIM and IVAO live network support** — switch between networks to see pilots and ATC positions on the live map in real time
+- Multiple map providers:
+  - OpenStreetMap
+  - OpenTopoMap
+  - FAA ArcGIS sectional and IFR enroute charts
+  - SkyVector VFR and IFR maps
+  - OpenAIP
+  - Azure Maps
+  - TopPlus Open (BKG)
+  - MapTiler
+  - AIP Israel
+- Flight analysis and scoring
+- Statistics (most used aircraft, most used airlines, average and max payload, distance, etc.)
+- Dark mode
+
+---
+
+**Roadmap**
+
+- Simbrief integration (fetch passengers, planned vs actual fuel and time, planned vs actual route)
+- More statistics
+- Display bearing/distance to a designated point on the map
+
+---
+
+FSTrAk uses icons from Airport icons created by Freepik - Flaticon
 
 ---
 
