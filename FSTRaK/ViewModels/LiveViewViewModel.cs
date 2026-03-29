@@ -478,7 +478,13 @@ namespace FSTRaK.ViewModels
                     if (!IsShowVatsimFirs) { VatsimControlledFirs.Clear(); VatsimControlledUirs.Clear(); }
                 }
                 if (IsShowPilots || IsShowAtc)
-                    StartActiveNetwork();
+                {
+                    bool alreadyStarted = _activeNetwork == NetworkType.Vatsim
+                        ? _vatsimService.Started
+                        : _ivaoService.Started;
+                    if (!alreadyStarted)
+                        StartActiveNetwork();
+                }
             });
 
             DisableNetworkItemCommand = new RelayCommand(o =>
@@ -549,7 +555,7 @@ namespace FSTRaK.ViewModels
         {
             var data = _ivaoService.IvaoData;
             if (data?.pilots == null) return;
-            var myId = Properties.Settings.Default.IvaoId;
+            var myId = Properties.Settings.Default.IvaoId?.Trim();
             var newList = new System.Collections.Generic.List<IvaoAircraft>();
             await Task.Run(() =>
             {
