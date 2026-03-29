@@ -1,4 +1,5 @@
 using System;
+using System.Collections.Generic;
 using System.Net.Http;
 using System.Threading.Tasks;
 using System.Timers;
@@ -16,7 +17,8 @@ namespace FSTRaK.BusinessLogic.IvaoService
         private const string AtcUrl = "https://api.ivao.aero/v2/tracker/now/atc/summary";
         private const int ConnectionInterval = 60 * 1000;
 
-        private System.Timers.Timer _connectionTimer;
+        private static readonly HttpClient _httpClient = new HttpClient();
+        private readonly System.Timers.Timer _connectionTimer;
 
         public bool Started { get; private set; }
 
@@ -75,20 +77,16 @@ namespace FSTRaK.BusinessLogic.IvaoService
             try
             {
                 Log.Debug("Fetching IVAO data");
-                using var client = new HttpClient();
-
-                var pilotsTask = client.GetStringAsync(PilotsUrl);
-                var atcTask = client.GetStringAsync(AtcUrl);
+                var pilotsTask = _httpClient.GetStringAsync(PilotsUrl);
+                var atcTask = _httpClient.GetStringAsync(AtcUrl);
                 await Task.WhenAll(pilotsTask, atcTask);
+
+                var pilots = JsonConvert.DeserializeObject<List<IvaoPilot>>(pilotsTask.Result);
+                var atcEntries = JsonConvert.DeserializeObject<List<IvaoAtcEntry>>(atcTask.Result);
 
                 Application.Current.Dispatcher.Invoke(() =>
                 {
-                    var data = new IvaoData
-                    {
-                        pilots = JsonConvert.DeserializeObject<System.Collections.Generic.List<IvaoPilot>>(pilotsTask.Result),
-                        atcEntries = JsonConvert.DeserializeObject<System.Collections.Generic.List<IvaoAtcEntry>>(atcTask.Result)
-                    };
-                    IvaoData = data;
+                    IvaoData = new IvaoData { pilots = pilots, atcEntries = atcEntries };
                 });
             }
             catch (Exception ex)
