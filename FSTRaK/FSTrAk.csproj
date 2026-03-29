@@ -140,6 +140,7 @@
     <Compile Include="BusinessLogic\IvaoService\IvaoModel\IvaoAtcPositionInfo.cs" />
     <Compile Include="BusinessLogic\IvaoService\IvaoModel\IvaoSubcenter.cs" />
     <Compile Include="BusinessLogic\IvaoService\IvaoModel\IvaoData.cs" />
+    <Compile Include="BusinessLogic\IvaoService\IvaoService.cs" />
     <Compile Include="DataTypes\Consts.cs" />
     <Compile Include="DataTypes\LandingRate.cs" />
     <Compile Include="DataTypes\FlightOutcome.cs" />
