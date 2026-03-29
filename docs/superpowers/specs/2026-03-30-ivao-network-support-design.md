@@ -127,6 +127,53 @@ Add `IvaoId` string setting (default empty string).
 
 ---
 
+## Documentation Updates
+
+### README.md
+
+Update the Features section to reflect current state and IVAO addition:
+
+```markdown
+## Features
+* Automatic silent start-up.
+* Automatic flight tracking (hands-free experience).
+* Option (default) to save only complete flights - i.e. flight ended in parking state, with engines off and parking brake set, after having flown.
+* Multiple map providers including FAA ArcGIS charts, OpenAIP, OpenTopoMap, Bing, and more.
+* Flight analysis and scoring.
+* Live flight tracking with a moving map.
+* VATSIM and IVAO live network support — view pilots and ATC on the live map.
+```
+
+Update the Roadmap to move VATSIM/IVAO off the todo list:
+
+```markdown
+## Roadmap
+- [ ] Simbrief integration (fetch passengers, planned vs actual fuel and time, planned vs actual route).
+- [ ] Statistics (on time, passengers flown, best/worst landings, average fps, average score).
+- [x] VATSIM integration (display live traffic and ATC on the map).
+- [x] IVAO integration (display live traffic and ATC on the map).
+```
+
+### flightsim.to listing
+
+The flightsim.to page could not be fetched automatically (403). The owner should update the listing description to reflect:
+
+1. **Multi-network support** — mention both VATSIM and IVAO by name
+2. **Map providers** — the listing likely still references outdated map options; update to reflect current providers (FAA ArcGIS, OpenAIP, SkyVector VFR/IFR, OpenTopoMap, Bing, MapTiler, AIP Israel)
+3. **MSFS 2024** — confirm compatibility with both MSFS 2020 and MSFS 2024
+
+Suggested description excerpt (to be merged with existing listing copy):
+
+> FSTRaK now supports both **VATSIM and IVAO** live networks. Switch between networks directly on the live map to see pilots and ATC positions in real time. Supports VATSIM FIR/UIR/TRACON boundaries and IVAO ATC control polygons.
+>
+> Map providers include FAA ArcGIS sectional and IFR charts, OpenAIP, SkyVector VFR/IFR, OpenTopoMap, Bing Maps, MapTiler, and AIP Israel MBTiles — switchable on the fly.
+>
+> Compatible with **Microsoft Flight Simulator 2020 and 2024**.
+
+> **Note to spec reviewer:** Paste the current flightsim.to description text into this spec so the full updated copy can be drafted before implementation is complete.
+
+---
+
 ## Constraints
 
 - No automated tests possible in this environment (Mac, WPF/.NET Framework project)
