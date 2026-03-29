@@ -8,6 +8,8 @@ using FSTRaK.BusinessLogic.FlightManager;
 using FSTRaK.BusinessLogic.FlightManager.State;
 using FSTRaK.BusinessLogic.VatsimService;
 using FSTRaK.BusinessLogic.VatsimService.VatsimModel;
+using FSTRaK.BusinessLogic.IvaoService;
+using FSTRaK.BusinessLogic.IvaoService.IvaoModel;
 using FSTRaK.Utils;
 using System.Collections.Generic;
 using System.Text;
@@ -21,12 +23,14 @@ namespace FSTRaK.ViewModels
     {
         private readonly FlightManager _flightManager = FlightManager.Instance;
         private readonly VatsimService _vatsimService = VatsimService.Instance;
+        private readonly IvaoService _ivaoService = IvaoService.Instance;
 
 
         public RelayCommand CenterOnAirplaneCommand { get; private set; }
         public RelayCommand StopCenterOnAirplaneCommand { get; private set; }
-        public RelayCommand EnableVatsimItemCommand { get; private set; }
-        public RelayCommand DisableVatsimItemCommand { get; private set; }
+        public RelayCommand SelectNetworkCommand { get; private set; }
+        public RelayCommand EnableNetworkItemCommand { get; private set; }
+        public RelayCommand DisableNetworkItemCommand { get; private set; }
 
 
         public Flight ActiveFlight
@@ -99,6 +103,57 @@ namespace FSTRaK.ViewModels
                 if (value != _isShowVatsimFirs)
                 {
                     _isShowVatsimFirs = value;
+                    OnPropertyChanged();
+                }
+            }
+        }
+
+        private NetworkType _activeNetwork = NetworkType.None;
+        public NetworkType ActiveNetwork
+        {
+            get => _activeNetwork;
+            set
+            {
+                if (value != _activeNetwork)
+                {
+                    _activeNetwork = value;
+                    OnPropertyChanged();
+                }
+            }
+        }
+
+        private bool _isShowPilots;
+        public bool IsShowPilots
+        {
+            get => _isShowPilots;
+            set
+            {
+                if (value != _isShowPilots)
+                {
+                    _isShowPilots = value;
+                    if (_activeNetwork == NetworkType.Vatsim)
+                    {
+                        IsShowVatsimAircraft = value;
+                    }
+                    OnPropertyChanged();
+                }
+            }
+        }
+
+        private bool _isShowAtc;
+        public bool IsShowAtc
+        {
+            get => _isShowAtc;
+            set
+            {
+                if (value != _isShowAtc)
+                {
+                    _isShowAtc = value;
+                    if (_activeNetwork == NetworkType.Vatsim)
+                    {
+                        IsShowVatsimAirports = value;
+                        IsShowVatsimFirs = value;
+                    }
                     OnPropertyChanged();
                 }
             }
@@ -286,6 +341,34 @@ namespace FSTRaK.ViewModels
             }
         }
 
+        private BindingList<IvaoAircraft> _ivaoAircraftList = new();
+        public BindingList<IvaoAircraft> IvaoAircraftList
+        {
+            get => _ivaoAircraftList;
+            private set
+            {
+                if (value != _ivaoAircraftList)
+                {
+                    _ivaoAircraftList = value;
+                    OnPropertyChanged();
+                }
+            }
+        }
+
+        private BindingList<IvaoAtcItem> _ivaoAtcList = new();
+        public BindingList<IvaoAtcItem> IvaoAtcList
+        {
+            get => _ivaoAtcList;
+            private set
+            {
+                if (value != _ivaoAtcList)
+                {
+                    _ivaoAtcList = value;
+                    OnPropertyChanged();
+                }
+            }
+        }
+
 
         public ObservableCollection<Location> FlightPath { get; set; } = new();
 
@@ -347,31 +430,49 @@ namespace FSTRaK.ViewModels
         {
             _flightManager.PropertyChanged += FlightManagerOnPropertyChanged;
             _vatsimService.PropertyChanged += VatsimServiceOnPropertyChanged;
+            _ivaoService.PropertyChanged += IvaoServiceOnPropertyChanged;
 
             CenterOnAirplaneCommand = new RelayCommand(o => IsCenterOnAirplane = true);
             StopCenterOnAirplaneCommand = new RelayCommand(o => IsCenterOnAirplane = false);
-            EnableVatsimItemCommand = new RelayCommand(o =>
+            SelectNetworkCommand = new RelayCommand(o =>
             {
-                if (!IsShowVatsimAircraft)
-                    VatsimAircraftList.Clear();
-                if (!IsShowVatsimAirports)
-                    VatsimControlledAirports.Clear();
-                if (!IsShowVatsimFirs)
+                var network = (NetworkType)o;
+
+                if (network == ActiveNetwork)
                 {
-                    VatsimControlledFirs.Clear();
-                    VatsimControlledUirs.Clear();
+                    StopActiveNetwork();
+                    ActiveNetwork = NetworkType.None;
+                    IsShowPilots = false;
+                    IsShowAtc = false;
                 }
-                if (IsShowVatsimAircraft || IsShowVatsimAirports || IsShowVatsimFirs)
+                else
                 {
-                    _vatsimService.Start();
+                    StopActiveNetwork();
+                    ClearAllNetworkCollections();
+                    ActiveNetwork = network;
+                    IsShowPilots = false;
+                    IsShowAtc = false;
+                    StartActiveNetwork();
                 }
             });
-            DisableVatsimItemCommand = new RelayCommand(o =>
+
+            EnableNetworkItemCommand = new RelayCommand(o =>
             {
-                if (!(IsShowVatsimAircraft || IsShowVatsimAirports || _isShowVatsimFirs))
-                {
-                    _vatsimService.Stop();
-                }
+                if (ActiveNetwork == NetworkType.None) return;
+                if (!_isShowPilots) ClearIvaoAircraft();
+                if (!_isShowAtc) ClearIvaoAtc();
+                if (!IsShowVatsimAircraft) VatsimAircraftList.Clear();
+                if (!IsShowVatsimAirports) VatsimControlledAirports.Clear();
+                if (!IsShowVatsimFirs) { VatsimControlledFirs.Clear(); VatsimControlledUirs.Clear(); }
+                if (IsShowPilots || IsShowAtc)
+                    StartActiveNetwork();
+            });
+
+            DisableNetworkItemCommand = new RelayCommand(o =>
+            {
+                if (ActiveNetwork == NetworkType.None) return;
+                if (!IsShowPilots && !IsShowAtc)
+                    StopActiveNetwork();
             });
         }
 
@@ -412,6 +513,95 @@ namespace FSTRaK.ViewModels
                     break;
             }
         }
+
+        private void IvaoServiceOnPropertyChanged(object sender, PropertyChangedEventArgs e)
+        {
+            switch (e.PropertyName)
+            {
+                case nameof(IvaoService.IvaoData):
+                    if (IsShowPilots)
+                        ProcessIvaoPilots();
+                    else
+                        IvaoAircraftList.Clear();
+
+                    if (IsShowAtc)
+                        ProcessIvaoAtc();
+                    else
+                        IvaoAtcList.Clear();
+                    break;
+            }
+        }
+
+        private async void ProcessIvaoPilots()
+        {
+            if (_ivaoService.IvaoData?.pilots == null) return;
+            var newList = new System.Collections.Generic.List<IvaoAircraft>();
+            var myId = Properties.Settings.Default.IvaoId;
+            await Task.Run(() =>
+            {
+                foreach (var pilot in _ivaoService.IvaoData.pilots)
+                {
+                    if (!string.IsNullOrEmpty(myId) && pilot.userId.ToString() == myId) continue;
+                    if (pilot.lastTrack == null) continue;
+                    newList.Add(new IvaoAircraft(pilot));
+                }
+            });
+            IvaoAircraftList.ReplaceContent(newList);
+        }
+
+        private async void ProcessIvaoAtc()
+        {
+            if (_ivaoService.IvaoData?.atcEntries == null) return;
+            var newList = new System.Collections.Generic.List<IvaoAtcItem>();
+            await Task.Run(() =>
+            {
+                foreach (var atc in _ivaoService.IvaoData.atcEntries)
+                {
+                    if (atc.atcPosition?.airport == null && atc.subcenter == null) continue;
+                    newList.Add(new IvaoAtcItem(atc));
+                }
+            });
+            IvaoAtcList.ReplaceContent(newList);
+        }
+
+        private void StartActiveNetwork()
+        {
+            switch (ActiveNetwork)
+            {
+                case NetworkType.Vatsim:
+                    _vatsimService.Start();
+                    break;
+                case NetworkType.Ivao:
+                    _ivaoService.Start();
+                    break;
+            }
+        }
+
+        private void StopActiveNetwork()
+        {
+            switch (ActiveNetwork)
+            {
+                case NetworkType.Vatsim:
+                    _vatsimService.Stop();
+                    break;
+                case NetworkType.Ivao:
+                    _ivaoService.Stop();
+                    break;
+            }
+        }
+
+        private void ClearAllNetworkCollections()
+        {
+            VatsimAircraftList.Clear();
+            VatsimControlledAirports.Clear();
+            VatsimControlledFirs.Clear();
+            VatsimControlledUirs.Clear();
+            ClearIvaoAircraft();
+            ClearIvaoAtc();
+        }
+
+        private void ClearIvaoAircraft() => IvaoAircraftList.Clear();
+        private void ClearIvaoAtc() => IvaoAtcList.Clear();
 
         private async void ProcessVatsimAirports()
         {
@@ -923,6 +1113,70 @@ namespace FSTRaK.ViewModels
                     return CoordinatesUtil.CalculateCenter(FirLocations);
                 }
                 private set { }
+            }
+        }
+
+        internal class IvaoAircraft
+        {
+            public Location Location { get; set; }
+            public double Heading { get; set; }
+            public string Icon { get; set; }
+            public string Callsign { get; set; }
+            public string Departure { get; set; }
+            public string Destination { get; set; }
+            public string Aircraft { get; set; }
+            public int Altitude { get; set; }
+            public int Groundspeed { get; set; }
+
+            public IvaoAircraft(IvaoPilot pilot)
+            {
+                Location = new Location(pilot.lastTrack.latitude, pilot.lastTrack.longitude);
+                Heading = pilot.lastTrack.heading;
+                Callsign = pilot.callsign;
+                Altitude = pilot.lastTrack.altitude;
+                Groundspeed = pilot.lastTrack.groundSpeed;
+                Departure = pilot.flightPlan?.departureId;
+                Destination = pilot.flightPlan?.arrivalId;
+                Aircraft = pilot.flightPlan?.aircraftId;
+                Icon = AircraftResolver.GetAircraftIcon(pilot.flightPlan?.aircraftId ?? "").Item1;
+            }
+        }
+
+        internal class IvaoAtcItem
+        {
+            public Location Location { get; set; }
+            public string Callsign { get; set; }
+            public string Frequency { get; set; }
+            public string DisplayName { get; set; }
+            public LocationCollection ControlPolygon { get; set; }
+
+            public IvaoAtcItem(IvaoAtcEntry entry)
+            {
+                Callsign = entry.callsign;
+                Frequency = entry.atcSession?.frequency.ToString("F3");
+
+                if (entry.atcPosition?.airport != null)
+                {
+                    Location = new Location(entry.atcPosition.airport.latitude, entry.atcPosition.airport.longitude);
+                    DisplayName = entry.atcPosition.atcCallsign ?? entry.callsign;
+                    if (entry.atcPosition.regionMap?.Count > 0)
+                    {
+                        ControlPolygon = new LocationCollection();
+                        foreach (var pt in entry.atcPosition.regionMap)
+                            ControlPolygon.Add(new Location(pt.lat, pt.lng));
+                    }
+                }
+                else if (entry.subcenter != null)
+                {
+                    Location = new Location(entry.subcenter.latitude, entry.subcenter.longitude);
+                    DisplayName = entry.subcenter.atcCallsign ?? entry.callsign;
+                    if (entry.subcenter.regionMap?.Count > 0)
+                    {
+                        ControlPolygon = new LocationCollection();
+                        foreach (var pt in entry.subcenter.regionMap)
+                            ControlPolygon.Add(new Location(pt.lat, pt.lng));
+                    }
+                }
             }
         }
     }
