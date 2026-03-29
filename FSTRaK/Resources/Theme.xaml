@@ -117,6 +117,7 @@
     <SolidColorBrush x:Key="MinButtonColorPressedBrush" Color="{DynamicResource MinButtonColorPressed}"/>
 
     <SolidColorBrush x:Key="VatsimAicraftColorBrush" Color="{DynamicResource PrimaryDark}"/>
+    <SolidColorBrush x:Key="IvaoAircraftColorBrush" Color="#FF8C00"/>
     <SolidColorBrush x:Key="VatsimFriendAicraftColorBrush" Color="#355E3B"/>
     <SolidColorBrush x:Key="VatsimAppCircleFillBrush" Color="#F78CA2" />
     <SolidColorBrush x:Key="VatsimAppCircleStrokeBrush" Color="#7D0A0A"/>

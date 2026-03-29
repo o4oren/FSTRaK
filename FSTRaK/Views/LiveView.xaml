@@ -6,6 +6,7 @@
              xmlns:map="clr-namespace:MapControl;assembly=MapControl.WPF"
              xmlns:utils="clr-namespace:FSTRaK.Utils"
              xmlns:viewmodels="clr-namespace:FSTRaK.ViewModels" xmlns:b="http://schemas.microsoft.com/xaml/behaviors" xmlns:views="clr-namespace:FSTRaK.Views"
+             xmlns:dataTypes="clr-namespace:FSTRaK.DataTypes"
              d:DataContext="{d:DesignInstance Type=viewmodels:LiveViewViewModel}"
              mc:Ignorable="d" 
              Loaded="OnLoaded"
@@ -16,6 +17,8 @@
                 <ResourceDictionary Source="../Resources/AircraftIconsDictionary.xaml"/>
                 <ResourceDictionary Source="../Resources/MapProvidersDictionary.xaml"/>
             </ResourceDictionary.MergedDictionaries>
+            <utils:EnumToBoolConverter x:Key="EnumToBoolConverter"/>
+            <utils:NetworkTypeToVisConverter x:Key="NetworkTypeToVisConverter"/>
         </ResourceDictionary>
     </UserControl.Resources>
 
@@ -225,6 +228,89 @@
                 </map:MapItemsControl.ItemTemplate>
             </map:MapItemsControl>
 
+            <!-- IVAO Aircraft -->
+            <map:MapItemsControl ItemsSource="{Binding IvaoAircraftList}" Visibility="{Binding IsShowPilots, Converter={StaticResource BoolToVis}}">
+                <map:MapItemsControl.ItemContainerStyle>
+                    <Style TargetType="map:MapItem">
+                        <Setter Property="Location" Value="{Binding Location}"/>
+                        <Setter Property="Margin" Value="-16 -16 0 0"/>
+                    </Style>
+                </map:MapItemsControl.ItemContainerStyle>
+                <map:MapItemsControl.ItemTemplate>
+                    <DataTemplate>
+                        <Path Fill="{DynamicResource IvaoAircraftColorBrush}"
+                              Data="{Binding Icon, Converter={StaticResource ResourceNameToGeometryConverter}}">
+                            <Path.RenderTransform>
+                                <TransformGroup>
+                                    <ScaleTransform CenterX="16" CenterY="16" ScaleX="0.75" ScaleY="0.75"/>
+                                    <RotateTransform CenterY="16" CenterX="16" Angle="{Binding Heading}"/>
+                                </TransformGroup>
+                            </Path.RenderTransform>
+                            <Path.ToolTip>
+                                <ToolTip>
+                                    <StackPanel>
+                                        <TextBlock Text="{Binding Callsign}" FontWeight="Bold"/>
+                                        <TextBlock>
+                                            <Run Text="{Binding Departure}"/><Run Text=" → "/><Run Text="{Binding Destination}"/>
+                                        </TextBlock>
+                                        <TextBlock Text="{Binding Aircraft}"/>
+                                        <TextBlock>
+                                            <Run Text="ALT: "/><Run Text="{Binding Altitude}"/>
+                                            <Run Text=" GS: "/><Run Text="{Binding Groundspeed}"/>
+                                        </TextBlock>
+                                    </StackPanel>
+                                </ToolTip>
+                            </Path.ToolTip>
+                        </Path>
+                    </DataTemplate>
+                </map:MapItemsControl.ItemTemplate>
+            </map:MapItemsControl>
+
+            <!-- IVAO ATC polygons -->
+            <map:MapItemsControl ItemsSource="{Binding IvaoAtcList}" Visibility="{Binding IsShowAtc, Converter={StaticResource BoolToVis}}">
+                <map:MapItemsControl.ItemTemplate>
+                    <DataTemplate>
+                        <map:MapPanel>
+                            <map:MapPolygon Locations="{Binding ControlPolygon}"
+                                            Fill="{DynamicResource VatsimTraconFillBrush}"
+                                            Stroke="{DynamicResource VatsimTraconStrokeBrush}"
+                                            StrokeThickness="1"
+                                            Visibility="{Binding ControlPolygon, Converter={StaticResource NullToVis}}"/>
+                        </map:MapPanel>
+                    </DataTemplate>
+                </map:MapItemsControl.ItemTemplate>
+            </map:MapItemsControl>
+
+            <!-- IVAO ATC icons -->
+            <map:MapItemsControl ItemsSource="{Binding IvaoAtcList}" Visibility="{Binding IsShowAtc, Converter={StaticResource BoolToVis}}">
+                <map:MapItemsControl.ItemContainerStyle>
+                    <Style TargetType="map:MapItem">
+                        <Setter Property="Location" Value="{Binding Location}"/>
+                    </Style>
+                </map:MapItemsControl.ItemContainerStyle>
+                <map:MapItemsControl.ItemTemplate>
+                    <DataTemplate>
+                        <map:MapPanel>
+                            <StackPanel>
+                                <TextBlock Text="{Binding Callsign}"
+                                           Foreground="{DynamicResource SuperBrightTextColor}"
+                                           FontSize="10" FontWeight="Bold">
+                                    <TextBlock.ToolTip>
+                                        <ToolTip>
+                                            <StackPanel>
+                                                <TextBlock Text="{Binding Callsign}" FontWeight="Bold"/>
+                                                <TextBlock Text="{Binding DisplayName}"/>
+                                                <TextBlock Text="{Binding Frequency}"/>
+                                            </StackPanel>
+                                        </ToolTip>
+                                    </TextBlock.ToolTip>
+                                </TextBlock>
+                            </StackPanel>
+                        </map:MapPanel>
+                    </DataTemplate>
+                </map:MapItemsControl.ItemTemplate>
+            </map:MapItemsControl>
+
             <!-- map:MapGraticule Opacity="0.5"/ -->
 
             <!--  Aircraft Icon -->
@@ -264,51 +350,58 @@
                     </b:EventTrigger>
                 </b:Interaction.Triggers>
             </ToggleButton>
-            <ToggleButton Style="{DynamicResource MapToggleButton}" 
-                          IsChecked="{Binding IsShowVatsimAircraft}">
-                <b:Interaction.Triggers>
-                    <b:EventTrigger EventName="Checked">
-                        <b:InvokeCommandAction Command="{Binding EnableVatsimItemCommand}"/>
-                    </b:EventTrigger>
-                    <b:EventTrigger EventName="Unchecked">
-                        <b:InvokeCommandAction Command="{Binding DisableVatsimItemCommand}"/>
-                    </b:EventTrigger>
-                </b:Interaction.Triggers>
+            <!-- Network selector -->
+            <StackPanel Orientation="Horizontal" HorizontalAlignment="Right" Margin="0,4,0,0">
+                <ToggleButton Style="{DynamicResource MapToggleButton}"
+                              IsChecked="{Binding ActiveNetwork, Converter={StaticResource EnumToBoolConverter}, ConverterParameter=Vatsim}">
+                    <b:Interaction.Triggers>
+                        <b:EventTrigger EventName="Click">
+                            <b:InvokeCommandAction Command="{Binding SelectNetworkCommand}"
+                                                   CommandParameter="{x:Static dataTypes:NetworkType.Vatsim}"/>
+                        </b:EventTrigger>
+                    </b:Interaction.Triggers>
+                    <TextBlock Foreground="{DynamicResource SuperBrightTextColor}" FontSize="11" FontWeight="Bold">VATSIM</TextBlock>
+                </ToggleButton>
+                <ToggleButton Style="{DynamicResource MapToggleButton}"
+                              IsChecked="{Binding ActiveNetwork, Converter={StaticResource EnumToBoolConverter}, ConverterParameter=Ivao}">
+                    <b:Interaction.Triggers>
+                        <b:EventTrigger EventName="Click">
+                            <b:InvokeCommandAction Command="{Binding SelectNetworkCommand}"
+                                                   CommandParameter="{x:Static dataTypes:NetworkType.Ivao}"/>
+                        </b:EventTrigger>
+                    </b:Interaction.Triggers>
+                    <TextBlock Foreground="{DynamicResource SuperBrightTextColor}" FontSize="11" FontWeight="Bold">IVAO</TextBlock>
+                </ToggleButton>
+            </StackPanel>
 
-                <StackPanel Orientation="Vertical">
-                    <Image Source="/Resources/Images/VATSIM_Logo_White_No_Tagline_500px.png" Width="32" />
-                    <TextBlock Foreground="{DynamicResource SuperBrightTextColor}">Pilots</TextBlock>
-                </StackPanel>
-            </ToggleButton>
-            <ToggleButton Style="{DynamicResource MapToggleButton}" 
-                          IsChecked="{Binding IsShowVatsimAirports}">
+            <!-- Pilots toggle -->
+            <ToggleButton Style="{DynamicResource MapToggleButton}"
+                          IsChecked="{Binding IsShowPilots}"
+                          Visibility="{Binding ActiveNetwork, Converter={StaticResource NetworkTypeToVisConverter}}">
                 <b:Interaction.Triggers>
                     <b:EventTrigger EventName="Checked">
-                        <b:InvokeCommandAction Command="{Binding EnableVatsimItemCommand}"/>
+                        <b:InvokeCommandAction Command="{Binding EnableNetworkItemCommand}"/>
                     </b:EventTrigger>
                     <b:EventTrigger EventName="Unchecked">
-                        <b:InvokeCommandAction Command="{Binding DisableVatsimItemCommand}"/>
+                        <b:InvokeCommandAction Command="{Binding DisableNetworkItemCommand}"/>
                     </b:EventTrigger>
                 </b:Interaction.Triggers>
-                <StackPanel Orientation="Vertical">
-                    <Image Source="/Resources/Images/VATSIM_Logo_White_No_Tagline_500px.png" Width="32" />
-                    <TextBlock Foreground="{DynamicResource SuperBrightTextColor}">Airports</TextBlock>
-                </StackPanel>
+                <TextBlock Foreground="{DynamicResource SuperBrightTextColor}">Pilots</TextBlock>
             </ToggleButton>
-            <ToggleButton Style="{DynamicResource MapToggleButton}" 
-                          IsChecked="{Binding IsShowVatsimFirs}" >
+
+            <!-- ATC toggle -->
+            <ToggleButton Style="{DynamicResource MapToggleButton}"
+                          IsChecked="{Binding IsShowAtc}"
+                          Visibility="{Binding ActiveNetwork, Converter={StaticResource NetworkTypeToVisConverter}}">
                 <b:Interaction.Triggers>
                     <b:EventTrigger EventName="Checked">
-                        <b:InvokeCommandAction Command="{Binding EnableVatsimItemCommand}"/>
+                        <b:InvokeCommandAction Command="{Binding EnableNetworkItemCommand}"/>
                     </b:EventTrigger>
                     <b:EventTrigger EventName="Unchecked">
-                        <b:InvokeCommandAction Command="{Binding DisableVatsimItemCommand}"/>
+                        <b:InvokeCommandAction Command="{Binding DisableNetworkItemCommand}"/>
                     </b:EventTrigger>
                 </b:Interaction.Triggers>
-                <StackPanel Orientation="Vertical">
-                    <Image Source="/Resources/Images/VATSIM_Logo_White_No_Tagline_500px.png" Width="32" />
-                    <TextBlock Foreground="{DynamicResource SuperBrightTextColor}">FIRs</TextBlock>
-                </StackPanel>
+                <TextBlock Foreground="{DynamicResource SuperBrightTextColor}">ATC</TextBlock>
             </ToggleButton>
         </StackPanel>
     </Grid>

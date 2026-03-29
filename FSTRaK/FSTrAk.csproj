@@ -186,6 +186,8 @@
     <Compile Include="Utils\PathUtil.cs" />
     <Compile Include="Utils\AircraftResolver.cs" />
     <Compile Include="Utils\Converters.cs" />
+    <Compile Include="Utils\EnumToBoolConverter.cs" />
+    <Compile Include="Utils\NetworkTypeToVisConverter.cs" />
     <Compile Include="Utils\MapTilerMapTileLayer.cs" />
     <Compile Include="Utils\IOverlayMapTileLayer.cs" />
     <Compile Include="Utils\OverlayMapTileLayer.cs" />
