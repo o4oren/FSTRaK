@@ -296,6 +296,18 @@ namespace FSTRaK.ViewModels
             }
         }
 
+        private string _ivaoId;
+        public string IvaoId
+        {
+            get => _ivaoId;
+            set
+            {
+                _ivaoId = value;
+                Properties.Settings.Default.IvaoId = _ivaoId;
+                OnPropertyChanged();
+            }
+        }
+
         public SettingsViewModel() : base()
         {
             var mapProviders = new ResourceDictionary
@@ -340,6 +352,7 @@ namespace FSTRaK.ViewModels
             Theme = Properties.Settings.Default.Theme;
 
             VatsimId = Properties.Settings.Default.VatsimId;
+            IvaoId = Properties.Settings.Default.IvaoId;
 
             SelectedChartOverlayProvider = Properties.Settings.Default.ChartOverlayProvider;
             IsOpenAipEnabled = Properties.Settings.Default.IsOpenAipEnabled;
