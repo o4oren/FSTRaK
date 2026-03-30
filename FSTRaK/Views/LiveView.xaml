@@ -260,11 +260,22 @@
                     <DataTemplate>
                         <map:MapPanel>
                             <map:MapPolygon Locations="{Binding ControlPolygon}"
-                                            Fill="{DynamicResource VatsimTraconFillBrush}"
-                                            Stroke="{DynamicResource VatsimTraconStrokeBrush}"
                                             StrokeThickness="1"
                                             Opacity="0.35"
-                                            Visibility="{Binding ControlPolygon, Converter={StaticResource NullToVis}}"/>
+                                            Visibility="{Binding ControlPolygon, Converter={StaticResource NullToVis}}">
+                                <map:MapPolygon.Style>
+                                    <Style TargetType="map:MapPolygon">
+                                        <Setter Property="Fill" Value="{DynamicResource IvaoAtcFillBrush}"/>
+                                        <Setter Property="Stroke" Value="{DynamicResource IvaoAtcStrokeBrush}"/>
+                                        <Style.Triggers>
+                                            <DataTrigger Binding="{Binding IsCtr}" Value="True">
+                                                <Setter Property="Fill" Value="{DynamicResource IvaoCtrFillBrush}"/>
+                                                <Setter Property="Stroke" Value="{DynamicResource IvaoCtrStrokeBrush}"/>
+                                            </DataTrigger>
+                                        </Style.Triggers>
+                                    </Style>
+                                </map:MapPolygon.Style>
+                            </map:MapPolygon>
                         </map:MapPanel>
                     </DataTemplate>
                 </map:MapItemsControl.ItemTemplate>
@@ -338,10 +349,7 @@
                                                CommandParameter="{x:Static dataTypes:NetworkType.Vatsim}"/>
                     </b:EventTrigger>
                 </b:Interaction.Triggers>
-                <StackPanel Orientation="Vertical">
-                    <Image Source="/Resources/Images/VATSIM_Logo_White_No_Tagline_500px.png" Width="32" />
-                    <TextBlock Foreground="{DynamicResource SuperBrightTextColor}">VATSIM</TextBlock>
-                </StackPanel>
+                <Image Source="/Resources/Images/VATSIM_Logo_White_No_Tagline_500px.png" Width="46" />
             </ToggleButton>
 
             <!-- Network selector: IVAO -->
@@ -353,10 +361,7 @@
                                                CommandParameter="{x:Static dataTypes:NetworkType.Ivao}"/>
                     </b:EventTrigger>
                 </b:Interaction.Triggers>
-                <StackPanel Orientation="Vertical">
-                    <ContentControl Content="{DynamicResource IvaoLogo}" Width="32"/>
-                    <TextBlock Foreground="{DynamicResource SuperBrightTextColor}">IVAO</TextBlock>
-                </StackPanel>
+                <ContentControl Content="{DynamicResource IvaoLogo}" Width="46"/>
             </ToggleButton>
 
             <!-- Pilots toggle -->

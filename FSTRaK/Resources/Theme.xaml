@@ -118,6 +118,10 @@
 
     <SolidColorBrush x:Key="VatsimAicraftColorBrush" Color="{DynamicResource PrimaryDark}"/>
     <SolidColorBrush x:Key="IvaoAircraftColorBrush" Color="#FF8C00"/>
+    <SolidColorBrush x:Key="IvaoAtcFillBrush" Color="#F78CA2" />
+    <SolidColorBrush x:Key="IvaoAtcStrokeBrush" Color="#7D0A0A"/>
+    <SolidColorBrush x:Key="IvaoCtrFillBrush" Color="#91C8E4" />
+    <SolidColorBrush x:Key="IvaoCtrStrokeBrush" Color="#080658"/>
     <SolidColorBrush x:Key="VatsimFriendAicraftColorBrush" Color="#355E3B"/>
     <SolidColorBrush x:Key="VatsimAppCircleFillBrush" Color="#F78CA2" />
     <SolidColorBrush x:Key="VatsimAppCircleStrokeBrush" Color="#7D0A0A"/>

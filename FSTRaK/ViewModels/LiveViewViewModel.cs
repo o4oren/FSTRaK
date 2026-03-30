@@ -1250,6 +1250,7 @@ namespace FSTRaK.ViewModels
             public string IconResourse { get; set; }
             public string TooltipText { get; set; }
             public LocationCollection ControlPolygon { get; set; }
+            public bool IsCtr { get; set; }
 
             // Constructor for grouped airport entries (TWR, GND, APP, DEP at the same airport)
             public IvaoAtcItem(System.Collections.Generic.List<IvaoAtcEntry> entries)
@@ -1293,6 +1294,7 @@ namespace FSTRaK.ViewModels
             // Constructor for CTR/subcenter entries
             public IvaoAtcItem(IvaoAtcEntry entry)
             {
+                IsCtr = true;
                 Location = new Location(entry.subcenter.latitude, entry.subcenter.longitude);
                 IconResourse = Consts.RadarImage;
                 var freq = entry.atcSession?.frequency.ToString("F3") ?? "";
