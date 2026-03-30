@@ -104,8 +104,8 @@
                     </TextBlock>
                     <TextBlock FontFamily="{DynamicResource CurrentFont}" FontSize="{DynamicResource ListFontSize}" Foreground="{DynamicResource UnselectedTextColor}">
                         <Run>Airport icons by </Run>
-                        <Run FontWeight="SemiBold" Foreground="{DynamicResource TextColor}">Freepik</Run>
-                        <Run> — Flaticon</Run>
+                        <Hyperlink NavigateUri="https://www.flaticon.com/free-icons/airport"
+                                   RequestNavigate="Hyperlink_RequestNavigate">Freepik — Flaticon</Hyperlink>
                     </TextBlock>
                 </StackPanel>
 
