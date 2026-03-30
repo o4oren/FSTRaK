@@ -107,7 +107,11 @@
                             <Grid Grid.Column="1" Margin="6,0">
                                 <Rectangle Height="1" Fill="{DynamicResource BrightTextColor}" VerticalAlignment="Center" Opacity="0.4"/>
                                 <TextBlock Text="✈" Foreground="{DynamicResource SuperBrightTextColor}"
-                                           FontSize="10" HorizontalAlignment="Center" VerticalAlignment="Center"/>
+                                           FontSize="10" HorizontalAlignment="Center" VerticalAlignment="Center">
+                                    <TextBlock.RenderTransform>
+                                        <RotateTransform Angle="45" CenterX="5" CenterY="5"/>
+                                    </TextBlock.RenderTransform>
+                                </TextBlock>
                             </Grid>
                             <TextBlock Grid.Column="2" Text="{Binding Arrival}"
                                        Foreground="{DynamicResource BrightTextColor}"
