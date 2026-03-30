@@ -175,6 +175,18 @@
                 </StackPanel.ToolTip>
             </StackPanel>
             <StackPanel Orientation="Horizontal" Margin="10" ToolTipService.ShowDuration="5000">
+                <Label Style="{DynamicResource FSTrAkLabel}" Width="250">StatSim API Key</Label>
+                <TextBox FontFamily="{DynamicResource CurrentFont}"
+                         Foreground="{DynamicResource TextColor}"
+                         Background="{DynamicResource ControlBackgroundColorBrush}"
+                         FontSize="{DynamicResource ControlFontSize}"
+                         Width="200"
+                         Text="{Binding StatSimApiKey}" Cursor="Arrow" TextAlignment="Center" Padding="0 8 0 0"/>
+                <StackPanel.ToolTip>
+                    Optional: Enter your StatSim API key (statsim.net) to enable full VATSIM flight track history
+                </StackPanel.ToolTip>
+            </StackPanel>
+            <StackPanel Orientation="Horizontal" Margin="10" ToolTipService.ShowDuration="5000">
                 <Label Style="{DynamicResource FSTrAkLabel}" Width="250">IVAO ID</Label>
                 <TextBox FontFamily="{DynamicResource CurrentFont}"
                          Foreground="{DynamicResource TextColor}"

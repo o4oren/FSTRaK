@@ -23,7 +23,8 @@ namespace FSTRaK.ViewModels
         public bool IsOwnAircraftInFlight { get; }
 
         // ── Track
-        internal bool IvaoTrackFetched;   // true once API track has been loaded — prevents polling from overwriting it
+        internal bool IvaoTrackFetched;    // true once IVAO API track has been loaded
+        internal bool VatsimTrackFetched;  // true once StatSim track has been loaded
         private List<TrackPoint> _trackPoints = new List<TrackPoint>();
         public List<TrackPoint> TrackPoints
         {
@@ -252,9 +253,9 @@ namespace FSTRaK.ViewModels
             // Always update the destination line regardless of speed
             DestinationLine = GeodesicUtil.Interpolate(currentLat, currentLon, _arrLat, _arrLon);
 
-            if (Network == NetworkType.Vatsim && _trackPoints.Count > 0)
+            if (_trackPoints.Count > 0 && !VatsimTrackFetched && Network == NetworkType.Vatsim)
             {
-                // VATSIM: prepend geodesic from departure to first known track point
+                // VATSIM dict track: prepend geodesic from departure to first known point
                 var first = _trackPoints[0];
                 var depToFirst = GeodesicUtil.Interpolate(_depLat, _depLon, first.Latitude, first.Longitude);
                 if (depToFirst.Count > 1)
@@ -265,18 +266,18 @@ namespace FSTRaK.ViewModels
                     _extendedTrackLocations = full;
                 }
                 else
-                {
                     _extendedTrackLocations = null;
-                }
             }
-            else if (Network == NetworkType.Ivao && _trackPoints.Count == 0)
+            else if (_trackPoints.Count == 0)
             {
-                // IVAO without API key: show geodesic from departure to current position as track
+                // No track at all (IVAO without key, or VATSIM/IVAO before API fetch completes):
+                // show geodesic from departure to current position
                 var depToCurrent = GeodesicUtil.Interpolate(_depLat, _depLon, currentLat, currentLon);
                 _extendedTrackLocations = depToCurrent.Count > 1 ? depToCurrent : null;
             }
             else
             {
+                // API track loaded (IVAO or VATSIM with StatSim) — use as-is, no prefix needed
                 _extendedTrackLocations = null;
             }
 

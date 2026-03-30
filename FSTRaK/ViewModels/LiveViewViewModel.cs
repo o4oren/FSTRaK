@@ -670,6 +670,7 @@ namespace FSTRaK.ViewModels
                     ? new List<TrackPoint>(t) : new List<TrackPoint>();
                 SelectedClient = new SelectedClientViewModel(va, isOwn, isOwn && isInFlight, tracks);
                 TrySetAirportCoords(SelectedClient);
+                var _vs = FetchVatsimTrackAsync(va.Pilot.callsign);
             }
             else if (parameter is IvaoAircraft ia)
             {
@@ -751,6 +752,81 @@ namespace FSTRaK.ViewModels
             public int altitude { get; set; }
         }
 
+        private async Task FetchVatsimTrackAsync(string callsign)
+        {
+            var apiKey = Properties.Settings.Default.StatSimApiKey?.Trim();
+            if (string.IsNullOrEmpty(apiKey)) return;
+
+            var targetClient = SelectedClient;
+            try
+            {
+                // Step 1: find the current/recent flight ID by callsign
+                var from = DateTime.UtcNow.AddDays(-1).ToString("yyyy-MM-ddTHH:mm:ssZ");
+                var to   = DateTime.UtcNow.AddMinutes(5).ToString("yyyy-MM-ddTHH:mm:ssZ");
+                var searchUrl = $"https://api.statsim.net/api/Flights/Callsign?callsign={callsign}&from={from}&to={to}&limit=1";
+                var req1 = new System.Net.Http.HttpRequestMessage(System.Net.Http.HttpMethod.Get, searchUrl);
+                req1.Headers.Add("X-API-Key", apiKey);
+                var res1 = await _trackHttpClient.SendAsync(req1);
+                if (!res1.IsSuccessStatusCode) return;
+                var json1 = await res1.Content.ReadAsStringAsync();
+                var flights = Newtonsoft.Json.JsonConvert.DeserializeObject<List<StatSimFlight>>(json1);
+                if (flights == null || flights.Count == 0 || SelectedClient != targetClient) return;
+
+                // Step 2: fetch full track by flight ID
+                var flightId = flights[0].id;
+                var trackUrl = $"https://api.statsim.net/api/Flights/Id/{flightId}";
+                var req2 = new System.Net.Http.HttpRequestMessage(System.Net.Http.HttpMethod.Get, trackUrl);
+                req2.Headers.Add("X-API-Key", apiKey);
+                var res2 = await _trackHttpClient.SendAsync(req2);
+                if (!res2.IsSuccessStatusCode) return;
+                var json2 = await res2.Content.ReadAsStringAsync();
+                var flight = Newtonsoft.Json.JsonConvert.DeserializeObject<StatSimFlightWithPositions>(json2);
+                if (flight?.positions == null || SelectedClient != targetClient) return;
+
+                var converted = flight.positions
+                    .Select(p => new TrackPoint(p.latitude, p.longitude, p.altitude, DateTime.UtcNow))
+                    .ToList();
+                // Append current position so line ends at aircraft
+                if (targetClient.VatsimPilotItem != null)
+                {
+                    var pilot = targetClient.VatsimPilotItem.Pilot;
+                    converted.Add(new TrackPoint(pilot.latitude, pilot.longitude, pilot.altitude, DateTime.UtcNow));
+                }
+                System.Windows.Application.Current.Dispatcher.Invoke(() =>
+                {
+                    if (SelectedClient == targetClient)
+                    {
+                        SelectedClient.VatsimTrackFetched = true;
+                        SelectedClient.TrackPoints = converted;
+                        SelectedClient.RecalcProgress();
+                        UpdateFlightPathLines();
+                    }
+                });
+            }
+            catch (Exception ex)
+            {
+                Log.Warning(ex, "Failed to fetch StatSim track for {Callsign}", callsign);
+            }
+        }
+
+        private class StatSimFlight
+        {
+            public int id { get; set; }
+            public string callsign { get; set; }
+        }
+
+        private class StatSimFlightWithPositions
+        {
+            public List<StatSimPosition> positions { get; set; }
+        }
+
+        private class StatSimPosition
+        {
+            public double latitude { get; set; }
+            public double longitude { get; set; }
+            public int altitude { get; set; }
+        }
+
         private void UpdateFlightPathLines()
         {
             SelectedTrackLocations.Clear();
@@ -800,8 +876,17 @@ namespace FSTRaK.ViewModels
                         {
                             var wrapper = new VatsimAicraft(match);
                             SelectedClient.UpdateFromVatsimPilot(wrapper);
-                            if (_pilotTracks.TryGetValue($"VATSIM:{match.callsign}", out var t))
+                            if (SelectedClient.VatsimTrackFetched)
+                            {
+                                // StatSim track loaded — update last point to current position
+                                var pts = SelectedClient.TrackPoints;
+                                if (pts.Count > 0)
+                                    pts[pts.Count - 1] = new TrackPoint(match.latitude, match.longitude, match.altitude, DateTime.UtcNow);
+                            }
+                            else if (_pilotTracks.TryGetValue($"VATSIM:{match.callsign}", out var t))
+                            {
                                 SelectedClient.TrackPoints = new List<TrackPoint>(t);
+                            }
                             SelectedClient.RecalcProgress();
                             UpdateFlightPathLines();
                         }
