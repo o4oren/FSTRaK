@@ -10,15 +10,20 @@ FSTrAk monitors your simulator silently, and will detect when a flight is starte
 ## Features
 * Automatic silent start-up.
 * Automatic flight tracking (hands-free experience).
-* Option (default) to save only complete flights - i.e. flight ended in parking states, with engines off and parking breaks, after having flown.
-* Different map providers.
+* Option (default) to save only complete flights - i.e. flight ended in parking state, with engines off and parking brake set, after having flown.
+* Multiple map providers including FAA ArcGIS charts, OpenAIP, SkyVector, OpenTopoMap, Bing, MapTiler, and more.
 * Flight analysis and scoring.
 * Live flight tracking with a moving map.
+* **VATSIM and IVAO live network support** — view pilots and ATC on the live map.
+* Statistics (most used aircraft, most used airlines, average and max payload, distance, etc.)
+* Dark mode.
 
 ## Roadmap
 - [ ] Simbrief integration (fetch passengers, planned vs actual fuel and time, planned vs actual route).
-- [ ] Statistics (On time, passengers flown, best/worst landings, average faps, average score)
-- [ ] Vastsim integration (display live traffic and atc on the map).
+- [ ] More statistics.
+- [ ] Display bearing/distance to a designated point on the map.
+- [x] VATSIM integration (display live traffic and ATC on the map).
+- [x] IVAO integration (display live traffic and ATC on the map).
 
 #### Flight Analysis
 <img width="1024" alt="Flight Analysis" src="https://github.com/o4oren/FSTRaK/assets/23486326/e6047bcc-df6a-4235-ac85-da6de6de8cd5">

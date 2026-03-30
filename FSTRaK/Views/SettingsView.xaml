@@ -163,15 +163,27 @@
         <StackPanel Margin="10">
             <StackPanel Orientation="Horizontal" Margin="10" ToolTipService.ShowDuration="5000">
                 <Label Style="{DynamicResource FSTrAkLabel}" Width="250">VATSIM ID</Label>
-                <TextBox FontFamily="{DynamicResource CurrentFont}" 
-                          Foreground="{DynamicResource TextColor}" 
+                <TextBox FontFamily="{DynamicResource CurrentFont}"
+                          Foreground="{DynamicResource TextColor}"
                           Background="{DynamicResource ControlBackgroundColorBrush}"
-                          FontSize="{DynamicResource ControlFontSize}" 
+                          FontSize="{DynamicResource ControlFontSize}"
                           Width="200"
                           Text="{Binding VatsimId}" Cursor="Arrow" TextAlignment="Center" Padding="0 8 0 0"
                           />
                 <StackPanel.ToolTip>
                     Type your VATSIM ID to prevent duplicate representation of your aircraft when VATSIM aircraft are shown on the map
+                </StackPanel.ToolTip>
+            </StackPanel>
+            <StackPanel Orientation="Horizontal" Margin="10" ToolTipService.ShowDuration="5000">
+                <Label Style="{DynamicResource FSTrAkLabel}" Width="250">IVAO ID</Label>
+                <TextBox FontFamily="{DynamicResource CurrentFont}"
+                         Foreground="{DynamicResource TextColor}"
+                         Background="{DynamicResource ControlBackgroundColorBrush}"
+                         FontSize="{DynamicResource ControlFontSize}"
+                         Width="200"
+                         Text="{Binding IvaoId}" Cursor="Arrow" TextAlignment="Center" Padding="0 8 0 0"/>
+                <StackPanel.ToolTip>
+                    Type your IVAO ID to prevent duplicate representation of your aircraft when IVAO aircraft are shown on the map
                 </StackPanel.ToolTip>
             </StackPanel>
         </StackPanel>
