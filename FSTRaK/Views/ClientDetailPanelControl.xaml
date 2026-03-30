@@ -25,18 +25,18 @@
                 <Setter Property="Padding"       Value="5,4"/>
             </Style>
             <Style x:Key="StatValue" TargetType="TextBlock">
-                <Setter Property="Foreground"        Value="{DynamicResource SuperBrightTextColor}"/>
-                <Setter Property="FontWeight"        Value="Bold"/>
-                <Setter Property="FontSize"          Value="{DynamicResource TextFontSize}"/>
-                <Setter Property="FontFamily"        Value="{DynamicResource CurrentFont}"/>
+                <Setter Property="Foreground"          Value="{DynamicResource SuperBrightTextColor}"/>
+                <Setter Property="FontWeight"          Value="Bold"/>
+                <Setter Property="FontSize"            Value="{DynamicResource HeaderFontSize}"/>
+                <Setter Property="FontFamily"          Value="{DynamicResource CurrentFont}"/>
                 <Setter Property="HorizontalAlignment" Value="Center"/>
             </Style>
             <Style x:Key="StatLabel" TargetType="TextBlock">
                 <Setter Property="Foreground"          Value="{DynamicResource BrightTextColor}"/>
-                <Setter Property="FontSize"            Value="9"/>
+                <Setter Property="FontSize"            Value="{DynamicResource TextFontSize}"/>
                 <Setter Property="FontFamily"          Value="{DynamicResource CurrentFont}"/>
                 <Setter Property="HorizontalAlignment" Value="Center"/>
-                <Setter Property="Opacity"             Value="0.55"/>
+                <Setter Property="Opacity"             Value="0.6"/>
             </Style>
             <Style x:Key="SectionLabel" TargetType="TextBlock">
                 <Setter Property="Foreground"  Value="{DynamicResource BrightTextColor}"/>
@@ -64,7 +64,7 @@
 
             <!-- ── Header row: network logo + callsign + close ── -->
             <DockPanel Margin="0,0,0,6">
-                <Grid Width="22" Height="14" DockPanel.Dock="Left" VerticalAlignment="Center" Margin="0,0,6,0">
+                <Grid Width="36" Height="22" DockPanel.Dock="Left" VerticalAlignment="Center" Margin="0,0,8,0">
                     <Image Source="/Resources/Images/VATSIM_Logo_White_No_Tagline_500px.png" Stretch="Uniform"
                            Visibility="{Binding IsVatsim, Converter={StaticResource BoolToVis}}"/>
                     <ContentControl Content="{DynamicResource IvaoLogo}"
@@ -90,7 +90,7 @@
                 <DockPanel Margin="0,0,0,8">
                     <!-- Airline logo box -->
                     <Border Width="36" Height="36" DockPanel.Dock="Left" Margin="0,0,8,0"
-                            Background="#22FFFFFF" BorderBrush="#33FFFFFF" BorderThickness="1" CornerRadius="4">
+                            Background="Transparent" BorderThickness="0">
                         <Grid>
                             <Image Source="{Binding AirlineLogo}" Stretch="Uniform" Margin="3"
                                    Visibility="{Binding AirlineLogo, Converter={StaticResource NullToVis}}"/>
@@ -103,11 +103,9 @@
                     <StackPanel VerticalAlignment="Center">
                         <TextBlock Text="{Binding PilotName}" Style="{StaticResource DimText}"/>
                         <DockPanel>
-                            <Border DockPanel.Dock="Left" Background="#2034D399" BorderBrush="#4034D399"
-                                    BorderThickness="1" CornerRadius="3" Padding="4,1" Margin="0,2,6,0">
-                                <TextBlock Text="{Binding FlightRules}" Foreground="#FF34D399"
-                                           FontSize="8" FontWeight="Bold"/>
-                            </Border>
+                            <TextBlock DockPanel.Dock="Left" Text="{Binding FlightRules}"
+                                       Foreground="#FF34D399" FontSize="9" FontWeight="Bold"
+                                       VerticalAlignment="Center" Margin="0,2,6,0"/>
                             <TextBlock Text="{Binding AircraftType}" Style="{StaticResource DimText}" VerticalAlignment="Center"/>
                         </DockPanel>
                     </StackPanel>
@@ -196,8 +194,7 @@
                     <StackPanel>
                         <TextBlock Text="ROUTE" Style="{StaticResource SectionLabel}"/>
                         <TextBlock Text="{Binding RouteString}" Style="{StaticResource DimText}"
-                                   FontFamily="Courier New" FontSize="9"
-                                   TextTrimming="CharacterEllipsis" TextWrapping="NoWrap"/>
+                                   FontSize="9" TextTrimming="CharacterEllipsis" TextWrapping="NoWrap"/>
                     </StackPanel>
                 </Border>
 
@@ -207,7 +204,7 @@
                     <StackPanel>
                         <TextBlock Text="REMARKS" Style="{StaticResource SectionLabel}"/>
                         <TextBlock Text="{Binding Remarks}" Style="{StaticResource DimText}"
-                                   TextTrimming="CharacterEllipsis" TextWrapping="NoWrap"/>
+                                   FontSize="9" TextTrimming="CharacterEllipsis" TextWrapping="NoWrap"/>
                     </StackPanel>
                 </Border>
             </StackPanel>
