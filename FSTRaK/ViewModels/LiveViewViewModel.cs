@@ -414,10 +414,32 @@ namespace FSTRaK.ViewModels
         public ObservableCollection<Location> FlightPath { get; set; } = new();
 
         private SelectedClientViewModel _selectedClient;
+        private System.ComponentModel.PropertyChangedEventHandler _selectedClientChangedHandler;
         public SelectedClientViewModel SelectedClient
         {
             get => _selectedClient;
-            set { _selectedClient = value; OnPropertyChanged(); UpdateFlightPathLines(); }
+            set
+            {
+                if (_selectedClient != null && _selectedClientChangedHandler != null)
+                    _selectedClient.PropertyChanged -= _selectedClientChangedHandler;
+                _selectedClient = value;
+                if (_selectedClient != null)
+                {
+                    _selectedClientChangedHandler = (s, e) =>
+                    {
+                        if (e.PropertyName == nameof(SelectedClientViewModel.TrackPoints) ||
+                            e.PropertyName == nameof(SelectedClientViewModel.DestinationLine))
+                            System.Windows.Application.Current.Dispatcher.Invoke(UpdateFlightPathLines);
+                    };
+                    _selectedClient.PropertyChanged += _selectedClientChangedHandler;
+                }
+                else
+                {
+                    _selectedClientChangedHandler = null;
+                }
+                OnPropertyChanged();
+                UpdateFlightPathLines();
+            }
         }
 
         public ObservableCollection<Location> SelectedTrackLocations { get; set; } = new ObservableCollection<Location>();
@@ -646,15 +668,6 @@ namespace FSTRaK.ViewModels
                 SelectedClient = SelectedClientViewModel.FromIvaoAtc(iai);
             }
 
-            if (SelectedClient != null)
-            {
-                SelectedClient.PropertyChanged += (sender, e) =>
-                {
-                    if (e.PropertyName == nameof(SelectedClientViewModel.TrackPoints) ||
-                        e.PropertyName == nameof(SelectedClientViewModel.DestinationLine))
-                        System.Windows.Application.Current.Dispatcher.Invoke(UpdateFlightPathLines);
-                };
-            }
         }
 
         private void TrySetAirportCoords(SelectedClientViewModel client)
@@ -670,6 +683,7 @@ namespace FSTRaK.ViewModels
 
         private async Task FetchIvaoTrackAsync(int userId, string callsign)
         {
+            var targetClient = SelectedClient;
             try
             {
                 using (var http = new System.Net.Http.HttpClient())
@@ -677,17 +691,14 @@ namespace FSTRaK.ViewModels
                     var url = $"https://api.ivao.aero/v2/tracker/sessions/{userId}/tracks";
                     var json = await http.GetStringAsync(url);
                     var tracks = Newtonsoft.Json.JsonConvert.DeserializeObject<List<IvaoTrackPoint>>(json);
-                    if (tracks == null || SelectedClient?.Callsign != callsign) return;
+                    if (tracks == null || SelectedClient != targetClient) return;
                     var converted = tracks
                         .Select(tp => new TrackPoint(tp.latitude, tp.longitude, tp.altitude, DateTime.UtcNow))
                         .ToList();
                     System.Windows.Application.Current.Dispatcher.Invoke(() =>
                     {
-                        if (SelectedClient?.Callsign == callsign)
-                        {
+                        if (SelectedClient == targetClient)
                             SelectedClient.TrackPoints = converted;
-                            UpdateFlightPathLines();
-                        }
                     });
                 }
             }
