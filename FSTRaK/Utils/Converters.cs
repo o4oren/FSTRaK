@@ -61,3 +61,32 @@ public class ResourceNameToImageConverter : IValueConverter
     }
 
 }
+
+public class InvertedNullToVisibilityConverter : IValueConverter
+{
+    public object Convert(object value, Type targetType, object parameter, CultureInfo culture)
+        => value == null ? Visibility.Visible : Visibility.Collapsed;
+
+    public object ConvertBack(object value, Type targetType, object parameter, CultureInfo culture)
+        => throw new NotImplementedException();
+}
+
+public class StringToSolidColorBrushConverter : IValueConverter
+{
+    public object Convert(object value, Type targetType, object parameter, CultureInfo culture)
+    {
+        if (value is string colorStr)
+        {
+            try
+            {
+                return new SolidColorBrush(
+                    (System.Windows.Media.Color)ColorConverter.ConvertFromString(colorStr));
+            }
+            catch { }
+        }
+        return Brushes.White;
+    }
+
+    public object ConvertBack(object value, Type targetType, object parameter, CultureInfo culture)
+        => throw new NotImplementedException();
+}
