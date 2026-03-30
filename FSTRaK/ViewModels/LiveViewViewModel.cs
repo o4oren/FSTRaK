@@ -469,20 +469,35 @@ namespace FSTRaK.ViewModels
                 {
                     if (!_isShowPilots) ClearIvaoAircraft();
                     if (!_isShowAtc) ClearIvaoAtc();
+                    if (IsShowPilots || IsShowAtc)
+                    {
+                        if (!_ivaoService.Started)
+                            StartActiveNetwork();
+                        else
+                        {
+                            // Service already has data — re-process for newly toggled items
+                            if (_isShowPilots && _ivaoService.IvaoData != null) ProcessIvaoPilots();
+                            if (_isShowAtc && _ivaoService.IvaoData != null) ProcessIvaoAtc();
+                        }
+                    }
                 }
                 else if (ActiveNetwork == NetworkType.Vatsim)
                 {
                     if (!IsShowVatsimAircraft) VatsimAircraftList.Clear();
                     if (!IsShowVatsimAirports) VatsimControlledAirports.Clear();
                     if (!IsShowVatsimFirs) { VatsimControlledFirs.Clear(); VatsimControlledUirs.Clear(); }
-                }
-                if (IsShowPilots || IsShowAtc)
-                {
-                    bool alreadyStarted = _activeNetwork == NetworkType.Vatsim
-                        ? _vatsimService.Started
-                        : _ivaoService.Started;
-                    if (!alreadyStarted)
-                        StartActiveNetwork();
+                    if (IsShowPilots || IsShowAtc)
+                    {
+                        if (!_vatsimService.Started)
+                            StartActiveNetwork();
+                        else
+                        {
+                            // Service already has data — re-process for newly toggled items
+                            if (IsShowVatsimAircraft && _vatsimData != null) ProcessVatsimPilots();
+                            if (IsShowVatsimAirports && _vatsimData != null) ProcessVatsimAirports();
+                            if (IsShowVatsimFirs && _vatsimData != null) ProcessVatsimCtrFSS();
+                        }
+                    }
                 }
             });
 
