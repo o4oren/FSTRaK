@@ -768,6 +768,7 @@ namespace FSTRaK.ViewModels
                             if (_pilotTracks.TryGetValue($"VATSIM:{match.callsign}", out var t))
                                 SelectedClient.TrackPoints = new List<TrackPoint>(t);
                             SelectedClient.RecalcProgress();
+                            UpdateFlightPathLines();
                         }
                     }
 
@@ -812,6 +813,7 @@ namespace FSTRaK.ViewModels
                             var wrapper = new IvaoAircraft(match);
                             SelectedClient.UpdateFromIvaoPilot(wrapper);
                             SelectedClient.RecalcProgress();
+                            UpdateFlightPathLines();
                         }
                     }
 
