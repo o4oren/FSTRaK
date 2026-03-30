@@ -655,7 +655,7 @@ namespace FSTRaK.ViewModels
                 bool isOwn = !string.IsNullOrEmpty(myIvaoId) && ia.Pilot.userId.ToString() == myIvaoId;
                 SelectedClient = new SelectedClientViewModel(ia, isOwn, isOwn && isInFlight, new List<TrackPoint>());
                 TrySetAirportCoords(SelectedClient);
-                var _ = FetchIvaoTrackAsync(ia.Pilot.userId, ia.Callsign);
+                var _ = FetchIvaoTrackAsync(ia.Pilot.lastTrack.id, ia.Callsign);
             }
             else if (parameter is VatsimControlledAirport vca)
             {
@@ -679,30 +679,29 @@ namespace FSTRaK.ViewModels
             client.SetAirportCoordinates(dep.Latitude, dep.Longitude, arr.Latitude, arr.Longitude);
         }
 
-        private async Task FetchIvaoTrackAsync(int userId, string callsign)
+        private static readonly System.Net.Http.HttpClient _trackHttpClient = new System.Net.Http.HttpClient();
+
+        private async Task FetchIvaoTrackAsync(long sessionId, string callsign)
         {
             var targetClient = SelectedClient;
             try
             {
-                using (var http = new System.Net.Http.HttpClient())
+                var url = $"https://api.ivao.aero/v2/tracker/sessions/{sessionId}/tracks";
+                var json = await _trackHttpClient.GetStringAsync(url);
+                var tracks = Newtonsoft.Json.JsonConvert.DeserializeObject<List<IvaoTrackPoint>>(json);
+                if (tracks == null || SelectedClient != targetClient) return;
+                var converted = tracks
+                    .Select(tp => new TrackPoint(tp.latitude, tp.longitude, tp.altitude, DateTime.UtcNow))
+                    .ToList();
+                System.Windows.Application.Current.Dispatcher.Invoke(() =>
                 {
-                    var url = $"https://api.ivao.aero/v2/tracker/sessions/{userId}/tracks";
-                    var json = await http.GetStringAsync(url);
-                    var tracks = Newtonsoft.Json.JsonConvert.DeserializeObject<List<IvaoTrackPoint>>(json);
-                    if (tracks == null || SelectedClient != targetClient) return;
-                    var converted = tracks
-                        .Select(tp => new TrackPoint(tp.latitude, tp.longitude, tp.altitude, DateTime.UtcNow))
-                        .ToList();
-                    System.Windows.Application.Current.Dispatcher.Invoke(() =>
-                    {
-                        if (SelectedClient == targetClient)
-                            SelectedClient.TrackPoints = converted;
-                    });
-                }
+                    if (SelectedClient == targetClient)
+                        SelectedClient.TrackPoints = converted;
+                });
             }
             catch (Exception ex)
             {
-                Log.Warning(ex, "Failed to fetch IVAO track for {UserId}", userId);
+                Log.Warning(ex, "Failed to fetch IVAO track for session {SessionId}", sessionId);
             }
         }
 
