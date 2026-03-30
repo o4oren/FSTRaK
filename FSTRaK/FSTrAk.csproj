@@ -178,8 +178,6 @@
     <Compile Include="Utils\CollectionUtils.cs" />
     <Compile Include="Utils\ColorUtil.cs" />
     <Compile Include="Utils\CoordinatesUtil.cs" />
-    <Compile Include="Utils\GeodesicUtil.cs" />
-    <Compile Include="Utils\IsExternalInit.cs" />
     <Compile Include="Utils\MapUtils.cs" />
     <Compile Include="Utils\ResourceUtil.cs" />
     <Compile Include="Utils\HyperlinkText.cs" />
@@ -218,7 +216,6 @@
       <DependentUpon>LiveView.xaml</DependentUpon>
     </Compile>
     <Compile Include="ViewModels\LiveViewViewModel.cs" />
-    <Compile Include="ViewModels\SelectedClientViewModel.cs" />
     <Compile Include="ViewModels\BaseViewModel.cs" />
     <Compile Include="ViewModels\MainWindowViewModel.cs" />
     <Compile Include="Views\FlightDetailsView.xaml.cs">
@@ -226,9 +223,6 @@
     </Compile>
     <Compile Include="Views\LogbookView.xaml.cs">
       <DependentUpon>LogbookView.xaml</DependentUpon>
-    </Compile>
-    <Compile Include="Views\ClientDetailPanelControl.xaml.cs">
-      <DependentUpon>ClientDetailPanelControl.xaml</DependentUpon>
     </Compile>
     <Compile Include="Views\OverlayTextCardControl.xaml.cs">
       <DependentUpon>OverlayTextCardControl.xaml</DependentUpon>
@@ -299,10 +293,6 @@
       <DependentUpon>MainWindow.xaml</DependentUpon>
       <SubType>Code</SubType>
     </Compile>
-    <Page Include="Views\ClientDetailPanelControl.xaml">
-      <Generator>MSBuild:Compile</Generator>
-      <SubType>Designer</SubType>
-    </Page>
     <Page Include="Views\OverlayTextCardControl.xaml">
       <Generator>MSBuild:Compile</Generator>
       <SubType>Designer</SubType>
