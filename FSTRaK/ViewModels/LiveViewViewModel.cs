@@ -26,8 +26,9 @@ namespace FSTRaK.ViewModels
         private readonly IvaoService _ivaoService = IvaoService.Instance;
 
         // Flight track accumulation
-        public record TrackPoint(double Latitude, double Longitude, int Altitude, DateTime Timestamp);
-        private readonly Dictionary<string, List<TrackPoint>> _pilotTracks = new Dictionary<string, List<TrackPoint>>();
+        internal record TrackPoint(double Latitude, double Longitude, int Altitude, DateTime Timestamp);
+        private readonly System.Collections.Concurrent.ConcurrentDictionary<string, List<TrackPoint>> _pilotTracks = new();
+        private readonly object _pilotTracksLock = new object();
 
 
         public RelayCommand CenterOnAirplaneCommand { get; private set; }
@@ -674,9 +675,13 @@ namespace FSTRaK.ViewModels
                     if (pilot.lastTrack == null) continue;
                     newList.Add(new IvaoAircraft(pilot));
                     var key = $"IVAO:{pilot.callsign}";
-                    if (!_pilotTracks.ContainsKey(key))
-                        _pilotTracks[key] = new List<TrackPoint>();
-                    _pilotTracks[key].Add(new TrackPoint(pilot.lastTrack.latitude, pilot.lastTrack.longitude, pilot.lastTrack.altitude, DateTime.UtcNow));
+                    var list = _pilotTracks.GetOrAdd(key, _ => new List<TrackPoint>());
+                    lock (list)
+                    {
+                        list.Add(new TrackPoint(pilot.lastTrack.latitude, pilot.lastTrack.longitude, pilot.lastTrack.altitude, DateTime.UtcNow));
+                        if (list.Count > 500)
+                            list.RemoveAt(0);
+                    }
                 }
             });
             IvaoAircraftList.ReplaceContent(newList);
@@ -883,16 +888,20 @@ namespace FSTRaK.ViewModels
                     var aircraft = new VatsimAicraft(pilot);
                     newVatsimAircraftList.Add(aircraft);
                     var key = $"VATSIM:{pilot.callsign}";
-                    if (!_pilotTracks.ContainsKey(key))
-                        _pilotTracks[key] = new List<TrackPoint>();
-                    _pilotTracks[key].Add(new TrackPoint(pilot.latitude, pilot.longitude, pilot.altitude, DateTime.UtcNow));
+                    var list = _pilotTracks.GetOrAdd(key, _ => new List<TrackPoint>());
+                    lock (list)
+                    {
+                        list.Add(new TrackPoint(pilot.latitude, pilot.longitude, pilot.altitude, DateTime.UtcNow));
+                        if (list.Count > 500)
+                            list.RemoveAt(0);
+                    }
                 }
             });
             VatsimAircraftList.ReplaceContent(newVatsimAircraftList);
             // Remove tracks for pilots no longer in feed
             var activeVatsimKeys = newVatsimAircraftList.Select(a => $"VATSIM:{a.Pilot.callsign}").ToHashSet();
-            foreach (var key in _pilotTracks.Keys.Where(k => k.StartsWith("VATSIM:") && !activeVatsimKeys.Contains(k)).ToList())
-                _pilotTracks.Remove(key);
+            foreach (var k in _pilotTracks.Keys.Where(k => k.StartsWith("VATSIM:") && !activeVatsimKeys.Contains(k)).ToList())
+                _pilotTracks.TryRemove(k, out _);
         }
 
         private async void ProcessVatsimCtrFSS()
