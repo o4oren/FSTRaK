@@ -119,34 +119,24 @@ namespace FSTRaK.BusinessLogic.VatsimService
         {
             const string filename = "VATSpy.dat";
             var localPath = Path.Combine(dataDir, filename);
-            var lastUpdatedStr = Properties.Settings.Default.VatSpyLastUpdated;
-
-            bool needsUpdate = !File.Exists(localPath);
-            if (!needsUpdate && DateTime.TryParse(lastUpdatedStr, out var lastUpdated))
-                needsUpdate = (DateTime.UtcNow - lastUpdated).TotalDays >= 7;
-            else if (!needsUpdate)
-                needsUpdate = true; // no valid date stored
-
-            if (!needsUpdate)
-            {
-                Log.Debug("VATSpy.dat is recent (last updated: {LastUpdated})", lastUpdatedStr);
-                return false;
-            }
+            var storedTag = Properties.Settings.Default.VatSpyReleaseTag;
 
             try
             {
-                Log.Information("Downloading VATSpy.dat");
-                var mapDataResponse = await _genericClient.GetStringAsync("https://api.vatsim.net/api/map_data/");
-                var mapDataJson = JObject.Parse(mapDataResponse);
-                var vatspyUrl = mapDataJson["vatspy_dat_url"]?.ToString();
+                var (latestTag, downloadUrl) = await GetLatestGitHubReleaseAssetAsync(
+                    "vatsimnetwork", "vatspy-data-project", filename);
 
-                if (string.IsNullOrEmpty(vatspyUrl))
-                    throw new Exception("vatspy_dat_url not found in VATSIM map_data response");
+                if (latestTag == storedTag && File.Exists(localPath))
+                {
+                    Log.Debug("VATSpy.dat up to date (tag: {Tag})", latestTag);
+                    return false;
+                }
 
-                await DownloadFileAtomicAsync(vatspyUrl, localPath);
-                Properties.Settings.Default.VatSpyLastUpdated = DateTime.UtcNow.ToString("O");
+                Log.Information("Downloading VATSpy.dat (tag: {Tag})", latestTag);
+                await DownloadFileAtomicAsync(downloadUrl, localPath);
+                Properties.Settings.Default.VatSpyReleaseTag = latestTag;
                 Properties.Settings.Default.Save();
-                Log.Information("VATSpy.dat updated successfully");
+                Log.Information("VATSpy.dat updated successfully (tag: {Tag})", latestTag);
                 return true;
             }
             catch (Exception ex)

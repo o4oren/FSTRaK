@@ -250,7 +250,7 @@ namespace FSTRaK.ViewModels
 
 
         public ObservableCollection<string> Fonts { get; set; } = new ObservableCollection<string>(ResourceUtil.AvailableFonts);
-        private string _fontName = "Slopes";
+        private string _fontName = "Comic Sans MS";
         public string FontName
         {
             get => _fontName;
@@ -332,6 +332,36 @@ namespace FSTRaK.ViewModels
             }
         }
 
+        public string AppVersion
+        {
+            get
+            {
+                var v = System.Reflection.Assembly.GetExecutingAssembly().GetName().Version;
+                return $"v{v.Major}.{v.Minor}.{v.Build}";
+            }
+        }
+
+        private string _firBoundaryTag = "—";
+        public string FirBoundaryTag
+        {
+            get => _firBoundaryTag;
+            private set { _firBoundaryTag = value; OnPropertyChanged(); }
+        }
+
+        private string _traconBoundaryTag = "—";
+        public string TraconBoundaryTag
+        {
+            get => _traconBoundaryTag;
+            private set { _traconBoundaryTag = value; OnPropertyChanged(); }
+        }
+
+        private string _vatSpyTag = "—";
+        public string VatSpyTag
+        {
+            get => _vatSpyTag;
+            private set { _vatSpyTag = value; OnPropertyChanged(); }
+        }
+
         public SettingsViewModel() : base()
         {
             var mapProviders = new ResourceDictionary
@@ -383,6 +413,12 @@ namespace FSTRaK.ViewModels
             SelectedChartOverlayProvider = Properties.Settings.Default.ChartOverlayProvider;
             IsOpenAipEnabled = Properties.Settings.Default.IsOpenAipEnabled;
             OpenAipApiKey = Properties.Settings.Default.OpenAipApiKey;
+            FirBoundaryTag = string.IsNullOrEmpty(Properties.Settings.Default.FirBoundaryReleaseTag)
+                ? "—" : Properties.Settings.Default.FirBoundaryReleaseTag;
+            TraconBoundaryTag = string.IsNullOrEmpty(Properties.Settings.Default.TraconBoundaryReleaseTag)
+                ? "—" : Properties.Settings.Default.TraconBoundaryReleaseTag;
+            VatSpyTag = string.IsNullOrEmpty(Properties.Settings.Default.VatSpyReleaseTag)
+                ? "—" : Properties.Settings.Default.VatSpyReleaseTag;
         }
 
         public void SaveSettings()
