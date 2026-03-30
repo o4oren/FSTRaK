@@ -87,9 +87,9 @@
 
             <!-- ── Header row: network logo + callsign + close ── -->
             <DockPanel Margin="0,0,0,6">
-                <Grid Width="36" Height="22" DockPanel.Dock="Left" VerticalAlignment="Center" Margin="0,0,8,0">
-                    <Image Source="/Resources/Images/VATSIM_Logo_White_No_Tagline_500px.png" Stretch="Uniform"
-                           Visibility="{Binding IsVatsim, Converter={StaticResource BoolToVis}}"/>
+                <Grid Width="48" Height="24" DockPanel.Dock="Left" VerticalAlignment="Center" Margin="0,0,8,0">
+                    <ContentControl Content="{DynamicResource VatsimLogo}"
+                                    Visibility="{Binding IsVatsim, Converter={StaticResource BoolToVis}}"/>
                     <ContentControl Content="{DynamicResource IvaoLogo}"
                                     Visibility="{Binding IsIvao, Converter={StaticResource BoolToVis}}"/>
                 </Grid>
@@ -98,9 +98,14 @@
                         Click="CloseButton_Click">
                     <Button.Template>
                         <ControlTemplate TargetType="Button">
-                            <TextBlock Text="×" FontSize="14"
+                            <TextBlock x:Name="CloseText" Text="×" FontSize="18"
                                        Foreground="{DynamicResource BrightTextColor}"
-                                       Opacity="0.7"/>
+                                       Opacity="0.6"/>
+                            <ControlTemplate.Triggers>
+                                <Trigger Property="IsMouseOver" Value="True">
+                                    <Setter TargetName="CloseText" Property="Opacity" Value="1"/>
+                                </Trigger>
+                            </ControlTemplate.Triggers>
                         </ControlTemplate>
                     </Button.Template>
                 </Button>

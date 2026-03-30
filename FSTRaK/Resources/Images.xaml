@@ -148,5 +148,10 @@
             </Path.Data>
         </Path>
     </Canvas>
+
+    <Image x:Key="VatsimLogo" x:Shared="False"
+           Source="/Resources/Images/VATSIM_Logo_White_No_Tagline_500px.png"
+           Stretch="Uniform"/>
+
 </ResourceDictionary>
     
