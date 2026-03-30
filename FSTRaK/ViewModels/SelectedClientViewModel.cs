@@ -248,31 +248,15 @@ namespace FSTRaK.ViewModels
             // Always update the destination line regardless of speed
             DestinationLine = GeodesicUtil.Interpolate(currentLat, currentLon, _arrLat, _arrLon);
 
-            if (_trackPoints.Count > 0 && !VatsimTrackFetched && Network == NetworkType.Vatsim)
+            if (_trackPoints.Count == 0)
             {
-                // VATSIM dict track: prepend geodesic from departure to first known point
-                var first = _trackPoints[0];
-                var depToFirst = GeodesicUtil.Interpolate(_depLat, _depLon, first.Latitude, first.Longitude);
-                if (depToFirst.Count > 1)
-                {
-                    var full = new System.Collections.Generic.List<MapControl.Location>(depToFirst);
-                    foreach (var pt in _trackPoints)
-                        full.Add(new MapControl.Location(pt.Latitude, pt.Longitude));
-                    _extendedTrackLocations = full;
-                }
-                else
-                    _extendedTrackLocations = null;
-            }
-            else if (_trackPoints.Count == 0)
-            {
-                // No track at all (IVAO without key, or VATSIM/IVAO before API fetch completes):
-                // show geodesic from departure to current position
+                // No API track yet — show geodesic from departure to current position
                 var depToCurrent = GeodesicUtil.Interpolate(_depLat, _depLon, currentLat, currentLon);
                 _extendedTrackLocations = depToCurrent.Count > 1 ? depToCurrent : null;
             }
             else
             {
-                // API track loaded (IVAO or VATSIM with StatSim) — use as-is, no prefix needed
+                // API track loaded — use as-is
                 _extendedTrackLocations = null;
             }
 

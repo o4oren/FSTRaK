@@ -25,10 +25,7 @@ namespace FSTRaK.ViewModels
         private readonly VatsimService _vatsimService = VatsimService.Instance;
         private readonly IvaoService _ivaoService = IvaoService.Instance;
 
-        // Flight track accumulation
         internal record TrackPoint(double Latitude, double Longitude, int Altitude, DateTime Timestamp);
-        private readonly System.Collections.Concurrent.ConcurrentDictionary<string, List<TrackPoint>> _pilotTracks = new();
-        private readonly object _pilotTracksLock = new object();
 
 
         public RelayCommand CenterOnAirplaneCommand { get; private set; }
@@ -666,9 +663,7 @@ namespace FSTRaK.ViewModels
             if (parameter is VatsimAicraft va)
             {
                 bool isOwn = !string.IsNullOrEmpty(myVatsimId) && va.Pilot.cid.ToString() == myVatsimId;
-                var tracks = _pilotTracks.TryGetValue($"VATSIM:{va.Pilot.callsign}", out var t)
-                    ? new List<TrackPoint>(t) : new List<TrackPoint>();
-                SelectedClient = new SelectedClientViewModel(va, isOwn, isOwn && isInFlight, tracks);
+                SelectedClient = new SelectedClientViewModel(va, isOwn, isOwn && isInFlight, new List<TrackPoint>());
                 TrySetAirportCoords(SelectedClient);
                 var _vs = FetchVatsimTrackAsync(va.Pilot.callsign);
             }
@@ -882,10 +877,6 @@ namespace FSTRaK.ViewModels
                                 var pts = SelectedClient.TrackPoints;
                                 if (pts.Count > 0)
                                     pts[pts.Count - 1] = new TrackPoint(match.latitude, match.longitude, match.altitude, DateTime.UtcNow);
-                            }
-                            else if (_pilotTracks.TryGetValue($"VATSIM:{match.callsign}", out var t))
-                            {
-                                SelectedClient.TrackPoints = new List<TrackPoint>(t);
                             }
                             SelectedClient.RecalcProgress();
                             UpdateFlightPathLines();
@@ -1173,23 +1164,10 @@ namespace FSTRaK.ViewModels
                 foreach (var pilot in _vatsimData.pilots)
                 {
                     if (!string.IsNullOrEmpty(myVatsimId) && pilot.cid.ToString() == myVatsimId && isInFlight) continue;
-                    var aircraft = new VatsimAicraft(pilot);
-                    newVatsimAircraftList.Add(aircraft);
-                    var key = $"VATSIM:{pilot.callsign}";
-                    var list = _pilotTracks.GetOrAdd(key, _ => new List<TrackPoint>());
-                    lock (list)
-                    {
-                        list.Add(new TrackPoint(pilot.latitude, pilot.longitude, pilot.altitude, DateTime.UtcNow));
-                        if (list.Count > 500)
-                            list.RemoveAt(0);
-                    }
+                    newVatsimAircraftList.Add(new VatsimAicraft(pilot));
                 }
             });
             VatsimAircraftList.ReplaceContent(newVatsimAircraftList);
-            // Remove tracks for pilots no longer in feed
-            var activeVatsimKeys = newVatsimAircraftList.Select(a => $"VATSIM:{a.Pilot.callsign}").ToHashSet();
-            foreach (var k in _pilotTracks.Keys.Where(k => k.StartsWith("VATSIM:") && !activeVatsimKeys.Contains(k)).ToList())
-                _pilotTracks.TryRemove(k, out _);
         }
 
         private async void ProcessVatsimCtrFSS()
