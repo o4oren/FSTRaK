@@ -1,7 +1,6 @@
 using System;
 using System.Collections.Generic;
 using System.Linq;
-using System.Windows.Media.Imaging;
 using FSTRaK.BusinessLogic.IvaoService.IvaoModel;
 using FSTRaK.BusinessLogic.VatsimService.VatsimModel;
 using FSTRaK.DataTypes;
@@ -47,10 +46,6 @@ namespace FSTRaK.ViewModels
         // ── Network identity helpers (for XAML visibility toggling)
         public bool IsVatsim => Network == NetworkType.Vatsim;
         public bool IsIvao   => Network == NetworkType.Ivao;
-
-        // ── Logos
-        public BitmapImage AirlineLogo => ClientKind == ClientType.Pilot
-            ? AirlineLogoResolver.GetLogo(Callsign) : null;
 
         // ── Pilot display properties
         public bool IsPilot => ClientKind == ClientType.Pilot;

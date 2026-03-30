@@ -178,11 +178,8 @@
     <Compile Include="Utils\CollectionUtils.cs" />
     <Compile Include="Utils\ColorUtil.cs" />
     <Compile Include="Utils\CoordinatesUtil.cs" />
-    <Compile Include="Utils\GeodesicUtil.cs" />
-    <Compile Include="Utils\IsExternalInit.cs" />
     <Compile Include="Utils\MapUtils.cs" />
     <Compile Include="Utils\ResourceUtil.cs" />
-    <Compile Include="Utils\AirlineLogoResolver.cs" />
     <Compile Include="Utils\HyperlinkText.cs" />
     <Compile Include="Utils\MapProviderResolver.cs" />
     <Compile Include="Utils\MathUtils.cs" />
@@ -219,7 +216,6 @@
       <DependentUpon>LiveView.xaml</DependentUpon>
     </Compile>
     <Compile Include="ViewModels\LiveViewViewModel.cs" />
-    <Compile Include="ViewModels\SelectedClientViewModel.cs" />
     <Compile Include="ViewModels\BaseViewModel.cs" />
     <Compile Include="ViewModels\MainWindowViewModel.cs" />
     <Compile Include="Views\FlightDetailsView.xaml.cs">
@@ -227,10 +223,6 @@
     </Compile>
     <Compile Include="Views\LogbookView.xaml.cs">
       <DependentUpon>LogbookView.xaml</DependentUpon>
-    </Compile>
-    <Compile Include="Views\ClientDetailPanelControl.xaml.cs">
-      <DependentUpon>ClientDetailPanelControl.xaml</DependentUpon>
-      <SubType>Code</SubType>
     </Compile>
     <Compile Include="Views\OverlayTextCardControl.xaml.cs">
       <DependentUpon>OverlayTextCardControl.xaml</DependentUpon>
@@ -301,10 +293,6 @@
       <DependentUpon>MainWindow.xaml</DependentUpon>
       <SubType>Code</SubType>
     </Compile>
-    <Page Include="Views\ClientDetailPanelControl.xaml">
-      <SubType>Designer</SubType>
-      <Generator>MSBuild:Compile</Generator>
-    </Page>
     <Page Include="Views\OverlayTextCardControl.xaml">
       <Generator>MSBuild:Compile</Generator>
       <SubType>Designer</SubType>
@@ -380,166 +368,6 @@
     <Resource Include="Resources\Images\Aircraft\003884\E195-image.png" />
     <Resource Include="Resources\Images\Aircraft\003884\ERJ-image.png" />
     <Resource Include="Resources\Images\Aircraft\003884\Helicopter-image.png" />
-    <Resource Include="Assets\AirlineLogos\AAA.png" />
-    <Resource Include="Assets\AirlineLogos\AAH.png" />
-    <Resource Include="Assets\AirlineLogos\AAL.png" />
-    <Resource Include="Assets\AirlineLogos\AAR.png" />
-    <Resource Include="Assets\AirlineLogos\ACA.png" />
-    <Resource Include="Assets\AirlineLogos\AFL.png" />
-    <Resource Include="Assets\AirlineLogos\AFR.png" />
-    <Resource Include="Assets\AirlineLogos\AIC.png" />
-    <Resource Include="Assets\AirlineLogos\AIJ.png" />
-    <Resource Include="Assets\AirlineLogos\AIZ.png" />
-    <Resource Include="Assets\AirlineLogos\AJM.png" />
-    <Resource Include="Assets\AirlineLogos\ALK.png" />
-    <Resource Include="Assets\AirlineLogos\AMC.png" />
-    <Resource Include="Assets\AirlineLogos\AMT.png" />
-    <Resource Include="Assets\AirlineLogos\AMU.png" />
-    <Resource Include="Assets\AirlineLogos\AMX.png" />
-    <Resource Include="Assets\AirlineLogos\ANA.png" />
-    <Resource Include="Assets\AirlineLogos\ANZ.png" />
-    <Resource Include="Assets\AirlineLogos\ARG.png" />
-    <Resource Include="Assets\AirlineLogos\ASA.png" />
-    <Resource Include="Assets\AirlineLogos\ASQ.png" />
-    <Resource Include="Assets\AirlineLogos\ATC.png" />
-    <Resource Include="Assets\AirlineLogos\AUA.png" />
-    <Resource Include="Assets\AirlineLogos\AVA.png" />
-    <Resource Include="Assets\AirlineLogos\AWE.png" />
-    <Resource Include="Assets\AirlineLogos\AZA.png" />
-    <Resource Include="Assets\AirlineLogos\AZU.png" />
-    <Resource Include="Assets\AirlineLogos\BAW.png" />
-    <Resource Include="Assets\AirlineLogos\BEE.png" />
-    <Resource Include="Assets\AirlineLogos\BER.png" />
-    <Resource Include="Assets\AirlineLogos\BLC.png" />
-    <Resource Include="Assets\AirlineLogos\BMA.png" />
-    <Resource Include="Assets\AirlineLogos\BOE.png" />
-    <Resource Include="Assets\AirlineLogos\BTA.png" />
-    <Resource Include="Assets\AirlineLogos\BWA.png" />
-    <Resource Include="Assets\AirlineLogos\CAL.png" />
-    <Resource Include="Assets\AirlineLogos\CAW.png" />
-    <Resource Include="Assets\AirlineLogos\CCA.png" />
-    <Resource Include="Assets\AirlineLogos\CES.png" />
-    <Resource Include="Assets\AirlineLogos\CFG.png" />
-    <Resource Include="Assets\AirlineLogos\CHH.png" />
-    <Resource Include="Assets\AirlineLogos\CJT.png" />
-    <Resource Include="Assets\AirlineLogos\CLH.png" />
-    <Resource Include="Assets\AirlineLogos\CLX.png" />
-    <Resource Include="Assets\AirlineLogos\CMP.png" />
-    <Resource Include="Assets\AirlineLogos\COA.png" />
-    <Resource Include="Assets\AirlineLogos\CPA.png" />
-    <Resource Include="Assets\AirlineLogos\CSA.png" />
-    <Resource Include="Assets\AirlineLogos\CSC.png" />
-    <Resource Include="Assets\AirlineLogos\CSN.png" />
-    <Resource Include="Assets\AirlineLogos\CSZ.png" />
-    <Resource Include="Assets\AirlineLogos\CXA.png" />
-    <Resource Include="Assets\AirlineLogos\DAL.png" />
-    <Resource Include="Assets\AirlineLogos\DLH.png" />
-    <Resource Include="Assets\AirlineLogos\EAL.png" />
-    <Resource Include="Assets\AirlineLogos\EDV.png" />
-    <Resource Include="Assets\AirlineLogos\EGF.png" />
-    <Resource Include="Assets\AirlineLogos\EIN.png" />
-    <Resource Include="Assets\AirlineLogos\ELY.png" />
-    <Resource Include="Assets\AirlineLogos\ENY.png" />
-    <Resource Include="Assets\AirlineLogos\ETD.png" />
-    <Resource Include="Assets\AirlineLogos\ETH.png" />
-    <Resource Include="Assets\AirlineLogos\EVA.png" />
-    <Resource Include="Assets\AirlineLogos\EWG.png" />
-    <Resource Include="Assets\AirlineLogos\EZY.png" />
-    <Resource Include="Assets\AirlineLogos\FDX.png" />
-    <Resource Include="Assets\AirlineLogos\FFT.png" />
-    <Resource Include="Assets\AirlineLogos\FIN.png" />
-    <Resource Include="Assets\AirlineLogos\FJI.png" />
-    <Resource Include="Assets\AirlineLogos\FLG.png" />
-    <Resource Include="Assets\AirlineLogos\FWR.png" />
-    <Resource Include="Assets\AirlineLogos\GBB.png" />
-    <Resource Include="Assets\AirlineLogos\GEC.png" />
-    <Resource Include="Assets\AirlineLogos\GFA.png" />
-    <Resource Include="Assets\AirlineLogos\GIA.png" />
-    <Resource Include="Assets\AirlineLogos\GLO.png" />
-    <Resource Include="Assets\AirlineLogos\GTI.png" />
-    <Resource Include="Assets\AirlineLogos\HAL.png" />
-    <Resource Include="Assets\AirlineLogos\HTL.png" />
-    <Resource Include="Assets\AirlineLogos\IBE.png" />
-    <Resource Include="Assets\AirlineLogos\ICE.png" />
-    <Resource Include="Assets\AirlineLogos\ISR.png" />
-    <Resource Include="Assets\AirlineLogos\JAL.png" />
-    <Resource Include="Assets\AirlineLogos\JAT.png" />
-    <Resource Include="Assets\AirlineLogos\JBU.png" />
-    <Resource Include="Assets\AirlineLogos\JKK.png" />
-    <Resource Include="Assets\AirlineLogos\JMC.png" />
-    <Resource Include="Assets\AirlineLogos\JSX.png" />
-    <Resource Include="Assets\AirlineLogos\JZA.png" />
-    <Resource Include="Assets\AirlineLogos\KAL.png" />
-    <Resource Include="Assets\AirlineLogos\KLM.png" />
-    <Resource Include="Assets\AirlineLogos\KQA.jpeg" />
-    <Resource Include="Assets\AirlineLogos\KQA.jpg" />
-    <Resource Include="Assets\AirlineLogos\LAL.png" />
-    <Resource Include="Assets\AirlineLogos\LAN.png" />
-    <Resource Include="Assets\AirlineLogos\LDA.png" />
-    <Resource Include="Assets\AirlineLogos\LGL.png" />
-    <Resource Include="Assets\AirlineLogos\LNI.png" />
-    <Resource Include="Assets\AirlineLogos\LNK.png" />
-    <Resource Include="Assets\AirlineLogos\LOF.png" />
-    <Resource Include="Assets\AirlineLogos\LOT.png" />
-    <Resource Include="Assets\AirlineLogos\LTD.png" />
-    <Resource Include="Assets\AirlineLogos\LTG.png" />
-    <Resource Include="Assets\AirlineLogos\LTU.png" />
-    <Resource Include="Assets\AirlineLogos\MAS.png" />
-    <Resource Include="Assets\AirlineLogos\MEP.png" />
-    <Resource Include="Assets\AirlineLogos\MGL.png" />
-    <Resource Include="Assets\AirlineLogos\MPG.png" />
-    <Resource Include="Assets\AirlineLogos\MPH.png" />
-    <Resource Include="Assets\AirlineLogos\MSR.png" />
-    <Resource Include="Assets\AirlineLogos\MXA.png" />
-    <Resource Include="Assets\AirlineLogos\NGE.png" />
-    <Resource Include="Assets\AirlineLogos\NKS.png" />
-    <Resource Include="Assets\AirlineLogos\NMB.png" />
-    <Resource Include="Assets\AirlineLogos\NRL.png" />
-    <Resource Include="Assets\AirlineLogos\NWA.png" />
-    <Resource Include="Assets\AirlineLogos\OAL.png" />
-    <Resource Include="Assets\AirlineLogos\OZW.png" />
-    <Resource Include="Assets\AirlineLogos\PAC.png" />
-    <Resource Include="Assets\AirlineLogos\PAL.png" />
-    <Resource Include="Assets\AirlineLogos\PGA.png" />
-    <Resource Include="Assets\AirlineLogos\PIA.png" />
-    <Resource Include="Assets\AirlineLogos\POE.png" />
-    <Resource Include="Assets\AirlineLogos\PWD.png" />
-    <Resource Include="Assets\AirlineLogos\QFA.png" />
-    <Resource Include="Assets\AirlineLogos\QTR.png" />
-    <Resource Include="Assets\AirlineLogos\ROU.png" />
-    <Resource Include="Assets\AirlineLogos\RSP.png" />
-    <Resource Include="Assets\AirlineLogos\RVF.png" />
-    <Resource Include="Assets\AirlineLogos\RYR.png" />
-    <Resource Include="Assets\AirlineLogos\SAA.png" />
-    <Resource Include="Assets\AirlineLogos\SAS.png" />
-    <Resource Include="Assets\AirlineLogos\SCX.png" />
-    <Resource Include="Assets\AirlineLogos\SFR.png" />
-    <Resource Include="Assets\AirlineLogos\SIA.png" />
-    <Resource Include="Assets\AirlineLogos\SKV.png" />
-    <Resource Include="Assets\AirlineLogos\SKW.png" />
-    <Resource Include="Assets\AirlineLogos\SLI.png" />
-    <Resource Include="Assets\AirlineLogos\SLM.png" />
-    <Resource Include="Assets\AirlineLogos\SRY.png" />
-    <Resource Include="Assets\AirlineLogos\SVA.png" />
-    <Resource Include="Assets\AirlineLogos\SWA.png" />
-    <Resource Include="Assets\AirlineLogos\SWG.png" />
-    <Resource Include="Assets\AirlineLogos\SWR.png" />
-    <Resource Include="Assets\AirlineLogos\TAI.png" />
-    <Resource Include="Assets\AirlineLogos\TAM.png" />
-    <Resource Include="Assets\AirlineLogos\TAP.png" />
-    <Resource Include="Assets\AirlineLogos\THA.png" />
-    <Resource Include="Assets\AirlineLogos\THY.png" />
-    <Resource Include="Assets\AirlineLogos\TRS.png" />
-    <Resource Include="Assets\AirlineLogos\TVS.png" />
-    <Resource Include="Assets\AirlineLogos\UAE.png" />
-    <Resource Include="Assets\AirlineLogos\UAL.png" />
-    <Resource Include="Assets\AirlineLogos\USA.png" />
-    <Resource Include="Assets\AirlineLogos\VIR.png" />
-    <Resource Include="Assets\AirlineLogos\VOI.png" />
-    <Resource Include="Assets\AirlineLogos\VOZ.png" />
-    <Resource Include="Assets\AirlineLogos\VRD.png" />
-    <Resource Include="Assets\AirlineLogos\VRG.png" />
-    <Resource Include="Assets\AirlineLogos\WJA.png" />
     <Content Include="System.Buffers.dll">
       <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
     </Content>

@@ -16,7 +16,6 @@
             </ResourceDictionary.MergedDictionaries>
 
             <utils:NullToVisibilityConverter      x:Key="NullToVis"/>
-            <utils:InvertedNullToVisibilityConverter x:Key="InvertedNullToVis"/>
             <utils:BoolToVisibilityConverter      x:Key="BoolToVis"/>
 
             <Style x:Key="StatTile" TargetType="Border">
