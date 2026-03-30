@@ -1,4 +1,5 @@
 ﻿using FSTRaK.ViewModels;
+using System.Diagnostics;
 using System.Windows;
 using System.Windows.Controls;
 
@@ -18,6 +19,12 @@ namespace FSTRaK.Views
         public void OnLoaded(object s, RoutedEventArgs e)
         {
             ((SettingsViewModel)DataContext).SettingsView_OnLoaded();
+        }
+
+        private void Hyperlink_RequestNavigate(object sender, System.Windows.Navigation.RequestNavigateEventArgs e)
+        {
+            Process.Start(new ProcessStartInfo(e.Uri.AbsoluteUri) { UseShellExecute = true });
+            e.Handled = true;
         }
     }
 }
