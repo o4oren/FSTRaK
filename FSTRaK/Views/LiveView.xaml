@@ -275,27 +275,17 @@
                 <map:MapItemsControl.ItemContainerStyle>
                     <Style TargetType="map:MapItem">
                         <Setter Property="Location" Value="{Binding Location}"/>
+                        <Setter Property="VerticalAlignment" Value="Center"/>
+                        <Setter Property="HorizontalAlignment" Value="Center"/>
                     </Style>
                 </map:MapItemsControl.ItemContainerStyle>
                 <map:MapItemsControl.ItemTemplate>
                     <DataTemplate>
-                        <map:MapPanel>
-                            <StackPanel>
-                                <TextBlock Text="{Binding Callsign}"
-                                           Foreground="{DynamicResource SuperBrightTextColor}"
-                                           FontSize="10" FontWeight="Bold">
-                                    <TextBlock.ToolTip>
-                                        <ToolTip>
-                                            <StackPanel>
-                                                <TextBlock Text="{Binding Callsign}" FontWeight="Bold"/>
-                                                <TextBlock Text="{Binding DisplayName}"/>
-                                                <TextBlock Text="{Binding Frequency}"/>
-                                            </StackPanel>
-                                        </ToolTip>
-                                    </TextBlock.ToolTip>
-                                </TextBlock>
-                            </StackPanel>
-                        </map:MapPanel>
+                        <Image Source="/Resources/Images/radar-64.png" Width="24" Height="24">
+                            <Image.ToolTip>
+                                <ToolTip Content="{Binding TooltipText}" />
+                            </Image.ToolTip>
+                        </Image>
                     </DataTemplate>
                 </map:MapItemsControl.ItemTemplate>
             </map:MapItemsControl>

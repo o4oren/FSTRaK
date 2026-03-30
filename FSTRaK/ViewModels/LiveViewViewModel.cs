@@ -1230,19 +1230,19 @@ namespace FSTRaK.ViewModels
         {
             public Location Location { get; set; }
             public string Callsign { get; set; }
-            public string Frequency { get; set; }
-            public string DisplayName { get; set; }
+            public string TooltipText { get; set; }
             public LocationCollection ControlPolygon { get; set; }
 
             public IvaoAtcItem(IvaoAtcEntry entry)
             {
                 Callsign = entry.callsign;
-                Frequency = entry.atcSession?.frequency.ToString("F3");
+                var freq = entry.atcSession?.frequency.ToString("F3") ?? "";
 
                 if (entry.atcPosition?.airport != null)
                 {
                     Location = new Location(entry.atcPosition.airport.latitude, entry.atcPosition.airport.longitude);
-                    DisplayName = entry.atcPosition.atcCallsign ?? entry.callsign;
+                    var displayName = entry.atcPosition.atcCallsign ?? entry.callsign;
+                    TooltipText = $"{entry.callsign}\n{displayName}\n{freq}";
                     if (entry.atcPosition.regionMap?.Count > 0)
                     {
                         ControlPolygon = new LocationCollection();
@@ -1253,7 +1253,8 @@ namespace FSTRaK.ViewModels
                 else if (entry.subcenter != null)
                 {
                     Location = new Location(entry.subcenter.latitude, entry.subcenter.longitude);
-                    DisplayName = entry.subcenter.atcCallsign ?? entry.callsign;
+                    var displayName = entry.subcenter.atcCallsign ?? entry.callsign;
+                    TooltipText = $"{entry.callsign}\n{displayName}\n{freq}";
                     if (entry.subcenter.regionMap?.Count > 0)
                     {
                         ControlPolygon = new LocationCollection();
