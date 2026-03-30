@@ -10,9 +10,9 @@ namespace FSTRaK.Utils;
 public class NullToVisibilityConverter : IValueConverter
 {
     public object Convert(object value, Type targetType, object parameter, CultureInfo culture)
-    {
-        return value == null ? Visibility.Collapsed : Visibility.Visible;
-    }
+        => (value == null || (value is string s && string.IsNullOrEmpty(s)))
+           ? Visibility.Collapsed
+           : Visibility.Visible;
 
     public object ConvertBack(object value, Type targetType, object parameter, CultureInfo culture)
     {
