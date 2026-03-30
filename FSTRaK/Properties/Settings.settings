@@ -47,6 +47,12 @@
     <Setting Name="IvaoId" Type="System.String" Scope="User">
       <Value Profile="(Default)" />
     </Setting>
+    <Setting Name="IvaoApiKey" Type="System.String" Scope="User">
+      <Value Profile="(Default)" />
+    </Setting>
+    <Setting Name="StatSimApiKey" Type="System.String" Scope="User">
+      <Value Profile="(Default)" />
+    </Setting>
     <Setting Name="MapTilerApiKey" Type="System.String" Scope="User">
       <Value Profile="(Default)" />
     </Setting>

@@ -244,6 +244,18 @@
         "Entry"
         {
         "MsmKey" = "8:_4586026CF3EF3C2494F60DEA45B1AAEE"
+        "OwnerKey" = "8:_B498FE2A6DAF4F38B3E0183D4C953F1E"
+        "MsmSig" = "8:_UNDEFINED"
+        }
+        "Entry"
+        {
+        "MsmKey" = "8:_4586026CF3EF3C2494F60DEA45B1AAEE"
+        "OwnerKey" = "8:_46D5262F7AC4837609E7CE1FDD3A02E0"
+        "MsmSig" = "8:_UNDEFINED"
+        }
+        "Entry"
+        {
+        "MsmKey" = "8:_4586026CF3EF3C2494F60DEA45B1AAEE"
         "OwnerKey" = "8:_13722E0B14CA47C4ADE1FA9E76A8D0EB"
         "MsmSig" = "8:_UNDEFINED"
         }
@@ -580,6 +592,18 @@
         "Entry"
         {
         "MsmKey" = "8:_9A57F3CBAB611E02CCC502B9E0C905E1"
+        "OwnerKey" = "8:_B498FE2A6DAF4F38B3E0183D4C953F1E"
+        "MsmSig" = "8:_UNDEFINED"
+        }
+        "Entry"
+        {
+        "MsmKey" = "8:_9A57F3CBAB611E02CCC502B9E0C905E1"
+        "OwnerKey" = "8:_46D5262F7AC4837609E7CE1FDD3A02E0"
+        "MsmSig" = "8:_UNDEFINED"
+        }
+        "Entry"
+        {
+        "MsmKey" = "8:_9A57F3CBAB611E02CCC502B9E0C905E1"
         "OwnerKey" = "8:_C0399746B13C43F38A0E89B609CF5330"
         "MsmSig" = "8:_UNDEFINED"
         }
@@ -611,6 +635,12 @@
         {
         "MsmKey" = "8:_9DF429BA73CD79EC512193E2E800C33F"
         "OwnerKey" = "8:_8581586A4FC4400494EBCD574550E0A0"
+        "MsmSig" = "8:_UNDEFINED"
+        }
+        "Entry"
+        {
+        "MsmKey" = "8:_A2DD72AEE76A403196C5EE0E30CCDBD4"
+        "OwnerKey" = "8:_UNDEFINED"
         "MsmSig" = "8:_UNDEFINED"
         }
         "Entry"
@@ -671,6 +701,12 @@
         {
         "MsmKey" = "8:_B3D71A524B586EB290A062BD9FE217E7"
         "OwnerKey" = "8:_8581586A4FC4400494EBCD574550E0A0"
+        "MsmSig" = "8:_UNDEFINED"
+        }
+        "Entry"
+        {
+        "MsmKey" = "8:_B498FE2A6DAF4F38B3E0183D4C953F1E"
+        "OwnerKey" = "8:_UNDEFINED"
         "MsmSig" = "8:_UNDEFINED"
         }
         "Entry"
@@ -898,7 +934,13 @@
         "Entry"
         {
         "MsmKey" = "8:_UNDEFINED"
-        "OwnerKey" = "8:_C0399746B13C43F38A0E89B609CF5330"
+        "OwnerKey" = "8:_B498FE2A6DAF4F38B3E0183D4C953F1E"
+        "MsmSig" = "8:_UNDEFINED"
+        }
+        "Entry"
+        {
+        "MsmKey" = "8:_UNDEFINED"
+        "OwnerKey" = "8:_A2DD72AEE76A403196C5EE0E30CCDBD4"
         "MsmSig" = "8:_UNDEFINED"
         }
         "Entry"
@@ -917,6 +959,30 @@
         {
         "MsmKey" = "8:_UNDEFINED"
         "OwnerKey" = "8:_C506FAE9A0354640A5AACADE05247EBA"
+        "MsmSig" = "8:_UNDEFINED"
+        }
+        "Entry"
+        {
+        "MsmKey" = "8:_UNDEFINED"
+        "OwnerKey" = "8:_C0399746B13C43F38A0E89B609CF5330"
+        "MsmSig" = "8:_UNDEFINED"
+        }
+        "Entry"
+        {
+        "MsmKey" = "8:_UNDEFINED"
+        "OwnerKey" = "8:_46D5262F7AC4837609E7CE1FDD3A02E0"
+        "MsmSig" = "8:_UNDEFINED"
+        }
+        "Entry"
+        {
+        "MsmKey" = "8:_UNDEFINED"
+        "OwnerKey" = "8:_C0399746B13C43F38A0E89B609CF5330"
+        "MsmSig" = "8:_UNDEFINED"
+        }
+        "Entry"
+        {
+        "MsmKey" = "8:_UNDEFINED"
+        "OwnerKey" = "8:_1FF5D5260FF97A332E2E58AA84C7C91A"
         "MsmSig" = "8:_UNDEFINED"
         }
         "Entry"
@@ -1223,12 +1289,6 @@
         {
         "MsmKey" = "8:_UNDEFINED"
         "OwnerKey" = "8:_630FD8E22A81AFF5D8B327C82031CFA4"
-        "MsmSig" = "8:_UNDEFINED"
-        }
-        "Entry"
-        {
-        "MsmKey" = "8:_UNDEFINED"
-        "OwnerKey" = "8:_C0399746B13C43F38A0E89B609CF5330"
         "MsmSig" = "8:_UNDEFINED"
         }
     }
@@ -1643,6 +1703,11 @@
             "AssemblyAsmDisplayName" = "8:System.Data.SQLite, Version=1.0.119.0, Culture=neutral, PublicKeyToken=db937bc2d44ff139, processorArchitecture=MSIL"
                 "ScatterAssemblies"
                 {
+                    "_1FF5D5260FF97A332E2E58AA84C7C91A"
+                    {
+                    "Name" = "8:System.Data.SQLite.dll"
+                    "Attributes" = "3:512"
+                    }
                 }
             "SourcePath" = "8:System.Data.SQLite.dll"
             "TargetName" = "8:"
@@ -1937,6 +2002,11 @@
             "AssemblyAsmDisplayName" = "8:System.Data.SQLite.EF6, Version=1.0.119.0, Culture=neutral, PublicKeyToken=db937bc2d44ff139, processorArchitecture=MSIL"
                 "ScatterAssemblies"
                 {
+                    "_46D5262F7AC4837609E7CE1FDD3A02E0"
+                    {
+                    "Name" = "8:System.Data.SQLite.EF6.dll"
+                    "Attributes" = "3:512"
+                    }
                 }
             "SourcePath" = "8:System.Data.SQLite.EF6.dll"
             "TargetName" = "8:"
@@ -2594,6 +2664,37 @@
             "IsDependency" = "11:TRUE"
             "IsolateTo" = "8:"
             }
+            "{9F6F8455-1EF1-4B85-886A-4223BCC8E7F7}:_A2DD72AEE76A403196C5EE0E30CCDBD4"
+            {
+            "AssemblyRegister" = "3:1"
+            "AssemblyIsInGAC" = "11:FALSE"
+            "AssemblyAsmDisplayName" = "8:System.Data.SQLite, Version=1.0.119.0, Culture=neutral, PublicKeyToken=db937bc2d44ff139, processorArchitecture=MSIL"
+                "ScatterAssemblies"
+                {
+                    "_A2DD72AEE76A403196C5EE0E30CCDBD4"
+                    {
+                    "Name" = "8:System.Data.SQLite.dll"
+                    "Attributes" = "3:512"
+                    }
+                }
+            "SourcePath" = "8:..\\FSTRaK\\bin\\x64\\Release\\System.Data.SQLite.dll"
+            "TargetName" = "8:"
+            "Tag" = "8:"
+            "Folder" = "8:_26CFFA3E4E6A4BE18B31D33970E8B9B7"
+            "Condition" = "8:"
+            "Transitive" = "11:FALSE"
+            "Vital" = "11:TRUE"
+            "ReadOnly" = "11:FALSE"
+            "Hidden" = "11:FALSE"
+            "System" = "11:FALSE"
+            "Permanent" = "11:FALSE"
+            "SharedLegacy" = "11:FALSE"
+            "PackageAs" = "3:1"
+            "Register" = "3:1"
+            "Exclude" = "11:FALSE"
+            "IsDependency" = "11:FALSE"
+            "IsolateTo" = "8:"
+            }
             "{9F6F8455-1EF1-4B85-886A-4223BCC8E7F7}:_A4D70056C78A158E7D851A2AC02B3CBB"
             {
             "AssemblyRegister" = "3:1"
@@ -2747,6 +2848,37 @@
             "Register" = "3:1"
             "Exclude" = "11:FALSE"
             "IsDependency" = "11:TRUE"
+            "IsolateTo" = "8:"
+            }
+            "{9F6F8455-1EF1-4B85-886A-4223BCC8E7F7}:_B498FE2A6DAF4F38B3E0183D4C953F1E"
+            {
+            "AssemblyRegister" = "3:1"
+            "AssemblyIsInGAC" = "11:FALSE"
+            "AssemblyAsmDisplayName" = "8:System.Data.SQLite.EF6, Version=1.0.119.0, Culture=neutral, PublicKeyToken=db937bc2d44ff139, processorArchitecture=MSIL"
+                "ScatterAssemblies"
+                {
+                    "_B498FE2A6DAF4F38B3E0183D4C953F1E"
+                    {
+                    "Name" = "8:System.Data.SQLite.EF6.dll"
+                    "Attributes" = "3:512"
+                    }
+                }
+            "SourcePath" = "8:..\\FSTRaK\\bin\\x64\\Release\\System.Data.SQLite.EF6.dll"
+            "TargetName" = "8:"
+            "Tag" = "8:"
+            "Folder" = "8:_26CFFA3E4E6A4BE18B31D33970E8B9B7"
+            "Condition" = "8:"
+            "Transitive" = "11:FALSE"
+            "Vital" = "11:TRUE"
+            "ReadOnly" = "11:FALSE"
+            "Hidden" = "11:FALSE"
+            "System" = "11:FALSE"
+            "Permanent" = "11:FALSE"
+            "SharedLegacy" = "11:FALSE"
+            "PackageAs" = "3:1"
+            "Register" = "3:1"
+            "Exclude" = "11:FALSE"
+            "IsDependency" = "11:FALSE"
             "IsolateTo" = "8:"
             }
             "{9F6F8455-1EF1-4B85-886A-4223BCC8E7F7}:_B8F8F2D36FABAD88A94887BBA0A0DE86"
@@ -3313,7 +3445,7 @@
         "Name" = "8:Microsoft Visual Studio"
         "ProductName" = "8:FSTrAk"
         "ProductCode" = "8:{49AFDBBD-E030-47B5-9E82-F79528720A77}"
-        "PackageCode" = "8:{410AF6E5-2A30-4D4A-9B70-5934A1DB488A}"
+        "PackageCode" = "8:{4B97A14E-8FA4-49E9-95A0-1A3C6D8A4864}"
         "UpgradeCode" = "8:{DFB8349E-B81D-4481-9F4C-14C136E2FBD4}"
         "AspNetVersion" = "8:2.0.50727.0"
         "RestartWWWService" = "11:FALSE"

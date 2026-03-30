@@ -25,6 +25,8 @@ namespace FSTRaK.Views
     {
         private MapTileLayerBase _currentOpenAipLayer;
         private MapTileLayerBase _currentChartLayer;
+        private System.Windows.Point _mouseDownPosition;
+        private const double DragThreshold = 5.0; // pixels
 
         public LiveView()
         {
@@ -41,6 +43,9 @@ namespace FSTRaK.Views
             ((LiveViewViewModel)DataContext).NotifyMapProviderChanged();
 
             ((LiveViewViewModel)DataContext).PropertyChanged += OnViewModelPropertyChanged;
+            KeyDown += OnKeyDown;
+            xMap.MouseLeftButtonDown += OnMapMouseDown;
+            xMap.MouseLeftButtonUp += OnMapMouseUp;
         }
 
         private void OnUnLoaded(object sender, RoutedEventArgs e)
@@ -49,6 +54,7 @@ namespace FSTRaK.Views
                 vm.PropertyChanged -= OnViewModelPropertyChanged;
 
             Properties.Settings.Default.PropertyChanged -= OnSettingsPropertyChanged;
+            KeyDown -= OnKeyDown;
             if (_currentOpenAipLayer != null)
             {
                 xMap.Children.Remove(_currentOpenAipLayer);
@@ -59,6 +65,8 @@ namespace FSTRaK.Views
                 xMap.Children.Remove(_currentChartLayer);
                 _currentChartLayer = null;
             }
+            xMap.MouseLeftButtonDown -= OnMapMouseDown;
+            xMap.MouseLeftButtonUp -= OnMapMouseUp;
         }
 
         private void OnViewModelPropertyChanged(object sender, PropertyChangedEventArgs e)
@@ -98,6 +106,42 @@ namespace FSTRaK.Views
         private void UpdateMapLayers()
         {
             MapLayerHelper.UpdateMapLayers(xMap, ref _currentOpenAipLayer, ref _currentChartLayer);
+        }
+
+        private void OnMapMouseDown(object sender, System.Windows.Input.MouseButtonEventArgs e)
+        {
+            _mouseDownPosition = e.GetPosition(xMap);
+        }
+
+        private void OnMapMouseUp(object sender, System.Windows.Input.MouseButtonEventArgs e)
+        {
+            var pos = e.GetPosition(xMap);
+            var dx = pos.X - _mouseDownPosition.X;
+            var dy = pos.Y - _mouseDownPosition.Y;
+            if (Math.Sqrt(dx * dx + dy * dy) < DragThreshold)
+            {
+                var vm = DataContext as LiveViewViewModel;
+                ((System.Windows.Input.ICommand)vm?.ClearSelectionCommand)?.Execute(null);
+            }
+        }
+
+        private void OnMapItemClicked(object sender, System.Windows.Input.MouseButtonEventArgs e)
+        {
+            if (sender is System.Windows.FrameworkElement fe && fe.DataContext != null)
+            {
+                var vm = DataContext as FSTRaK.ViewModels.LiveViewViewModel;
+                ((System.Windows.Input.ICommand)vm?.SelectClientCommand)?.Execute(fe.DataContext);
+                e.Handled = true;
+            }
+        }
+
+        private void OnKeyDown(object sender, System.Windows.Input.KeyEventArgs e)
+        {
+            if (e.Key == System.Windows.Input.Key.Escape)
+            {
+                var vm = DataContext as FSTRaK.ViewModels.LiveViewViewModel;
+                ((System.Windows.Input.ICommand)vm?.ClearSelectionCommand)?.Execute(null);
+            }
         }
 
         private void Hyperlink_RequestNavigate(object sender, RequestNavigateEventArgs e)
