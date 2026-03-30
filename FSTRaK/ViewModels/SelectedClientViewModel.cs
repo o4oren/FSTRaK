@@ -152,8 +152,7 @@ namespace FSTRaK.ViewModels
             Frequency = item.Controllers?.FirstOrDefault()?.frequency ?? "";
             RatingDisplay = "";
             VisualRange = "";
-            AtisText = item.Atis?.FirstOrDefault()?.text_atis != null
-                ? string.Join("\n", item.Atis.First().text_atis) : null;
+            AtisText = BuildAtisText(item.Atis);
             if (item.Controllers != null)
                 foreach (var c in item.Controllers)
                     Controllers.Add(new AtcControllerRow(
@@ -399,6 +398,17 @@ namespace FSTRaK.ViewModels
             if (string.IsNullOrEmpty(logonTime)) return "";
             if (!DateTime.TryParse(logonTime, null, System.Globalization.DateTimeStyles.RoundtripKind, out var dt)) return "";
             return FormatOnlineTime(dt);
+        }
+
+        private static string BuildAtisText(IEnumerable<Atis> atisList)
+        {
+            if (atisList == null) return null;
+            var entries = atisList.Where(a => a.text_atis != null).ToList();
+            if (entries.Count == 0) return null;
+            if (entries.Count == 1)
+                return string.Join("\n", entries[0].text_atis);
+            return string.Join("\n\n", entries.Select(a =>
+                $"{a.callsign}:\n{string.Join("\n", a.text_atis)}"));
         }
 
         private static string BuildFacilityLabel(IEnumerable<Controller> controllers)
