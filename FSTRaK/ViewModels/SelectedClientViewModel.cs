@@ -11,9 +11,9 @@ using static FSTRaK.ViewModels.LiveViewViewModel;
 
 namespace FSTRaK.ViewModels
 {
-    public enum ClientType { Pilot, AirportATC, CtrATC }
+    internal enum ClientType { Pilot, AirportATC, CtrATC }
 
-    public class SelectedClientViewModel : BaseViewModel
+    internal class SelectedClientViewModel : BaseViewModel
     {
         // ── Identity
         public NetworkType Network { get; }
@@ -316,5 +316,5 @@ namespace FSTRaK.ViewModels
         }
     }
 
-    public record AtcControllerRow(string Callsign, string Position, string Frequency, string Rating, string OnlineTime);
+    internal record AtcControllerRow(string Callsign, string Position, string Frequency, string Rating, string OnlineTime);
 }
