@@ -18,7 +18,7 @@ namespace FSTRaK.Views
             {
                 if (current is FrameworkElement fe && fe.DataContext is FSTRaK.ViewModels.LiveViewViewModel vm)
                 {
-                    vm.ClearSelectionCommand.Execute(null);
+                    ((System.Windows.Input.ICommand)vm.ClearSelectionCommand).Execute(null);
                     return;
                 }
                 current = VisualTreeHelper.GetParent(current);

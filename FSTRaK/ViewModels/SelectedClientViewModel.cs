@@ -145,7 +145,7 @@ namespace FSTRaK.ViewModels
             ClientKind = ClientType.AirportATC;
             VatsimAirportItem = item;
             Callsign = item.Airport?.ICAO ?? "";
-            AirportName = item.Airport?.name ?? "";
+            AirportName = item.Airport?.Name ?? "";
             FacilityLabel = BuildFacilityLabel(item.Controllers);
             Frequency = item.Controllers?.FirstOrDefault()?.frequency ?? "";
             RatingDisplay = "";

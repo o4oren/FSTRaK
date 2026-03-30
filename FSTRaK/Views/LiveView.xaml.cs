@@ -107,7 +107,7 @@ namespace FSTRaK.Views
             if (sender is System.Windows.FrameworkElement fe && fe.DataContext != null)
             {
                 var vm = DataContext as FSTRaK.ViewModels.LiveViewViewModel;
-                vm?.SelectClientCommand.Execute(fe.DataContext);
+                ((System.Windows.Input.ICommand)vm?.SelectClientCommand)?.Execute(fe.DataContext);
                 e.Handled = true;
             }
         }
@@ -117,7 +117,7 @@ namespace FSTRaK.Views
             if (e.Key == System.Windows.Input.Key.Escape)
             {
                 var vm = DataContext as FSTRaK.ViewModels.LiveViewViewModel;
-                vm?.ClearSelectionCommand.Execute(null);
+                ((System.Windows.Input.ICommand)vm?.ClearSelectionCommand)?.Execute(null);
             }
         }
 
