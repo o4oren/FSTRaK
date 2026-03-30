@@ -127,8 +127,8 @@
                                        FontWeight="Bold" FontFamily="{DynamicResource CurrentFont}"
                                        FontSize="{DynamicResource HeaderFontSize}"/>
                             <Grid Grid.Column="1" Margin="6,0">
-                                <Rectangle Height="1" Fill="#44FFFFFF" VerticalAlignment="Center"/>
-                                <TextBlock Text="✈" Foreground="{DynamicResource BrightTextColor}"
+                                <Rectangle Height="1" Fill="{DynamicResource BrightTextColor}" VerticalAlignment="Center" Opacity="0.4"/>
+                                <TextBlock Text="✈" Foreground="{DynamicResource SuperBrightTextColor}"
                                            FontSize="10" HorizontalAlignment="Center" VerticalAlignment="Center"/>
                             </Grid>
                             <TextBlock Grid.Column="2" Text="{Binding Arrival}"
@@ -136,7 +136,7 @@
                                        FontWeight="Bold" FontFamily="{DynamicResource CurrentFont}"
                                        FontSize="{DynamicResource HeaderFontSize}" Opacity="0.75"/>
                         </Grid>
-                        <ProgressBar Value="{Binding ProgressPercent}" Maximum="100" Height="3"
+                        <ProgressBar Value="{Binding ProgressPercent, Mode=OneWay}" Maximum="100" Height="3"
                                      Background="#33FFFFFF" BorderThickness="0" Margin="0,0,0,3"/>
                         <DockPanel>
                             <TextBlock DockPanel.Dock="Left" Style="{StaticResource DimText}" FontSize="9">
