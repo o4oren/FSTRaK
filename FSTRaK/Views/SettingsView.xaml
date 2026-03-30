@@ -22,10 +22,8 @@
 
     <DockPanel>
         <!-- About footer docked to the bottom -->
+        <Separator DockPanel.Dock="Bottom" Background="{DynamicResource ControlBackgroundColorBrush}" Margin="0"/>
         <Border DockPanel.Dock="Bottom"
-                Background="{DynamicResource ApplicationHeaderBackgroundColorBrush}"
-                BorderThickness="0,1,0,0"
-                BorderBrush="{DynamicResource ControlBackgroundColorBrush}"
                 Padding="20,12">
             <StackPanel Orientation="Horizontal">
 
