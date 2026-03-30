@@ -374,7 +374,10 @@
                                                CommandParameter="{x:Static dataTypes:NetworkType.Ivao}"/>
                     </b:EventTrigger>
                 </b:Interaction.Triggers>
-                <TextBlock Foreground="{DynamicResource SuperBrightTextColor}" FontSize="14" FontWeight="Bold">IVAO</TextBlock>
+                <StackPanel Orientation="Vertical">
+                    <ContentControl Content="{DynamicResource IvaoLogo}" Width="32"/>
+                    <TextBlock Foreground="{DynamicResource SuperBrightTextColor}">IVAO</TextBlock>
+                </StackPanel>
             </ToggleButton>
 
             <!-- Pilots toggle -->
