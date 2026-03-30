@@ -186,6 +186,18 @@
                     Type your IVAO ID to prevent duplicate representation of your aircraft when IVAO aircraft are shown on the map
                 </StackPanel.ToolTip>
             </StackPanel>
+            <StackPanel Orientation="Horizontal" Margin="10" ToolTipService.ShowDuration="5000">
+                <Label Style="{DynamicResource FSTrAkLabel}" Width="250">IVAO API Key</Label>
+                <TextBox FontFamily="{DynamicResource CurrentFont}"
+                         Foreground="{DynamicResource TextColor}"
+                         Background="{DynamicResource ControlBackgroundColorBrush}"
+                         FontSize="{DynamicResource ControlFontSize}"
+                         Width="200"
+                         Text="{Binding IvaoApiKey}" Cursor="Arrow" TextAlignment="Center" Padding="0 8 0 0"/>
+                <StackPanel.ToolTip>
+                    Optional: Enter your IVAO API key to enable full flight track history when selecting an IVAO aircraft
+                </StackPanel.ToolTip>
+            </StackPanel>
         </StackPanel>
     </StackPanel>
 

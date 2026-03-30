@@ -702,11 +702,18 @@ namespace FSTRaK.ViewModels
 
         private async Task FetchIvaoTrackAsync(long sessionId, string callsign)
         {
+            var apiKey = Properties.Settings.Default.IvaoApiKey?.Trim();
+            if (string.IsNullOrEmpty(apiKey)) return;   // no key configured — fall back to poll accumulation
+
             var targetClient = SelectedClient;
             try
             {
                 var url = $"https://api.ivao.aero/v2/tracker/sessions/{sessionId}/tracks";
-                var json = await _trackHttpClient.GetStringAsync(url);
+                var request = new System.Net.Http.HttpRequestMessage(System.Net.Http.HttpMethod.Get, url);
+                request.Headers.Add("apiKey", apiKey);
+                var response = await _trackHttpClient.SendAsync(request);
+                if (!response.IsSuccessStatusCode) return;
+                var json = await response.Content.ReadAsStringAsync();
                 var tracks = Newtonsoft.Json.JsonConvert.DeserializeObject<List<IvaoTrackPoint>>(json);
                 if (tracks == null || SelectedClient != targetClient) return;
                 var converted = tracks

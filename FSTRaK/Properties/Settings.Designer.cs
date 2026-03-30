@@ -206,6 +206,18 @@ namespace FSTRaK.Properties {
         [global::System.Configuration.UserScopedSettingAttribute()]
         [global::System.Diagnostics.DebuggerNonUserCodeAttribute()]
         [global::System.Configuration.DefaultSettingValueAttribute("")]
+        public string IvaoApiKey {
+            get {
+                return ((string)(this["IvaoApiKey"]));
+            }
+            set {
+                this["IvaoApiKey"] = value;
+            }
+        }
+
+        [global::System.Configuration.UserScopedSettingAttribute()]
+        [global::System.Diagnostics.DebuggerNonUserCodeAttribute()]
+        [global::System.Configuration.DefaultSettingValueAttribute("")]
         public string MapTilerApiKey {
             get {
                 return ((string)(this["MapTilerApiKey"]));

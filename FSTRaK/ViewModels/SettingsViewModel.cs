@@ -308,6 +308,18 @@ namespace FSTRaK.ViewModels
             }
         }
 
+        private string _ivaoApiKey;
+        public string IvaoApiKey
+        {
+            get => _ivaoApiKey;
+            set
+            {
+                _ivaoApiKey = value;
+                Properties.Settings.Default.IvaoApiKey = _ivaoApiKey;
+                OnPropertyChanged();
+            }
+        }
+
         public SettingsViewModel() : base()
         {
             var mapProviders = new ResourceDictionary
@@ -353,6 +365,7 @@ namespace FSTRaK.ViewModels
 
             VatsimId = Properties.Settings.Default.VatsimId;
             IvaoId = Properties.Settings.Default.IvaoId;
+            IvaoApiKey = Properties.Settings.Default.IvaoApiKey;
 
             SelectedChartOverlayProvider = Properties.Settings.Default.ChartOverlayProvider;
             IsOpenAipEnabled = Properties.Settings.Default.IsOpenAipEnabled;
