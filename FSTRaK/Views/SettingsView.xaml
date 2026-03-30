@@ -8,7 +8,7 @@
              xmlns:dataTypes="clr-namespace:FSTRaK.DataTypes;assembly=FSTrAK"
              xmlns:System="clr-namespace:System;assembly=mscorlib"
              d:DataContext="{d:DesignInstance Type=viewmodels:SettingsViewModel}"
-             d:DesignHeight="600"
+             d:DesignHeight="750"
              Loaded="OnLoaded" Width="986"
 >
     <UserControl.Resources>
