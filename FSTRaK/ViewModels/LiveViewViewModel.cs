@@ -685,7 +685,9 @@ namespace FSTRaK.ViewModels
                 }
             });
             IvaoAircraftList.ReplaceContent(newList);
-            // TODO: IVAO track cleanup added in Task 2 when IvaoAircraft.Callsign is available
+            var activeIvaoKeys = newList.Select(a => $"IVAO:{a.Callsign}").ToHashSet();
+            foreach (var k in _pilotTracks.Keys.Where(k => k.StartsWith("IVAO:") && !activeIvaoKeys.Contains(k)).ToList())
+                _pilotTracks.TryRemove(k, out _);
         }
 
         private async void ProcessIvaoAtc()
@@ -1149,6 +1151,7 @@ namespace FSTRaK.ViewModels
             public bool IsShowCircle { get; set; } = false;
             public List<LocationCollection> TraconPolygons { get; set; }
             public bool IsShowTraconPolygon => TraconPolygons != null && TraconPolygons.Count > 0;
+            public string Callsign => Airport?.ICAO ?? "";
 
             public Location Location
             {
@@ -1252,6 +1255,8 @@ namespace FSTRaK.ViewModels
 
         internal class IvaoAircraft
         {
+            public IvaoPilot Pilot { get; }
+            public string Callsign { get; }
             public Location Location { get; set; }
             public double Heading { get; set; }
             public string Icon { get; set; }
@@ -1259,6 +1264,8 @@ namespace FSTRaK.ViewModels
 
             public IvaoAircraft(IvaoPilot pilot)
             {
+                Pilot = pilot;
+                Callsign = pilot.callsign;
                 Location = new Location(pilot.lastTrack.latitude, pilot.lastTrack.longitude);
                 Heading = pilot.lastTrack.heading;
                 Icon = AircraftResolver.GetAircraftIcon(pilot.flightPlan?.aircraftId ?? "").Item1;
@@ -1277,10 +1284,15 @@ namespace FSTRaK.ViewModels
             public string TooltipText { get; set; }
             public LocationCollection ControlPolygon { get; set; }
             public bool IsCtr { get; set; }
+            public string Callsign { get; private set; }
+            public List<IvaoAtcEntry> AtcEntries { get; private set; }
+            public IvaoAtcEntry SingleEntry { get; private set; }
 
             // Constructor for grouped airport entries (TWR, GND, APP, DEP at the same airport)
             public IvaoAtcItem(System.Collections.Generic.List<IvaoAtcEntry> entries)
             {
+                Callsign = entries[0].atcPosition.airportId;
+                AtcEntries = entries;
                 var first = entries[0];
                 Location = new Location(first.atcPosition.airport.latitude, first.atcPosition.airport.longitude);
 
@@ -1320,6 +1332,8 @@ namespace FSTRaK.ViewModels
             // Constructor for CTR/subcenter entries
             public IvaoAtcItem(IvaoAtcEntry entry)
             {
+                Callsign = entry.callsign;
+                SingleEntry = entry;
                 IsCtr = true;
                 Location = new Location(entry.subcenter.latitude, entry.subcenter.longitude);
                 IconResourse = Consts.RadarImage;
