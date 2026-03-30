@@ -670,9 +670,11 @@ namespace FSTRaK.ViewModels
             else if (parameter is IvaoAircraft ia)
             {
                 bool isOwn = !string.IsNullOrEmpty(myIvaoId) && ia.Pilot.userId.ToString() == myIvaoId;
-                SelectedClient = new SelectedClientViewModel(ia, isOwn, isOwn && isInFlight, new List<TrackPoint>());
+                var ivaoTracks = _pilotTracks.TryGetValue($"IVAO:{ia.Callsign}", out var t2)
+                    ? new List<TrackPoint>(t2) : new List<TrackPoint>();
+                SelectedClient = new SelectedClientViewModel(ia, isOwn, isOwn && isInFlight, ivaoTracks);
                 TrySetAirportCoords(SelectedClient);
-                var _ = FetchIvaoTrackAsync(ia.Pilot.lastTrack.id, ia.Callsign);
+                var _ = FetchIvaoTrackAsync(ia.Pilot.SessionId, ia.Callsign);
             }
             else if (parameter is VatsimControlledAirport vca)
             {
@@ -829,6 +831,8 @@ namespace FSTRaK.ViewModels
                         {
                             var wrapper = new IvaoAircraft(match);
                             SelectedClient.UpdateFromIvaoPilot(wrapper);
+                            if (_pilotTracks.TryGetValue($"IVAO:{match.callsign}", out var ivaoT))
+                                SelectedClient.TrackPoints = new List<TrackPoint>(ivaoT);
                             SelectedClient.RecalcProgress();
                             UpdateFlightPathLines();
                         }
@@ -856,9 +860,20 @@ namespace FSTRaK.ViewModels
                     if (!string.IsNullOrEmpty(myId) && pilot.userId.ToString() == myId && isInFlight) continue;
                     if (pilot.lastTrack == null) continue;
                     newList.Add(new IvaoAircraft(pilot));
+                    var key = $"IVAO:{pilot.callsign}";
+                    var list = _pilotTracks.GetOrAdd(key, _ => new List<TrackPoint>());
+                    lock (list)
+                    {
+                        list.Add(new TrackPoint(pilot.lastTrack.latitude, pilot.lastTrack.longitude, pilot.lastTrack.altitude, DateTime.UtcNow));
+                        if (list.Count > 500)
+                            list.RemoveAt(0);
+                    }
                 }
             });
             IvaoAircraftList.ReplaceContent(newList);
+            var activeIvaoKeys = newList.Select(a => $"IVAO:{a.Callsign}").ToHashSet();
+            foreach (var k in _pilotTracks.Keys.Where(k => k.StartsWith("IVAO:") && !activeIvaoKeys.Contains(k)).ToList())
+                _pilotTracks.TryRemove(k, out _);
         }
 
         private async void ProcessIvaoAtc()

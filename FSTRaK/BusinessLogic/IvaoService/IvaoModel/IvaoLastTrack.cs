@@ -2,7 +2,6 @@ namespace FSTRaK.BusinessLogic.IvaoService.IvaoModel
 {
     public class IvaoLastTrack
     {
-        public long id { get; set; }       // session ID — used for tracks API
         public double latitude { get; set; }
         public double longitude { get; set; }
         public int altitude { get; set; }
