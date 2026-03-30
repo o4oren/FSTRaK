@@ -545,6 +545,10 @@ namespace FSTRaK.ViewModels
                         IsVatsimActive = true;
                         IsShowPilots = _isIvaoActive ? (_isShowPilots || _vatsimShowPilots) : _vatsimShowPilots;
                         IsShowAtc = _isIvaoActive ? (_isShowAtc || _vatsimShowAtc) : _vatsimShowAtc;
+                        // Force-set visibility flags directly — IsShowPilots setter may no-op if value unchanged
+                        IsShowVatsimAircraft = _isShowPilots;
+                        IsShowVatsimAirports = _isShowAtc;
+                        IsShowVatsimFirs = _isShowAtc;
                         if (_isShowPilots || _isShowAtc)
                         {
                             if (!_vatsimService.Started)
