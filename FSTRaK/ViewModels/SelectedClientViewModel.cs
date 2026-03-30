@@ -50,21 +50,21 @@ namespace FSTRaK.ViewModels
         // ── Pilot display properties
         public bool IsPilot => ClientKind == ClientType.Pilot;
         public string TrackStrokeColor => Network == NetworkType.Ivao ? "#FFFF8C00" : "#FF38bdf8";
-        public string PilotName { get; }
+        public string PilotName { get; private set; }
         public int? CidInt { get; }
         public string CidDisplay => CidInt?.ToString() ?? "";
-        public string FlightRules { get; }
-        public string AircraftType { get; }
+        public string FlightRules { get; private set; }
+        public string AircraftType { get; private set; }
         public string Departure { get; }
         public string Arrival { get; }
         public int Altitude { get; private set; }
         public int Groundspeed { get; private set; }
         public int Heading { get; private set; }
-        public string Squawk { get; }
-        public string CruiseAlt { get; }
+        public string Squawk { get; private set; }
+        public string CruiseAlt { get; private set; }
         public string OnlineTime { get; private set; }
-        public string RouteString { get; }
-        public string Remarks { get; }
+        public string RouteString { get; private set; }
+        public string Remarks { get; private set; }
         public double ProgressPercent { get; private set; }
         public string EtaDisplay { get; private set; }
         public string RemainingNmDisplay { get; private set; }
@@ -75,10 +75,10 @@ namespace FSTRaK.ViewModels
         public string AirportName { get; }
         public string FacilityLabel { get; }
         public string Frequency { get; }
-        public string RatingDisplay { get; }
+        public string RatingDisplay { get; private set; }
         public string VisualRange { get; }
         public List<AtcControllerRow> Controllers { get; } = new List<AtcControllerRow>();
-        public string AtisText { get; }
+        public string AtisText { get; private set; }
 
         // Raw references
         public VatsimAicraft VatsimPilotItem { get; private set; }
@@ -199,6 +199,45 @@ namespace FSTRaK.ViewModels
                             e.atcSession?.frequency.ToString("F3") ?? "",
                             "", ""));
             }
+        }
+
+        // ── IVAO enrichment — called after API fetch completes
+        public void EnrichIvaoPilot(string pilotName, string flightRules, string aircraftType,
+            string route, string remarks, string cruiseAlt, string squawk, string onlineTime)
+        {
+            PilotName = pilotName;
+            FlightRules = flightRules;
+            AircraftType = aircraftType;
+            RouteString = route;
+            Remarks = remarks;
+            CruiseAlt = cruiseAlt;
+            Squawk = squawk;
+            OnlineTime = onlineTime;
+            OnPropertyChanged(nameof(PilotName));
+            OnPropertyChanged(nameof(FlightRules));
+            OnPropertyChanged(nameof(AircraftType));
+            OnPropertyChanged(nameof(RouteString));
+            OnPropertyChanged(nameof(Remarks));
+            OnPropertyChanged(nameof(CruiseAlt));
+            OnPropertyChanged(nameof(Squawk));
+            OnPropertyChanged(nameof(OnlineTime));
+        }
+
+        public void EnrichIvaoAtc(string controllerName, string ratingDisplay, string onlineTime, string atisText)
+        {
+            // Update the first controller row with name/rating/online
+            if (Controllers.Count > 0)
+            {
+                var c = Controllers[0];
+                Controllers[0] = new AtcControllerRow(c.Callsign, c.Position, c.Frequency, ratingDisplay, onlineTime);
+            }
+            RatingDisplay = ratingDisplay;
+            OnlineTime = onlineTime;
+            AtisText = atisText;
+            OnPropertyChanged(nameof(RatingDisplay));
+            OnPropertyChanged(nameof(OnlineTime));
+            OnPropertyChanged(nameof(AtisText));
+            OnPropertyChanged(nameof(Controllers));
         }
 
         // ── Live update methods

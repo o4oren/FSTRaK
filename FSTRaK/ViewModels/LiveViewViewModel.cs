@@ -673,6 +673,7 @@ namespace FSTRaK.ViewModels
                 SelectedClient = new SelectedClientViewModel(ia, isOwn, isOwn && isInFlight, new List<TrackPoint>());
                 TrySetAirportCoords(SelectedClient);
                 var _ = FetchIvaoTrackAsync(ia.Pilot.SessionId, ia.Callsign);
+                var _fp = FetchIvaoPilotDetailsAsync(ia.Pilot.SessionId);
             }
             else if (parameter is VatsimControlledAirport vca)
             {
@@ -681,6 +682,10 @@ namespace FSTRaK.ViewModels
             else if (parameter is IvaoAtcItem iai)
             {
                 SelectedClient = SelectedClientViewModel.FromIvaoAtc(iai);
+                // Fetch enriched data for the first/primary session ID
+                var primaryId = iai.IsCtr ? iai.SingleEntry?.id ?? 0 : iai.AtcEntries?[0]?.id ?? 0;
+                if (primaryId != 0)
+                    var _atc = FetchIvaoAtcDetailsAsync(primaryId);
             }
 
         }
@@ -820,6 +825,167 @@ namespace FSTRaK.ViewModels
             public double latitude { get; set; }
             public double longitude { get; set; }
             public int altitude { get; set; }
+        }
+
+        private async Task FetchIvaoPilotDetailsAsync(long sessionId)
+        {
+            var apiKey = Properties.Settings.Default.IvaoApiKey?.Trim();
+            if (string.IsNullOrEmpty(apiKey)) return;
+
+            var targetClient = SelectedClient;
+            try
+            {
+                // Fetch session details (name, rating, online time)
+                var req1 = new System.Net.Http.HttpRequestMessage(System.Net.Http.HttpMethod.Get,
+                    $"https://api.ivao.aero/v2/tracker/sessions/{sessionId}");
+                req1.Headers.Add("apiKey", apiKey);
+                var res1 = await _trackHttpClient.SendAsync(req1);
+                if (!res1.IsSuccessStatusCode || SelectedClient != targetClient) return;
+                var session = Newtonsoft.Json.JsonConvert.DeserializeObject<IvaoSessionDetail>(
+                    await res1.Content.ReadAsStringAsync());
+
+                // Fetch latest flight plan (route, remarks, cruise, flight rules)
+                var req2 = new System.Net.Http.HttpRequestMessage(System.Net.Http.HttpMethod.Get,
+                    $"https://api.ivao.aero/v2/tracker/sessions/{sessionId}/flightPlans/latest");
+                req2.Headers.Add("apiKey", apiKey);
+                var res2 = await _trackHttpClient.SendAsync(req2);
+                IvaoFlightPlanDetail fp = null;
+                if (res2.IsSuccessStatusCode)
+                    fp = Newtonsoft.Json.JsonConvert.DeserializeObject<IvaoFlightPlanDetail>(
+                        await res2.Content.ReadAsStringAsync());
+
+                if (SelectedClient != targetClient) return;
+
+                var firstName = session?.user?.firstName ?? "";
+                var lastName  = session?.user?.lastName  ?? "";
+                var name = $"{firstName} {lastName}".Trim();
+                var rating = session?.user?.rating?.atcRating?.shortName ?? "";
+                var onlineTime = session?.createdAt != null && DateTime.TryParse(session.createdAt,
+                    null, System.Globalization.DateTimeStyles.RoundtripKind, out var dt)
+                    ? FormatOnlineTime(dt) : "";
+                var flightRules = fp?.flightRules == "I" ? "IFR" : fp?.flightRules == "V" ? "VFR" : "IFR";
+                var aircraft = fp?.aircraft?.model ?? fp?.aircraftId ?? "";
+                var squawk = session?.pilotSession?.transponder ?? "";
+                var cruiseAlt = fp?.level ?? "";
+                var route = fp?.route ?? "";
+                var remarks = fp?.remarks ?? "";
+
+                System.Windows.Application.Current.Dispatcher.Invoke(() =>
+                {
+                    if (SelectedClient == targetClient)
+                        SelectedClient.EnrichIvaoPilot(name, flightRules, aircraft, route, remarks, cruiseAlt, squawk, onlineTime);
+                });
+            }
+            catch (Exception ex)
+            {
+                Log.Warning(ex, "Failed to fetch IVAO pilot details for session {SessionId}", sessionId);
+            }
+        }
+
+        private async Task FetchIvaoAtcDetailsAsync(long sessionId)
+        {
+            var apiKey = Properties.Settings.Default.IvaoApiKey?.Trim();
+            if (string.IsNullOrEmpty(apiKey)) return;
+
+            var targetClient = SelectedClient;
+            try
+            {
+                // Fetch session detail for name/rating/online time
+                var req1 = new System.Net.Http.HttpRequestMessage(System.Net.Http.HttpMethod.Get,
+                    $"https://api.ivao.aero/v2/tracker/sessions/{sessionId}");
+                req1.Headers.Add("apiKey", apiKey);
+                var res1 = await _trackHttpClient.SendAsync(req1);
+                if (!res1.IsSuccessStatusCode || SelectedClient != targetClient) return;
+                var session = Newtonsoft.Json.JsonConvert.DeserializeObject<IvaoSessionDetail>(
+                    await res1.Content.ReadAsStringAsync());
+
+                // Fetch ATIS
+                string atisText = null;
+                var req2 = new System.Net.Http.HttpRequestMessage(System.Net.Http.HttpMethod.Get,
+                    $"https://api.ivao.aero/v2/tracker/sessions/{sessionId}/atis/latest");
+                req2.Headers.Add("apiKey", apiKey);
+                var res2 = await _trackHttpClient.SendAsync(req2);
+                if (res2.IsSuccessStatusCode)
+                {
+                    var atis = Newtonsoft.Json.JsonConvert.DeserializeObject<IvaoAtisDetail>(
+                        await res2.Content.ReadAsStringAsync());
+                    if (atis?.lines != null)
+                        atisText = string.Join("\n", atis.lines);
+                }
+
+                if (SelectedClient != targetClient) return;
+
+                var firstName = session?.user?.firstName ?? "";
+                var lastName  = session?.user?.lastName  ?? "";
+                var name = $"{firstName} {lastName}".Trim();
+                var rating = session?.user?.rating?.atcRating?.shortName ?? "";
+                var onlineTime = session?.createdAt != null && DateTime.TryParse(session.createdAt,
+                    null, System.Globalization.DateTimeStyles.RoundtripKind, out var dt)
+                    ? FormatOnlineTime(dt) : "";
+
+                System.Windows.Application.Current.Dispatcher.Invoke(() =>
+                {
+                    if (SelectedClient == targetClient)
+                        SelectedClient.EnrichIvaoAtc(name, rating, onlineTime, atisText);
+                });
+            }
+            catch (Exception ex)
+            {
+                Log.Warning(ex, "Failed to fetch IVAO ATC details for session {SessionId}", sessionId);
+            }
+        }
+
+        private static string FormatOnlineTime(DateTime logonUtc)
+        {
+            var elapsed = DateTime.UtcNow - logonUtc;
+            return elapsed.TotalHours >= 1
+                ? $"{(int)elapsed.TotalHours}h {elapsed.Minutes:D2}m"
+                : $"{elapsed.Minutes}m";
+        }
+
+        // IVAO API detail models
+        private class IvaoSessionDetail
+        {
+            public string createdAt { get; set; }
+            public IvaoSessionUser user { get; set; }
+            public IvaoPilotSessionInfo pilotSession { get; set; }
+        }
+        private class IvaoSessionUser
+        {
+            public string firstName { get; set; }
+            public string lastName { get; set; }
+            public IvaoUserRating rating { get; set; }
+        }
+        private class IvaoUserRating
+        {
+            public IvaoRatingDetail atcRating { get; set; }
+            public IvaoRatingDetail pilotRating { get; set; }
+        }
+        private class IvaoRatingDetail
+        {
+            public string shortName { get; set; }
+        }
+        private class IvaoPilotSessionInfo
+        {
+            public string transponder { get; set; }
+        }
+        private class IvaoFlightPlanDetail
+        {
+            public string aircraftId { get; set; }
+            public string flightRules { get; set; }
+            public string route { get; set; }
+            public string remarks { get; set; }
+            public string level { get; set; }
+            public IvaoAircraftDetail aircraft { get; set; }
+        }
+        private class IvaoAircraftDetail
+        {
+            public string model { get; set; }
+        }
+        private class IvaoAtisDetail
+        {
+            public List<string> lines { get; set; }
+            public string revision { get; set; }
         }
 
         private void UpdateFlightPathLines()
