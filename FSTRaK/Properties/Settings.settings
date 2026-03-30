@@ -71,6 +71,9 @@
     <Setting Name="VatSpyLastUpdated" Type="System.String" Scope="User">
       <Value Profile="(Default)" />
     </Setting>
+    <Setting Name="VatSpyReleaseTag" Type="System.String" Scope="User">
+      <Value Profile="(Default)" />
+    </Setting>
     <Setting Name="ChartOverlayProvider" Type="System.String" Scope="User">
       <Value Profile="(Default)">None</Value>
     </Setting>

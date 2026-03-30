@@ -301,6 +301,18 @@ namespace FSTRaK.Properties {
 
         [global::System.Configuration.UserScopedSettingAttribute()]
         [global::System.Diagnostics.DebuggerNonUserCodeAttribute()]
+        [global::System.Configuration.DefaultSettingValueAttribute("")]
+        public string VatSpyReleaseTag {
+            get {
+                return ((string)(this["VatSpyReleaseTag"]));
+            }
+            set {
+                this["VatSpyReleaseTag"] = value;
+            }
+        }
+
+        [global::System.Configuration.UserScopedSettingAttribute()]
+        [global::System.Diagnostics.DebuggerNonUserCodeAttribute()]
         [global::System.Configuration.DefaultSettingValueAttribute("None")]
         public string ChartOverlayProvider {
             get {
