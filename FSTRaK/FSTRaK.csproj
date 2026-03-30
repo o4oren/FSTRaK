@@ -393,7 +393,6 @@
     <Resource Include="FSTrAk.ico">
       <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
     </Resource>
-
     <None Include="Resources\Data\airports.csv">
       <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
     </None>
