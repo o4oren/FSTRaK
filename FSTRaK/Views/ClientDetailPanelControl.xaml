@@ -89,7 +89,7 @@
                 <!-- Pilot info row -->
                 <DockPanel Margin="0,0,0,8">
                     <!-- Airline logo box -->
-                    <Border Width="36" Height="36" DockPanel.Dock="Left" Margin="0,0,8,0"
+                    <Border Width="48" Height="48" DockPanel.Dock="Left" Margin="0,0,8,0"
                             Background="Transparent" BorderThickness="0">
                         <Grid>
                             <Image Source="{Binding AirlineLogo}" Stretch="Uniform" Margin="3"
@@ -137,13 +137,16 @@
                         <ProgressBar Value="{Binding ProgressPercent, Mode=OneWay}" Maximum="100" Height="3"
                                      Background="#33FFFFFF" BorderThickness="0" Margin="0,0,0,3"/>
                         <DockPanel>
-                            <TextBlock DockPanel.Dock="Left" Style="{StaticResource DimText}" FontSize="9">
+                            <TextBlock DockPanel.Dock="Left" Style="{StaticResource DimText}"
+                                       FontSize="{DynamicResource TextFontSize}">
                                 <Run Text="{Binding ProgressPercent, StringFormat={}{0:F0}%, Mode=OneWay}"/>
                                 <Run Text=" · "/>
                                 <Run Text="{Binding RemainingNmDisplay, Mode=OneWay}"/>
                             </TextBlock>
                             <TextBlock Text="{Binding EtaDisplay}" DockPanel.Dock="Right"
-                                       Style="{StaticResource DimText}" FontSize="9" HorizontalAlignment="Right"/>
+                                       Style="{StaticResource DimText}"
+                                       FontSize="{DynamicResource TextFontSize}"
+                                       HorizontalAlignment="Right"/>
                         </DockPanel>
                     </StackPanel>
                 </Border>
@@ -194,7 +197,8 @@
                     <StackPanel>
                         <TextBlock Text="ROUTE" Style="{StaticResource SectionLabel}"/>
                         <TextBlock Text="{Binding RouteString}" Style="{StaticResource DimText}"
-                                   FontSize="9" TextTrimming="CharacterEllipsis" TextWrapping="NoWrap"/>
+                                   FontSize="{DynamicResource TextFontSize}"
+                                   TextTrimming="CharacterEllipsis" TextWrapping="NoWrap"/>
                     </StackPanel>
                 </Border>
 
@@ -204,7 +208,8 @@
                     <StackPanel>
                         <TextBlock Text="REMARKS" Style="{StaticResource SectionLabel}"/>
                         <TextBlock Text="{Binding Remarks}" Style="{StaticResource DimText}"
-                                   FontSize="9" TextTrimming="CharacterEllipsis" TextWrapping="NoWrap"/>
+                                   FontSize="{DynamicResource TextFontSize}"
+                                   TextTrimming="CharacterEllipsis" TextWrapping="NoWrap"/>
                     </StackPanel>
                 </Border>
             </StackPanel>

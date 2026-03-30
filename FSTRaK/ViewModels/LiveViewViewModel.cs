@@ -696,7 +696,11 @@ namespace FSTRaK.ViewModels
                 System.Windows.Application.Current.Dispatcher.Invoke(() =>
                 {
                     if (SelectedClient == targetClient)
+                    {
                         SelectedClient.TrackPoints = converted;
+                        SelectedClient.RecalcProgress();
+                        UpdateFlightPathLines();
+                    }
                 });
             }
             catch (Exception ex)
@@ -720,8 +724,11 @@ namespace FSTRaK.ViewModels
             if (c == null || !c.IsPilot) return;
 
             if (!c.IsOwnAircraftInFlight)
-                foreach (var loc in c.TrackLocations)
+            {
+                var trackLocs = c._extendedTrackLocations ?? (IEnumerable<Location>)c.TrackLocations;
+                foreach (var loc in trackLocs)
                     SelectedTrackLocations.Add(loc);
+            }
 
             if (c.DestinationLine != null)
                 foreach (var loc in c.DestinationLine)

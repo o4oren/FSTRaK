@@ -32,6 +32,9 @@ namespace FSTRaK.ViewModels
         public IEnumerable<Location> TrackLocations =>
             _trackPoints.Select(t => new Location(t.Latitude, t.Longitude));
 
+        // Extended track including geodesic prefix from departure to first known point (VATSIM)
+        internal List<Location> _extendedTrackLocations;
+
         private IEnumerable<Location> _destLine;
         public IEnumerable<Location> DestinationLine
         {
@@ -247,6 +250,27 @@ namespace FSTRaK.ViewModels
 
             // Always update the destination line regardless of speed
             DestinationLine = GeodesicUtil.Interpolate(currentLat, currentLon, _arrLat, _arrLon);
+
+            // For VATSIM: if track doesn't start at origin, prepend a geodesic line from
+            // departure airport to first known track point so the path looks complete
+            if (Network == NetworkType.Vatsim && _trackPoints.Count > 0)
+            {
+                var first = _trackPoints[0];
+                var depToFirst = GeodesicUtil.Interpolate(_depLat, _depLon, first.Latitude, first.Longitude);
+                if (depToFirst.Count > 1)
+                {
+                    var full = new System.Collections.Generic.List<MapControl.Location>(depToFirst);
+                    foreach (var pt in _trackPoints)
+                        full.Add(new MapControl.Location(pt.Latitude, pt.Longitude));
+                    OnPropertyChanged(nameof(TrackLocations)); // notify map to re-read
+                    // Store extended track temporarily for UpdateFlightPathLines to pick up
+                    _extendedTrackLocations = full;
+                }
+            }
+            else
+            {
+                _extendedTrackLocations = null;
+            }
 
             double totalNm = GeodesicUtil.DistanceNm(_depLat, _depLon, _arrLat, _arrLon);
             if (totalNm < 1 || Groundspeed <= 0) return;
