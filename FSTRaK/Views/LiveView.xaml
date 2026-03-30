@@ -48,6 +48,33 @@
                     <ContentControl Content="{DynamicResource MaptillerLogo}"/>
                 </Hyperlink>
             </ContentControl>
+            <!-- IVAO ATC polygons (bottom) -->
+            <map:MapItemsControl ItemsSource="{Binding IvaoAtcList}" Visibility="{Binding IsShowIvaoAtc, Converter={StaticResource BoolToVis}}">
+                <map:MapItemsControl.ItemTemplate>
+                    <DataTemplate>
+                        <map:MapPanel>
+                            <map:MapPolygon Locations="{Binding ControlPolygon}"
+                                            StrokeThickness="1"
+                                            Opacity="0.35"
+                                            Visibility="{Binding ControlPolygon, Converter={StaticResource NullToVis}}">
+                                <map:MapPolygon.Style>
+                                    <Style TargetType="map:MapPolygon">
+                                        <Setter Property="Fill" Value="{DynamicResource IvaoAtcFillBrush}"/>
+                                        <Setter Property="Stroke" Value="{DynamicResource IvaoAtcStrokeBrush}"/>
+                                        <Style.Triggers>
+                                            <DataTrigger Binding="{Binding IsCtr}" Value="True">
+                                                <Setter Property="Fill" Value="{DynamicResource IvaoCtrFillBrush}"/>
+                                                <Setter Property="Stroke" Value="{DynamicResource IvaoCtrStrokeBrush}"/>
+                                            </DataTrigger>
+                                        </Style.Triggers>
+                                    </Style>
+                                </map:MapPolygon.Style>
+                            </map:MapPolygon>
+                        </map:MapPanel>
+                    </DataTemplate>
+                </map:MapItemsControl.ItemTemplate>
+            </map:MapItemsControl>
+
             <!--  Vatsim UIRs -->
             <map:MapItemsControl ItemsSource="{Binding VatsimControlledUirs}" Visibility="{Binding IsShowVatsimFirs, Converter={StaticResource BoolToVis}}">
                 <map:MapItemsControl.ItemTemplate>
@@ -56,7 +83,7 @@
                             <map:MapItemsControl ItemsSource="{Binding FirLocations}">
                                 <map:MapItemsControl.ItemTemplate>
                                     <DataTemplate>
-                                        <map:MapPolygon 
+                                        <map:MapPolygon
                                             Stroke="{DynamicResource VatsimUirFillBrush}"
                                             Fill="{DynamicResource VatsimUirFillBrush}"
                                             Opacity="0.3"
@@ -77,7 +104,7 @@
                             <ItemsControl ItemsSource="{Binding Locations}">
                                 <ItemsControl.ItemTemplate>
                                     <DataTemplate>
-                                        <map:MapPolygon 
+                                        <map:MapPolygon
                                             Stroke="{DynamicResource VatsimFirStrokeBrush}"
                                             Fill="{DynamicResource VatsimFirFillBrush}"
                                             Opacity="0.3"
@@ -127,6 +154,27 @@
                 </map:MapItemsControl.ItemTemplate>
             </map:MapItemsControl>
 
+            <!-- IVAO ATC icons -->
+            <map:MapItemsControl ItemsSource="{Binding IvaoAtcList}" Visibility="{Binding IsShowIvaoAtc, Converter={StaticResource BoolToVis}}">
+                <map:MapItemsControl.ItemContainerStyle>
+                    <Style TargetType="map:MapItem">
+                        <Setter Property="Location" Value="{Binding Location}"/>
+                        <Setter Property="VerticalAlignment" Value="Center"/>
+                        <Setter Property="HorizontalAlignment" Value="Center"/>
+                    </Style>
+                </map:MapItemsControl.ItemContainerStyle>
+                <map:MapItemsControl.ItemTemplate>
+                    <DataTemplate>
+                        <Image Source="{Binding IconResourse, Converter={StaticResource ResourceNameToImageConverter}}" Width="24" Height="24">
+                            <Image.ToolTip>
+                                <ToolTip Content="{Binding TooltipText}" />
+                            </Image.ToolTip>
+                        </Image>
+                    </DataTemplate>
+                </map:MapItemsControl.ItemTemplate>
+            </map:MapItemsControl>
+
+            <!-- Vatsim airport icons -->
             <map:MapItemsControl ItemsSource="{Binding VatsimControlledAirports}" Visibility="{Binding IsShowVatsimAirports, Converter={StaticResource BoolToVis}}">
                 <map:MapItemsControl.ItemContainerStyle>
                     <Style TargetType="map:MapItem">
@@ -159,7 +207,7 @@
                 <map:MapItemsControl.ItemTemplate>
                     <DataTemplate>
                         <map:MapContentControl>
-                            <Label Content="{Binding  Label}" 
+                            <Label Content="{Binding  Label}"
                                    Foreground="{DynamicResource VatsimFirTextBrush}"
                                    FontWeight="Bold"
                                    HorizontalAlignment="Center"
@@ -185,7 +233,7 @@
                 <map:MapItemsControl.ItemTemplate>
                     <DataTemplate>
                         <map:MapContentControl>
-                            <Label Content="{Binding Label}" 
+                            <Label Content="{Binding Label}"
                                    Foreground="{DynamicResource VatsimUirTextBrush}"
                                    FontWeight="Bold"
                                    HorizontalAlignment="Center"
@@ -196,34 +244,6 @@
                                 </Label.ToolTip>
                             </Label>
                         </map:MapContentControl>
-                    </DataTemplate>
-                </map:MapItemsControl.ItemTemplate>
-            </map:MapItemsControl>
-
-            <!-- Vatsim Aircraft -->
-            <map:MapItemsControl ItemsSource="{Binding VatsimAircraftList}" Visibility="{Binding IsShowVatsimAircraft, Converter={StaticResource BoolToVis}}">
-                <map:MapItemsControl.ItemContainerStyle>
-                    <Style TargetType="map:MapItem">
-                        <Setter Property="Location" Value="{Binding Location}"/>
-                        <Setter Property="Margin" Value="-16 -16 0 0"/>
-                    </Style>
-                </map:MapItemsControl.ItemContainerStyle>
-                <map:MapItemsControl.ItemTemplate>
-                    <DataTemplate>
-                        <Path 
-                            Fill="{DynamicResource VatsimAicraftColorBrush}" 
-                            Data="{Binding Path=IconResource, Converter={StaticResource ResourceNameToGeometryConverter}}"
-                        >
-                            <Path.RenderTransform>
-                                <TransformGroup>
-                                    <ScaleTransform CenterX="16" CenterY="16" ScaleX="{Binding ScaleFactror}" ScaleY="{Binding ScaleFactror}"/>
-                                    <RotateTransform CenterY="16" CenterX="16" Angle="{Binding Pilot.heading}"></RotateTransform>
-                                </TransformGroup>
-                            </Path.RenderTransform>
-                            <Path.ToolTip>
-                                <ToolTip Content="{Binding TooltipText}" />
-                            </Path.ToolTip>
-                        </Path>
                     </DataTemplate>
                 </map:MapItemsControl.ItemTemplate>
             </map:MapItemsControl>
@@ -254,49 +274,30 @@
                 </map:MapItemsControl.ItemTemplate>
             </map:MapItemsControl>
 
-            <!-- IVAO ATC polygons -->
-            <map:MapItemsControl ItemsSource="{Binding IvaoAtcList}" Visibility="{Binding IsShowIvaoAtc, Converter={StaticResource BoolToVis}}">
-                <map:MapItemsControl.ItemTemplate>
-                    <DataTemplate>
-                        <map:MapPanel>
-                            <map:MapPolygon Locations="{Binding ControlPolygon}"
-                                            StrokeThickness="1"
-                                            Opacity="0.35"
-                                            Visibility="{Binding ControlPolygon, Converter={StaticResource NullToVis}}">
-                                <map:MapPolygon.Style>
-                                    <Style TargetType="map:MapPolygon">
-                                        <Setter Property="Fill" Value="{DynamicResource IvaoAtcFillBrush}"/>
-                                        <Setter Property="Stroke" Value="{DynamicResource IvaoAtcStrokeBrush}"/>
-                                        <Style.Triggers>
-                                            <DataTrigger Binding="{Binding IsCtr}" Value="True">
-                                                <Setter Property="Fill" Value="{DynamicResource IvaoCtrFillBrush}"/>
-                                                <Setter Property="Stroke" Value="{DynamicResource IvaoCtrStrokeBrush}"/>
-                                            </DataTrigger>
-                                        </Style.Triggers>
-                                    </Style>
-                                </map:MapPolygon.Style>
-                            </map:MapPolygon>
-                        </map:MapPanel>
-                    </DataTemplate>
-                </map:MapItemsControl.ItemTemplate>
-            </map:MapItemsControl>
-
-            <!-- IVAO ATC icons -->
-            <map:MapItemsControl ItemsSource="{Binding IvaoAtcList}" Visibility="{Binding IsShowIvaoAtc, Converter={StaticResource BoolToVis}}">
+            <!-- Vatsim Aircraft (top network layer) -->
+            <map:MapItemsControl ItemsSource="{Binding VatsimAircraftList}" Visibility="{Binding IsShowVatsimAircraft, Converter={StaticResource BoolToVis}}">
                 <map:MapItemsControl.ItemContainerStyle>
                     <Style TargetType="map:MapItem">
                         <Setter Property="Location" Value="{Binding Location}"/>
-                        <Setter Property="VerticalAlignment" Value="Center"/>
-                        <Setter Property="HorizontalAlignment" Value="Center"/>
+                        <Setter Property="Margin" Value="-16 -16 0 0"/>
                     </Style>
                 </map:MapItemsControl.ItemContainerStyle>
                 <map:MapItemsControl.ItemTemplate>
                     <DataTemplate>
-                        <Image Source="{Binding IconResourse, Converter={StaticResource ResourceNameToImageConverter}}" Width="24" Height="24">
-                            <Image.ToolTip>
+                        <Path
+                            Fill="{DynamicResource VatsimAicraftColorBrush}"
+                            Data="{Binding Path=IconResource, Converter={StaticResource ResourceNameToGeometryConverter}}"
+                        >
+                            <Path.RenderTransform>
+                                <TransformGroup>
+                                    <ScaleTransform CenterX="16" CenterY="16" ScaleX="{Binding ScaleFactror}" ScaleY="{Binding ScaleFactror}"/>
+                                    <RotateTransform CenterY="16" CenterX="16" Angle="{Binding Pilot.heading}"></RotateTransform>
+                                </TransformGroup>
+                            </Path.RenderTransform>
+                            <Path.ToolTip>
                                 <ToolTip Content="{Binding TooltipText}" />
-                            </Image.ToolTip>
-                        </Image>
+                            </Path.ToolTip>
+                        </Path>
                     </DataTemplate>
                 </map:MapItemsControl.ItemTemplate>
             </map:MapItemsControl>
