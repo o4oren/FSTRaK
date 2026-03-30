@@ -1,11 +1,10 @@
 using System;
 using System.Collections.Concurrent;
 using System.Windows.Media.Imaging;
+using FSTRaK.DataTypes;
 
 namespace FSTRaK.Utils
 {
-    public enum NetworkType { VATSIM, IVAO }
-
     public static class AirlineLogoResolver
     {
         private static readonly ConcurrentDictionary<string, BitmapImage> _cache = new ConcurrentDictionary<string, BitmapImage>();
@@ -27,7 +26,7 @@ namespace FSTRaK.Utils
         /// <summary>Returns the network logo BitmapImage for VATSIM or IVAO.</summary>
         public static BitmapImage GetNetworkLogo(NetworkType network)
         {
-            var key = network == NetworkType.VATSIM ? "vatsim" : "ivao";
+            var key = network == NetworkType.Vatsim ? "vatsim" : "ivao";
             return _cache.GetOrAdd(key, _ =>
             {
                 var uri = new Uri($"pack://application:,,,/FSTRaK;component/Assets/NetworkLogos/{key}.png");

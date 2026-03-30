@@ -4,6 +4,7 @@ using System.Linq;
 using System.Windows.Media.Imaging;
 using FSTRaK.BusinessLogic.IvaoService.IvaoModel;
 using FSTRaK.BusinessLogic.VatsimService.VatsimModel;
+using FSTRaK.DataTypes;
 using FSTRaK.Utils;
 using MapControl;
 using static FSTRaK.ViewModels.LiveViewViewModel;
@@ -84,7 +85,7 @@ namespace FSTRaK.ViewModels
         // ── VATSIM pilot constructor
         public SelectedClientViewModel(VatsimAicraft item, bool isOwn, bool isOwnInFlight, List<TrackPoint> tracks)
         {
-            Network = NetworkType.VATSIM;
+            Network = NetworkType.Vatsim;
             ClientKind = ClientType.Pilot;
             VatsimPilotItem = item;
             IsOwnAircraft = isOwn;
@@ -110,7 +111,7 @@ namespace FSTRaK.ViewModels
         // ── IVAO pilot constructor
         public SelectedClientViewModel(IvaoAircraft item, bool isOwn, bool isOwnInFlight, List<TrackPoint> tracks)
         {
-            Network = NetworkType.IVAO;
+            Network = NetworkType.Ivao;
             ClientKind = ClientType.Pilot;
             IvaoPilotItem = item;
             IsOwnAircraft = isOwn;
@@ -136,7 +137,7 @@ namespace FSTRaK.ViewModels
         // ── VATSIM airport ATC constructor
         public SelectedClientViewModel(VatsimControlledAirport item)
         {
-            Network = NetworkType.VATSIM;
+            Network = NetworkType.Vatsim;
             ClientKind = ClientType.AirportATC;
             VatsimAirportItem = item;
             Callsign = item.Airport?.ICAO ?? "";
@@ -165,7 +166,7 @@ namespace FSTRaK.ViewModels
 
         private SelectedClientViewModel(IvaoAtcItem item, bool isCtr)
         {
-            Network = NetworkType.IVAO;
+            Network = NetworkType.Ivao;
             IvaoAtcItemRef = item;
             Callsign = item.Callsign;
             AirportName = "";
