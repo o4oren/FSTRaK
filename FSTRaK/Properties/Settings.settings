@@ -39,7 +39,7 @@
       <Value Profile="(Default)">True</Value>
     </Setting>
     <Setting Name="FontName" Type="System.String" Scope="User">
-      <Value Profile="(Default)">Slopes</Value>
+      <Value Profile="(Default)">Comic Sans MS</Value>
     </Setting>
     <Setting Name="VatsimId" Type="System.String" Scope="User">
       <Value Profile="(Default)" />

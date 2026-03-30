@@ -250,7 +250,7 @@ namespace FSTRaK.ViewModels
 
 
         public ObservableCollection<string> Fonts { get; set; } = new ObservableCollection<string>(ResourceUtil.AvailableFonts);
-        private string _fontName = "Slopes";
+        private string _fontName = "Comic Sans MS";
         public string FontName
         {
             get => _fontName;
