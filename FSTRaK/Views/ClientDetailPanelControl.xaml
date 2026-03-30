@@ -89,29 +89,15 @@
             <StackPanel Visibility="{Binding IsPilot, Converter={StaticResource BoolToVis}}">
 
                 <!-- Pilot info row -->
-                <DockPanel Margin="0,0,0,8">
-                    <!-- Airline logo box -->
-                    <Border Width="56" Height="56" DockPanel.Dock="Left" Margin="0,0,8,0"
-                            Background="Transparent" BorderThickness="0">
-                        <Grid>
-                            <Image Source="{Binding AirlineLogo}" Stretch="Uniform" Margin="3"
-                                   Visibility="{Binding AirlineLogo, Converter={StaticResource NullToVis}}"/>
-                            <TextBlock Text="{Binding Callsign}" FontSize="7"
-                                       Foreground="{DynamicResource BrightTextColor}"
-                                       HorizontalAlignment="Center" VerticalAlignment="Center"
-                                       Visibility="{Binding AirlineLogo, Converter={StaticResource InvertedNullToVis}}"/>
-                        </Grid>
-                    </Border>
-                    <StackPanel VerticalAlignment="Center">
-                        <TextBlock Text="{Binding PilotName}" Style="{StaticResource DimText}"/>
-                        <DockPanel>
-                            <TextBlock DockPanel.Dock="Left" Text="{Binding FlightRules}"
-                                       Foreground="#FF34D399" FontSize="9" FontWeight="Bold"
-                                       VerticalAlignment="Center" Margin="0,2,6,0"/>
-                            <TextBlock Text="{Binding AircraftType}" Style="{StaticResource DimText}" VerticalAlignment="Center"/>
-                        </DockPanel>
-                    </StackPanel>
-                </DockPanel>
+                <StackPanel Margin="0,0,0,8">
+                    <TextBlock Text="{Binding PilotName}" Style="{StaticResource DimText}"/>
+                    <DockPanel>
+                        <TextBlock DockPanel.Dock="Left" Text="{Binding FlightRules}"
+                                   Foreground="#FF34D399" FontSize="9" FontWeight="Bold"
+                                   VerticalAlignment="Center" Margin="0,2,6,0"/>
+                        <TextBlock Text="{Binding AircraftType}" Style="{StaticResource DimText}" VerticalAlignment="Center"/>
+                    </DockPanel>
+                </StackPanel>
 
                 <!-- Route bar -->
                 <Border Background="#33FFFFFF" CornerRadius="4" Padding="8,6" Margin="0,0,0,6">
