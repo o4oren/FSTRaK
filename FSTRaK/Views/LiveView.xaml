@@ -341,7 +341,7 @@
             </ToggleButton>
             <!-- Network selector: VATSIM -->
             <ToggleButton Style="{DynamicResource MapToggleButton}"
-                          IsChecked="{Binding ActiveNetwork, Converter={StaticResource EnumToBoolConverter}, ConverterParameter=Vatsim, Mode=OneWay}">
+                          IsChecked="{Binding IsVatsimActive, Mode=OneWay}">
                 <b:Interaction.Triggers>
                     <b:EventTrigger EventName="Click">
                         <b:InvokeCommandAction Command="{Binding SelectNetworkCommand}"
@@ -356,7 +356,7 @@
 
             <!-- Network selector: IVAO -->
             <ToggleButton Style="{DynamicResource MapToggleButton}"
-                          IsChecked="{Binding ActiveNetwork, Converter={StaticResource EnumToBoolConverter}, ConverterParameter=Ivao, Mode=OneWay}">
+                          IsChecked="{Binding IsIvaoActive, Mode=OneWay}">
                 <b:Interaction.Triggers>
                     <b:EventTrigger EventName="Click">
                         <b:InvokeCommandAction Command="{Binding SelectNetworkCommand}"
@@ -372,7 +372,7 @@
             <!-- Pilots toggle -->
             <ToggleButton Style="{DynamicResource MapToggleButton}"
                           IsChecked="{Binding IsShowPilots}"
-                          Visibility="{Binding ActiveNetwork, Converter={StaticResource NetworkTypeToVisConverter}}">
+                          Visibility="{Binding IsAnyNetworkActive, Converter={StaticResource BoolToVis}}">
                 <b:Interaction.Triggers>
                     <b:EventTrigger EventName="Checked">
                         <b:InvokeCommandAction Command="{Binding EnableNetworkItemCommand}"/>
@@ -387,7 +387,7 @@
             <!-- ATC toggle -->
             <ToggleButton Style="{DynamicResource MapToggleButton}"
                           IsChecked="{Binding IsShowAtc}"
-                          Visibility="{Binding ActiveNetwork, Converter={StaticResource NetworkTypeToVisConverter}}">
+                          Visibility="{Binding IsAnyNetworkActive, Converter={StaticResource BoolToVis}}">
                 <b:Interaction.Triggers>
                     <b:EventTrigger EventName="Checked">
                         <b:InvokeCommandAction Command="{Binding EnableNetworkItemCommand}"/>
