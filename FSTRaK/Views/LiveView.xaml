@@ -227,6 +227,7 @@
                         <Setter Property="Location" Value="{Binding LabelLocation}"/>
                         <Setter Property="HorizontalAlignment" Value="Center"/>
                         <Setter Property="VerticalAlignment" Value="Center"/>
+                        <EventSetter Event="MouseLeftButtonUp" Handler="OnMapItemClicked"/>
                     </Style>
                 </map:MapItemsControl.ItemContainerStyle>
                 <map:MapItemsControl.ItemTemplate>
@@ -253,6 +254,7 @@
                         <Setter Property="Location" Value="{Binding LabelLocation}"/>
                         <Setter Property="HorizontalAlignment" Value="Center"/>
                         <Setter Property="VerticalAlignment" Value="Center"/>
+                        <EventSetter Event="MouseLeftButtonUp" Handler="OnMapItemClicked"/>
                     </Style>
                 </map:MapItemsControl.ItemContainerStyle>
                 <map:MapItemsControl.ItemTemplate>

@@ -161,7 +161,51 @@ namespace FSTRaK.ViewModels
                         MapVatsimFacility(c.facility),
                         c.frequency,
                         MapVatsimRating(c.rating),
-                        FormatOnlineTime(c.logon_time)));
+                        c.name ?? ""));
+        }
+
+        // ── VATSIM FIR constructor
+        public SelectedClientViewModel(VatsimControlledFir item)
+        {
+            Network = NetworkType.Vatsim;
+            ClientKind = ClientType.CtrATC;
+            Callsign = item.Name ?? "";
+            AirportName = item.Name ?? "";
+            FacilityLabel = "FIR";
+            Frequency = item.Controllers?.FirstOrDefault()?.frequency ?? "";
+            RatingDisplay = "";
+            VisualRange = "";
+            AtisText = null;
+            if (item.Controllers != null)
+                foreach (var c in item.Controllers)
+                    Controllers.Add(new AtcControllerRow(
+                        c.callsign,
+                        MapVatsimFacility(c.facility),
+                        c.frequency,
+                        MapVatsimRating(c.rating),
+                        c.name ?? ""));
+        }
+
+        // ── VATSIM UIR constructor (UIR is a merged polygon — show the single primary controller)
+        public SelectedClientViewModel(VatsimControlledUir item)
+        {
+            Network = NetworkType.Vatsim;
+            ClientKind = ClientType.CtrATC;
+            Callsign = item.Callsign ?? "";
+            AirportName = item.Callsign ?? "";
+            FacilityLabel = "UIR";
+            var primary = item.Controllers?.FirstOrDefault();
+            Frequency = primary?.frequency ?? "";
+            RatingDisplay = primary != null ? MapVatsimRating(primary.rating) : "";
+            VisualRange = "";
+            AtisText = null;
+            if (primary != null)
+                Controllers.Add(new AtcControllerRow(
+                    primary.callsign,
+                    MapVatsimFacility(primary.facility),
+                    primary.frequency,
+                    MapVatsimRating(primary.rating),
+                    primary.name ?? ""));
         }
 
         // ── IVAO ATC static factory (replaces two constructors with `when` clauses)
@@ -227,17 +271,15 @@ namespace FSTRaK.ViewModels
 
         public void EnrichIvaoAtc(string controllerName, string ratingDisplay, string onlineTime, string atisText)
         {
-            // Update the first controller row with name/rating/online
+            // Update the first controller row with enriched name/rating
             if (Controllers.Count > 0)
             {
                 var c = Controllers[0];
-                Controllers[0] = new AtcControllerRow(c.Callsign, c.Position, c.Frequency, ratingDisplay, onlineTime);
+                Controllers[0] = new AtcControllerRow(c.Callsign, c.Position, c.Frequency, ratingDisplay, controllerName);
             }
             RatingDisplay = ratingDisplay;
-            OnlineTime = onlineTime;
             AtisText = atisText;
             OnPropertyChanged(nameof(RatingDisplay));
-            OnPropertyChanged(nameof(OnlineTime));
             OnPropertyChanged(nameof(AtisText));
             OnPropertyChanged(nameof(Controllers));
         }
@@ -373,5 +415,5 @@ namespace FSTRaK.ViewModels
         }
     }
 
-    internal record AtcControllerRow(string Callsign, string Position, string Frequency, string Rating, string OnlineTime);
+    internal record AtcControllerRow(string Callsign, string Position, string Frequency, string Rating, string Name);
 }

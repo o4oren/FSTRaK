@@ -681,6 +681,14 @@ namespace FSTRaK.ViewModels
             {
                 SelectedClient = new SelectedClientViewModel(vca);
             }
+            else if (parameter is VatsimControlledFir fir)
+            {
+                SelectedClient = new SelectedClientViewModel(fir);
+            }
+            else if (parameter is VatsimControlledUir uir)
+            {
+                SelectedClient = new SelectedClientViewModel(uir);
+            }
             else if (parameter is IvaoAtcItem iai)
             {
                 SelectedClient = SelectedClientViewModel.FromIvaoAtc(iai);
@@ -1591,6 +1599,7 @@ namespace FSTRaK.ViewModels
 
         public class VatsimControlledFir
         {
+            public string Callsign => Name ?? "";
             public HashSet<Controller> Controllers { get; private set; } = new();
             public string TooltipText
             {

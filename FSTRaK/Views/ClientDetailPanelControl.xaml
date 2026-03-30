@@ -236,27 +236,38 @@
                     <ItemsControl ItemsSource="{Binding Controllers}">
                         <ItemsControl.ItemTemplate>
                             <DataTemplate>
-                                <DockPanel Margin="0,3" LastChildFill="False">
-                                    <TextBlock DockPanel.Dock="Left" Text="{Binding Callsign}"
-                                               Foreground="{DynamicResource SuperBrightTextColor}"
-                                               FontFamily="{DynamicResource CurrentFont}"
-                                               FontSize="{DynamicResource TextFontSize}" FontWeight="SemiBold"
-                                               Margin="0,0,6,0"/>
-                                    <TextBlock DockPanel.Dock="Left" Text="{Binding Position}"
-                                               Foreground="{DynamicResource BrightTextColor}"
-                                               FontFamily="{DynamicResource CurrentFont}"
-                                               FontSize="{DynamicResource TextFontSize}"
-                                               Opacity="0.6" Margin="0,0,6,0"/>
-                                    <TextBlock DockPanel.Dock="Left" Text="{Binding Frequency}"
-                                               Foreground="{DynamicResource BrightTextColor}"
-                                               FontFamily="{DynamicResource CurrentFont}"
-                                               FontSize="{DynamicResource TextFontSize}" FontWeight="SemiBold"/>
-                                    <TextBlock DockPanel.Dock="Right" Text="{Binding OnlineTime}"
-                                               Foreground="{DynamicResource BrightTextColor}"
-                                               FontFamily="{DynamicResource CurrentFont}"
-                                               FontSize="{DynamicResource TextFontSize}"
-                                               Opacity="0.5"/>
-                                </DockPanel>
+                                <StackPanel Margin="0,3,0,0">
+                                    <!-- Line 1: callsign + position + frequency -->
+                                    <DockPanel>
+                                        <TextBlock DockPanel.Dock="Left" Text="{Binding Callsign}"
+                                                   Foreground="{DynamicResource SuperBrightTextColor}"
+                                                   FontFamily="{DynamicResource CurrentFont}"
+                                                   FontSize="{DynamicResource TextFontSize}" FontWeight="SemiBold"
+                                                   Margin="0,0,6,0"/>
+                                        <TextBlock DockPanel.Dock="Left" Text="{Binding Position}"
+                                                   Foreground="{DynamicResource BrightTextColor}"
+                                                   FontFamily="{DynamicResource CurrentFont}"
+                                                   FontSize="{DynamicResource TextFontSize}"
+                                                   Opacity="0.6" Margin="0,0,6,0"/>
+                                        <TextBlock DockPanel.Dock="Left" Text="{Binding Frequency}"
+                                                   Foreground="{DynamicResource BrightTextColor}"
+                                                   FontFamily="{DynamicResource CurrentFont}"
+                                                   FontSize="{DynamicResource TextFontSize}" FontWeight="SemiBold"/>
+                                    </DockPanel>
+                                    <!-- Line 2: name + rating -->
+                                    <DockPanel>
+                                        <TextBlock DockPanel.Dock="Left" Text="{Binding Name}"
+                                                   Foreground="{DynamicResource BrightTextColor}"
+                                                   FontFamily="{DynamicResource CurrentFont}"
+                                                   FontSize="{DynamicResource TextFontSize}"
+                                                   Opacity="0.6" Margin="0,0,6,0"/>
+                                        <TextBlock DockPanel.Dock="Left" Text="{Binding Rating}"
+                                                   Foreground="{DynamicResource BrightTextColor}"
+                                                   FontFamily="{DynamicResource CurrentFont}"
+                                                   FontSize="{DynamicResource TextFontSize}"
+                                                   Opacity="0.5"/>
+                                    </DockPanel>
+                                </StackPanel>
                             </DataTemplate>
                         </ItemsControl.ItemTemplate>
                     </ItemsControl>
