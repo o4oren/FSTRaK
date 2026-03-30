@@ -247,19 +247,7 @@
                                 </TransformGroup>
                             </Path.RenderTransform>
                             <Path.ToolTip>
-                                <ToolTip>
-                                    <StackPanel>
-                                        <TextBlock Text="{Binding Callsign}" FontWeight="Bold"/>
-                                        <TextBlock>
-                                            <Run Text="{Binding Departure}"/><Run Text=" → "/><Run Text="{Binding Destination}"/>
-                                        </TextBlock>
-                                        <TextBlock Text="{Binding Aircraft}"/>
-                                        <TextBlock>
-                                            <Run Text="ALT: "/><Run Text="{Binding Altitude}"/>
-                                            <Run Text=" GS: "/><Run Text="{Binding Groundspeed}"/>
-                                        </TextBlock>
-                                    </StackPanel>
-                                </ToolTip>
+                                <ToolTip Content="{Binding TooltipText}" />
                             </Path.ToolTip>
                         </Path>
                     </DataTemplate>

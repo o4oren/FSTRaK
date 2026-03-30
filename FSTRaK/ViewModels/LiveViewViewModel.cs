@@ -1164,24 +1164,18 @@ namespace FSTRaK.ViewModels
             public Location Location { get; set; }
             public double Heading { get; set; }
             public string Icon { get; set; }
-            public string Callsign { get; set; }
-            public string Departure { get; set; }
-            public string Destination { get; set; }
-            public string Aircraft { get; set; }
-            public int Altitude { get; set; }
-            public int Groundspeed { get; set; }
+            public string TooltipText { get; set; }
 
             public IvaoAircraft(IvaoPilot pilot)
             {
                 Location = new Location(pilot.lastTrack.latitude, pilot.lastTrack.longitude);
                 Heading = pilot.lastTrack.heading;
-                Callsign = pilot.callsign;
-                Altitude = pilot.lastTrack.altitude;
-                Groundspeed = pilot.lastTrack.groundSpeed;
-                Departure = pilot.flightPlan?.departureId;
-                Destination = pilot.flightPlan?.arrivalId;
-                Aircraft = pilot.flightPlan?.aircraftId;
                 Icon = AircraftResolver.GetAircraftIcon(pilot.flightPlan?.aircraftId ?? "").Item1;
+
+                var departure = pilot.flightPlan?.departureId ?? "";
+                var destination = pilot.flightPlan?.arrivalId ?? "";
+                var aircraft = pilot.flightPlan?.aircraftId ?? "";
+                TooltipText = $"{pilot.callsign}\n{departure} → {destination}\n{aircraft}\nALT: {pilot.lastTrack.altitude}  GS: {pilot.lastTrack.groundSpeed}";
             }
         }
 
