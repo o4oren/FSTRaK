@@ -670,9 +670,7 @@ namespace FSTRaK.ViewModels
             else if (parameter is IvaoAircraft ia)
             {
                 bool isOwn = !string.IsNullOrEmpty(myIvaoId) && ia.Pilot.userId.ToString() == myIvaoId;
-                var ivaoTracks = _pilotTracks.TryGetValue($"IVAO:{ia.Callsign}", out var t2)
-                    ? new List<TrackPoint>(t2) : new List<TrackPoint>();
-                SelectedClient = new SelectedClientViewModel(ia, isOwn, isOwn && isInFlight, ivaoTracks);
+                SelectedClient = new SelectedClientViewModel(ia, isOwn, isOwn && isInFlight, new List<TrackPoint>());
                 TrySetAirportCoords(SelectedClient);
                 var _ = FetchIvaoTrackAsync(ia.Pilot.SessionId, ia.Callsign);
             }
@@ -719,10 +717,17 @@ namespace FSTRaK.ViewModels
                 var converted = tracks
                     .Select(tp => new TrackPoint(tp.latitude, tp.longitude, tp.altitude, DateTime.UtcNow))
                     .ToList();
+                // Append current position so the track line ends exactly at the aircraft
+                if (targetClient.IvaoPilotItem != null)
+                {
+                    var lt = targetClient.IvaoPilotItem.Pilot.lastTrack;
+                    converted.Add(new TrackPoint(lt.latitude, lt.longitude, lt.altitude, DateTime.UtcNow));
+                }
                 System.Windows.Application.Current.Dispatcher.Invoke(() =>
                 {
                     if (SelectedClient == targetClient)
                     {
+                        SelectedClient.IvaoTrackFetched = true;
                         SelectedClient.TrackPoints = converted;
                         SelectedClient.RecalcProgress();
                         UpdateFlightPathLines();
@@ -838,8 +843,15 @@ namespace FSTRaK.ViewModels
                         {
                             var wrapper = new IvaoAircraft(match);
                             SelectedClient.UpdateFromIvaoPilot(wrapper);
-                            if (_pilotTracks.TryGetValue($"IVAO:{match.callsign}", out var ivaoT))
-                                SelectedClient.TrackPoints = new List<TrackPoint>(ivaoT);
+                            if (SelectedClient.IvaoTrackFetched)
+                            {
+                                // API track loaded — update the last point to current position to keep line ending at aircraft
+                                var lt = match.lastTrack;
+                                var pts = SelectedClient.TrackPoints;
+                                if (pts.Count > 0)
+                                    pts[pts.Count - 1] = new TrackPoint(lt.latitude, lt.longitude, lt.altitude, DateTime.UtcNow);
+                            }
+                            // No API key: track stays empty; RecalcProgress will draw geodesic dep→current
                             SelectedClient.RecalcProgress();
                             UpdateFlightPathLines();
                         }
@@ -867,20 +879,9 @@ namespace FSTRaK.ViewModels
                     if (!string.IsNullOrEmpty(myId) && pilot.userId.ToString() == myId && isInFlight) continue;
                     if (pilot.lastTrack == null) continue;
                     newList.Add(new IvaoAircraft(pilot));
-                    var key = $"IVAO:{pilot.callsign}";
-                    var list = _pilotTracks.GetOrAdd(key, _ => new List<TrackPoint>());
-                    lock (list)
-                    {
-                        list.Add(new TrackPoint(pilot.lastTrack.latitude, pilot.lastTrack.longitude, pilot.lastTrack.altitude, DateTime.UtcNow));
-                        if (list.Count > 500)
-                            list.RemoveAt(0);
-                    }
                 }
             });
             IvaoAircraftList.ReplaceContent(newList);
-            var activeIvaoKeys = newList.Select(a => $"IVAO:{a.Callsign}").ToHashSet();
-            foreach (var k in _pilotTracks.Keys.Where(k => k.StartsWith("IVAO:") && !activeIvaoKeys.Contains(k)).ToList())
-                _pilotTracks.TryRemove(k, out _);
         }
 
         private async void ProcessIvaoAtc()
