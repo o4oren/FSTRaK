@@ -459,7 +459,6 @@ namespace FSTRaK.ViewModels
                     ActiveNetwork = network;
                     IsShowPilots = false;
                     IsShowAtc = false;
-                    StartActiveNetwork();
                 }
             });
 
@@ -500,7 +499,15 @@ namespace FSTRaK.ViewModels
             switch (e.PropertyName)
             {
                 case nameof(_vatsimService.VatsimData):
-                    VatsimData = _vatsimService.VatsimData;  // check if needed after all is done
+                    VatsimData = _vatsimService.VatsimData;
+                    if (VatsimData == null)
+                    {
+                        VatsimAircraftList.Clear();
+                        VatsimControlledAirports.Clear();
+                        VatsimControlledFirs.Clear();
+                        VatsimControlledUirs.Clear();
+                        break;
+                    }
                     if (IsShowVatsimAircraft)
                     {
                         ProcessVatsimPilots();
