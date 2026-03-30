@@ -18,92 +18,108 @@
             <utils:InvertedNullToVisibilityConverter x:Key="InvertedNullToVis"/>
             <BooleanToVisibilityConverter x:Key="BoolToVis"/>
 
-        <Style x:Key="GlassPanel" TargetType="Border">
-            <Setter Property="Background" Value="#12FFFFFF"/>
-            <Setter Property="BorderBrush" Value="#22FFFFFF"/>
-            <Setter Property="BorderThickness" Value="1"/>
-            <Setter Property="CornerRadius" Value="12"/>
-            <Setter Property="Padding" Value="14"/>
-        </Style>
+            <Style x:Key="StatTile" TargetType="Border">
+                <Setter Property="Background" Value="#44000000"/>
+                <Setter Property="CornerRadius" Value="4"/>
+                <Setter Property="Padding" Value="5,4"/>
+            </Style>
 
-        <Style x:Key="StatTile" TargetType="Border">
-            <Setter Property="Background" Value="#33000000"/>
-            <Setter Property="CornerRadius" Value="6"/>
-            <Setter Property="Padding" Value="6"/>
-        </Style>
+            <Style x:Key="StatValue" TargetType="TextBlock">
+                <Setter Property="Foreground" Value="{DynamicResource SuperBrightTextColor}"/>
+                <Setter Property="FontWeight" Value="Bold"/>
+                <Setter Property="FontSize" Value="{DynamicResource TextFontSize}"/>
+                <Setter Property="FontFamily" Value="{DynamicResource CurrentFont}"/>
+                <Setter Property="HorizontalAlignment" Value="Center"/>
+            </Style>
 
-        <Style x:Key="StatValue" TargetType="TextBlock">
-            <Setter Property="Foreground" Value="#FF7dd3fc"/>
-            <Setter Property="FontWeight" Value="Bold"/>
-            <Setter Property="FontSize" Value="12"/>
-            <Setter Property="HorizontalAlignment" Value="Center"/>
-        </Style>
+            <Style x:Key="StatLabel" TargetType="TextBlock">
+                <Setter Property="Foreground" Value="{DynamicResource BrightTextColor}"/>
+                <Setter Property="FontSize" Value="8"/>
+                <Setter Property="FontFamily" Value="{DynamicResource CurrentFont}"/>
+                <Setter Property="HorizontalAlignment" Value="Center"/>
+                <Setter Property="Opacity" Value="0.55"/>
+            </Style>
 
-        <Style x:Key="StatLabel" TargetType="TextBlock">
-            <Setter Property="Foreground" Value="#66FFFFFF"/>
-            <Setter Property="FontSize" Value="8"/>
-            <Setter Property="HorizontalAlignment" Value="Center"/>
-        </Style>
-
-        <Style x:Key="SectionBg" TargetType="Border">
-            <Setter Property="Background" Value="#33000000"/>
-            <Setter Property="CornerRadius" Value="6"/>
-            <Setter Property="Padding" Value="6,5"/>
-            <Setter Property="Margin" Value="0,0,0,6"/>
-        </Style>
+            <Style x:Key="SectionLabel" TargetType="TextBlock">
+                <Setter Property="Foreground" Value="{DynamicResource BrightTextColor}"/>
+                <Setter Property="FontSize" Value="8"/>
+                <Setter Property="FontFamily" Value="{DynamicResource CurrentFont}"/>
+                <Setter Property="Opacity" Value="0.4"/>
+                <Setter Property="Margin" Value="0,0,0,2"/>
+            </Style>
         </ResourceDictionary>
     </UserControl.Resources>
 
-    <Border Style="{StaticResource GlassPanel}">
-        <Grid>
-            <!-- Close button -->
-            <Button Content="×" FontSize="14" Foreground="#88FFFFFF" Background="Transparent"
-                    BorderThickness="0" HorizontalAlignment="Right" VerticalAlignment="Top"
-                    Margin="0,-4,-4,0" Cursor="Hand"
-                    Click="CloseButton_Click"/>
+    <Border Background="{DynamicResource OverlayBackgroundBrush}"
+            BorderBrush="{DynamicResource BrightTextColor}"
+            BorderThickness="1"
+            CornerRadius="5"
+            Padding="10">
+        <StackPanel>
+            <!-- Close button row -->
+            <DockPanel Margin="0,0,0,6">
+                <!-- Network logo -->
+                <Grid Width="20" Height="14" DockPanel.Dock="Left" VerticalAlignment="Center" Margin="0,0,6,0">
+                    <Image Source="/Resources/Images/VATSIM_Logo_White_No_Tagline_500px.png"
+                           Stretch="Uniform"
+                           Visibility="{Binding IsVatsim, Converter={StaticResource BoolToVis}}"/>
+                    <ContentControl Content="{DynamicResource IvaoLogo}"
+                                    Visibility="{Binding IsIvao, Converter={StaticResource BoolToVis}}"/>
+                </Grid>
+                <Button Content="×" DockPanel.Dock="Right"
+                        FontSize="14" Foreground="{DynamicResource BrightTextColor}"
+                        Background="Transparent" BorderThickness="0"
+                        Cursor="Hand" Padding="4,0"
+                        Click="CloseButton_Click"/>
+                <!-- Callsign -->
+                <TextBlock Text="{Binding Callsign}"
+                           Foreground="{DynamicResource SuperBrightTextColor}"
+                           FontWeight="Bold"
+                           FontSize="{DynamicResource HeaderFontSize}"
+                           FontFamily="{DynamicResource CurrentFont}"
+                           VerticalAlignment="Center"/>
+            </DockPanel>
 
-            <!-- Pilot panel -->
+            <!-- ═══ PILOT PANEL ═══ -->
             <StackPanel Visibility="{Binding IsPilot, Converter={StaticResource BoolToVis}}">
-                <Grid Margin="0,0,0,10">
-                    <Grid.ColumnDefinitions>
-                        <ColumnDefinition Width="Auto"/>
-                        <ColumnDefinition Width="*"/>
-                    </Grid.ColumnDefinitions>
-                    <Border Grid.Column="0" Width="40" Height="40" Margin="0,0,10,0"
-                            Background="#1AFFFFFF" BorderBrush="#22FFFFFF" BorderThickness="1" CornerRadius="8">
+
+                <!-- Pilot name + IFR badge -->
+                <DockPanel Margin="0,0,0,8">
+                    <!-- Airline logo box -->
+                    <Border Width="36" Height="36" DockPanel.Dock="Left" Margin="0,0,8,0"
+                            Background="#22FFFFFF" BorderBrush="#33FFFFFF" BorderThickness="1" CornerRadius="4">
                         <Grid>
-                            <Image Source="{Binding AirlineLogo}" Stretch="Uniform" Margin="4"
+                            <Image Source="{Binding AirlineLogo}" Stretch="Uniform" Margin="3"
                                    Visibility="{Binding AirlineLogo, Converter={StaticResource NullToVis}}"/>
-                            <!-- Network logo fallback when no airline logo -->
-                            <Grid Visibility="{Binding AirlineLogo, Converter={StaticResource InvertedNullToVis}}"
-                                  Margin="6">
-                                <Image Source="/Resources/Images/VATSIM_Logo_White_No_Tagline_500px.png"
-                                       Stretch="Uniform"
-                                       Visibility="{Binding IsVatsim, Converter={StaticResource BoolToVis}}"/>
-                                <ContentControl Content="{DynamicResource IvaoLogo}"
-                                                Visibility="{Binding IsIvao, Converter={StaticResource BoolToVis}}"/>
-                            </Grid>
+                            <TextBlock Text="{Binding Callsign}" Foreground="{DynamicResource BrightTextColor}"
+                                       FontSize="7" HorizontalAlignment="Center" VerticalAlignment="Center"
+                                       Visibility="{Binding AirlineLogo, Converter={StaticResource InvertedNullToVis}}"/>
                         </Grid>
                     </Border>
-                    <StackPanel Grid.Column="1" VerticalAlignment="Center">
+                    <StackPanel VerticalAlignment="Center">
+                        <TextBlock Text="{Binding PilotName}"
+                                   Foreground="{DynamicResource BrightTextColor}"
+                                   FontFamily="{DynamicResource CurrentFont}"
+                                   FontSize="{DynamicResource TextFontSize}"
+                                   Opacity="0.75"/>
                         <DockPanel>
-                            <TextBlock Text="{Binding Callsign}" Foreground="White" FontWeight="Bold"
-                                       FontSize="15" DockPanel.Dock="Left"/>
-                            <Border Background="#2034D399" BorderBrush="#3034D399" BorderThickness="1"
-                                    CornerRadius="10" Padding="5,1" Margin="6,0,0,0"
-                                    HorizontalAlignment="Left" VerticalAlignment="Center">
+                            <Border Background="#2034D399" BorderBrush="#4034D399" BorderThickness="1"
+                                    CornerRadius="3" Padding="4,1" Margin="0,0,6,0" DockPanel.Dock="Left">
                                 <TextBlock Text="{Binding FlightRules}" Foreground="#FF34D399"
-                                           FontSize="9" FontWeight="Bold"/>
+                                           FontSize="8" FontWeight="Bold"/>
                             </Border>
+                            <TextBlock Text="{Binding AircraftType}"
+                                       Foreground="{DynamicResource BrightTextColor}"
+                                       FontFamily="{DynamicResource CurrentFont}"
+                                       FontSize="{DynamicResource TextFontSize}"
+                                       Opacity="0.65"
+                                       VerticalAlignment="Center"/>
                         </DockPanel>
-                        <TextBlock Foreground="#66FFFFFF" FontSize="10">
-                            <Run Text="{Binding PilotName, Mode=OneWay}"/>
-                            <Run Text=" · "/><Run Text="{Binding CidDisplay, Mode=OneWay}"/>
-                        </TextBlock>
                     </StackPanel>
-                </Grid>
+                </DockPanel>
 
-                <Border Style="{StaticResource SectionBg}">
+                <!-- Route bar -->
+                <Border Background="#33000000" CornerRadius="4" Padding="8,5" Margin="0,0,0,6">
                     <StackPanel>
                         <Grid Margin="0,0,0,4">
                             <Grid.ColumnDefinitions>
@@ -111,51 +127,55 @@
                                 <ColumnDefinition Width="*"/>
                                 <ColumnDefinition Width="Auto"/>
                             </Grid.ColumnDefinitions>
-                            <StackPanel Grid.Column="0">
-                                <TextBlock Text="{Binding Departure}" Foreground="#FF7dd3fc"
-                                           FontWeight="Bold" FontSize="13"/>
-                            </StackPanel>
+                            <TextBlock Grid.Column="0" Text="{Binding Departure}"
+                                       Foreground="{DynamicResource SuperBrightTextColor}"
+                                       FontWeight="Bold"
+                                       FontFamily="{DynamicResource CurrentFont}"
+                                       FontSize="{DynamicResource HeaderFontSize}"/>
                             <Grid Grid.Column="1" Margin="6,0">
-                                <Rectangle Height="1" Fill="#33FFFFFF" VerticalAlignment="Center"/>
-                                <TextBlock Text="✈" Foreground="White" FontSize="9"
-                                           HorizontalAlignment="Center" VerticalAlignment="Center"/>
+                                <Rectangle Height="1" Fill="#44FFFFFF" VerticalAlignment="Center"/>
+                                <TextBlock Text="✈" Foreground="{DynamicResource BrightTextColor}"
+                                           FontSize="9" HorizontalAlignment="Center" VerticalAlignment="Center"/>
                             </Grid>
-                            <StackPanel Grid.Column="2">
-                                <TextBlock Text="{Binding Arrival}" Foreground="#887dd3fc"
-                                           FontWeight="Bold" FontSize="13"/>
-                            </StackPanel>
+                            <TextBlock Grid.Column="2" Text="{Binding Arrival}"
+                                       Foreground="{DynamicResource BrightTextColor}"
+                                       FontWeight="Bold"
+                                       FontFamily="{DynamicResource CurrentFont}"
+                                       FontSize="{DynamicResource HeaderFontSize}"
+                                       Opacity="0.7"/>
                         </Grid>
                         <ProgressBar Value="{Binding ProgressPercent}" Maximum="100" Height="3"
-                                     Background="#22FFFFFF" BorderThickness="0" Margin="0,0,0,3">
-                            <ProgressBar.Foreground>
-                                <LinearGradientBrush StartPoint="0,0" EndPoint="1,0">
-                                    <GradientStop Color="#FF38bdf8" Offset="0"/>
-                                    <GradientStop Color="#FF7dd3fc" Offset="1"/>
-                                </LinearGradientBrush>
-                            </ProgressBar.Foreground>
-                        </ProgressBar>
+                                     Background="#33FFFFFF" BorderThickness="0" Margin="0,0,0,3"/>
                         <DockPanel>
-                            <TextBlock Foreground="#55FFFFFF" FontSize="9" DockPanel.Dock="Left">
+                            <TextBlock DockPanel.Dock="Left"
+                                       Foreground="{DynamicResource BrightTextColor}"
+                                       FontFamily="{DynamicResource CurrentFont}"
+                                       FontSize="8" Opacity="0.55">
                                 <Run Text="{Binding ProgressPercent, StringFormat={}{0:F0}%, Mode=OneWay}"/>
-                                <Run Text=" · "/><Run Text="{Binding RemainingNmDisplay, Mode=OneWay}"/>
+                                <Run Text=" · "/>
+                                <Run Text="{Binding RemainingNmDisplay, Mode=OneWay}"/>
                             </TextBlock>
-                            <TextBlock Text="{Binding EtaDisplay}" Foreground="#55FFFFFF"
-                                       FontSize="9" HorizontalAlignment="Right" DockPanel.Dock="Right"/>
+                            <TextBlock Text="{Binding EtaDisplay}" DockPanel.Dock="Right"
+                                       Foreground="{DynamicResource BrightTextColor}"
+                                       FontFamily="{DynamicResource CurrentFont}"
+                                       FontSize="8" Opacity="0.55"
+                                       HorizontalAlignment="Right"/>
                         </DockPanel>
                     </StackPanel>
                 </Border>
 
+                <!-- Stats grid -->
                 <UniformGrid Columns="3" Margin="0,0,0,6">
                     <Border Style="{StaticResource StatTile}" Margin="0,0,2,2">
                         <StackPanel>
                             <TextBlock Text="{Binding Altitude, StringFormat={}{0:N0}}" Style="{StaticResource StatValue}"/>
-                            <TextBlock Text="ft ALT" Style="{StaticResource StatLabel}"/>
+                            <TextBlock Text="ALT ft" Style="{StaticResource StatLabel}"/>
                         </StackPanel>
                     </Border>
                     <Border Style="{StaticResource StatTile}" Margin="1,0,1,2">
                         <StackPanel>
                             <TextBlock Text="{Binding Groundspeed}" Style="{StaticResource StatValue}"/>
-                            <TextBlock Text="kts GS" Style="{StaticResource StatLabel}"/>
+                            <TextBlock Text="GS kts" Style="{StaticResource StatLabel}"/>
                         </StackPanel>
                     </Border>
                     <Border Style="{StaticResource StatTile}" Margin="2,0,0,2">
@@ -166,71 +186,71 @@
                     </Border>
                     <Border Style="{StaticResource StatTile}" Margin="0,2,2,0">
                         <StackPanel>
-                            <TextBlock Text="{Binding AircraftType}" Foreground="#FFE2E8F0"
-                                       FontSize="11" FontWeight="SemiBold" HorizontalAlignment="Center"/>
-                            <TextBlock Text="ACFT" Style="{StaticResource StatLabel}"/>
+                            <TextBlock Text="{Binding Squawk}" Style="{StaticResource StatValue}"/>
+                            <TextBlock Text="SQWK" Style="{StaticResource StatLabel}"/>
                         </StackPanel>
                     </Border>
                     <Border Style="{StaticResource StatTile}" Margin="1,2,1,0">
                         <StackPanel>
-                            <TextBlock Text="{Binding Squawk}" Foreground="#FFE2E8F0"
-                                       FontSize="11" FontWeight="SemiBold" HorizontalAlignment="Center"/>
-                            <TextBlock Text="SQWK" Style="{StaticResource StatLabel}"/>
+                            <TextBlock Text="{Binding CruiseAlt}" Style="{StaticResource StatValue}"/>
+                            <TextBlock Text="CRZ ALT" Style="{StaticResource StatLabel}"/>
                         </StackPanel>
                     </Border>
                     <Border Style="{StaticResource StatTile}" Margin="2,2,0,0">
                         <StackPanel>
-                            <TextBlock Text="{Binding OnlineTime}" Foreground="#FFE2E8F0"
-                                       FontSize="11" FontWeight="SemiBold" HorizontalAlignment="Center"/>
+                            <TextBlock Text="{Binding OnlineTime}" Style="{StaticResource StatValue}"/>
                             <TextBlock Text="ONLINE" Style="{StaticResource StatLabel}"/>
                         </StackPanel>
                     </Border>
                 </UniformGrid>
 
-                <Border Style="{StaticResource SectionBg}"
+                <!-- Route -->
+                <Border Background="#33000000" CornerRadius="4" Padding="6,4" Margin="0,0,0,4"
                         Visibility="{Binding RouteString, Converter={StaticResource NullToVis}}">
                     <StackPanel>
-                        <TextBlock Text="ROUTE" Foreground="#44FFFFFF" FontSize="8" Margin="0,0,0,2"/>
-                        <TextBlock Text="{Binding RouteString}" Foreground="#99FFFFFF"
-                                   FontFamily="Courier New" FontSize="9"
-                                   TextTrimming="CharacterEllipsis" TextWrapping="NoWrap"/>
+                        <TextBlock Text="ROUTE" Style="{StaticResource SectionLabel}"/>
+                        <TextBlock Text="{Binding RouteString}"
+                                   Foreground="{DynamicResource BrightTextColor}"
+                                   FontFamily="Courier New"
+                                   FontSize="{DynamicResource TextFontSize}"
+                                   TextTrimming="CharacterEllipsis" TextWrapping="NoWrap"
+                                   Opacity="0.75"/>
                     </StackPanel>
                 </Border>
 
-                <Border Style="{StaticResource SectionBg}"
+                <!-- Remarks -->
+                <Border Background="#33000000" CornerRadius="4" Padding="6,4"
                         Visibility="{Binding Remarks, Converter={StaticResource NullToVis}}">
                     <StackPanel>
-                        <TextBlock Text="REMARKS" Foreground="#44FFFFFF" FontSize="8" Margin="0,0,0,2"/>
-                        <TextBlock Text="{Binding Remarks}" Foreground="#77FFFFFF"
-                                   FontSize="9" TextTrimming="CharacterEllipsis" TextWrapping="NoWrap"/>
+                        <TextBlock Text="REMARKS" Style="{StaticResource SectionLabel}"/>
+                        <TextBlock Text="{Binding Remarks}"
+                                   Foreground="{DynamicResource BrightTextColor}"
+                                   FontFamily="{DynamicResource CurrentFont}"
+                                   FontSize="{DynamicResource TextFontSize}"
+                                   TextTrimming="CharacterEllipsis" TextWrapping="NoWrap"
+                                   Opacity="0.65"/>
                     </StackPanel>
                 </Border>
             </StackPanel>
 
-            <!-- Airport ATC panel -->
+            <!-- ═══ AIRPORT ATC PANEL ═══ -->
             <StackPanel Visibility="{Binding IsAirportATC, Converter={StaticResource BoolToVis}}">
-                <StackPanel Margin="0,0,0,10">
-                    <DockPanel Margin="0,0,0,2">
-                        <Grid Width="16" Height="16" Margin="0,0,6,0" DockPanel.Dock="Left" VerticalAlignment="Center">
-                            <Image Source="/Resources/Images/VATSIM_Logo_White_No_Tagline_500px.png"
-                                   Stretch="Uniform"
-                                   Visibility="{Binding IsVatsim, Converter={StaticResource BoolToVis}}"/>
-                            <ContentControl Content="{DynamicResource IvaoLogo}"
-                                            Visibility="{Binding IsIvao, Converter={StaticResource BoolToVis}}"/>
-                        </Grid>
-                        <TextBlock Text="{Binding Callsign}" Foreground="White"
-                                   FontWeight="Bold" FontSize="15"/>
-                    </DockPanel>
-                    <TextBlock Text="{Binding AirportName}" Foreground="#66FFFFFF" FontSize="10"/>
-                    <TextBlock Text="{Binding FacilityLabel}" Foreground="#887dd3fc"
-                               FontSize="10" Margin="0,2,0,0"/>
-                </StackPanel>
+                <TextBlock Text="{Binding AirportName}"
+                           Foreground="{DynamicResource BrightTextColor}"
+                           FontFamily="{DynamicResource CurrentFont}"
+                           FontSize="{DynamicResource TextFontSize}"
+                           Opacity="0.65" Margin="0,0,0,2"/>
+                <TextBlock Text="{Binding FacilityLabel}"
+                           Foreground="{DynamicResource BrightTextColor}"
+                           FontFamily="{DynamicResource CurrentFont}"
+                           FontSize="{DynamicResource TextFontSize}"
+                           Opacity="0.55" Margin="0,0,0,8"/>
 
-                <Border Style="{StaticResource SectionBg}">
+                <Border Background="#33000000" CornerRadius="4" Padding="6,4" Margin="0,0,0,4">
                     <ItemsControl ItemsSource="{Binding Controllers}">
                         <ItemsControl.ItemTemplate>
                             <DataTemplate>
-                                <Grid Margin="0,2">
+                                <Grid Margin="0,3">
                                     <Grid.ColumnDefinitions>
                                         <ColumnDefinition Width="*"/>
                                         <ColumnDefinition Width="Auto"/>
@@ -238,85 +258,90 @@
                                         <ColumnDefinition Width="Auto"/>
                                     </Grid.ColumnDefinitions>
                                     <TextBlock Grid.Column="0" Text="{Binding Callsign}"
-                                               Foreground="#CCE2E8F0" FontSize="10" FontWeight="SemiBold"/>
+                                               Foreground="{DynamicResource SuperBrightTextColor}"
+                                               FontFamily="{DynamicResource CurrentFont}"
+                                               FontSize="{DynamicResource TextFontSize}"
+                                               FontWeight="SemiBold"/>
                                     <TextBlock Grid.Column="1" Text="{Binding Position}"
-                                               Foreground="#887dd3fc" FontSize="9" Margin="6,0"/>
+                                               Foreground="{DynamicResource BrightTextColor}"
+                                               FontFamily="{DynamicResource CurrentFont}"
+                                               FontSize="{DynamicResource TextFontSize}"
+                                               Opacity="0.6" Margin="6,0"/>
                                     <TextBlock Grid.Column="2" Text="{Binding Frequency}"
-                                               Foreground="#AAE2E8F0" FontSize="10" Margin="6,0,0,0"/>
+                                               Foreground="{DynamicResource BrightTextColor}"
+                                               FontFamily="{DynamicResource CurrentFont}"
+                                               FontSize="{DynamicResource TextFontSize}"
+                                               Margin="6,0,0,0"/>
                                     <TextBlock Grid.Column="3" Text="{Binding OnlineTime}"
-                                               Foreground="#55FFFFFF" FontSize="9" Margin="6,0,0,0"/>
+                                               Foreground="{DynamicResource BrightTextColor}"
+                                               FontFamily="{DynamicResource CurrentFont}"
+                                               FontSize="{DynamicResource TextFontSize}"
+                                               Opacity="0.5" Margin="6,0,0,0"/>
                                 </Grid>
                             </DataTemplate>
                         </ItemsControl.ItemTemplate>
                     </ItemsControl>
                 </Border>
 
-                <Border Style="{StaticResource SectionBg}"
+                <Border Background="#33000000" CornerRadius="4" Padding="6,4"
                         Visibility="{Binding AtisText, Converter={StaticResource NullToVis}}">
                     <StackPanel>
-                        <TextBlock Text="ATIS" Foreground="#44FFFFFF" FontSize="8" Margin="0,0,0,2"/>
-                        <TextBlock Text="{Binding AtisText}" Foreground="#88FFFFFF"
-                                   FontSize="9" TextWrapping="Wrap" MaxHeight="80"/>
+                        <TextBlock Text="ATIS" Style="{StaticResource SectionLabel}"/>
+                        <TextBlock Text="{Binding AtisText}"
+                                   Foreground="{DynamicResource BrightTextColor}"
+                                   FontFamily="{DynamicResource CurrentFont}"
+                                   FontSize="{DynamicResource TextFontSize}"
+                                   TextWrapping="Wrap" MaxHeight="80" Opacity="0.75"/>
                     </StackPanel>
                 </Border>
             </StackPanel>
 
-            <!-- CTR / APP / FSS ATC panel -->
+            <!-- ═══ CTR / APP / FSS PANEL ═══ -->
             <StackPanel Visibility="{Binding IsCtrATC, Converter={StaticResource BoolToVis}}">
-                <DockPanel Margin="0,0,0,6">
-                    <Grid Width="16" Height="16" Margin="0,0,6,0" DockPanel.Dock="Left" VerticalAlignment="Center">
-                        <Image Source="/Resources/Images/VATSIM_Logo_White_No_Tagline_500px.png"
-                               Stretch="Uniform"
-                               Visibility="{Binding IsVatsim, Converter={StaticResource BoolToVis}}"/>
-                        <ContentControl Content="{DynamicResource IvaoLogo}"
-                                        Visibility="{Binding IsIvao, Converter={StaticResource BoolToVis}}"/>
-                    </Grid>
-                    <StackPanel>
-                        <DockPanel>
-                            <Border Background="#33FF8C00" BorderBrush="#44FF8C00" BorderThickness="1"
-                                    CornerRadius="10" Padding="5,1" Margin="0,0,6,0">
-                                <TextBlock Text="{Binding FacilityLabel}" Foreground="#FFFF8C00"
-                                           FontSize="9" FontWeight="Bold"/>
-                            </Border>
-                            <TextBlock Text="{Binding Callsign}" Foreground="White"
-                                       FontWeight="Bold" FontSize="14"/>
-                        </DockPanel>
-                        <TextBlock Foreground="#55FFFFFF" FontSize="10">
-                            <Run Text="{Binding PilotName, Mode=OneWay}"/>
-                            <Run Text=" · "/><Run Text="{Binding CidDisplay, Mode=OneWay}"/>
-                        </TextBlock>
-                    </StackPanel>
-                </DockPanel>
-                <Border Style="{StaticResource SectionBg}" Margin="0,0,0,6">
+                <TextBlock Text="{Binding FacilityLabel}"
+                           Foreground="{DynamicResource BrightTextColor}"
+                           FontFamily="{DynamicResource CurrentFont}"
+                           FontSize="{DynamicResource TextFontSize}"
+                           Opacity="0.55" Margin="0,0,0,8"/>
+
+                <Border Background="#33000000" CornerRadius="4" Padding="8,6" Margin="0,0,0,4">
                     <DockPanel>
                         <StackPanel DockPanel.Dock="Left" Margin="0,0,16,0">
-                            <TextBlock Text="{Binding Frequency}" Foreground="#FF7dd3fc"
+                            <TextBlock Text="{Binding Frequency}"
+                                       Foreground="{DynamicResource SuperBrightTextColor}"
+                                       FontFamily="{DynamicResource CurrentFont}"
                                        FontSize="18" FontWeight="Bold"/>
-                            <TextBlock Text="MHz" Foreground="#44FFFFFF" FontSize="9"/>
+                            <TextBlock Text="MHz"
+                                       Foreground="{DynamicResource BrightTextColor}"
+                                       FontFamily="{DynamicResource CurrentFont}"
+                                       FontSize="8" Opacity="0.5"/>
                         </StackPanel>
                         <UniformGrid Columns="2">
                             <StackPanel Margin="0,0,6,0">
-                                <TextBlock Text="{Binding RatingDisplay}" Foreground="#CCE2E8F0"
-                                           FontSize="11" FontWeight="SemiBold"/>
-                                <TextBlock Text="RATING" Foreground="#44FFFFFF" FontSize="8"/>
+                                <TextBlock Text="{Binding RatingDisplay}" Style="{StaticResource StatValue}"/>
+                                <TextBlock Text="RATING" Style="{StaticResource StatLabel}"/>
                             </StackPanel>
                             <StackPanel>
-                                <TextBlock Text="{Binding OnlineTime}" Foreground="#CCE2E8F0"
-                                           FontSize="11" FontWeight="SemiBold"/>
-                                <TextBlock Text="ONLINE" Foreground="#44FFFFFF" FontSize="8"/>
+                                <TextBlock Text="{Binding OnlineTime}" Style="{StaticResource StatValue}"/>
+                                <TextBlock Text="ONLINE" Style="{StaticResource StatLabel}"/>
                             </StackPanel>
                         </UniformGrid>
                     </DockPanel>
                 </Border>
-                <Border Style="{StaticResource SectionBg}"
+
+                <Border Background="#33000000" CornerRadius="4" Padding="6,4"
                         Visibility="{Binding AtisText, Converter={StaticResource NullToVis}}">
                     <StackPanel>
-                        <TextBlock Text="ATIS" Foreground="#44FFFFFF" FontSize="8" Margin="0,0,0,2"/>
-                        <TextBlock Text="{Binding AtisText}" Foreground="#88FFFFFF"
-                                   FontSize="9" TextWrapping="Wrap" MaxHeight="80"/>
+                        <TextBlock Text="ATIS" Style="{StaticResource SectionLabel}"/>
+                        <TextBlock Text="{Binding AtisText}"
+                                   Foreground="{DynamicResource BrightTextColor}"
+                                   FontFamily="{DynamicResource CurrentFont}"
+                                   FontSize="{DynamicResource TextFontSize}"
+                                   TextWrapping="Wrap" MaxHeight="80" Opacity="0.75"/>
                     </StackPanel>
                 </Border>
             </StackPanel>
-        </Grid>
+
+        </StackPanel>
     </Border>
 </UserControl>

@@ -1282,24 +1282,10 @@ namespace FSTRaK.ViewModels
 
             private string CreateTooltipText()
             {
-                StringBuilder sb = new StringBuilder();
-                sb.AppendLine($"{Pilot.callsign} {Pilot.name}");
-                if (Pilot.flight_plan != null)
-                {
-                    sb.AppendLine($"Flying from {Pilot.flight_plan.departure} to {Pilot.flight_plan.arrival}");
-                    sb.AppendLine($"{Pilot.flight_plan.aircraft_short}  {Pilot.flight_plan.aircraft}");
-                }
-                sb.AppendLine($"Altitude: {Pilot.altitude} ft");
-                sb.AppendLine($"Heading: {Pilot.heading}");
-                sb.AppendLine($"Ground Speed: {Pilot.groundspeed} Kts");
-
-                if (Pilot.flight_plan != null)
-                {
-                    sb.AppendLine($"Flight Plan:\n {Pilot.flight_plan.route}");
-                    sb.AppendLine($"Remarks:\n {Pilot.flight_plan.remarks}");
-                }
-                StringUtil.RemoveTrailingWhitespace(sb);
-                return sb.ToString();
+                var departure = Pilot.flight_plan?.departure ?? "";
+                var arrival = Pilot.flight_plan?.arrival ?? "";
+                var aircraft = Pilot.flight_plan?.aircraft_short ?? "";
+                return $"{Pilot.callsign}\n{departure} → {arrival}\n{aircraft}\n{Pilot.name}\nALT: {Pilot.altitude}  GS: {Pilot.groundspeed}  HDG: {Pilot.heading}";
             }
         }
 
