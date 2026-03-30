@@ -665,6 +665,7 @@ namespace FSTRaK.ViewModels
                 bool isOwn = !string.IsNullOrEmpty(myVatsimId) && va.Pilot.cid.ToString() == myVatsimId;
                 SelectedClient = new SelectedClientViewModel(va, isOwn, isOwn && isInFlight, new List<TrackPoint>());
                 TrySetAirportCoords(SelectedClient);
+                UpdateFlightPathLines();
                 var _vs = FetchVatsimTrackAsync(va.Pilot.callsign);
             }
             else if (parameter is IvaoAircraft ia)
@@ -672,6 +673,7 @@ namespace FSTRaK.ViewModels
                 bool isOwn = !string.IsNullOrEmpty(myIvaoId) && ia.Pilot.userId.ToString() == myIvaoId;
                 SelectedClient = new SelectedClientViewModel(ia, isOwn, isOwn && isInFlight, new List<TrackPoint>());
                 TrySetAirportCoords(SelectedClient);
+                UpdateFlightPathLines();
                 var _ = FetchIvaoTrackAsync(ia.Pilot.SessionId, ia.Callsign);
                 var _fp = FetchIvaoPilotDetailsAsync(ia.Pilot.SessionId);
             }
