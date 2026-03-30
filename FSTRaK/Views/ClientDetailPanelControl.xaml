@@ -7,7 +7,7 @@
              xmlns:utils="clr-namespace:FSTRaK.Utils"
              mc:Ignorable="d"
              d:DataContext="{d:DesignInstance Type=vm:SelectedClientViewModel}"
-             Width="260">
+             Width="300">
 
     <UserControl.Resources>
         <ResourceDictionary>
@@ -210,7 +210,7 @@
                                        HorizontalAlignment="Right"/>
                         </DockPanel>
                         <TextBlock Text="{Binding RouteString}" Style="{StaticResource DimText}"
-                                   FontSize="{DynamicResource TextFontSize}"
+                                   FontSize="10"
                                    TextWrapping="Wrap"/>
                     </StackPanel>
                 </Border>
@@ -221,7 +221,7 @@
                     <StackPanel>
                         <TextBlock Text="REMARKS" Style="{StaticResource SectionLabel}"/>
                         <TextBlock Text="{Binding Remarks}" Style="{StaticResource DimText}"
-                                   FontSize="{DynamicResource TextFontSize}"
+                                   FontSize="10"
                                    TextWrapping="Wrap"/>
                     </StackPanel>
                 </Border>
@@ -283,7 +283,7 @@
                     <StackPanel>
                         <TextBlock Text="ATIS" Style="{StaticResource SectionLabel}"/>
                         <TextBlock Text="{Binding AtisText}" Style="{StaticResource DimText}"
-                                   TextWrapping="Wrap"/>
+                                   FontSize="10" TextWrapping="Wrap"/>
                     </StackPanel>
                 </Border>
             </StackPanel>
@@ -319,7 +319,7 @@
                     <StackPanel>
                         <TextBlock Text="ATIS" Style="{StaticResource SectionLabel}"/>
                         <TextBlock Text="{Binding AtisText}" Style="{StaticResource DimText}"
-                                   TextWrapping="Wrap"/>
+                                   FontSize="10" TextWrapping="Wrap"/>
                     </StackPanel>
                 </Border>
             </StackPanel>
