@@ -88,12 +88,7 @@
                 <!-- Pilot info row -->
                 <StackPanel Margin="0,0,0,8">
                     <TextBlock Text="{Binding PilotName}" Style="{StaticResource DimText}"/>
-                    <DockPanel>
-                        <TextBlock DockPanel.Dock="Left" Text="{Binding FlightRules}"
-                                   Foreground="#FF34D399" FontSize="9" FontWeight="Bold"
-                                   VerticalAlignment="Center" Margin="0,2,6,0"/>
-                        <TextBlock Text="{Binding AircraftType}" Style="{StaticResource DimText}" VerticalAlignment="Center"/>
-                    </DockPanel>
+                    <TextBlock Text="{Binding AircraftType}" Style="{StaticResource DimText}"/>
                 </StackPanel>
 
                 <!-- Route bar -->
@@ -180,7 +175,12 @@
                 <Border Background="#22FFFFFF" CornerRadius="4" Padding="6,4" Margin="0,0,0,4"
                         Visibility="{Binding RouteString, Converter={StaticResource NullToVis}}">
                     <StackPanel>
-                        <TextBlock Text="ROUTE" Style="{StaticResource SectionLabel}"/>
+                        <DockPanel Margin="0,0,0,2">
+                            <TextBlock DockPanel.Dock="Left" Text="ROUTE" Style="{StaticResource SectionLabel}" Margin="0"/>
+                            <TextBlock DockPanel.Dock="Right" Text="{Binding FlightRules}"
+                                       Foreground="#FF34D399" FontSize="9" FontWeight="Bold"
+                                       HorizontalAlignment="Right"/>
+                        </DockPanel>
                         <TextBlock Text="{Binding RouteString}" Style="{StaticResource DimText}"
                                    FontSize="{DynamicResource TextFontSize}"
                                    TextWrapping="Wrap"/>
