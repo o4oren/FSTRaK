@@ -46,6 +46,7 @@ namespace FSTRaK.ViewModels
 
         // ── Pilot display properties
         public bool IsPilot => ClientKind == ClientType.Pilot;
+        public string TrackStrokeColor => Network == NetworkType.Ivao ? "#FFFF8C00" : "#FF38bdf8";
         public string PilotName { get; }
         public int? CidInt { get; }
         public string CidDisplay => CidInt?.ToString() ?? "";

@@ -19,6 +19,30 @@
             </ResourceDictionary.MergedDictionaries>
             <utils:EnumToBoolConverter x:Key="EnumToBoolConverter"/>
             <utils:NetworkTypeToVisConverter x:Key="NetworkTypeToVisConverter"/>
+            <utils:NullToVisibilityConverter x:Key="NullToVisConverter"/>
+            <utils:InvertedNullToVisibilityConverter x:Key="InvertedNullToVis"/>
+            <utils:StringToSolidColorBrushConverter x:Key="StringToColorBrushConverter"/>
+            <Style TargetType="ToolTip">
+                <Setter Property="Background" Value="#CC1a2a3a"/>
+                <Setter Property="Foreground" Value="#DDFFFFFF"/>
+                <Setter Property="BorderBrush" Value="#33FFFFFF"/>
+                <Setter Property="BorderThickness" Value="1"/>
+                <Setter Property="Padding" Value="8,6"/>
+                <Setter Property="FontSize" Value="11"/>
+                <Setter Property="Template">
+                    <Setter.Value>
+                        <ControlTemplate TargetType="ToolTip">
+                            <Border Background="{TemplateBinding Background}"
+                                    BorderBrush="{TemplateBinding BorderBrush}"
+                                    BorderThickness="{TemplateBinding BorderThickness}"
+                                    CornerRadius="8"
+                                    Padding="{TemplateBinding Padding}">
+                                <ContentPresenter/>
+                            </Border>
+                        </ControlTemplate>
+                    </Setter.Value>
+                </Setter>
+            </Style>
         </ResourceDictionary>
     </UserControl.Resources>
 
@@ -161,6 +185,7 @@
                         <Setter Property="Location" Value="{Binding Location}"/>
                         <Setter Property="VerticalAlignment" Value="Center"/>
                         <Setter Property="HorizontalAlignment" Value="Center"/>
+                        <EventSetter Event="MouseLeftButtonUp" Handler="OnMapItemClicked"/>
                     </Style>
                 </map:MapItemsControl.ItemContainerStyle>
                 <map:MapItemsControl.ItemTemplate>
@@ -181,6 +206,7 @@
                         <Setter Property="Location" Value="{Binding Location}"/>
                         <Setter Property="VerticalAlignment" Value="Center"/>
                         <Setter Property="HorizontalAlignment" Value="Center"/>
+                        <EventSetter Event="MouseLeftButtonUp" Handler="OnMapItemClicked"/>
                     </Style>
                 </map:MapItemsControl.ItemContainerStyle>
                 <map:MapItemsControl.ItemTemplate>
@@ -254,6 +280,7 @@
                     <Style TargetType="map:MapItem">
                         <Setter Property="Location" Value="{Binding Location}"/>
                         <Setter Property="Margin" Value="-12 -12 0 0"/>
+                        <EventSetter Event="MouseLeftButtonUp" Handler="OnMapItemClicked"/>
                     </Style>
                 </map:MapItemsControl.ItemContainerStyle>
                 <map:MapItemsControl.ItemTemplate>
@@ -280,6 +307,7 @@
                     <Style TargetType="map:MapItem">
                         <Setter Property="Location" Value="{Binding Location}"/>
                         <Setter Property="Margin" Value="-16 -16 0 0"/>
+                        <EventSetter Event="MouseLeftButtonUp" Handler="OnMapItemClicked"/>
                     </Style>
                 </map:MapItemsControl.ItemContainerStyle>
                 <map:MapItemsControl.ItemTemplate>
@@ -318,7 +346,30 @@
             <map:MapPolyline Locations="{Binding FlightPath}" Stroke="{DynamicResource FlightPathColorBrush}" StrokeThickness="2" StrokeLineJoin="round"/>
             <map:MapPolyline Locations="{Binding LastSegmentLine}" Stroke="{DynamicResource FlightPathColorBrush}" StrokeThickness="2" Visibility="{Binding Path=IsShowAirplane, Converter={StaticResource BoolToVis}}"/>
 
+            <!-- Selected client track (solid) -->
+            <map:MapPolyline
+                Locations="{Binding SelectedTrackLocations}"
+                Stroke="{Binding SelectedClient.TrackStrokeColor, Converter={StaticResource StringToColorBrushConverter}}"
+                StrokeThickness="2"
+                StrokeLineJoin="Round"/>
+
+            <!-- Selected client destination line (dashed) -->
+            <map:MapPolyline
+                Locations="{Binding SelectedDestinationLine}"
+                Stroke="{Binding SelectedClient.TrackStrokeColor, Converter={StaticResource StringToColorBrushConverter}}"
+                StrokeThickness="1.5"
+                StrokeDashArray="4 4"
+                StrokeLineJoin="Round"/>
+
         </map:Map>
+
+        <views:ClientDetailPanelControl
+            DataContext="{Binding SelectedClient}"
+            VerticalAlignment="Bottom"
+            HorizontalAlignment="Right"
+            Margin="0,0,16,16"
+            Visibility="{Binding SelectedClient, RelativeSource={RelativeSource AncestorType=UserControl},
+                         Converter={StaticResource NullToVisConverter}}"/>
 
         <StackPanel Margin="10" HorizontalAlignment="Left" MinWidth="160">
             <views:OverlayTextCardControl Header="{Binding ConnectionText}" Text="{Binding State}"/>

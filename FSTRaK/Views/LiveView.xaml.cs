@@ -41,6 +41,7 @@ namespace FSTRaK.Views
             ((LiveViewViewModel)DataContext).NotifyMapProviderChanged();
 
             ((LiveViewViewModel)DataContext).PropertyChanged += OnViewModelPropertyChanged;
+            KeyDown += OnKeyDown;
         }
 
         private void OnUnLoaded(object sender, RoutedEventArgs e)
@@ -49,6 +50,7 @@ namespace FSTRaK.Views
                 vm.PropertyChanged -= OnViewModelPropertyChanged;
 
             Properties.Settings.Default.PropertyChanged -= OnSettingsPropertyChanged;
+            KeyDown -= OnKeyDown;
             if (_currentOpenAipLayer != null)
             {
                 xMap.Children.Remove(_currentOpenAipLayer);
@@ -98,6 +100,25 @@ namespace FSTRaK.Views
         private void UpdateMapLayers()
         {
             MapLayerHelper.UpdateMapLayers(xMap, ref _currentOpenAipLayer, ref _currentChartLayer);
+        }
+
+        private void OnMapItemClicked(object sender, System.Windows.Input.MouseButtonEventArgs e)
+        {
+            if (sender is System.Windows.FrameworkElement fe && fe.DataContext != null)
+            {
+                var vm = DataContext as FSTRaK.ViewModels.LiveViewViewModel;
+                vm?.SelectClientCommand.Execute(fe.DataContext);
+                e.Handled = true;
+            }
+        }
+
+        private void OnKeyDown(object sender, System.Windows.Input.KeyEventArgs e)
+        {
+            if (e.Key == System.Windows.Input.Key.Escape)
+            {
+                var vm = DataContext as FSTRaK.ViewModels.LiveViewViewModel;
+                vm?.ClearSelectionCommand.Execute(null);
+            }
         }
 
         private void Hyperlink_RequestNavigate(object sender, RequestNavigateEventArgs e)
