@@ -399,3 +399,7 @@ FodyWeavers.xsd
 
 
 .superpowers/
+.cursor/
+.windsurf/
+.claude/
+.bmad/
