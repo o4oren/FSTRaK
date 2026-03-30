@@ -254,7 +254,7 @@
                                                    FontFamily="{DynamicResource CurrentFont}"
                                                    FontSize="{DynamicResource TextFontSize}" FontWeight="SemiBold"/>
                                     </DockPanel>
-                                    <!-- Line 2: name + rating -->
+                                    <!-- Line 2: name + rating + online time -->
                                     <DockPanel>
                                         <TextBlock DockPanel.Dock="Left" Text="{Binding Name}"
                                                    Foreground="{DynamicResource BrightTextColor}"
@@ -262,6 +262,11 @@
                                                    FontSize="{DynamicResource TextFontSize}"
                                                    Opacity="0.6" Margin="0,0,6,0"/>
                                         <TextBlock DockPanel.Dock="Left" Text="{Binding Rating}"
+                                                   Foreground="{DynamicResource BrightTextColor}"
+                                                   FontFamily="{DynamicResource CurrentFont}"
+                                                   FontSize="{DynamicResource TextFontSize}"
+                                                   Opacity="0.5" Margin="0,0,6,0"/>
+                                        <TextBlock DockPanel.Dock="Left" Text="{Binding OnlineTime}"
                                                    Foreground="{DynamicResource BrightTextColor}"
                                                    FontFamily="{DynamicResource CurrentFont}"
                                                    FontSize="{DynamicResource TextFontSize}"

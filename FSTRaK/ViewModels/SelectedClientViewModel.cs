@@ -161,7 +161,8 @@ namespace FSTRaK.ViewModels
                         MapVatsimFacility(c.facility),
                         c.frequency,
                         MapVatsimRating(c.rating),
-                        c.name ?? ""));
+                        c.name ?? "",
+                        FormatOnlineTime(c.logon_time)));
         }
 
         // ── VATSIM FIR constructor
@@ -183,7 +184,8 @@ namespace FSTRaK.ViewModels
                         MapVatsimFacility(c.facility),
                         c.frequency,
                         MapVatsimRating(c.rating),
-                        c.name ?? ""));
+                        c.name ?? "",
+                        FormatOnlineTime(c.logon_time)));
         }
 
         // ── VATSIM UIR constructor (UIR is a merged polygon — show the single primary controller)
@@ -205,7 +207,8 @@ namespace FSTRaK.ViewModels
                     MapVatsimFacility(primary.facility),
                     primary.frequency,
                     MapVatsimRating(primary.rating),
-                    primary.name ?? ""));
+                    primary.name ?? "",
+                    FormatOnlineTime(primary.logon_time)));
         }
 
         // ── IVAO ATC static factory (replaces two constructors with `when` clauses)
@@ -275,11 +278,13 @@ namespace FSTRaK.ViewModels
             if (Controllers.Count > 0)
             {
                 var c = Controllers[0];
-                Controllers[0] = new AtcControllerRow(c.Callsign, c.Position, c.Frequency, ratingDisplay, controllerName);
+                Controllers[0] = new AtcControllerRow(c.Callsign, c.Position, c.Frequency, ratingDisplay, controllerName, onlineTime);
             }
             RatingDisplay = ratingDisplay;
+            OnlineTime = onlineTime;
             AtisText = atisText;
             OnPropertyChanged(nameof(RatingDisplay));
+            OnPropertyChanged(nameof(OnlineTime));
             OnPropertyChanged(nameof(AtisText));
             OnPropertyChanged(nameof(Controllers));
         }
@@ -415,5 +420,5 @@ namespace FSTRaK.ViewModels
         }
     }
 
-    internal record AtcControllerRow(string Callsign, string Position, string Frequency, string Rating, string Name);
+    internal record AtcControllerRow(string Callsign, string Position, string Frequency, string Rating, string Name, string OnlineTime = "");
 }
