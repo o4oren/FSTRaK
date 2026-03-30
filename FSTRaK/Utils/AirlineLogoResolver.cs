@@ -31,7 +31,8 @@ namespace FSTRaK.Utils
             return _cache.GetOrAdd(key, _ =>
             {
                 var uri = new Uri($"pack://application:,,,/FSTRaK;component/Assets/NetworkLogos/{key}.png");
-                return LoadFromUri(uri);
+                try { return LoadFromUri(uri); }
+                catch { return null; }
             });
         }
 

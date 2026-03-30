@@ -27,18 +27,20 @@ namespace FSTRaK.Utils
             double a = Math.Sin(dLat / 2) * Math.Sin(dLat / 2)
                      + Math.Cos(lat1) * Math.Cos(lat2) * Math.Sin(dLon / 2) * Math.Sin(dLon / 2);
             double centralAngle = 2 * Math.Atan2(Math.Sqrt(a), Math.Sqrt(1 - a));
-            double totalNm = centralAngle * EarthRadiusNm;
+            double sinD = Math.Sin(centralAngle);
 
+            // Degenerate case: start and end are the same point or antipodal
+            if (Math.Abs(sinD) < 1e-10)
+            {
+                points.Add(new Location(startLat, startLon));
+                return points;
+            }
+
+            double totalNm = centralAngle * EarthRadiusNm;
             int steps = Math.Max(2, (int)(totalNm / stepNm));
             for (int i = 0; i <= steps; i++)
             {
                 double f = (double)i / steps;
-                double sinD = Math.Sin(centralAngle);
-                if (Math.Abs(sinD) < 1e-10)
-                {
-                    points.Add(new Location(startLat, startLon));
-                    continue;
-                }
                 double A = Math.Sin((1 - f) * centralAngle) / sinD;
                 double B = Math.Sin(f * centralAngle) / sinD;
                 double x = A * Math.Cos(lat1) * Math.Cos(lon1) + B * Math.Cos(lat2) * Math.Cos(lon2);
