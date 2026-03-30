@@ -36,6 +36,8 @@ namespace FSTRaK.ViewModels
         public RelayCommand SelectNetworkCommand { get; private set; }
         public RelayCommand EnableNetworkItemCommand { get; private set; }
         public RelayCommand DisableNetworkItemCommand { get; private set; }
+        public RelayCommand SelectClientCommand { get; private set; }
+        public RelayCommand ClearSelectionCommand { get; private set; }
 
 
         public Flight ActiveFlight
@@ -411,6 +413,16 @@ namespace FSTRaK.ViewModels
 
         public ObservableCollection<Location> FlightPath { get; set; } = new();
 
+        private SelectedClientViewModel _selectedClient;
+        public SelectedClientViewModel SelectedClient
+        {
+            get => _selectedClient;
+            set { _selectedClient = value; OnPropertyChanged(); UpdateFlightPathLines(); }
+        }
+
+        public ObservableCollection<Location> SelectedTrackLocations { get; set; } = new ObservableCollection<Location>();
+        public ObservableCollection<Location> SelectedDestinationLine { get; set; } = new ObservableCollection<Location>();
+
         private ObservableCollection<Location> _lastSegmentLine;
         public ObservableCollection<Location> LastSegmentLine
         {
@@ -595,6 +607,117 @@ namespace FSTRaK.ViewModels
                 if (_isIvaoActive && !_isShowPilots && !_isShowAtc)
                     _ivaoService.Stop();
             });
+
+            SelectClientCommand = new RelayCommand(OnSelectClient);
+            ClearSelectionCommand = new RelayCommand(_ => SelectedClient = null);
+        }
+
+        private void OnSelectClient(object parameter)
+        {
+            if (parameter == null) { SelectedClient = null; return; }
+
+            var myVatsimId = Properties.Settings.Default.VatsimId?.Trim();
+            var myIvaoId = Properties.Settings.Default.IvaoId?.Trim();
+            var isInFlight = _flightManager.ActiveFlight != null;
+
+            if (parameter is VatsimAicraft va)
+            {
+                bool isOwn = !string.IsNullOrEmpty(myVatsimId) && va.Pilot.cid.ToString() == myVatsimId;
+                var tracks = _pilotTracks.TryGetValue($"VATSIM:{va.Pilot.callsign}", out var t)
+                    ? new List<TrackPoint>(t) : new List<TrackPoint>();
+                SelectedClient = new SelectedClientViewModel(va, isOwn, isOwn && isInFlight, tracks);
+                TrySetAirportCoords(SelectedClient);
+            }
+            else if (parameter is IvaoAircraft ia)
+            {
+                bool isOwn = !string.IsNullOrEmpty(myIvaoId) && ia.Pilot.userId.ToString() == myIvaoId;
+                var tracks = _pilotTracks.TryGetValue($"IVAO:{ia.Callsign}", out var t2)
+                    ? new List<TrackPoint>(t2) : new List<TrackPoint>();
+                SelectedClient = new SelectedClientViewModel(ia, isOwn, isOwn && isInFlight, tracks);
+                TrySetAirportCoords(SelectedClient);
+                var _ = FetchIvaoTrackAsync(ia.Pilot.userId, ia.Callsign);
+            }
+            else if (parameter is VatsimControlledAirport vca)
+            {
+                SelectedClient = new SelectedClientViewModel(vca);
+            }
+            else if (parameter is IvaoAtcItem iai)
+            {
+                SelectedClient = SelectedClientViewModel.FromIvaoAtc(iai);
+            }
+
+            if (SelectedClient != null)
+            {
+                SelectedClient.PropertyChanged += (sender, e) =>
+                {
+                    if (e.PropertyName == nameof(SelectedClientViewModel.TrackPoints) ||
+                        e.PropertyName == nameof(SelectedClientViewModel.DestinationLine))
+                        System.Windows.Application.Current.Dispatcher.Invoke(UpdateFlightPathLines);
+                };
+            }
+        }
+
+        private void TrySetAirportCoords(SelectedClientViewModel client)
+        {
+            if (string.IsNullOrEmpty(client.Departure) || string.IsNullOrEmpty(client.Arrival)) return;
+            var airports = _vatsimService.VatsimStaticData?.Airports;
+            if (airports == null) return;
+            var dep = airports.FirstOrDefault(a => a.ICAO == client.Departure);
+            var arr = airports.FirstOrDefault(a => a.ICAO == client.Arrival);
+            if (dep == null || arr == null) return;
+            client.SetAirportCoordinates(dep.Latitude, dep.Longitude, arr.Latitude, arr.Longitude);
+        }
+
+        private async Task FetchIvaoTrackAsync(int userId, string callsign)
+        {
+            try
+            {
+                using (var http = new System.Net.Http.HttpClient())
+                {
+                    var url = $"https://api.ivao.aero/v2/tracker/sessions/{userId}/tracks";
+                    var json = await http.GetStringAsync(url);
+                    var tracks = Newtonsoft.Json.JsonConvert.DeserializeObject<List<IvaoTrackPoint>>(json);
+                    if (tracks == null || SelectedClient?.Callsign != callsign) return;
+                    var converted = tracks
+                        .Select(tp => new TrackPoint(tp.latitude, tp.longitude, tp.altitude, DateTime.UtcNow))
+                        .ToList();
+                    System.Windows.Application.Current.Dispatcher.Invoke(() =>
+                    {
+                        if (SelectedClient?.Callsign == callsign)
+                        {
+                            SelectedClient.TrackPoints = converted;
+                            UpdateFlightPathLines();
+                        }
+                    });
+                }
+            }
+            catch (Exception ex)
+            {
+                Log.Warning(ex, "Failed to fetch IVAO track for {UserId}", userId);
+            }
+        }
+
+        private class IvaoTrackPoint
+        {
+            public double latitude { get; set; }
+            public double longitude { get; set; }
+            public int altitude { get; set; }
+        }
+
+        private void UpdateFlightPathLines()
+        {
+            SelectedTrackLocations.Clear();
+            SelectedDestinationLine.Clear();
+            var c = SelectedClient;
+            if (c == null || !c.IsPilot) return;
+
+            if (!c.IsOwnAircraftInFlight)
+                foreach (var loc in c.TrackLocations)
+                    SelectedTrackLocations.Add(loc);
+
+            if (c.DestinationLine != null)
+                foreach (var loc in c.DestinationLine)
+                    SelectedDestinationLine.Add(loc);
         }
 
         private void VatsimServiceOnPropertyChanged(object sender, PropertyChangedEventArgs e)
@@ -618,6 +741,19 @@ namespace FSTRaK.ViewModels
                     else
                     {
                         VatsimAircraftList.Clear();
+                    }
+
+                    if (SelectedClient != null && SelectedClient.Network == NetworkType.Vatsim && SelectedClient.IsPilot)
+                    {
+                        var match = _vatsimData?.pilots.FirstOrDefault(p => p.callsign == SelectedClient.Callsign);
+                        if (match != null)
+                        {
+                            var wrapper = new VatsimAicraft(match);
+                            SelectedClient.UpdateFromVatsimPilot(wrapper);
+                            if (_pilotTracks.TryGetValue($"VATSIM:{match.callsign}", out var t))
+                                SelectedClient.TrackPoints = new List<TrackPoint>(t);
+                            SelectedClient.RecalcProgress();
+                        }
                     }
 
                     if (IsShowVatsimAirports)
@@ -653,6 +789,17 @@ namespace FSTRaK.ViewModels
                     else
                         IvaoAircraftList.Clear();
 
+                    if (SelectedClient != null && SelectedClient.Network == NetworkType.Ivao && SelectedClient.IsPilot)
+                    {
+                        var match = _ivaoService.IvaoData?.pilots.FirstOrDefault(p => p.callsign == SelectedClient.Callsign);
+                        if (match != null)
+                        {
+                            var wrapper = new IvaoAircraft(match);
+                            SelectedClient.UpdateFromIvaoPilot(wrapper);
+                            SelectedClient.RecalcProgress();
+                        }
+                    }
+
                     if (IsShowAtc)
                         ProcessIvaoAtc();
                     else
@@ -666,12 +813,13 @@ namespace FSTRaK.ViewModels
             var data = _ivaoService.IvaoData;
             if (data?.pilots == null) return;
             var myId = Properties.Settings.Default.IvaoId?.Trim();
+            bool isInFlight = _flightManager.ActiveFlight != null;
             var newList = new System.Collections.Generic.List<IvaoAircraft>();
             await Task.Run(() =>
             {
                 foreach (var pilot in data.pilots)
                 {
-                    if (!string.IsNullOrEmpty(myId) && pilot.userId.ToString() == myId) continue;
+                    if (!string.IsNullOrEmpty(myId) && pilot.userId.ToString() == myId && isInFlight) continue;
                     if (pilot.lastTrack == null) continue;
                     newList.Add(new IvaoAircraft(pilot));
                     var key = $"IVAO:{pilot.callsign}";
@@ -882,11 +1030,14 @@ namespace FSTRaK.ViewModels
 
         private async void ProcessVatsimPilots()
         {
+            var myVatsimId = Properties.Settings.Default.VatsimId?.Trim();
+            bool isInFlight = _flightManager.ActiveFlight != null;
             var newVatsimAircraftList = new List<VatsimAicraft>();
             await Task.Run(() =>
             {
                 foreach (var pilot in _vatsimData.pilots)
                 {
+                    if (!string.IsNullOrEmpty(myVatsimId) && pilot.cid.ToString() == myVatsimId && isInFlight) continue;
                     var aircraft = new VatsimAicraft(pilot);
                     newVatsimAircraftList.Add(aircraft);
                     var key = $"VATSIM:{pilot.callsign}";
