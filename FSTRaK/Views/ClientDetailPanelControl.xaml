@@ -19,7 +19,7 @@
             <utils:BoolToVisibilityConverter      x:Key="BoolToVis"/>
 
             <Style x:Key="StatTile" TargetType="Border">
-                <Setter Property="Background"    Value="#44000000"/>
+                <Setter Property="Background"    Value="Transparent"/>
                 <Setter Property="CornerRadius"  Value="4"/>
                 <Setter Property="Padding"       Value="5,4"/>
             </Style>
@@ -92,7 +92,7 @@
                 </StackPanel>
 
                 <!-- Route bar -->
-                <Border Background="#33FFFFFF" CornerRadius="4" Padding="8,6" Margin="0,0,0,6">
+                <Border Background="Transparent" CornerRadius="4" Padding="8,6" Margin="0,0,0,6">
                     <StackPanel>
                         <Grid Margin="0,0,0,4">
                             <Grid.ColumnDefinitions>
@@ -176,7 +176,7 @@
                 </UniformGrid>
 
                 <!-- Route string -->
-                <Border Background="#22FFFFFF" CornerRadius="4" Padding="6,4" Margin="0,0,0,4"
+                <Border Background="Transparent" CornerRadius="4" Padding="6,4" Margin="0,0,0,4"
                         Visibility="{Binding RouteString, Converter={StaticResource NullToVis}}">
                     <StackPanel>
                         <DockPanel Margin="0,0,0,2">
@@ -192,7 +192,7 @@
                 </Border>
 
                 <!-- Remarks -->
-                <Border Background="#22FFFFFF" CornerRadius="4" Padding="6,4"
+                <Border Background="Transparent" CornerRadius="4" Padding="6,4"
                         Visibility="{Binding Remarks, Converter={StaticResource NullToVis}}">
                     <StackPanel>
                         <TextBlock Text="REMARKS" Style="{StaticResource SectionLabel}"/>
@@ -208,7 +208,7 @@
                 <TextBlock Text="{Binding AirportName}" Style="{StaticResource DimText}" Margin="0,0,0,2"/>
                 <TextBlock Text="{Binding FacilityLabel}" Style="{StaticResource DimText}" Opacity="0.5" Margin="0,0,0,8"/>
 
-                <Border Background="#33FFFFFF" CornerRadius="4" Padding="6,4" Margin="0,0,0,4">
+                <Border Background="Transparent" CornerRadius="4" Padding="6,4" Margin="0,0,0,4">
                     <ItemsControl ItemsSource="{Binding Controllers}">
                         <ItemsControl.ItemTemplate>
                             <DataTemplate>
@@ -238,7 +238,7 @@
                     </ItemsControl>
                 </Border>
 
-                <Border Background="#22FFFFFF" CornerRadius="4" Padding="6,4"
+                <Border Background="Transparent" CornerRadius="4" Padding="6,4"
                         Visibility="{Binding AtisText, Converter={StaticResource NullToVis}}">
                     <StackPanel>
                         <TextBlock Text="ATIS" Style="{StaticResource SectionLabel}"/>
@@ -252,7 +252,7 @@
             <StackPanel Visibility="{Binding IsCtrATC, Converter={StaticResource BoolToVis}}">
                 <TextBlock Text="{Binding FacilityLabel}" Style="{StaticResource DimText}" Margin="0,0,0,8"/>
 
-                <Border Background="#33FFFFFF" CornerRadius="4" Padding="8,6" Margin="0,0,0,4">
+                <Border Background="Transparent" CornerRadius="4" Padding="8,6" Margin="0,0,0,4">
                     <DockPanel>
                         <StackPanel DockPanel.Dock="Left" Margin="0,0,16,0">
                             <TextBlock Text="{Binding Frequency}"
@@ -274,7 +274,7 @@
                     </DockPanel>
                 </Border>
 
-                <Border Background="#22FFFFFF" CornerRadius="4" Padding="6,4"
+                <Border Background="Transparent" CornerRadius="4" Padding="6,4"
                         Visibility="{Binding AtisText, Converter={StaticResource NullToVis}}">
                     <StackPanel>
                         <TextBlock Text="ATIS" Style="{StaticResource SectionLabel}"/>
