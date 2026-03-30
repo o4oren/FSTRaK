@@ -263,6 +263,7 @@
                                             Fill="{DynamicResource VatsimTraconFillBrush}"
                                             Stroke="{DynamicResource VatsimTraconStrokeBrush}"
                                             StrokeThickness="1"
+                                            Opacity="0.35"
                                             Visibility="{Binding ControlPolygon, Converter={StaticResource NullToVis}}"/>
                         </map:MapPanel>
                     </DataTemplate>
