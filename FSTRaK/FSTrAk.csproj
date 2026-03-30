@@ -539,8 +539,6 @@
     <Resource Include="Assets\AirlineLogos\VRD.png" />
     <Resource Include="Assets\AirlineLogos\VRG.png" />
     <Resource Include="Assets\AirlineLogos\WJA.png" />
-    <Resource Include="Assets\NetworkLogos\vatsim.png" />
-    <Resource Include="Assets\NetworkLogos\ivao.png" />
     <Content Include="System.Buffers.dll">
       <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
     </Content>

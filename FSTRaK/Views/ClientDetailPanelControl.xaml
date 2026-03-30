@@ -10,9 +10,13 @@
              Width="260">
 
     <UserControl.Resources>
-        <utils:NullToVisibilityConverter x:Key="NullToVis"/>
-        <utils:InvertedNullToVisibilityConverter x:Key="InvertedNullToVis"/>
-        <BooleanToVisibilityConverter x:Key="BoolToVis"/>
+        <ResourceDictionary>
+            <ResourceDictionary.MergedDictionaries>
+                <ResourceDictionary Source="../Resources/Images.xaml"/>
+            </ResourceDictionary.MergedDictionaries>
+            <utils:NullToVisibilityConverter x:Key="NullToVis"/>
+            <utils:InvertedNullToVisibilityConverter x:Key="InvertedNullToVis"/>
+            <BooleanToVisibilityConverter x:Key="BoolToVis"/>
 
         <Style x:Key="GlassPanel" TargetType="Border">
             <Setter Property="Background" Value="#12FFFFFF"/>
@@ -47,6 +51,7 @@
             <Setter Property="Padding" Value="6,5"/>
             <Setter Property="Margin" Value="0,0,0,6"/>
         </Style>
+        </ResourceDictionary>
     </UserControl.Resources>
 
     <Border Style="{StaticResource GlassPanel}">
@@ -69,8 +74,15 @@
                         <Grid>
                             <Image Source="{Binding AirlineLogo}" Stretch="Uniform" Margin="4"
                                    Visibility="{Binding AirlineLogo, Converter={StaticResource NullToVis}}"/>
-                            <Image Source="{Binding NetworkLogo}" Stretch="Uniform" Margin="6"
-                                   Visibility="{Binding AirlineLogo, Converter={StaticResource InvertedNullToVis}}"/>
+                            <!-- Network logo fallback when no airline logo -->
+                            <Grid Visibility="{Binding AirlineLogo, Converter={StaticResource InvertedNullToVis}}"
+                                  Margin="6">
+                                <Image Source="/Resources/Images/VATSIM_Logo_White_No_Tagline_500px.png"
+                                       Stretch="Uniform"
+                                       Visibility="{Binding IsVatsim, Converter={StaticResource BoolToVis}}"/>
+                                <ContentControl Content="{DynamicResource IvaoLogo}"
+                                                Visibility="{Binding IsIvao, Converter={StaticResource BoolToVis}}"/>
+                            </Grid>
                         </Grid>
                     </Border>
                     <StackPanel Grid.Column="1" VerticalAlignment="Center">
@@ -199,8 +211,13 @@
             <StackPanel Visibility="{Binding IsAirportATC, Converter={StaticResource BoolToVis}}">
                 <StackPanel Margin="0,0,0,10">
                     <DockPanel Margin="0,0,0,2">
-                        <Image Source="{Binding NetworkLogo}" Width="16" Height="16"
-                               Margin="0,0,6,0" DockPanel.Dock="Left" VerticalAlignment="Center"/>
+                        <Grid Width="16" Height="16" Margin="0,0,6,0" DockPanel.Dock="Left" VerticalAlignment="Center">
+                            <Image Source="/Resources/Images/VATSIM_Logo_White_No_Tagline_500px.png"
+                                   Stretch="Uniform"
+                                   Visibility="{Binding IsVatsim, Converter={StaticResource BoolToVis}}"/>
+                            <ContentControl Content="{DynamicResource IvaoLogo}"
+                                            Visibility="{Binding IsIvao, Converter={StaticResource BoolToVis}}"/>
+                        </Grid>
                         <TextBlock Text="{Binding Callsign}" Foreground="White"
                                    FontWeight="Bold" FontSize="15"/>
                     </DockPanel>
@@ -247,8 +264,13 @@
             <!-- CTR / APP / FSS ATC panel -->
             <StackPanel Visibility="{Binding IsCtrATC, Converter={StaticResource BoolToVis}}">
                 <DockPanel Margin="0,0,0,6">
-                    <Image Source="{Binding NetworkLogo}" Width="16" Height="16"
-                           Margin="0,0,6,0" DockPanel.Dock="Left" VerticalAlignment="Center"/>
+                    <Grid Width="16" Height="16" Margin="0,0,6,0" DockPanel.Dock="Left" VerticalAlignment="Center">
+                        <Image Source="/Resources/Images/VATSIM_Logo_White_No_Tagline_500px.png"
+                               Stretch="Uniform"
+                               Visibility="{Binding IsVatsim, Converter={StaticResource BoolToVis}}"/>
+                        <ContentControl Content="{DynamicResource IvaoLogo}"
+                                        Visibility="{Binding IsIvao, Converter={StaticResource BoolToVis}}"/>
+                    </Grid>
                     <StackPanel>
                         <DockPanel>
                             <Border Background="#33FF8C00" BorderBrush="#44FF8C00" BorderThickness="1"

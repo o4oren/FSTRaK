@@ -39,8 +39,11 @@ namespace FSTRaK.ViewModels
             set { _destLine = value; OnPropertyChanged(); }
         }
 
+        // ── Network identity helpers (for XAML visibility toggling)
+        public bool IsVatsim => Network == NetworkType.Vatsim;
+        public bool IsIvao   => Network == NetworkType.Ivao;
+
         // ── Logos
-        public BitmapImage NetworkLogo => AirlineLogoResolver.GetNetworkLogo(Network);
         public BitmapImage AirlineLogo => ClientKind == ClientType.Pilot
             ? AirlineLogoResolver.GetLogo(Callsign) : null;
 

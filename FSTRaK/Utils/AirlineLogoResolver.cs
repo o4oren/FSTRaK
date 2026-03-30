@@ -1,7 +1,6 @@
 using System;
 using System.Collections.Concurrent;
 using System.Windows.Media.Imaging;
-using FSTRaK.DataTypes;
 
 namespace FSTRaK.Utils
 {
@@ -21,18 +20,6 @@ namespace FSTRaK.Utils
             var logo = TryLoad(prefix);
             if (logo != null) _cache[prefix] = logo;
             return logo;
-        }
-
-        /// <summary>Returns the network logo BitmapImage for VATSIM or IVAO.</summary>
-        public static BitmapImage GetNetworkLogo(NetworkType network)
-        {
-            var key = network == NetworkType.Vatsim ? "vatsim" : "ivao";
-            return _cache.GetOrAdd(key, _ =>
-            {
-                var uri = new Uri($"pack://application:,,,/FSTRaK;component/Assets/NetworkLogos/{key}.png");
-                try { return LoadFromUri(uri); }
-                catch { return null; }
-            });
         }
 
         private static BitmapImage TryLoad(string prefix)
