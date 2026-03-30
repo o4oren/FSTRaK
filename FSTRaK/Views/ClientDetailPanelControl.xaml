@@ -225,32 +225,27 @@
                     <ItemsControl ItemsSource="{Binding Controllers}">
                         <ItemsControl.ItemTemplate>
                             <DataTemplate>
-                                <Grid Margin="0,3">
-                                    <Grid.ColumnDefinitions>
-                                        <ColumnDefinition Width="*"/>
-                                        <ColumnDefinition Width="Auto"/>
-                                        <ColumnDefinition Width="Auto"/>
-                                        <ColumnDefinition Width="Auto"/>
-                                    </Grid.ColumnDefinitions>
-                                    <TextBlock Grid.Column="0" Text="{Binding Callsign}"
+                                <DockPanel Margin="0,3" LastChildFill="False">
+                                    <TextBlock DockPanel.Dock="Left" Text="{Binding Callsign}"
                                                Foreground="{DynamicResource SuperBrightTextColor}"
                                                FontFamily="{DynamicResource CurrentFont}"
+                                               FontSize="{DynamicResource TextFontSize}" FontWeight="SemiBold"
+                                               Margin="0,0,6,0"/>
+                                    <TextBlock DockPanel.Dock="Left" Text="{Binding Position}"
+                                               Foreground="{DynamicResource BrightTextColor}"
+                                               FontFamily="{DynamicResource CurrentFont}"
+                                               FontSize="{DynamicResource TextFontSize}"
+                                               Opacity="0.6" Margin="0,0,6,0"/>
+                                    <TextBlock DockPanel.Dock="Left" Text="{Binding Frequency}"
+                                               Foreground="{DynamicResource BrightTextColor}"
+                                               FontFamily="{DynamicResource CurrentFont}"
                                                FontSize="{DynamicResource TextFontSize}" FontWeight="SemiBold"/>
-                                    <TextBlock Grid.Column="1" Text="{Binding Position}"
+                                    <TextBlock DockPanel.Dock="Right" Text="{Binding OnlineTime}"
                                                Foreground="{DynamicResource BrightTextColor}"
                                                FontFamily="{DynamicResource CurrentFont}"
                                                FontSize="{DynamicResource TextFontSize}"
-                                               Opacity="0.6" Margin="6,0"/>
-                                    <TextBlock Grid.Column="2" Text="{Binding Frequency}"
-                                               Foreground="{DynamicResource BrightTextColor}"
-                                               FontFamily="{DynamicResource CurrentFont}"
-                                               FontSize="{DynamicResource TextFontSize}" Margin="4,0,0,0"/>
-                                    <TextBlock Grid.Column="3" Text="{Binding OnlineTime}"
-                                               Foreground="{DynamicResource BrightTextColor}"
-                                               FontFamily="{DynamicResource CurrentFont}"
-                                               FontSize="{DynamicResource TextFontSize}"
-                                               Opacity="0.5" Margin="6,0,0,0"/>
-                                </Grid>
+                                               Opacity="0.5"/>
+                                </DockPanel>
                             </DataTemplate>
                         </ItemsControl.ItemTemplate>
                     </ItemsControl>

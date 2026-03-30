@@ -546,7 +546,16 @@ namespace FSTRaK.ViewModels
                         IsShowPilots = _isIvaoActive ? (_isShowPilots || _vatsimShowPilots) : _vatsimShowPilots;
                         IsShowAtc = _isIvaoActive ? (_isShowAtc || _vatsimShowAtc) : _vatsimShowAtc;
                         if (_isShowPilots || _isShowAtc)
-                            _vatsimService.Start();
+                        {
+                            if (!_vatsimService.Started)
+                                _vatsimService.Start();
+                            else
+                            {
+                                if (IsShowVatsimAircraft && _vatsimData != null) ProcessVatsimPilots();
+                                if (IsShowVatsimAirports && _vatsimData != null) ProcessVatsimAirports();
+                                if (IsShowVatsimFirs && _vatsimData != null) ProcessVatsimCtrFSS();
+                            }
+                        }
                     }
                 }
                 else if (network == NetworkType.Ivao)
@@ -579,7 +588,15 @@ namespace FSTRaK.ViewModels
                         IsShowPilots = _isVatsimActive ? (_isShowPilots || _ivaoShowPilots) : _ivaoShowPilots;
                         IsShowAtc = _isVatsimActive ? (_isShowAtc || _ivaoShowAtc) : _ivaoShowAtc;
                         if (_isShowPilots || _isShowAtc)
-                            _ivaoService.Start();
+                        {
+                            if (!_ivaoService.Started)
+                                _ivaoService.Start();
+                            else
+                            {
+                                if (_isShowPilots && _ivaoService.IvaoData != null) ProcessIvaoPilots();
+                                if (_isShowAtc && _ivaoService.IvaoData != null) ProcessIvaoAtc();
+                            }
+                        }
                     }
                 }
             });
