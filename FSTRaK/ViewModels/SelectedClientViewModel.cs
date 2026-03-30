@@ -289,17 +289,8 @@ namespace FSTRaK.ViewModels
             // Always update the destination line regardless of speed
             DestinationLine = GeodesicUtil.Interpolate(currentLat, currentLon, _arrLat, _arrLon);
 
-            if (_trackPoints.Count == 0)
-            {
-                // No API track yet — show geodesic from departure to current position
-                var depToCurrent = GeodesicUtil.Interpolate(_depLat, _depLon, currentLat, currentLon);
-                _extendedTrackLocations = depToCurrent.Count > 1 ? depToCurrent : null;
-            }
-            else
-            {
-                // API track loaded — use as-is
-                _extendedTrackLocations = null;
-            }
+            // Only use extended locations when API track has been loaded
+            _extendedTrackLocations = null;
 
             double totalNm = GeodesicUtil.DistanceNm(_depLat, _depLon, _arrLat, _arrLon);
             if (totalNm < 1 || Groundspeed <= 0) return;
