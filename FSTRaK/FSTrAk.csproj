@@ -227,6 +227,10 @@
     <Compile Include="Views\LogbookView.xaml.cs">
       <DependentUpon>LogbookView.xaml</DependentUpon>
     </Compile>
+    <Compile Include="Views\ClientDetailPanelControl.xaml.cs">
+      <DependentUpon>ClientDetailPanelControl.xaml</DependentUpon>
+      <SubType>Code</SubType>
+    </Compile>
     <Compile Include="Views\OverlayTextCardControl.xaml.cs">
       <DependentUpon>OverlayTextCardControl.xaml</DependentUpon>
     </Compile>
@@ -296,6 +300,10 @@
       <DependentUpon>MainWindow.xaml</DependentUpon>
       <SubType>Code</SubType>
     </Compile>
+    <Page Include="Views\ClientDetailPanelControl.xaml">
+      <SubType>Designer</SubType>
+      <Generator>MSBuild:Compile</Generator>
+    </Page>
     <Page Include="Views\OverlayTextCardControl.xaml">
       <Generator>MSBuild:Compile</Generator>
       <SubType>Designer</SubType>
