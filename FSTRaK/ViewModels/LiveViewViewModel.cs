@@ -685,7 +685,9 @@ namespace FSTRaK.ViewModels
                 // Fetch enriched data for the first/primary session ID
                 var primaryId = iai.IsCtr ? iai.SingleEntry?.id ?? 0 : iai.AtcEntries?[0]?.id ?? 0;
                 if (primaryId != 0)
+                {
                     var _atc = FetchIvaoAtcDetailsAsync(primaryId);
+                }
             }
 
         }
@@ -835,34 +837,37 @@ namespace FSTRaK.ViewModels
             var targetClient = SelectedClient;
             try
             {
-                // Fetch session details (name, rating, online time)
+                // Fire both requests simultaneously
                 var req1 = new System.Net.Http.HttpRequestMessage(System.Net.Http.HttpMethod.Get,
                     $"https://api.ivao.aero/v2/tracker/sessions/{sessionId}");
                 req1.Headers.Add("apiKey", apiKey);
-                var res1 = await _trackHttpClient.SendAsync(req1);
-                if (!res1.IsSuccessStatusCode || SelectedClient != targetClient) return;
-                var session = Newtonsoft.Json.JsonConvert.DeserializeObject<IvaoSessionDetail>(
-                    await res1.Content.ReadAsStringAsync());
 
-                // Fetch latest flight plan (route, remarks, cruise, flight rules)
                 var req2 = new System.Net.Http.HttpRequestMessage(System.Net.Http.HttpMethod.Get,
                     $"https://api.ivao.aero/v2/tracker/sessions/{sessionId}/flightPlans/latest");
                 req2.Headers.Add("apiKey", apiKey);
-                var res2 = await _trackHttpClient.SendAsync(req2);
+
+                var t1 = _trackHttpClient.SendAsync(req1);
+                var t2 = _trackHttpClient.SendAsync(req2);
+                await Task.WhenAll(t1, t2);
+
+                if (SelectedClient != targetClient) return;
+
+                var res1 = await t1;
+                var res2 = await t2;
+                if (!res1.IsSuccessStatusCode) return;
+
+                var session = Newtonsoft.Json.JsonConvert.DeserializeObject<IvaoSessionDetail>(
+                    await res1.Content.ReadAsStringAsync());
+
                 IvaoFlightPlanDetail fp = null;
                 if (res2.IsSuccessStatusCode)
                     fp = Newtonsoft.Json.JsonConvert.DeserializeObject<IvaoFlightPlanDetail>(
                         await res2.Content.ReadAsStringAsync());
 
-                if (SelectedClient != targetClient) return;
-
-                var firstName = session?.user?.firstName ?? "";
-                var lastName  = session?.user?.lastName  ?? "";
-                var name = $"{firstName} {lastName}".Trim();
-                var rating = session?.user?.rating?.atcRating?.shortName ?? "";
+                var (name, _) = ExtractIvaoNameAndRating(session);
                 var onlineTime = session?.createdAt != null && DateTime.TryParse(session.createdAt,
                     null, System.Globalization.DateTimeStyles.RoundtripKind, out var dt)
-                    ? FormatOnlineTime(dt) : "";
+                    ? SelectedClientViewModel.FormatOnlineTime(dt) : "";
                 var flightRules = fp?.flightRules == "I" ? "IFR" : fp?.flightRules == "V" ? "VFR" : "IFR";
                 var aircraft = fp?.aircraft?.model ?? fp?.aircraftId ?? "";
                 var squawk = session?.pilotSession?.transponder ?? "";
@@ -890,21 +895,27 @@ namespace FSTRaK.ViewModels
             var targetClient = SelectedClient;
             try
             {
-                // Fetch session detail for name/rating/online time
                 var req1 = new System.Net.Http.HttpRequestMessage(System.Net.Http.HttpMethod.Get,
                     $"https://api.ivao.aero/v2/tracker/sessions/{sessionId}");
                 req1.Headers.Add("apiKey", apiKey);
-                var res1 = await _trackHttpClient.SendAsync(req1);
-                if (!res1.IsSuccessStatusCode || SelectedClient != targetClient) return;
-                var session = Newtonsoft.Json.JsonConvert.DeserializeObject<IvaoSessionDetail>(
-                    await res1.Content.ReadAsStringAsync());
 
-                // Fetch ATIS
-                string atisText = null;
                 var req2 = new System.Net.Http.HttpRequestMessage(System.Net.Http.HttpMethod.Get,
                     $"https://api.ivao.aero/v2/tracker/sessions/{sessionId}/atis/latest");
                 req2.Headers.Add("apiKey", apiKey);
-                var res2 = await _trackHttpClient.SendAsync(req2);
+
+                var t1 = _trackHttpClient.SendAsync(req1);
+                var t2 = _trackHttpClient.SendAsync(req2);
+                await Task.WhenAll(t1, t2);
+
+                if (SelectedClient != targetClient) return;
+
+                var res1 = await t1;
+                if (!res1.IsSuccessStatusCode) return;
+                var session = Newtonsoft.Json.JsonConvert.DeserializeObject<IvaoSessionDetail>(
+                    await res1.Content.ReadAsStringAsync());
+
+                string atisText = null;
+                var res2 = await t2;
                 if (res2.IsSuccessStatusCode)
                 {
                     var atis = Newtonsoft.Json.JsonConvert.DeserializeObject<IvaoAtisDetail>(
@@ -913,15 +924,10 @@ namespace FSTRaK.ViewModels
                         atisText = string.Join("\n", atis.lines);
                 }
 
-                if (SelectedClient != targetClient) return;
-
-                var firstName = session?.user?.firstName ?? "";
-                var lastName  = session?.user?.lastName  ?? "";
-                var name = $"{firstName} {lastName}".Trim();
-                var rating = session?.user?.rating?.atcRating?.shortName ?? "";
+                var (name, rating) = ExtractIvaoNameAndRating(session);
                 var onlineTime = session?.createdAt != null && DateTime.TryParse(session.createdAt,
                     null, System.Globalization.DateTimeStyles.RoundtripKind, out var dt)
-                    ? FormatOnlineTime(dt) : "";
+                    ? SelectedClientViewModel.FormatOnlineTime(dt) : "";
 
                 System.Windows.Application.Current.Dispatcher.Invoke(() =>
                 {
@@ -935,12 +941,11 @@ namespace FSTRaK.ViewModels
             }
         }
 
-        private static string FormatOnlineTime(DateTime logonUtc)
+        private static (string name, string rating) ExtractIvaoNameAndRating(IvaoSessionDetail session)
         {
-            var elapsed = DateTime.UtcNow - logonUtc;
-            return elapsed.TotalHours >= 1
-                ? $"{(int)elapsed.TotalHours}h {elapsed.Minutes:D2}m"
-                : $"{elapsed.Minutes}m";
+            var first = session?.user?.firstName ?? "";
+            var last  = session?.user?.lastName  ?? "";
+            return ($"{first} {last}".Trim(), session?.user?.rating?.atcRating?.shortName ?? "");
         }
 
         // IVAO API detail models
@@ -997,7 +1002,7 @@ namespace FSTRaK.ViewModels
 
             if (!c.IsOwnAircraftInFlight)
             {
-                var trackLocs = c._extendedTrackLocations ?? (IEnumerable<Location>)c.TrackLocations;
+                var trackLocs = c.EffectiveTrackLocations;
                 foreach (var loc in trackLocs)
                     SelectedTrackLocations.Add(loc);
             }
@@ -1044,7 +1049,6 @@ namespace FSTRaK.ViewModels
                                 if (pts.Count > 0)
                                     pts[pts.Count - 1] = new TrackPoint(match.latitude, match.longitude, match.altitude, DateTime.UtcNow);
                             }
-                            SelectedClient.RecalcProgress();
                             UpdateFlightPathLines();
                         }
                     }
@@ -1098,7 +1102,6 @@ namespace FSTRaK.ViewModels
                                     pts[pts.Count - 1] = new TrackPoint(lt.latitude, lt.longitude, lt.altitude, DateTime.UtcNow);
                             }
                             // No API key: track stays empty; RecalcProgress will draw geodesic dep→current
-                            SelectedClient.RecalcProgress();
                             UpdateFlightPathLines();
                         }
                     }

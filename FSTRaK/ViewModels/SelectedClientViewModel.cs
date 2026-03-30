@@ -34,7 +34,9 @@ namespace FSTRaK.ViewModels
             _trackPoints.Select(t => new Location(t.Latitude, t.Longitude));
 
         // Extended track including geodesic prefix from departure to first known point (VATSIM)
-        internal List<Location> _extendedTrackLocations;
+        private List<Location> _extendedTrackLocations;
+        public IEnumerable<Location> EffectiveTrackLocations =>
+            _extendedTrackLocations ?? TrackLocations;
 
         private IEnumerable<Location> _destLine;
         public IEnumerable<Location> DestinationLine
@@ -338,14 +340,19 @@ namespace FSTRaK.ViewModels
             };
         }
 
-        private static string FormatOnlineTime(string logonTime)
+        internal static string FormatOnlineTime(DateTime logonUtc)
         {
-            if (string.IsNullOrEmpty(logonTime)) return "";
-            if (!DateTime.TryParse(logonTime, null, System.Globalization.DateTimeStyles.RoundtripKind, out var dt)) return "";
-            var elapsed = DateTime.UtcNow - dt;
+            var elapsed = DateTime.UtcNow - logonUtc;
             return elapsed.TotalHours >= 1
                 ? $"{(int)elapsed.TotalHours}h {elapsed.Minutes:D2}m"
                 : $"{elapsed.Minutes}m";
+        }
+
+        internal static string FormatOnlineTime(string logonTime)
+        {
+            if (string.IsNullOrEmpty(logonTime)) return "";
+            if (!DateTime.TryParse(logonTime, null, System.Globalization.DateTimeStyles.RoundtripKind, out var dt)) return "";
+            return FormatOnlineTime(dt);
         }
 
         private static string BuildFacilityLabel(IEnumerable<Controller> controllers)

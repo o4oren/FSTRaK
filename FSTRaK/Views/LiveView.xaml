@@ -20,8 +20,7 @@
             <utils:EnumToBoolConverter x:Key="EnumToBoolConverter"/>
             <utils:NetworkTypeToVisConverter x:Key="NetworkTypeToVisConverter"/>
             <utils:NullToVisibilityConverter x:Key="NullToVisConverter"/>
-            <utils:InvertedNullToVisibilityConverter x:Key="InvertedNullToVis"/>
-            <utils:StringToSolidColorBrushConverter x:Key="StringToColorBrushConverter"/>
+<utils:StringToSolidColorBrushConverter x:Key="StringToColorBrushConverter"/>
             <Style TargetType="ToolTip">
                 <Setter Property="Background" Value="#CC1a2a3a"/>
                 <Setter Property="Foreground" Value="#DDFFFFFF"/>
