@@ -40,7 +40,7 @@
         </Style>
 
         <Style x:Key="StatLabel" TargetType="TextBlock">
-            <Setter Property="Foreground" Value="#664DFFFFFF"/>
+            <Setter Property="Foreground" Value="#66FFFFFF"/>
             <Setter Property="FontSize" Value="8"/>
             <Setter Property="HorizontalAlignment" Value="Center"/>
         </Style>
