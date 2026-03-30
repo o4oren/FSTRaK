@@ -236,13 +236,17 @@ namespace FSTRaK.ViewModels
 
         public void RecalcProgress()
         {
-            if (!_hasAirportCoords || Groundspeed <= 0) return;
-
-            double totalNm = GeodesicUtil.DistanceNm(_depLat, _depLon, _arrLat, _arrLon);
-            if (totalNm < 1) return;
+            if (!_hasAirportCoords) return;
 
             double currentLat = IvaoPilotItem?.Pilot.lastTrack.latitude ?? VatsimPilotItem?.Pilot.latitude ?? 0;
             double currentLon = IvaoPilotItem?.Pilot.lastTrack.longitude ?? VatsimPilotItem?.Pilot.longitude ?? 0;
+
+            // Always update the destination line regardless of speed
+            DestinationLine = GeodesicUtil.Interpolate(currentLat, currentLon, _arrLat, _arrLon);
+
+            double totalNm = GeodesicUtil.DistanceNm(_depLat, _depLon, _arrLat, _arrLon);
+            if (totalNm < 1 || Groundspeed <= 0) return;
+
             double flownNm = GeodesicUtil.DistanceNm(_depLat, _depLon, currentLat, currentLon);
             double remainingNm = GeodesicUtil.DistanceNm(currentLat, currentLon, _arrLat, _arrLon);
 
@@ -258,8 +262,6 @@ namespace FSTRaK.ViewModels
             OnPropertyChanged(nameof(ProgressPercent));
             OnPropertyChanged(nameof(EtaDisplay));
             OnPropertyChanged(nameof(RemainingNmDisplay));
-
-            DestinationLine = GeodesicUtil.Interpolate(currentLat, currentLon, _arrLat, _arrLon);
         }
 
         // ── Static helpers
