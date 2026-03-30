@@ -281,7 +281,7 @@
                 </map:MapItemsControl.ItemContainerStyle>
                 <map:MapItemsControl.ItemTemplate>
                     <DataTemplate>
-                        <Image Source="/Resources/Images/radar-64.png" Width="24" Height="24">
+                        <Image Source="{Binding IconResourse, Converter={StaticResource ResourceNameToImageConverter}}" Width="24" Height="24">
                             <Image.ToolTip>
                                 <ToolTip Content="{Binding TooltipText}" />
                             </Image.ToolTip>

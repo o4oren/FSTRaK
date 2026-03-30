@@ -681,11 +681,29 @@ namespace FSTRaK.ViewModels
             var newList = new System.Collections.Generic.List<IvaoAtcItem>();
             await Task.Run(() =>
             {
+                // Group airport-type entries by airportId, like VATSIM groups by ICAO
+                var airportDict = new Dictionary<string, System.Collections.Generic.List<IvaoAtcEntry>>();
                 foreach (var atc in data.atcEntries)
                 {
-                    if (atc.atcPosition?.airport == null && atc.subcenter == null) continue;
-                    newList.Add(new IvaoAtcItem(atc));
+                    if (atc.atcPosition?.airport != null)
+                    {
+                        var icao = atc.atcPosition.airportId;
+                        if (!airportDict.TryGetValue(icao, out var list))
+                        {
+                            list = new System.Collections.Generic.List<IvaoAtcEntry>();
+                            airportDict[icao] = list;
+                        }
+                        list.Add(atc);
+                    }
+                    else if (atc.subcenter != null)
+                    {
+                        // CTR entries — one item per entry
+                        newList.Add(new IvaoAtcItem(atc));
+                    }
                 }
+
+                foreach (var group in airportDict.Values)
+                    newList.Add(new IvaoAtcItem(group));
             });
             IvaoAtcList.ReplaceContent(newList);
         }
@@ -1229,38 +1247,61 @@ namespace FSTRaK.ViewModels
         internal class IvaoAtcItem
         {
             public Location Location { get; set; }
-            public string Callsign { get; set; }
+            public string IconResourse { get; set; }
             public string TooltipText { get; set; }
             public LocationCollection ControlPolygon { get; set; }
 
+            // Constructor for grouped airport entries (TWR, GND, APP, DEP at the same airport)
+            public IvaoAtcItem(System.Collections.Generic.List<IvaoAtcEntry> entries)
+            {
+                var first = entries[0];
+                Location = new Location(first.atcPosition.airport.latitude, first.atcPosition.airport.longitude);
+
+                var positions = new HashSet<string>(entries.Select(e => e.atcSession?.position ?? ""));
+                bool hasApp = positions.Contains("APP") || positions.Contains("DEP");
+                bool hasTwr = positions.Contains("TWR");
+                bool hasGnd = positions.Contains("GND");
+
+                // Same logic as VATSIM: APP/DEP = radar, TWR = tower, GND = radio
+                if (hasApp)
+                    IconResourse = hasTwr ? Consts.TowerRadarImage : hasGnd ? Consts.RadioRadarImage : Consts.RadarImage;
+                else if (hasTwr)
+                    IconResourse = Consts.TowerImage;
+                else
+                    IconResourse = Consts.RadioImage;
+
+                // Tooltip: airport name + all controllers
+                var sb = new StringBuilder();
+                sb.AppendLine($"{first.atcPosition.airportId} {first.atcPosition.atcCallsign}");
+                sb.AppendLine();
+                foreach (var e in entries)
+                    sb.AppendLine($"{e.callsign} {e.atcSession?.frequency.ToString("F3")}");
+                StringUtil.RemoveTrailingWhitespace(sb);
+                TooltipText = sb.ToString();
+
+                // Use APP polygon if available, otherwise first entry with a polygon
+                var appEntry = entries.FirstOrDefault(e => (e.atcSession?.position == "APP" || e.atcSession?.position == "DEP") && e.atcPosition.regionMap?.Count > 0);
+                var polyEntry = appEntry ?? entries.FirstOrDefault(e => e.atcPosition.regionMap?.Count > 0);
+                if (polyEntry != null)
+                {
+                    ControlPolygon = new LocationCollection();
+                    foreach (var pt in polyEntry.atcPosition.regionMap)
+                        ControlPolygon.Add(new Location(pt.lat, pt.lng));
+                }
+            }
+
+            // Constructor for CTR/subcenter entries
             public IvaoAtcItem(IvaoAtcEntry entry)
             {
-                Callsign = entry.callsign;
+                Location = new Location(entry.subcenter.latitude, entry.subcenter.longitude);
+                IconResourse = Consts.RadarImage;
                 var freq = entry.atcSession?.frequency.ToString("F3") ?? "";
-
-                if (entry.atcPosition?.airport != null)
+                TooltipText = $"{entry.callsign}\n{entry.subcenter.atcCallsign}\n{freq}";
+                if (entry.subcenter.regionMap?.Count > 0)
                 {
-                    Location = new Location(entry.atcPosition.airport.latitude, entry.atcPosition.airport.longitude);
-                    var displayName = entry.atcPosition.atcCallsign ?? entry.callsign;
-                    TooltipText = $"{entry.callsign}\n{displayName}\n{freq}";
-                    if (entry.atcPosition.regionMap?.Count > 0)
-                    {
-                        ControlPolygon = new LocationCollection();
-                        foreach (var pt in entry.atcPosition.regionMap)
-                            ControlPolygon.Add(new Location(pt.lat, pt.lng));
-                    }
-                }
-                else if (entry.subcenter != null)
-                {
-                    Location = new Location(entry.subcenter.latitude, entry.subcenter.longitude);
-                    var displayName = entry.subcenter.atcCallsign ?? entry.callsign;
-                    TooltipText = $"{entry.callsign}\n{displayName}\n{freq}";
-                    if (entry.subcenter.regionMap?.Count > 0)
-                    {
-                        ControlPolygon = new LocationCollection();
-                        foreach (var pt in entry.subcenter.regionMap)
-                            ControlPolygon.Add(new Location(pt.lat, pt.lng));
-                    }
+                    ControlPolygon = new LocationCollection();
+                    foreach (var pt in entry.subcenter.regionMap)
+                        ControlPolygon.Add(new Location(pt.lat, pt.lng));
                 }
             }
         }
