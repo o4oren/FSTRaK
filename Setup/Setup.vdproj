@@ -93,12 +93,6 @@
         }
         "Entry"
         {
-        "MsmKey" = "8:_1FF5D5260FF97A332E2E58AA84C7C91A"
-        "OwnerKey" = "8:_UNDEFINED"
-        "MsmSig" = "8:_UNDEFINED"
-        }
-        "Entry"
-        {
         "MsmKey" = "8:_25992C9C48EDC69E71EF0AF467773DFB"
         "OwnerKey" = "8:_8581586A4FC4400494EBCD574550E0A0"
         "MsmSig" = "8:_UNDEFINED"
@@ -269,12 +263,6 @@
         {
         "MsmKey" = "8:_4586026CF3EF3C2494F60DEA45B1AAEE"
         "OwnerKey" = "8:_283969CBAC15F164C6F9330FB7A9CA13"
-        "MsmSig" = "8:_UNDEFINED"
-        }
-        "Entry"
-        {
-        "MsmKey" = "8:_46D5262F7AC4837609E7CE1FDD3A02E0"
-        "OwnerKey" = "8:_UNDEFINED"
         "MsmSig" = "8:_UNDEFINED"
         }
         "Entry"
@@ -1672,32 +1660,6 @@
             "IsDependency" = "11:TRUE"
             "IsolateTo" = "8:"
             }
-            "{9F6F8455-1EF1-4B85-886A-4223BCC8E7F7}:_1FF5D5260FF97A332E2E58AA84C7C91A"
-            {
-            "AssemblyRegister" = "3:1"
-            "AssemblyIsInGAC" = "11:FALSE"
-            "AssemblyAsmDisplayName" = "8:System.Data.SQLite, Version=1.0.119.0, Culture=neutral, PublicKeyToken=db937bc2d44ff139, processorArchitecture=MSIL"
-                "ScatterAssemblies"
-                {
-                }
-            "SourcePath" = "8:System.Data.SQLite.dll"
-            "TargetName" = "8:"
-            "Tag" = "8:"
-            "Folder" = "8:_26CFFA3E4E6A4BE18B31D33970E8B9B7"
-            "Condition" = "8:"
-            "Transitive" = "11:FALSE"
-            "Vital" = "11:TRUE"
-            "ReadOnly" = "11:FALSE"
-            "Hidden" = "11:FALSE"
-            "System" = "11:FALSE"
-            "Permanent" = "11:FALSE"
-            "SharedLegacy" = "11:FALSE"
-            "PackageAs" = "3:1"
-            "Register" = "3:1"
-            "Exclude" = "11:FALSE"
-            "IsDependency" = "11:TRUE"
-            "IsolateTo" = "8:"
-            }
             "{9F6F8455-1EF1-4B85-886A-4223BCC8E7F7}:_25992C9C48EDC69E71EF0AF467773DFB"
             {
             "AssemblyRegister" = "3:1"
@@ -1949,32 +1911,6 @@
                     }
                 }
             "SourcePath" = "8:System.Data.SQLite.dll"
-            "TargetName" = "8:"
-            "Tag" = "8:"
-            "Folder" = "8:_26CFFA3E4E6A4BE18B31D33970E8B9B7"
-            "Condition" = "8:"
-            "Transitive" = "11:FALSE"
-            "Vital" = "11:TRUE"
-            "ReadOnly" = "11:FALSE"
-            "Hidden" = "11:FALSE"
-            "System" = "11:FALSE"
-            "Permanent" = "11:FALSE"
-            "SharedLegacy" = "11:FALSE"
-            "PackageAs" = "3:1"
-            "Register" = "3:1"
-            "Exclude" = "11:FALSE"
-            "IsDependency" = "11:TRUE"
-            "IsolateTo" = "8:"
-            }
-            "{9F6F8455-1EF1-4B85-886A-4223BCC8E7F7}:_46D5262F7AC4837609E7CE1FDD3A02E0"
-            {
-            "AssemblyRegister" = "3:1"
-            "AssemblyIsInGAC" = "11:FALSE"
-            "AssemblyAsmDisplayName" = "8:System.Data.SQLite.EF6, Version=1.0.119.0, Culture=neutral, PublicKeyToken=db937bc2d44ff139, processorArchitecture=MSIL"
-                "ScatterAssemblies"
-                {
-                }
-            "SourcePath" = "8:System.Data.SQLite.EF6.dll"
             "TargetName" = "8:"
             "Tag" = "8:"
             "Folder" = "8:_26CFFA3E4E6A4BE18B31D33970E8B9B7"
@@ -3410,15 +3346,15 @@
         {
         "Name" = "8:Microsoft Visual Studio"
         "ProductName" = "8:FSTrAk"
-        "ProductCode" = "8:{9B424F88-2EFC-4044-9075-25747B3B1EB2}"
-        "PackageCode" = "8:{C8C7CEA0-899C-4B90-ADAA-93794E501647}"
+        "ProductCode" = "8:{D09CF2C7-ADA9-45B2-8E4C-DFF64A65BE7A}"
+        "PackageCode" = "8:{4B1596E5-855A-4C60-B78F-2BE705A0DF69}"
         "UpgradeCode" = "8:{DFB8349E-B81D-4481-9F4C-14C136E2FBD4}"
         "AspNetVersion" = "8:2.0.50727.0"
         "RestartWWWService" = "11:FALSE"
         "RemovePreviousVersions" = "11:TRUE"
         "DetectNewerInstalledVersion" = "11:TRUE"
         "InstallAllUsers" = "11:FALSE"
-        "ProductVersion" = "8:3.4.0"
+        "ProductVersion" = "8:3.4.1"
         "Manufacturer" = "8:FSTrAk"
         "ARPHELPTELEPHONE" = "8:"
         "ARPHELPLINK" = "8:"
