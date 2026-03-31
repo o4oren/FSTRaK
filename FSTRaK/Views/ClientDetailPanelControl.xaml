@@ -85,14 +85,8 @@
             </ScrollViewer.Resources>
         <StackPanel>
 
-            <!-- ── Header row: network logo + callsign + close ── -->
+            <!-- ── Header row: callsign left, logo + close right ── -->
             <DockPanel Margin="0,0,0,6">
-                <Grid Width="48" Height="24" DockPanel.Dock="Left" VerticalAlignment="Center" Margin="0,0,8,0">
-                    <ContentControl Content="{DynamicResource VatsimLogo}"
-                                    Visibility="{Binding IsVatsim, Converter={StaticResource BoolToVis}}"/>
-                    <ContentControl Content="{DynamicResource IvaoLogo}"
-                                    Visibility="{Binding IsIvao, Converter={StaticResource BoolToVis}}"/>
-                </Grid>
                 <Button DockPanel.Dock="Right" Cursor="Hand" VerticalAlignment="Center"
                         Background="Transparent" BorderThickness="0" Padding="4,0"
                         Click="CloseButton_Click">
@@ -109,6 +103,12 @@
                         </ControlTemplate>
                     </Button.Template>
                 </Button>
+                <Grid Width="48" Height="24" DockPanel.Dock="Right" VerticalAlignment="Center" Margin="8,0,0,0">
+                    <ContentControl Content="{DynamicResource VatsimLogo}"
+                                    Visibility="{Binding IsVatsim, Converter={StaticResource BoolToVis}}"/>
+                    <ContentControl Content="{DynamicResource IvaoLogo}"
+                                    Visibility="{Binding IsIvao, Converter={StaticResource BoolToVis}}"/>
+                </Grid>
                 <TextBlock Text="{Binding Callsign}"
                            Foreground="{DynamicResource SuperBrightTextColor}"
                            FontWeight="Bold"
