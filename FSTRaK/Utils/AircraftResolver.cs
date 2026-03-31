@@ -16,7 +16,7 @@ namespace FSTRaK.Utils
         public static readonly List<string> B747 = new List<string>(new string[] { "B741", "B742", "B744", "B748", "B74R", "B74S", "B74L" });
         public static readonly List<string> B767 = new List<string>(new string[] { "B762", "B763", "B764" });
         public static readonly List<string> B777 = new List<string>(new string[] { "B772", "B773", "B778", "B779", "B77X", "B77L", "B77W" });
-        public static readonly List<string> B787 = new List<string>(new string[] { "B788", "B789", "B78X", "B78J", "MD11", "MD10", "DC10", "DC1F" });
+        public static readonly List<string> B787 = new List<string>(new string[] { "B788", "B789", "B78X", "B78J", "MD11", "MD10", "DC10", "DC1F", "MD1F", "L101" });
         public static readonly List<string> A340 = new List<string>(new string[] { "A342", "A343", "A345", "A346", "IL76", "IL96" });
         public static readonly List<string> A330 = new List<string>(new string[] { "A332", "A333", "A338", "A339", "A310", "A306", "A300", "A33X", "A33Y", "A359", "A35K", "A350", "A351" });
         public static readonly List<string> A380 = new List<string>(new string[] { "A388", "A389" });
