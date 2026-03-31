@@ -156,8 +156,7 @@
 
                 <StackPanel Orientation="Horizontal" Margin="10" Visibility="{Binding IsShowBingApiKeyField, Converter={StaticResource BoolToVis}}" ToolTipService.ShowDuration="5000">
                     <Label  Style="{DynamicResource FSTrAkLabel}" Width="250">Azure Maps Key</Label>
-                    <TextBox FontFamily="{DynamicResource CurrentFont}" Foreground="{DynamicResource TextColor}" Background="{DynamicResource ControlBackgroundColorBrush}" FontSize="{DynamicResource ListFontSize}" Text="{Binding BingApiKey}" TextWrapping="Wrap" Height="100" Width="200">
-                    </TextBox>
+                    <TextBox FontFamily="{DynamicResource CurrentFont}" Foreground="{DynamicResource TextColor}" Background="{DynamicResource ControlBackgroundColorBrush}" FontSize="{DynamicResource ControlFontSize}" Text="{Binding BingApiKey}" Width="200"/>
                     <StackPanel.ToolTip>
                         Azure Maps require a subscription key.
                         Please see https://learn.microsoft.com/en-us/azure/azure-maps/how-to-manage-authentication
@@ -166,8 +165,7 @@
 
                 <StackPanel Orientation="Horizontal" Margin="10" Visibility="{Binding IsShowMapTilerApiKeyField, Converter={StaticResource BoolToVis}}" ToolTipService.ShowDuration="5000">
                     <Label  Style="{DynamicResource FSTrAkLabel}" Width="250">Maptiler API Key</Label>
-                    <TextBox FontFamily="{DynamicResource CurrentFont}" Foreground="{DynamicResource TextColor}" Background="{DynamicResource ControlBackgroundColorBrush}" FontSize="{DynamicResource ListFontSize}" Text="{Binding MapTilerApiKey}" TextWrapping="Wrap" Height="100" Width="200">
-                    </TextBox>
+                    <TextBox FontFamily="{DynamicResource CurrentFont}" Foreground="{DynamicResource TextColor}" Background="{DynamicResource ControlBackgroundColorBrush}" FontSize="{DynamicResource ControlFontSize}" Text="{Binding MapTilerApiKey}" Width="200"/>
                     <StackPanel.ToolTip>
                         Maptiler maps require an API Key.
                         Please see the instructions at https://docs.maptiler.com/cloud/api.
@@ -201,7 +199,7 @@
 
                 <StackPanel Orientation="Horizontal" Margin="10" Visibility="{Binding IsShowOpenAipApiKeyField, Converter={StaticResource BoolToVis}}" ToolTipService.ShowDuration="5000">
                     <Label Style="{DynamicResource FSTrAkLabel}" Width="250">OpenAIP API Key</Label>
-                    <TextBox FontFamily="{DynamicResource CurrentFont}" Foreground="{DynamicResource TextColor}" Background="{DynamicResource ControlBackgroundColorBrush}" FontSize="{DynamicResource ListFontSize}" Text="{Binding OpenAipApiKey}" TextWrapping="Wrap" Height="100" Width="200"/>
+                    <TextBox FontFamily="{DynamicResource CurrentFont}" Foreground="{DynamicResource TextColor}" Background="{DynamicResource ControlBackgroundColorBrush}" FontSize="{DynamicResource ControlFontSize}" Text="{Binding OpenAipApiKey}" Width="200"/>
                     <StackPanel.ToolTip>
                         OpenAIP requires a free API key. Register at https://www.openaip.net
                     </StackPanel.ToolTip>

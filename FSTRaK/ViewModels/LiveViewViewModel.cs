@@ -1012,13 +1012,12 @@ namespace FSTRaK.ViewModels
 
             if (!c.IsOwnAircraftInFlight)
             {
-                var trackLocs = c.EffectiveTrackLocations;
-                foreach (var loc in trackLocs)
+                foreach (var loc in MapUtils.WrapPolyline(c.EffectiveTrackLocations))
                     SelectedTrackLocations.Add(loc);
             }
 
             if (c.DestinationLine != null)
-                foreach (var loc in c.DestinationLine)
+                foreach (var loc in MapUtils.WrapPolyline(c.DestinationLine))
                     SelectedDestinationLine.Add(loc);
         }
 
