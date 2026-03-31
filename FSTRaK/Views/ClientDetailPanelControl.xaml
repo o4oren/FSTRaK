@@ -39,7 +39,7 @@
             </Style>
             <Style x:Key="SectionLabel" TargetType="TextBlock">
                 <Setter Property="Foreground"  Value="{DynamicResource BrightTextColor}"/>
-                <Setter Property="FontSize"    Value="9"/>
+                <Setter Property="FontSize"    Value="11"/>
                 <Setter Property="FontFamily"  Value="{DynamicResource CurrentFont}"/>
                 <Setter Property="Opacity"     Value="0.45"/>
                 <Setter Property="Margin"      Value="0,0,0,2"/>
@@ -222,7 +222,7 @@
                                        HorizontalAlignment="Right"/>
                         </DockPanel>
                         <TextBlock Text="{Binding RouteString}" Style="{StaticResource DimText}"
-                                   TextWrapping="Wrap"/>
+                                   FontSize="13" TextWrapping="Wrap"/>
                     </StackPanel>
                 </Border>
 
@@ -232,7 +232,7 @@
                     <StackPanel>
                         <TextBlock Text="REMARKS" Style="{StaticResource SectionLabel}"/>
                         <TextBlock Text="{Binding Remarks}" Style="{StaticResource DimText}"
-                                   TextWrapping="Wrap"/>
+                                   FontSize="13" TextWrapping="Wrap"/>
                     </StackPanel>
                 </Border>
             </StackPanel>
@@ -293,7 +293,7 @@
                     <StackPanel>
                         <TextBlock Text="ATIS" Style="{StaticResource SectionLabel}"/>
                         <TextBlock Text="{Binding AtisText}" Style="{StaticResource DimText}"
-                                   TextWrapping="Wrap"/>
+                                   FontSize="13" TextWrapping="Wrap"/>
                     </StackPanel>
                 </Border>
             </StackPanel>
@@ -329,7 +329,7 @@
                     <StackPanel>
                         <TextBlock Text="ATIS" Style="{StaticResource SectionLabel}"/>
                         <TextBlock Text="{Binding AtisText}" Style="{StaticResource DimText}"
-                                   TextWrapping="Wrap"/>
+                                   FontSize="13" TextWrapping="Wrap"/>
                     </StackPanel>
                 </Border>
             </StackPanel>
