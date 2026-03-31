@@ -103,7 +103,7 @@
                         </ControlTemplate>
                     </Button.Template>
                 </Button>
-                <Grid Width="48" Height="24" DockPanel.Dock="Right" VerticalAlignment="Center" Margin="8,0,0,0">
+                <Grid Width="48" Height="24" DockPanel.Dock="Right" VerticalAlignment="Center" Margin="12,0,4,0">
                     <ContentControl Content="{DynamicResource VatsimLogo}"
                                     Visibility="{Binding IsVatsim, Converter={StaticResource BoolToVis}}"/>
                     <ContentControl Content="{DynamicResource IvaoLogo}"
@@ -114,7 +114,8 @@
                            FontWeight="Bold"
                            FontSize="{DynamicResource HeaderFontSize}"
                            FontFamily="{DynamicResource CurrentFont}"
-                           VerticalAlignment="Center"/>
+                           VerticalAlignment="Center"
+                           HorizontalAlignment="Left"/>
             </DockPanel>
 
             <!-- ══════════════ PILOT PANEL ══════════════ -->
@@ -221,7 +222,6 @@
                                        HorizontalAlignment="Right"/>
                         </DockPanel>
                         <TextBlock Text="{Binding RouteString}" Style="{StaticResource DimText}"
-                                   FontSize="11"
                                    TextWrapping="Wrap"/>
                     </StackPanel>
                 </Border>
@@ -232,7 +232,6 @@
                     <StackPanel>
                         <TextBlock Text="REMARKS" Style="{StaticResource SectionLabel}"/>
                         <TextBlock Text="{Binding Remarks}" Style="{StaticResource DimText}"
-                                   FontSize="11"
                                    TextWrapping="Wrap"/>
                     </StackPanel>
                 </Border>
@@ -294,7 +293,7 @@
                     <StackPanel>
                         <TextBlock Text="ATIS" Style="{StaticResource SectionLabel}"/>
                         <TextBlock Text="{Binding AtisText}" Style="{StaticResource DimText}"
-                                   FontSize="11" TextWrapping="Wrap"/>
+                                   TextWrapping="Wrap"/>
                     </StackPanel>
                 </Border>
             </StackPanel>
@@ -330,7 +329,7 @@
                     <StackPanel>
                         <TextBlock Text="ATIS" Style="{StaticResource SectionLabel}"/>
                         <TextBlock Text="{Binding AtisText}" Style="{StaticResource DimText}"
-                                   FontSize="11" TextWrapping="Wrap"/>
+                                   TextWrapping="Wrap"/>
                     </StackPanel>
                 </Border>
             </StackPanel>
