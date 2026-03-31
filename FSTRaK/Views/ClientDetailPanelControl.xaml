@@ -39,7 +39,7 @@
             </Style>
             <Style x:Key="SectionLabel" TargetType="TextBlock">
                 <Setter Property="Foreground"  Value="{DynamicResource BrightTextColor}"/>
-                <Setter Property="FontSize"    Value="11"/>
+                <Setter Property="FontSize"    Value="12"/>
                 <Setter Property="FontFamily"  Value="{DynamicResource CurrentFont}"/>
                 <Setter Property="Opacity"     Value="0.45"/>
                 <Setter Property="Margin"      Value="0,0,0,2"/>
@@ -207,7 +207,7 @@
                                        HorizontalAlignment="Right"/>
                         </DockPanel>
                         <TextBlock Text="{Binding RouteString}" Style="{StaticResource DimText}"
-                                   FontSize="13" TextWrapping="Wrap"/>
+                                   FontSize="14" TextWrapping="Wrap"/>
                     </StackPanel>
                 </Border>
 
@@ -217,7 +217,7 @@
                     <StackPanel>
                         <TextBlock Text="REMARKS" Style="{StaticResource SectionLabel}"/>
                         <TextBlock Text="{Binding Remarks}" Style="{StaticResource DimText}"
-                                   FontSize="13" TextWrapping="Wrap"/>
+                                   FontSize="14" TextWrapping="Wrap"/>
                     </StackPanel>
                 </Border>
             </StackPanel>
@@ -278,7 +278,7 @@
                     <StackPanel>
                         <TextBlock Text="ATIS" Style="{StaticResource SectionLabel}"/>
                         <TextBlock Text="{Binding AtisText}" Style="{StaticResource DimText}"
-                                   FontSize="13" TextWrapping="Wrap"/>
+                                   FontSize="14" TextWrapping="Wrap"/>
                     </StackPanel>
                 </Border>
             </StackPanel>
@@ -314,7 +314,7 @@
                     <StackPanel>
                         <TextBlock Text="ATIS" Style="{StaticResource SectionLabel}"/>
                         <TextBlock Text="{Binding AtisText}" Style="{StaticResource DimText}"
-                                   FontSize="13" TextWrapping="Wrap"/>
+                                   FontSize="14" TextWrapping="Wrap"/>
                     </StackPanel>
                 </Border>
             </StackPanel>
@@ -323,10 +323,10 @@
         </ScrollViewer>
     </Border>
 
-    <!-- Close button — floats above top-right corner of the panel -->
+    <!-- Close button — sits inside top-right corner, above the content row -->
     <Button Cursor="Hand"
             VerticalAlignment="Top" HorizontalAlignment="Right"
-            Margin="0,-12,-12,0"
+            Margin="0,2,4,0"
             Background="Transparent" BorderThickness="0" Padding="2"
             Click="CloseButton_Click">
         <Button.Template>
