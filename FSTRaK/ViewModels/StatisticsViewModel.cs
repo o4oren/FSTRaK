@@ -315,40 +315,50 @@ namespace FSTRaK.ViewModels
         {
             try
             {
-                var cached = TryReadFiltersCache();
-                if (cached != null)
+                bool hasActiveFilter = !string.IsNullOrEmpty(AirlineFilter)
+                    || !string.IsNullOrEmpty(AircraftTypeFilter)
+                    || !string.IsNullOrEmpty(TailNumberFilter);
+
+                // Only use cache on initial load — when filters are active always query fresh
+                // so interdependent options update correctly.
+                if (!hasActiveFilter)
                 {
-                    App.Current.Dispatcher.Invoke(() =>
+                    var cached = TryReadFiltersCache();
+                    if (cached != null)
                     {
-                        FilteredAirlines = new ObservableCollection<string>(cached.Value.airlines);
-                        FilteredAircraftTypes = new ObservableCollection<string>(cached.Value.types);
-                        FilteredTailNumbers = new ObservableCollection<string>(cached.Value.tailNumbers);
-                    });
-
-                    _ = Task.Run(async () =>
-                    {
-                        try
+                        App.Current.Dispatcher.Invoke(() =>
                         {
-                            var fresh = await QueryFiltersFromDbAsync().ConfigureAwait(false);
-                            WriteFiltersCache(fresh.airlines, fresh.types, fresh.tailNumbers);
-                            App.Current.Dispatcher.Invoke(() =>
+                            FilteredAirlines = new ObservableCollection<string>(cached.Value.airlines);
+                            FilteredAircraftTypes = new ObservableCollection<string>(cached.Value.types);
+                            FilteredTailNumbers = new ObservableCollection<string>(cached.Value.tailNumbers);
+                        });
+
+                        _ = Task.Run(async () =>
+                        {
+                            try
                             {
-                                FilteredAirlines = new ObservableCollection<string>(fresh.airlines);
-                                FilteredAircraftTypes = new ObservableCollection<string>(fresh.types);
-                                FilteredTailNumbers = new ObservableCollection<string>(fresh.tailNumbers);
-                            });
-                        }
-                        catch (Exception ex)
-                        {
-                            Log.Debug(ex, "Background refresh of filters failed");
-                        }
-                    });
+                                var fresh = await QueryFiltersFromDbAsync().ConfigureAwait(false);
+                                WriteFiltersCache(fresh.airlines, fresh.types, fresh.tailNumbers);
+                                App.Current.Dispatcher.Invoke(() =>
+                                {
+                                    FilteredAirlines = new ObservableCollection<string>(fresh.airlines);
+                                    FilteredAircraftTypes = new ObservableCollection<string>(fresh.types);
+                                    FilteredTailNumbers = new ObservableCollection<string>(fresh.tailNumbers);
+                                });
+                            }
+                            catch (Exception ex)
+                            {
+                                Log.Debug(ex, "Background refresh of filters failed");
+                            }
+                        });
 
-                    return;
+                        return;
+                    }
                 }
 
                 var result = await QueryFiltersFromDbAsync().ConfigureAwait(false);
-                WriteFiltersCache(result.airlines, result.types, result.tailNumbers);
+                if (!hasActiveFilter)
+                    WriteFiltersCache(result.airlines, result.types, result.tailNumbers);
                 App.Current.Dispatcher.Invoke(() =>
                 {
                     FilteredAirlines = new ObservableCollection<string>(result.airlines);
@@ -363,30 +373,43 @@ namespace FSTRaK.ViewModels
         }
 
         /// <summary>
-        /// Query distinct filter options respecting current active filters for interdependency.
+        /// Query distinct filter options. Each filter's options are computed without that
+        /// filter's own constraint, so selecting one filter doesn't lock the others.
         /// </summary>
         private async Task<(List<string> airlines, List<string> types, List<string> tailNumbers)> QueryFiltersFromDbAsync()
         {
             using (var logbookContext = new LogbookContext())
             {
-                IQueryable<Aircraft> query = logbookContext.Aircraft.AsNoTracking();
-
-                if (!string.IsNullOrEmpty(AirlineFilter))
-                    query = query.Where(a => a.Airline == AirlineFilter);
+                // Airlines: filtered by type + tail but NOT airline
+                IQueryable<Aircraft> airlinesQuery = logbookContext.Aircraft.AsNoTracking();
                 if (!string.IsNullOrEmpty(AircraftTypeFilter))
-                    query = query.Where(a => a.AircraftType == AircraftTypeFilter);
+                    airlinesQuery = airlinesQuery.Where(a => a.AircraftType == AircraftTypeFilter);
                 if (!string.IsNullOrEmpty(TailNumberFilter))
-                    query = query.Where(a => a.TailNumber == TailNumberFilter);
+                    airlinesQuery = airlinesQuery.Where(a => a.TailNumber == TailNumberFilter);
 
-                var airlinesTask = query
+                // Aircraft types: filtered by airline + tail but NOT type
+                IQueryable<Aircraft> typesQuery = logbookContext.Aircraft.AsNoTracking();
+                if (!string.IsNullOrEmpty(AirlineFilter))
+                    typesQuery = typesQuery.Where(a => a.Airline == AirlineFilter);
+                if (!string.IsNullOrEmpty(TailNumberFilter))
+                    typesQuery = typesQuery.Where(a => a.TailNumber == TailNumberFilter);
+
+                // Tail numbers: filtered by airline + type but NOT tail
+                IQueryable<Aircraft> tailsQuery = logbookContext.Aircraft.AsNoTracking();
+                if (!string.IsNullOrEmpty(AirlineFilter))
+                    tailsQuery = tailsQuery.Where(a => a.Airline == AirlineFilter);
+                if (!string.IsNullOrEmpty(AircraftTypeFilter))
+                    tailsQuery = tailsQuery.Where(a => a.AircraftType == AircraftTypeFilter);
+
+                var airlinesTask = airlinesQuery
                     .Where(a => a.Airline != null && a.Airline.Trim() != "")
                     .Select(a => a.Airline).Distinct().OrderBy(a => a).ToListAsync();
 
-                var typesTask = query
+                var typesTask = typesQuery
                     .Where(a => a.AircraftType != null && a.AircraftType.Trim() != "")
                     .Select(a => a.AircraftType).Distinct().OrderBy(t => t).ToListAsync();
 
-                var tailsTask = query
+                var tailsTask = tailsQuery
                     .Where(a => a.TailNumber != null && a.TailNumber.Trim() != "")
                     .Select(a => a.TailNumber).Distinct().OrderBy(t => t).ToListAsync();
 
@@ -704,11 +727,17 @@ namespace FSTRaK.ViewModels
 
         private static ISeries[] BuildPieSeries(Dictionary<string, double> data)
         {
+            double total = data.Values.Sum();
             return data.Select((kv, i) => (ISeries)new PieSeries<double>
             {
                 Name = kv.Key,
                 Values = new double[] { kv.Value },
-                Fill = new SolidColorPaint(ChartPalette[i % ChartPalette.Length])
+                Fill = new SolidColorPaint(ChartPalette[i % ChartPalette.Length]),
+                DataLabelsPaint = new SolidColorPaint(SKColors.White),
+                DataLabelsSize = 11,
+                DataLabelsPosition = LiveChartsCore.Measure.PolarLabelsPosition.Middle,
+                DataLabelsFormatter = point =>
+                    $"{point.PrimaryValue:N0} ({point.PrimaryValue / total * 100:N1}%)"
             }).ToArray();
         }
 
@@ -777,7 +806,11 @@ namespace FSTRaK.ViewModels
                 {
                     Values = values,
                     Fill = new SolidColorPaint(SKColor.Parse("#81C784")),
-                    Name = "Landings"
+                    Name = "Landings",
+                    DataLabelsPaint = new SolidColorPaint(SKColors.White),
+                    DataLabelsSize = 10,
+                    DataLabelsPosition = LiveChartsCore.Measure.DataLabelsPosition.Top,
+                    DataLabelsFormatter = point => point.PrimaryValue > 0 ? $"{point.PrimaryValue:N0}" : ""
                 }
             };
 
