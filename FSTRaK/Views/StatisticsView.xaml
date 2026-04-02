@@ -134,7 +134,7 @@
                                         XAxes="{Binding FlightsPerPeriodXAxes}"
                                         YAxes="{Binding FlightsPerPeriodYAxes}"
                                         MinHeight="200"
-                                        TooltipPosition="Hidden"/>
+                                        />
                 </StackPanel>
             </Border>
 
