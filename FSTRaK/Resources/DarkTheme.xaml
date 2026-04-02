@@ -100,6 +100,12 @@
     <Color x:Key="FocusBorderColor">#4A90D9</Color>
     <SolidColorBrush x:Key="FocusBorderColorBrush" Color="{DynamicResource FocusBorderColor}"/>
 
+    <!-- Stat card brushes -->
+    <SolidColorBrush x:Key="CardBackgroundBrush" Color="#1A2A3A"/>
+    <SolidColorBrush x:Key="CardBorderBrush" Color="#2A4A6A"/>
+    <SolidColorBrush x:Key="AccentBrush" Color="#64B5F6"/>
+    <SolidColorBrush x:Key="SubtleTextBrush" Color="#8899AA"/>
+
     <SolidColorBrush x:Key="FlightPathColorBrush" Color="#FF6B6B"/>
     <SolidColorBrush x:Key="FlightPathStrokeBrush" Color="#CC4444"/>
     <SolidColorBrush x:Key="MapPinStrokeBrush" Color="#FFD580"/>

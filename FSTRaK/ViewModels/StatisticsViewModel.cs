@@ -17,6 +17,7 @@ using LiveChartsCore.SkiaSharpView;
 using LiveChartsCore.SkiaSharpView.Painting;
 using MapControl;
 using SkiaSharp;
+using FSTRaK.Properties;
 
 namespace FSTRaK.ViewModels
 {
@@ -795,6 +796,23 @@ namespace FSTRaK.ViewModels
         }
 
         private enum AirportType { DEP, ARR }
+
+        // ── Map attribution ───────────────────────────────────────────────────
+
+        public string MapAttributionText
+        {
+            get
+            {
+                var parts = new List<string>();
+                var baseProvider = MapProviderResolver.GetMapProvider();
+                if (baseProvider?.Description != null) parts.Add(baseProvider.Description);
+                if (Settings.Default.IsOpenAipEnabled)
+                    parts.Add("© [OpenAIP](https://www.openaip.net)");
+                var chartProvider = MapProviderResolver.GetChartOverlayProvider();
+                if (chartProvider?.Description != null) parts.Add(chartProvider.Description);
+                return string.Join(" | ", parts);
+            }
+        }
 
         internal void ViewLoaded()
         {
