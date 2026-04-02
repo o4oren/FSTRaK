@@ -806,7 +806,7 @@ namespace FSTRaK.ViewModels
                 var parts = new List<string>();
                 var baseProvider = MapProviderResolver.GetMapProvider();
                 if (baseProvider?.Description != null) parts.Add(baseProvider.Description);
-                if (Settings.Default.IsOpenAipEnabled)
+                if (Properties.Settings.Default.IsOpenAipEnabled)
                     parts.Add("© [OpenAIP](https://www.openaip.net)");
                 var chartProvider = MapProviderResolver.GetChartOverlayProvider();
                 if (chartProvider?.Description != null) parts.Add(chartProvider.Description);
