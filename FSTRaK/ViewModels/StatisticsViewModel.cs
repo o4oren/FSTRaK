@@ -1,5 +1,6 @@
-﻿using System;
+using System;
 using System.Collections.Generic;
+using System.Collections.ObjectModel;
 using System.Data.Entity;
 using System.IO;
 using System.Linq;
@@ -8,40 +9,45 @@ using System.Threading.Tasks;
 using FSTRaK.Models;
 using FSTRaK.Models.Entity;
 using FSTRaK.Utils;
-using System.Linq.Dynamic;
 using Serilog;
-using System.Windows.Media.Media3D;
 using FSTRaK.DataTypes;
 using Newtonsoft.Json;
+using LiveChartsCore;
+using LiveChartsCore.SkiaSharpView;
+using LiveChartsCore.SkiaSharpView.Painting;
+using MapControl;
+using SkiaSharp;
 
 namespace FSTRaK.ViewModels
 {
     internal class StatisticsViewModel : BaseViewModel
     {
-        private List<string> _aircraftTypes;
-        public List<string> AircraftTypes
+        // ── Filter option lists (reactive, interdependent) ──────────────────
+
+        private ObservableCollection<string> _filteredAirlines = new ObservableCollection<string>();
+        public ObservableCollection<string> FilteredAirlines
         {
-            get => _aircraftTypes;
-            set
-            {
-                _aircraftTypes = value;
-                OnPropertyChanged();
-            }
+            get => _filteredAirlines;
+            set { _filteredAirlines = value; OnPropertyChanged(); }
         }
 
-        private List<string> _airlines;
-        public List<string> Airlines
+        private ObservableCollection<string> _filteredAircraftTypes = new ObservableCollection<string>();
+        public ObservableCollection<string> FilteredAircraftTypes
         {
-            get => _airlines;
-            set
-            {
-                _airlines = value;
-                OnPropertyChanged();
-            }
+            get => _filteredAircraftTypes;
+            set { _filteredAircraftTypes = value; OnPropertyChanged(); }
         }
+
+        private ObservableCollection<string> _filteredTailNumbers = new ObservableCollection<string>();
+        public ObservableCollection<string> FilteredTailNumbers
+        {
+            get => _filteredTailNumbers;
+            set { _filteredTailNumbers = value; OnPropertyChanged(); }
+        }
+
+        // ── Active filter values ─────────────────────────────────────────────
 
         private string _airlineFilter;
-
         public string AirlineFilter
         {
             get => _airlineFilter;
@@ -54,7 +60,6 @@ namespace FSTRaK.ViewModels
         }
 
         private string _aircraftTypeFilter;
-
         public string AircraftTypeFilter
         {
             get => _aircraftTypeFilter;
@@ -66,191 +71,76 @@ namespace FSTRaK.ViewModels
             }
         }
 
+        private string _tailNumberFilter;
+        public string TailNumberFilter
+        {
+            get => _tailNumberFilter;
+            set
+            {
+                _tailNumberFilter = value;
+                DebounceUpdateStatistics();
+                OnPropertyChanged();
+            }
+        }
+
+        // ── Summary stat properties ──────────────────────────────────────────
+
         private int _totalNumberOfFlights;
         public int TotalNumberOfFlights
         {
             get => _totalNumberOfFlights;
-            set
-            {
-                _totalNumberOfFlights = value;
-                OnPropertyChanged();
-            }
+            set { _totalNumberOfFlights = value; OnPropertyChanged(); }
         }
 
         private string _totalFlightTime;
         public string TotalFlightTime
         {
             get => _totalFlightTime;
-            set
-            {
-                _totalFlightTime = value;
-                OnPropertyChanged();
-            }
+            set { _totalFlightTime = value; OnPropertyChanged(); }
         }
 
         private string _avgFlightTime;
         public string AvgFlightTime
         {
             get => _avgFlightTime;
-            set
-            {
-                _avgFlightTime = value;
-                OnPropertyChanged();
-            }
+            set { _avgFlightTime = value; OnPropertyChanged(); }
         }
 
         private string _totalFlightDistance;
         public string TotalFlightDistance
         {
             get => _totalFlightDistance;
-            set
-            {
-                _totalFlightDistance = value;
-                OnPropertyChanged();
-            }
-        }
-
-        private string _avgFlightDistance;
-        public string AvgFlightDistance
-        {
-            get => _avgFlightDistance;
-            set
-            {
-                _avgFlightDistance = value;
-                OnPropertyChanged();
-            }
+            set { _totalFlightDistance = value; OnPropertyChanged(); }
         }
 
         private string _totalFuelUsed;
         public string TotalFuelUsed
         {
             get => _totalFuelUsed;
-            set
-            {
-                _totalFuelUsed = value;
-                OnPropertyChanged();
-            }
-        }
-
-        private string _avgFuelUsed;
-        public string AvgFuelUsed
-        {
-            get => _avgFuelUsed;
-            set
-            {
-                _avgFuelUsed = value;
-                OnPropertyChanged();
-            }
+            set { _totalFuelUsed = value; OnPropertyChanged(); }
         }
 
         private string _totalPayload;
         public string TotalPayload
         {
             get => _totalPayload;
-            set
-            {
-                _totalPayload = value;
-                OnPropertyChanged();
-            }
-        }
-
-        private string _avgPayload;
-        public string AvgPayload
-        {
-            get => _avgPayload;
-            set
-            {
-                _avgPayload = value;
-                OnPropertyChanged();
-            }
+            set { _totalPayload = value; OnPropertyChanged(); }
         }
 
         private string _avgLandingFpm;
         public string AvgLandingFpm
         {
             get => _avgLandingFpm;
-            set
-            {
-                _avgLandingFpm = value;
-                OnPropertyChanged();
-            }
+            set { _avgLandingFpm = value; OnPropertyChanged(); }
         }
 
-        private string _minLandingFpm;
-        public string MinLandingFpm
-        {
-            get => _minLandingFpm;
-            set
-            {
-                _minLandingFpm = value;
-                OnPropertyChanged();
-            }
-        }
-
-        private string _maxLandingFpm;
-        public string MaxLandingFpm
-        {
-            get => _maxLandingFpm;
-            set
-            {
-                _maxLandingFpm = value;
-                OnPropertyChanged();
-            }
-        }
-
-        private Dictionary<string, double> _aircraftDistribution;
-        public Dictionary<string, double> AircraftDistribution
-        {
-            get => _aircraftDistribution;
-            set
-            {
-                _aircraftDistribution = value;
-                OnPropertyChanged();
-            }
-        }
-
-        private Dictionary<string, double> _airlineDistribution;
-        public Dictionary<string, double> AirlineDistribution
-        {
-            get => _airlineDistribution;
-            set
-            {
-                _airlineDistribution = value;
-                OnPropertyChanged();
-            }
-        }
-
-        private Dictionary<string, double> _frequentDepartureAirportsDistribution;
-        public Dictionary<string, double> FrequentDepartureAirportsDistribution
-        {
-            get => _frequentDepartureAirportsDistribution;
-            set
-            {
-                _frequentDepartureAirportsDistribution = value;
-                OnPropertyChanged();
-            }
-        }
-
-        private Dictionary<string, double> _frequentArrivalAirportsDistribution;
-        public Dictionary<string, double> FrequentArrivalAirportsDistribution
-        {
-            get => _frequentArrivalAirportsDistribution;
-            set
-            {
-                _frequentArrivalAirportsDistribution = value;
-                OnPropertyChanged();
-            }
-        }
+        // ── FlightsPerDay (kept for TimePeriod rebuild) ──────────────────────
 
         private Dictionary<DateTime, double> _flightsPerDay;
         public Dictionary<DateTime, double> FlightsPerDay
         {
             get => _flightsPerDay;
-            set
-            {
-                _flightsPerDay = value;
-                OnPropertyChanged();
-            }
+            set { _flightsPerDay = value; OnPropertyChanged(); }
         }
 
         private TimePeriod _timePeriod = TimePeriod.Day;
@@ -261,34 +151,131 @@ namespace FSTRaK.ViewModels
             {
                 _timePeriod = value;
                 OnPropertyChanged();
+                if (_flightsPerDay != null && _flightsPerDay.Count > 0)
+                {
+                    var (series, xAxes) = BuildFlightsPerPeriod(_flightsPerDay, _timePeriod);
+                    App.Current.Dispatcher.Invoke(() =>
+                    {
+                        FlightsPerPeriodSeries = series;
+                        FlightsPerPeriodXAxes = xAxes;
+                    });
+                }
             }
         }
 
-        // Debounce fields
+        // ── Route map data ───────────────────────────────────────────────────
+
+        private List<(Location dep, Location arr)> _flightRoutes;
+        public List<(Location dep, Location arr)> FlightRoutes
+        {
+            get => _flightRoutes;
+            set { _flightRoutes = value; OnPropertyChanged(); }
+        }
+
+        // ── LiveCharts2 series properties ────────────────────────────────────
+
+        private ISeries[] _flightsPerPeriodSeries = Array.Empty<ISeries>();
+        public ISeries[] FlightsPerPeriodSeries
+        {
+            get => _flightsPerPeriodSeries;
+            set { _flightsPerPeriodSeries = value; OnPropertyChanged(); }
+        }
+
+        private Axis[] _flightsPerPeriodXAxes = Array.Empty<Axis>();
+        public Axis[] FlightsPerPeriodXAxes
+        {
+            get => _flightsPerPeriodXAxes;
+            set { _flightsPerPeriodXAxes = value; OnPropertyChanged(); }
+        }
+
+        private Axis[] _flightsPerPeriodYAxes = new[] { new Axis() };
+        public Axis[] FlightsPerPeriodYAxes
+        {
+            get => _flightsPerPeriodYAxes;
+            set { _flightsPerPeriodYAxes = value; OnPropertyChanged(); }
+        }
+
+        private ISeries[] _depAirportsSeries = Array.Empty<ISeries>();
+        public ISeries[] DepAirportsSeries
+        {
+            get => _depAirportsSeries;
+            set { _depAirportsSeries = value; OnPropertyChanged(); }
+        }
+
+        private ISeries[] _arrAirportsSeries = Array.Empty<ISeries>();
+        public ISeries[] ArrAirportsSeries
+        {
+            get => _arrAirportsSeries;
+            set { _arrAirportsSeries = value; OnPropertyChanged(); }
+        }
+
+        private ISeries[] _aircraftTypesSeries = Array.Empty<ISeries>();
+        public ISeries[] AircraftTypesSeries
+        {
+            get => _aircraftTypesSeries;
+            set { _aircraftTypesSeries = value; OnPropertyChanged(); }
+        }
+
+        private ISeries[] _airlinesSeries = Array.Empty<ISeries>();
+        public ISeries[] AirlinesSeries
+        {
+            get => _airlinesSeries;
+            set { _airlinesSeries = value; OnPropertyChanged(); }
+        }
+
+        private ISeries[] _landingRateSeries = Array.Empty<ISeries>();
+        public ISeries[] LandingRateSeries
+        {
+            get => _landingRateSeries;
+            set { _landingRateSeries = value; OnPropertyChanged(); }
+        }
+
+        private Axis[] _landingRateXAxes = Array.Empty<Axis>();
+        public Axis[] LandingRateXAxes
+        {
+            get => _landingRateXAxes;
+            set { _landingRateXAxes = value; OnPropertyChanged(); }
+        }
+
+        private Axis[] _landingRateYAxes = new[] { new Axis() };
+        public Axis[] LandingRateYAxes
+        {
+            get => _landingRateYAxes;
+            set { _landingRateYAxes = value; OnPropertyChanged(); }
+        }
+
+        private ISeries[] _countriesSeries = Array.Empty<ISeries>();
+        public ISeries[] CountriesSeries
+        {
+            get => _countriesSeries;
+            set { _countriesSeries = value; OnPropertyChanged(); }
+        }
+
+        // ── Debounce ─────────────────────────────────────────────────────────
+
         private CancellationTokenSource _debounceCts;
-        private readonly object _debounceLock = new();
+        private readonly object _debounceLock = new object();
         private const int DebounceMilliseconds = 300;
 
-        // Cache filename (per-user local data)
+        // ── Filter cache ─────────────────────────────────────────────────────
+
         private readonly string _filtersCachePath = Path.Combine(PathUtil.GetApplicationLocalDataPath(), "filters_cache.json");
 
         public StatisticsViewModel()
         {
-            // removed synchronous CreateFilters() call to avoid startup blocking.
         }
 
-        /// <summary>
-        /// Read cached filter lists from disk (fast). Returns null if cache not present or invalid.
-        /// </summary>
-        private (List<string> airlines, List<string> types)? TryReadFiltersCache()
+        // ── Cache helpers ─────────────────────────────────────────────────────
+
+        private (List<string> airlines, List<string> types, List<string> tailNumbers)? TryReadFiltersCache()
         {
             try
             {
                 if (!File.Exists(_filtersCachePath)) return null;
                 var json = File.ReadAllText(_filtersCachePath);
                 var dto = JsonConvert.DeserializeObject<FiltersCacheDto>(json);
-                if (dto?.Airlines == null || dto?.AircraftTypes == null) return null;
-                return (dto.Airlines, dto.AircraftTypes);
+                if (dto?.Airlines == null || dto?.AircraftTypes == null || dto?.TailNumbers == null) return null;
+                return (dto.Airlines, dto.AircraftTypes, dto.TailNumbers);
             }
             catch (Exception ex)
             {
@@ -297,14 +284,11 @@ namespace FSTRaK.ViewModels
             }
         }
 
-        /// <summary>
-        /// Persist filter lists to disk. Best-effort; failures are logged but not fatal.
-        /// </summary>
-        private void WriteFiltersCache(List<string> airlines, List<string> types)
+        private void WriteFiltersCache(List<string> airlines, List<string> types, List<string> tailNumbers)
         {
             try
             {
-                var dto = new FiltersCacheDto { Airlines = airlines, AircraftTypes = types, Generated = DateTime.UtcNow };
+                var dto = new FiltersCacheDto { Airlines = airlines, AircraftTypes = types, TailNumbers = tailNumbers, Generated = DateTime.UtcNow };
                 var json = JsonConvert.SerializeObject(dto);
                 var dir = Path.GetDirectoryName(_filtersCachePath);
                 if (!string.IsNullOrEmpty(dir) && !Directory.Exists(dir)) Directory.CreateDirectory(dir);
@@ -320,43 +304,38 @@ namespace FSTRaK.ViewModels
         {
             public List<string> Airlines { get; set; }
             public List<string> AircraftTypes { get; set; }
+            public List<string> TailNumbers { get; set; }
             public DateTime Generated { get; set; }
         }
 
-        /// <summary>
-        /// CreateFiltersAsync returns immediately if a cache exists (fast), then refreshes cache in background.
-        /// If no cache exists it will query DB and create cache.
-        /// </summary>
+        // ── Filter loading ────────────────────────────────────────────────────
+
         private async Task CreateFiltersAsync()
         {
             try
             {
-                // Try read cache first - fast path
                 var cached = TryReadFiltersCache();
                 if (cached != null)
                 {
                     App.Current.Dispatcher.Invoke(() =>
                     {
-                        Airlines = cached.Value.airlines;
-                        AircraftTypes = cached.Value.types;
+                        FilteredAirlines = new ObservableCollection<string>(cached.Value.airlines);
+                        FilteredAircraftTypes = new ObservableCollection<string>(cached.Value.types);
+                        FilteredTailNumbers = new ObservableCollection<string>(cached.Value.tailNumbers);
                     });
 
-                    // Refresh cache in background without blocking UI
                     _ = Task.Run(async () =>
                     {
                         try
                         {
                             var fresh = await QueryFiltersFromDbAsync().ConfigureAwait(false);
-                            if (!Enumerable.SequenceEqual(fresh.airlines, cached.Value.airlines) ||
-                                !Enumerable.SequenceEqual(fresh.types, cached.Value.types))
+                            WriteFiltersCache(fresh.airlines, fresh.types, fresh.tailNumbers);
+                            App.Current.Dispatcher.Invoke(() =>
                             {
-                                WriteFiltersCache(fresh.airlines, fresh.types);
-                                App.Current.Dispatcher.Invoke(() =>
-                                {
-                                    Airlines = fresh.airlines;
-                                    AircraftTypes = fresh.types;
-                                });
-                            }
+                                FilteredAirlines = new ObservableCollection<string>(fresh.airlines);
+                                FilteredAircraftTypes = new ObservableCollection<string>(fresh.types);
+                                FilteredTailNumbers = new ObservableCollection<string>(fresh.tailNumbers);
+                            });
                         }
                         catch (Exception ex)
                         {
@@ -367,13 +346,13 @@ namespace FSTRaK.ViewModels
                     return;
                 }
 
-                // No cache found - query DB and cache results (this runs async and won't block UI)
                 var result = await QueryFiltersFromDbAsync().ConfigureAwait(false);
-                WriteFiltersCache(result.airlines, result.types);
+                WriteFiltersCache(result.airlines, result.types, result.tailNumbers);
                 App.Current.Dispatcher.Invoke(() =>
                 {
-                    Airlines = result.airlines;
-                    AircraftTypes = result.types;
+                    FilteredAirlines = new ObservableCollection<string>(result.airlines);
+                    FilteredAircraftTypes = new ObservableCollection<string>(result.types);
+                    FilteredTailNumbers = new ObservableCollection<string>(result.tailNumbers);
                 });
             }
             catch (Exception ex)
@@ -383,44 +362,50 @@ namespace FSTRaK.ViewModels
         }
 
         /// <summary>
-        /// Query distinct Airlines and AircraftTypes from the Aircraft table.
-        /// Runs off the UI thread when awaited with ConfigureAwait(false).
+        /// Query distinct filter options respecting current active filters for interdependency.
         /// </summary>
-        private async Task<(List<string> airlines, List<string> types)> QueryFiltersFromDbAsync()
+        private async Task<(List<string> airlines, List<string> types, List<string> tailNumbers)> QueryFiltersFromDbAsync()
         {
-            using var logbookContext = new LogbookContext();
+            using (var logbookContext = new LogbookContext())
+            {
+                IQueryable<Aircraft> query = logbookContext.Aircraft.AsNoTracking();
 
-            var airlinesTask = logbookContext.Aircraft
-                .AsNoTracking()
-                .Where(a => a.Airline != null && a.Airline.Trim() != "")
-                .Select(a => a.Airline)
-                .Distinct()
-                .OrderBy(a => a)
-                .ToListAsync();
+                if (!string.IsNullOrEmpty(AirlineFilter))
+                    query = query.Where(a => a.Airline == AirlineFilter);
+                if (!string.IsNullOrEmpty(AircraftTypeFilter))
+                    query = query.Where(a => a.AircraftType == AircraftTypeFilter);
+                if (!string.IsNullOrEmpty(TailNumberFilter))
+                    query = query.Where(a => a.TailNumber == TailNumberFilter);
 
-            var typesTask = logbookContext.Aircraft
-                .AsNoTracking()
-                .Where(a => a.AircraftType != null && a.AircraftType.Trim() != "")
-                .Select(a => a.AircraftType)
-                .Distinct()
-                .OrderBy(t => t)
-                .ToListAsync();
+                var airlinesTask = query
+                    .Where(a => a.Airline != null && a.Airline.Trim() != "")
+                    .Select(a => a.Airline).Distinct().OrderBy(a => a).ToListAsync();
 
-            await Task.WhenAll(airlinesTask, typesTask).ConfigureAwait(false);
+                var typesTask = query
+                    .Where(a => a.AircraftType != null && a.AircraftType.Trim() != "")
+                    .Select(a => a.AircraftType).Distinct().OrderBy(t => t).ToListAsync();
 
-            var airlines = airlinesTask.Result;
-            var types = typesTask.Result;
+                var tailsTask = query
+                    .Where(a => a.TailNumber != null && a.TailNumber.Trim() != "")
+                    .Select(a => a.TailNumber).Distinct().OrderBy(t => t).ToListAsync();
 
-            // ensure empty selection exists
-            if (!airlines.Contains(string.Empty)) airlines.Add(string.Empty);
-            if (!types.Contains(string.Empty)) types.Add(string.Empty);
+                await Task.WhenAll(airlinesTask, typesTask, tailsTask).ConfigureAwait(false);
 
-            return (airlines, types);
+                var airlines = airlinesTask.Result;
+                if (!airlines.Contains(string.Empty)) airlines.Insert(0, string.Empty);
+
+                var types = typesTask.Result;
+                if (!types.Contains(string.Empty)) types.Insert(0, string.Empty);
+
+                var tails = tailsTask.Result;
+                if (!tails.Contains(string.Empty)) tails.Insert(0, string.Empty);
+
+                return (airlines, types, tails);
+            }
         }
 
-        /// <summary>
-        /// Debounce wrapper. Cancels any pending update and schedules a new one after DebounceMilliseconds.
-        /// </summary>
+        // ── Debounce ──────────────────────────────────────────────────────────
+
         private void DebounceUpdateStatistics()
         {
             lock (_debounceLock)
@@ -430,7 +415,6 @@ namespace FSTRaK.ViewModels
                 _debounceCts = new CancellationTokenSource();
                 var token = _debounceCts.Token;
 
-                // fire-and-forget background task
                 _ = Task.Run(async () =>
                 {
                     try
@@ -438,10 +422,11 @@ namespace FSTRaK.ViewModels
                         await Task.Delay(DebounceMilliseconds, token).ConfigureAwait(false);
                         if (token.IsCancellationRequested) return;
                         await UpdateStatisticsAsync().ConfigureAwait(false);
+                        await CreateFiltersAsync().ConfigureAwait(false);
                     }
                     catch (TaskCanceledException)
                     {
-                        // expected when another change occurs
+                        // expected
                     }
                     catch (Exception ex)
                     {
@@ -451,109 +436,111 @@ namespace FSTRaK.ViewModels
             }
         }
 
-        /// <summary>
-        /// Async server-side implementation: applies filters to the IQueryable before materializing.
-        /// Uses EF6's ToListAsync to avoid blocking the UI thread while the DB work runs.
-        /// </summary>
+        // ── Main data update ──────────────────────────────────────────────────
+
         private async Task UpdateStatisticsAsync()
         {
             try
             {
-                using var logbookContext = new LogbookContext();
-
-                IQueryable<Flight> query = logbookContext.Flights
-                    .AsNoTracking()
-                    .Include(f => f.Aircraft);
-
-                if (!string.IsNullOrEmpty(AirlineFilter))
+                using (var logbookContext = new LogbookContext())
                 {
-                    query = query.Where(f => f.Aircraft.Airline == AirlineFilter);
-                }
+                    IQueryable<Flight> query = logbookContext.Flights
+                        .AsNoTracking()
+                        .Include(f => f.Aircraft);
 
-                if (!string.IsNullOrEmpty(AircraftTypeFilter))
-                {
-                    query = query.Where(f => f.Aircraft.AircraftType == AircraftTypeFilter);
-                }
+                    if (!string.IsNullOrEmpty(AirlineFilter))
+                        query = query.Where(f => f.Aircraft.Airline == AirlineFilter);
+                    if (!string.IsNullOrEmpty(AircraftTypeFilter))
+                        query = query.Where(f => f.Aircraft.AircraftType == AircraftTypeFilter);
+                    if (!string.IsNullOrEmpty(TailNumberFilter))
+                        query = query.Where(f => f.Aircraft.TailNumber == TailNumberFilter);
 
-                var flights = await query.OrderByDescending(f => f.Id).ToListAsync().ConfigureAwait(false);
+                    var flights = await query.OrderByDescending(f => f.Id).ToListAsync().ConfigureAwait(false);
 
-                // compute aggregates on background thread then marshal updates to UI
-                var totalNumberOfFlights = flights.Count;
-                if (totalNumberOfFlights == 0)
-                {
-                    // marshal empty results to UI
+                    var totalNumberOfFlights = flights.Count;
+                    if (totalNumberOfFlights == 0)
+                    {
+                        App.Current.Dispatcher.Invoke(() =>
+                        {
+                            TotalNumberOfFlights = 0;
+                            TotalFlightTime = "";
+                            AvgFlightTime = "";
+                            TotalFlightDistance = "";
+                            TotalFuelUsed = "";
+                            TotalPayload = "";
+                            AvgLandingFpm = "";
+                            FlightsPerDay = new Dictionary<DateTime, double>();
+                            FlightRoutes = new List<(Location, Location)>();
+                            FlightsPerPeriodSeries = Array.Empty<ISeries>();
+                            FlightsPerPeriodXAxes = Array.Empty<Axis>();
+                            DepAirportsSeries = Array.Empty<ISeries>();
+                            ArrAirportsSeries = Array.Empty<ISeries>();
+                            AircraftTypesSeries = Array.Empty<ISeries>();
+                            AirlinesSeries = Array.Empty<ISeries>();
+                            LandingRateSeries = Array.Empty<ISeries>();
+                            LandingRateXAxes = Array.Empty<Axis>();
+                            CountriesSeries = Array.Empty<ISeries>();
+                        });
+                        return;
+                    }
+
+                    var totalFlightMilis = flights.Sum(f => f.FlightTimeMilis);
+                    var averageFlightMilis = flights.Average(f => f.FlightTimeMilis);
+                    var totalFlightTimeTs = TimeSpan.FromTicks(totalFlightMilis);
+                    var avgFlightTimeTs = TimeSpan.FromTicks((long)averageFlightMilis);
+
+                    var totalFlightDistance = flights.Sum(f => f.FlightDistanceNm);
+                    var totalFuel = flights.Sum(f => f.TotalFuelUsed);
+                    var totalPayload = flights.Sum(f => f.TotalPayloadLbs ?? 0);
+
+                    var avgLandingFpm = flights.Where(f => f.LandingFpm != null).Any()
+                        ? flights.Where(f => f.LandingFpm != null).Average(f => f.LandingFpm)
+                        : (double?)null;
+
+                    var aircraftDist = CalculateAircraftDistribution(flights);
+                    var airlineDist = CalculateAirlineDistribution(flights);
+                    var depDist = CalculateAirportDistribution(flights, AirportType.DEP);
+                    var arrDist = CalculateAirportDistribution(flights, AirportType.ARR);
+                    var flightsPerDay = CalculateFlightsPerDay(flights);
+                    var landingDist = CalculateLandingRateDistribution(flights);
+                    var countryDist = CalculateCountryDistribution(flights);
+                    var flightRoutes = CalculateFlightRoutes(flights);
+
+                    var (fpSeries, fpXAxes) = BuildFlightsPerPeriod(flightsPerDay, _timePeriod);
+                    var (lrSeries, lrXAxes) = BuildLandingRateSeries(landingDist);
+
                     App.Current.Dispatcher.Invoke(() =>
                     {
-                        TotalNumberOfFlights = 0;
-                        TotalFlightTime = "";
-                        AvgFlightTime = "";
-                        TotalFlightDistance = "";
-                        AvgFlightDistance = "";
-                        TotalFuelUsed = "";
-                        AvgFuelUsed = "";
-                        TotalPayload = "";
-                        AvgPayload = "";
-                        AircraftDistribution = new Dictionary<string, double>();
-                        AirlineDistribution = new Dictionary<string, double>();
-                        FrequentDepartureAirportsDistribution = new Dictionary<string, double>();
-                        FrequentArrivalAirportsDistribution = new Dictionary<string, double>();
-                        FlightsPerDay = new Dictionary<DateTime, double>();
+                        TotalNumberOfFlights = totalNumberOfFlights;
+                        TotalFlightTime = $"{(int)totalFlightTimeTs.TotalHours}:{totalFlightTimeTs.Minutes:D2}:{totalFlightTimeTs.Seconds:D2}";
+                        AvgFlightTime = $"{(int)avgFlightTimeTs.TotalHours}:{avgFlightTimeTs.Minutes:D2}:{avgFlightTimeTs.Seconds:D2}";
+                        TotalFlightDistance = $"{totalFlightDistance:N1}";
+                        TotalFuelUsed = UnitsUtil.GetWeightString(totalFuel);
+                        TotalPayload = UnitsUtil.GetWeightString(totalPayload);
+                        AvgLandingFpm = avgLandingFpm.HasValue ? $"{avgLandingFpm:N0}" : "-";
+
+                        FlightsPerDay = flightsPerDay;
+                        FlightRoutes = flightRoutes;
+
+                        FlightsPerPeriodSeries = fpSeries;
+                        FlightsPerPeriodXAxes = fpXAxes;
+                        DepAirportsSeries = BuildPieSeries(depDist);
+                        ArrAirportsSeries = BuildPieSeries(arrDist);
+                        AircraftTypesSeries = BuildPieSeries(aircraftDist);
+                        AirlinesSeries = BuildPieSeries(airlineDist);
+                        LandingRateSeries = lrSeries;
+                        LandingRateXAxes = lrXAxes;
+                        CountriesSeries = BuildPieSeries(countryDist);
                     });
-                    return;
                 }
-
-                var totalFlightMilis = flights.Sum(f => f.FlightTimeMilis);
-                var averageFlightMilis = flights.Average(f => f.FlightTimeMilis);
-                var totalFlightTimeTs = TimeSpan.FromTicks(totalFlightMilis);
-                var avgFlightTimeTs = TimeSpan.FromTicks((long)averageFlightMilis);
-
-                var totalFlightDistance = flights.Sum(f => f.FlightDistanceNm);
-                var avgFlightDistance = flights.Average(f => f.FlightDistanceNm);
-
-                var totalFuel = flights.Sum(f => f.TotalFuelUsed);
-                var avgFuel = flights.Average(f => f.TotalFuelUsed);
-
-                var totalPayload = flights.Sum(f => f.TotalPayloadLbs ?? 0);
-                var avgPayload = flights.Average(f => f.TotalPayloadLbs ?? 0);
-
-                var avgLandingFpm = flights.Where(f => f.LandingFpm != null).Average(f => f.LandingFpm);
-                var minLandingFpm = flights.Where(f => f.LandingFpm != null).Max(f => f.LandingFpm);
-                var maxLandingFpm = flights.Where(f => f.LandingFpm != null).Min(f => f.LandingFpm);
-
-                var aircraftDist = CalculateAircraftDistribution(flights);
-                var airlineDist = CalculateAirlineDistribution(flights);
-                var depDist = CalculateAirportDistribution(flights, AirportType.DEP);
-                var arrDist = CalculateAirportDistribution(flights, AirportType.ARR);
-                var flightsPerDay = CalculateFlightsPerDay(flights);
-
-                // update UI-bound properties on the UI thread
-                App.Current.Dispatcher.Invoke(() =>
-                {
-                    TotalNumberOfFlights = totalNumberOfFlights;
-                    TotalFlightTime = $"{(int)totalFlightTimeTs.TotalHours}:{totalFlightTimeTs.Minutes}:{totalFlightTimeTs.Seconds}";
-                    AvgFlightTime = $"{(int)avgFlightTimeTs.TotalHours}:{avgFlightTimeTs.Minutes}:{avgFlightTimeTs.Seconds}";
-                    TotalFlightDistance = $"{totalFlightDistance:N1}";
-                    AvgFlightDistance = $"{avgFlightDistance:N1}";
-                    TotalFuelUsed = UnitsUtil.GetWeightString(totalFuel);
-                    AvgFuelUsed = UnitsUtil.GetWeightString(avgFuel);
-                    TotalPayload = UnitsUtil.GetWeightString(totalPayload);
-                    AvgPayload = UnitsUtil.GetWeightString(avgPayload);
-                    AvgLandingFpm = $"{avgLandingFpm:N0}";
-                    MinLandingFpm = $"{minLandingFpm:N0}";
-                    MaxLandingFpm = $"{maxLandingFpm:N0}";
-
-                    AircraftDistribution = aircraftDist;
-                    AirlineDistribution = airlineDist;
-                    FrequentDepartureAirportsDistribution = depDist;
-                    FrequentArrivalAirportsDistribution = arrDist;
-                    FlightsPerDay = flightsPerDay;
-                });
             }
             catch (Exception ex)
             {
                 Log.Error(ex, "UpdateStatisticsAsync failed");
             }
         }
+
+        // ── Calculation helpers ───────────────────────────────────────────────
 
         private static Dictionary<DateTime, double> CalculateFlightsPerDay(List<Flight> flights)
         {
@@ -562,29 +549,18 @@ namespace FSTRaK.ViewModels
                 .ToDictionary(g => g.Key, g => Convert.ToDouble(g.Count()));
         }
 
-        private static Dictionary<DateTime, int> CalculateFlightsPerMonth(List<Flight> flights)
-        {
-            return flights
-                .GroupBy(f => new { f.StartTime.Year, f.StartTime.Month })
-                .ToDictionary(g => new DateTime(g.Key.Year, g.Key.Month, 1), g => g.Count());
-        }
-
         private static Dictionary<string, double> CalculateAirlineDistribution(List<Flight> flights)
         {
-            var airlineDistribution = new Dictionary<string, double>();
+            var dist = new Dictionary<string, double>();
             var i = 0;
             var sum = 0;
             foreach (var f in flights.GroupBy(f => f.Aircraft.Airline)
-                         .Select(group => new
-                         {
-                             airline = group.Key,
-                             count = group.Count()
-                         })
+                         .Select(g => new { airline = g.Key, count = g.Count() })
                          .OrderByDescending(x => x.count))
             {
                 if (i < 5)
                 {
-                    airlineDistribution.Add(f.airline.Equals(string.Empty) ? "None" : f.airline, f.count);
+                    dist.Add(string.IsNullOrEmpty(f.airline) ? "None" : f.airline, f.count);
                     i++;
                 }
                 else
@@ -592,31 +568,22 @@ namespace FSTRaK.ViewModels
                     sum += f.count;
                 }
             }
-
-            if (sum > 0)
-            {
-                airlineDistribution.Add("Other", (double)sum);
-            }
-
-            return airlineDistribution;
+            if (sum > 0) dist.Add("Other", (double)sum);
+            return dist;
         }
 
         private static Dictionary<string, double> CalculateAircraftDistribution(List<Flight> flights)
         {
+            var dist = new Dictionary<string, double>();
             var i = 0;
             var sum = 0;
-            var aircraftDistribution = new Dictionary<string, double>();
             foreach (var f in flights.GroupBy(f => f.Aircraft.AircraftType)
-                         .Select(group => new
-                         {
-                             aircraftType = group.Key,
-                             count = group.Count()
-                         })
+                         .Select(g => new { aircraftType = g.Key, count = g.Count() })
                          .OrderByDescending(x => x.count))
             {
                 if (i < 5)
                 {
-                    aircraftDistribution.Add(f.aircraftType, f.count);
+                    dist.Add(string.IsNullOrEmpty(f.aircraftType) ? "Unknown" : f.aircraftType, f.count);
                     i++;
                 }
                 else
@@ -624,93 +591,215 @@ namespace FSTRaK.ViewModels
                     sum += f.count;
                 }
             }
-
-            if (sum > 0)
-            {
-                aircraftDistribution.Add("Other", (double)sum);
-            }
-
-            return aircraftDistribution;
+            if (sum > 0) dist.Add("Other", (double)sum);
+            return dist;
         }
 
         private static Dictionary<string, double> CalculateAirportDistribution(List<Flight> flights, AirportType type)
         {
+            var dist = new Dictionary<string, double>();
             var i = 0;
             var sum = 0;
-            var airportDistribution = new Dictionary<string, double>();
+            var groups = type == AirportType.ARR
+                ? flights.GroupBy(f => f.ArrivalAirport)
+                : flights.GroupBy(f => f.DepartureAirport);
 
-            if (type == AirportType.ARR)
+            foreach (var g in groups.Select(gr => new { airport = gr.Key, count = gr.Count() })
+                         .OrderByDescending(x => x.count))
             {
-                foreach (var f in flights.GroupBy(f => f.ArrivalAirport)
-                             .Select(group => new
-                             {
-                                 airport = group.Key,
-                                 count = group.Count()
-                             })
-                             .OrderByDescending(x => x.count))
+                if (i < 5)
                 {
-                    if (i < 5)
-                    {
-                        if (f.airport != null)
-                        {
-                            airportDistribution.Add(f.airport, f.count);
-                        }
-                    }
-                    else
-                    {
-                        sum += f.count;
-                    }
+                    if (!string.IsNullOrEmpty(g.airport))
+                        dist.Add(g.airport, g.count);
+                }
+                else
+                {
+                    sum += g.count;
+                }
+                i++;
+            }
+            if (i >= 5 && sum > 0) dist.Add("Other", (double)sum);
+            return dist;
+        }
+
+        private static Dictionary<string, double> CalculateCountryDistribution(List<Flight> flights)
+        {
+            var dist = new Dictionary<string, double>();
+            var i = 0;
+            var sum = 0;
+            foreach (var f in flights
+                         .GroupBy(f => f.DepartureAirportDetails?.iso_country ?? "Unknown")
+                         .Select(g => new { country = g.Key, count = g.Count() })
+                         .OrderByDescending(x => x.count))
+            {
+                if (i < 5)
+                {
+                    dist.Add(string.IsNullOrEmpty(f.country) ? "Unknown" : f.country, f.count);
                     i++;
                 }
-
-                if (i >= 5 && sum > 0)
+                else
                 {
-                    airportDistribution.Add("Other", (double)sum);
+                    sum += f.count;
                 }
+            }
+            if (sum > 0) dist.Add("Other", (double)sum);
+            return dist;
+        }
+
+        private static List<(double bucketCenter, int count)> CalculateLandingRateDistribution(List<Flight> flights)
+        {
+            const int bucketSize = 50;
+            const int minFpm = -1000;
+            const int maxFpm = 0;
+
+            var buckets = new Dictionary<int, int>();
+            for (int b = minFpm; b < maxFpm; b += bucketSize)
+                buckets[b] = 0;
+
+            foreach (var f in flights.Where(f => f.LandingFpm.HasValue))
+            {
+                var fpm = (int)f.LandingFpm.Value;
+                var bucket = (int)(Math.Floor((double)fpm / bucketSize) * bucketSize);
+                bucket = Math.Max(minFpm, Math.Min(maxFpm - bucketSize, bucket));
+                if (buckets.ContainsKey(bucket))
+                    buckets[bucket]++;
+            }
+
+            return buckets
+                .OrderBy(kv => kv.Key)
+                .Select(kv => (bucketCenter: (double)(kv.Key + bucketSize / 2), count: kv.Value))
+                .ToList();
+        }
+
+        private static List<(Location dep, Location arr)> CalculateFlightRoutes(List<Flight> flights)
+        {
+            var routes = new List<(Location, Location)>();
+            foreach (var f in flights)
+            {
+                var dep = f.DepartureAirportDetails;
+                var arr = f.ArrivalAirportDetails;
+                if (dep == null || arr == null) continue;
+                if (dep.latitude_deg == 0 && dep.longitude_deg == 0) continue;
+                if (arr.latitude_deg == 0 && arr.longitude_deg == 0) continue;
+                routes.Add((
+                    new Location(dep.latitude_deg, dep.longitude_deg),
+                    new Location(arr.latitude_deg, arr.longitude_deg)
+                ));
+            }
+            return routes;
+        }
+
+        // ── LiveCharts2 series builders ───────────────────────────────────────
+
+        private static readonly SKColor[] ChartPalette = new[]
+        {
+            SKColor.Parse("#4FC3F7"),
+            SKColor.Parse("#81C784"),
+            SKColor.Parse("#FFB74D"),
+            SKColor.Parse("#F06292"),
+            SKColor.Parse("#CE93D8"),
+            SKColor.Parse("#80DEEA")
+        };
+
+        private static ISeries[] BuildPieSeries(Dictionary<string, double> data)
+        {
+            return data.Select((kv, i) => (ISeries)new PieSeries<double>
+            {
+                Name = kv.Key,
+                Values = new double[] { kv.Value },
+                Fill = new SolidColorPaint(ChartPalette[i % ChartPalette.Length])
+            }).ToArray();
+        }
+
+        private static (ISeries[] series, Axis[] xAxes) BuildFlightsPerPeriod(
+            Dictionary<DateTime, double> flightsPerDay, TimePeriod period)
+        {
+            Dictionary<DateTime, double> data;
+            string labelFormat;
+
+            if (period == TimePeriod.Month)
+            {
+                data = flightsPerDay
+                    .GroupBy(x => new DateTime(x.Key.Year, x.Key.Month, 1))
+                    .ToDictionary(g => g.Key, g => g.Sum(x => x.Value));
+                labelFormat = "MMM yyyy";
+            }
+            else if (period == TimePeriod.Year)
+            {
+                data = flightsPerDay
+                    .GroupBy(x => new DateTime(x.Key.Year, 1, 1))
+                    .ToDictionary(g => g.Key, g => g.Sum(x => x.Value));
+                labelFormat = "yyyy";
             }
             else
             {
-                foreach (var f in flights.GroupBy(f => f.DepartureAirport)
-                             .Select(group => new
-                             {
-                                 airport = group.Key,
-                                 count = group.Count()
-                             })
-                             .OrderByDescending(x => x.count))
-                {
-                    if (i < 5)
-                    {
-                        if (f.airport != null)
-                        {
-                            airportDistribution.Add(f.airport, f.count);
-                        }
-                    }
-                    else
-                    {
-                        sum += f.count;
-                    }
-                    i++;
-                }
-
-                if (i >= 5 && sum > 0)
-                {
-                    airportDistribution.Add("Other", (double)sum);
-                }
+                data = flightsPerDay;
+                labelFormat = "dd/MM/yy";
             }
 
-            return airportDistribution;
+            var ordered = data.OrderBy(kv => kv.Key).ToList();
+            var values = ordered.Select(kv => kv.Value).ToArray();
+            var labels = ordered.Select(kv => kv.Key.ToString(labelFormat)).ToArray();
+
+            var series = new ISeries[]
+            {
+                new ColumnSeries<double>
+                {
+                    Values = values,
+                    Fill = new SolidColorPaint(SKColor.Parse("#4FC3F7")),
+                    Name = "Flights"
+                }
+            };
+
+            var xAxes = new[]
+            {
+                new Axis
+                {
+                    Labels = labels,
+                    LabelsRotation = -45,
+                    TextSize = 10
+                }
+            };
+
+            return (series, xAxes);
         }
 
-        private enum AirportType
+        private static (ISeries[] series, Axis[] xAxes) BuildLandingRateSeries(
+            List<(double bucketCenter, int count)> dist)
         {
-            DEP, ARR
+            var values = dist.Select(d => (double)d.count).ToArray();
+            var labels = dist.Select(d => $"{(int)d.bucketCenter}").ToArray();
+
+            var series = new ISeries[]
+            {
+                new ColumnSeries<double>
+                {
+                    Values = values,
+                    Fill = new SolidColorPaint(SKColor.Parse("#81C784")),
+                    Name = "Landings"
+                }
+            };
+
+            var xAxes = new[]
+            {
+                new Axis
+                {
+                    Labels = labels,
+                    LabelsRotation = -45,
+                    TextSize = 10,
+                    Name = "fpm"
+                }
+            };
+
+            return (series, xAxes);
         }
+
+        private enum AirportType { DEP, ARR }
 
         internal void ViewLoaded()
         {
-            // start filter population and stats when the view actually loads
             _ = CreateFiltersAsync();
-            _ = UpdateStatisticsAsync(); // perform async update when view loads
+            _ = UpdateStatisticsAsync();
         }
     }
 }
