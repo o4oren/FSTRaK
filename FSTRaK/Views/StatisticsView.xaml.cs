@@ -25,6 +25,13 @@ namespace FSTRaK.Views
         {
             MapLayerHelper.UpdateMapLayers(RouteMap, ref _currentOpenAipLayer, ref _currentChartLayer);
 
+            // Intercept PreviewMouseWheel on the map before it reaches the ScrollViewer.
+            // We let MapControl zoom normally, then stop the event bubbling up.
+            RouteMap.AddHandler(
+                PreviewMouseWheelEvent,
+                new MouseWheelEventHandler(OnMapPreviewMouseWheel),
+                handledEventsToo: false);
+
             var vm = (StatisticsViewModel)DataContext;
             vm.PropertyChanged += (s, args) =>
             {
@@ -35,38 +42,19 @@ namespace FSTRaK.Views
             vm.ViewLoaded();
         }
 
-        private bool _suppressMapWheelReentry;
+        // Called during the tunnel phase on the map — before the ScrollViewer sees it.
+        // MapControl's internal PreviewMouseWheel zoom handler fires at the same phase
+        // on the map element, so zoom still works. We then mark it handled so the
+        // ScrollViewer's PreviewMouseWheel handler (which scrolls the page) never fires.
+        private void OnMapPreviewMouseWheel(object sender, MouseWheelEventArgs e)
+        {
+            e.Handled = true;
+        }
 
-        // Suppress ScrollViewer scroll when mouse is over the route map,
-        // and forward the wheel event directly to the map for zooming.
+        // Kept for the ScrollViewer handler wired in XAML — no-op since the map handler
+        // marks events handled before they reach here when mouse is over the map.
         private void OnScrollViewerPreviewMouseWheel(object sender, MouseWheelEventArgs e)
         {
-            if (_suppressMapWheelReentry) return;
-
-            var source = e.OriginalSource as DependencyObject;
-            while (source != null)
-            {
-                if (ReferenceEquals(source, RouteMap))
-                {
-                    e.Handled = true;
-                    _suppressMapWheelReentry = true;
-                    try
-                    {
-                        var args = new MouseWheelEventArgs(e.MouseDevice, e.Timestamp, e.Delta)
-                        {
-                            RoutedEvent = MouseWheelEvent,
-                            Source = e.OriginalSource
-                        };
-                        RouteMap.RaiseEvent(args);
-                    }
-                    finally
-                    {
-                        _suppressMapWheelReentry = false;
-                    }
-                    return;
-                }
-                source = VisualTreeHelper.GetParent(source);
-            }
         }
 
         private void RenderRoutePolylines()
