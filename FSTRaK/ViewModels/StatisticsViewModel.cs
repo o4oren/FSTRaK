@@ -17,6 +17,8 @@ using LiveChartsCore.SkiaSharpView;
 using LiveChartsCore.SkiaSharpView.Painting;
 using MapControl;
 using SkiaSharp;
+using System.Windows;
+using System.Windows.Media;
 using FSTRaK.Properties;
 
 namespace FSTRaK.ViewModels
@@ -154,9 +156,9 @@ namespace FSTRaK.ViewModels
                 OnPropertyChanged();
                 if (_flightsPerDay != null && _flightsPerDay.Count > 0)
                 {
-                    var (series, xAxes) = BuildFlightsPerPeriod(_flightsPerDay, _timePeriod);
                     App.Current.Dispatcher.Invoke(() =>
                     {
+                        var (series, xAxes) = BuildFlightsPerPeriod(_flightsPerDay, _timePeriod, GetChartLabelPaint());
                         FlightsPerPeriodSeries = series;
                         FlightsPerPeriodXAxes = xAxes;
                     });
@@ -250,6 +252,23 @@ namespace FSTRaK.ViewModels
         {
             get => _countriesSeries;
             set { _countriesSeries = value; OnPropertyChanged(); }
+        }
+
+        // ── Chart label paint (theme-aware) ──────────────────────────────────
+
+        private SolidColorPaint _chartLabelPaint = new SolidColorPaint(new SKColor(0, 0, 0));
+        public SolidColorPaint ChartLabelPaint
+        {
+            get => _chartLabelPaint;
+            set { _chartLabelPaint = value; OnPropertyChanged(); }
+        }
+
+        private static SolidColorPaint GetChartLabelPaint()
+        {
+            var brush = Application.Current.Resources["TextColor"] as SolidColorBrush;
+            if (brush == null) return new SolidColorPaint(new SKColor(0, 0, 0));
+            var c = brush.Color;
+            return new SolidColorPaint(new SKColor(c.R, c.G, c.B, c.A));
         }
 
         // ── Debounce ─────────────────────────────────────────────────────────
@@ -530,11 +549,13 @@ namespace FSTRaK.ViewModels
                     var countryDist = CalculateCountryDistribution(flights);
                     var flightRoutes = CalculateFlightRoutes(flights);
 
-                    var (fpSeries, fpXAxes) = BuildFlightsPerPeriod(flightsPerDay, _timePeriod);
-                    var (lrSeries, lrXAxes) = BuildLandingRateSeries(landingDist);
-
                     App.Current.Dispatcher.Invoke(() =>
                     {
+                        var labelPaint = GetChartLabelPaint();
+                        ChartLabelPaint = labelPaint;
+                        var (fpSeries, fpXAxes) = BuildFlightsPerPeriod(flightsPerDay, _timePeriod, labelPaint);
+                        var (lrSeries, lrXAxes) = BuildLandingRateSeries(landingDist, labelPaint);
+
                         TotalNumberOfFlights = totalNumberOfFlights;
                         TotalFlightTime = $"{(int)totalFlightTimeTs.TotalHours}:{totalFlightTimeTs.Minutes:D2}:{totalFlightTimeTs.Seconds:D2}";
                         AvgFlightTime = $"{(int)avgFlightTimeTs.TotalHours}:{avgFlightTimeTs.Minutes:D2}:{avgFlightTimeTs.Seconds:D2}";
@@ -548,12 +569,14 @@ namespace FSTRaK.ViewModels
 
                         FlightsPerPeriodSeries = fpSeries;
                         FlightsPerPeriodXAxes = fpXAxes;
+                        FlightsPerPeriodYAxes = new[] { new Axis { LabelsPaint = labelPaint } };
                         DepAirportsSeries = BuildPieSeries(depDist);
                         ArrAirportsSeries = BuildPieSeries(arrDist);
                         AircraftTypesSeries = BuildPieSeries(aircraftDist);
                         AirlinesSeries = BuildPieSeries(airlineDist);
                         LandingRateSeries = lrSeries;
                         LandingRateXAxes = lrXAxes;
+                        LandingRateYAxes = new[] { new Axis { LabelsPaint = labelPaint } };
                         CountriesSeries = BuildPieSeries(countryDist);
                     });
                 }
@@ -739,7 +762,7 @@ namespace FSTRaK.ViewModels
         }
 
         private static (ISeries[] series, Axis[] xAxes) BuildFlightsPerPeriod(
-            Dictionary<DateTime, double> flightsPerDay, TimePeriod period)
+            Dictionary<DateTime, double> flightsPerDay, TimePeriod period, SolidColorPaint labelPaint)
         {
             Dictionary<DateTime, double> data;
             string labelFormat;
@@ -784,7 +807,8 @@ namespace FSTRaK.ViewModels
                 {
                     Labels = labels,
                     LabelsRotation = -45,
-                    TextSize = 10
+                    TextSize = 10,
+                    LabelsPaint = labelPaint
                 }
             };
 
@@ -792,7 +816,7 @@ namespace FSTRaK.ViewModels
         }
 
         private static (ISeries[] series, Axis[] xAxes) BuildLandingRateSeries(
-            List<(double bucketCenter, int count)> dist)
+            List<(double bucketCenter, int count)> dist, SolidColorPaint labelPaint)
         {
             var values = dist.Select(d => (double)d.count).ToArray();
             var labels = dist.Select(d => $"{(int)d.bucketCenter}").ToArray();
@@ -814,7 +838,8 @@ namespace FSTRaK.ViewModels
                     Labels = labels,
                     LabelsRotation = -45,
                     TextSize = 10,
-                    Name = "fpm"
+                    Name = "fpm",
+                    LabelsPaint = labelPaint
                 }
             };
 
