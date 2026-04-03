@@ -839,7 +839,8 @@ namespace FSTRaK.ViewModels
                     LabelsRotation = -45,
                     TextSize = 10,
                     Name = "fpm",
-                    LabelsPaint = labelPaint
+                    LabelsPaint = labelPaint,
+                    NamePaint = labelPaint
                 }
             };
 
