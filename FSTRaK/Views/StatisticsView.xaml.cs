@@ -25,11 +25,12 @@ namespace FSTRaK.Views
         {
             MapLayerHelper.UpdateMapLayers(RouteMap, ref _currentOpenAipLayer, ref _currentChartLayer);
 
-            // Intercept PreviewMouseWheel on the map before it reaches the ScrollViewer.
-            // We let MapControl zoom normally, then stop the event bubbling up.
+            // Catch the bubble phase of MouseWheel on the map and stop it there,
+            // so it never reaches the ScrollViewer. MapControl zooms via PreviewMouseWheel
+            // (tunnel phase) which has already fired by the time we see the bubble.
             RouteMap.AddHandler(
-                PreviewMouseWheelEvent,
-                new MouseWheelEventHandler(OnMapPreviewMouseWheel),
+                MouseWheelEvent,
+                new MouseWheelEventHandler(OnMapMouseWheel),
                 handledEventsToo: false);
 
             var vm = (StatisticsViewModel)DataContext;
@@ -42,17 +43,13 @@ namespace FSTRaK.Views
             vm.ViewLoaded();
         }
 
-        // Called during the tunnel phase on the map — before the ScrollViewer sees it.
-        // MapControl's internal PreviewMouseWheel zoom handler fires at the same phase
-        // on the map element, so zoom still works. We then mark it handled so the
-        // ScrollViewer's PreviewMouseWheel handler (which scrolls the page) never fires.
-        private void OnMapPreviewMouseWheel(object sender, MouseWheelEventArgs e)
+        // Fires during bubble phase after MapControl has already handled zooming.
+        // Mark handled so the event doesn't bubble up to the ScrollViewer.
+        private void OnMapMouseWheel(object sender, MouseWheelEventArgs e)
         {
             e.Handled = true;
         }
 
-        // Kept for the ScrollViewer handler wired in XAML — no-op since the map handler
-        // marks events handled before they reach here when mouse is over the map.
         private void OnScrollViewerPreviewMouseWheel(object sender, MouseWheelEventArgs e)
         {
         }
