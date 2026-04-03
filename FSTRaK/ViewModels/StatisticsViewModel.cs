@@ -733,10 +733,7 @@ namespace FSTRaK.ViewModels
                 Name = kv.Key,
                 Values = new double[] { kv.Value },
                 Fill = new SolidColorPaint(ChartPalette[i % ChartPalette.Length]),
-                DataLabelsPaint = new SolidColorPaint(SKColors.White),
-                DataLabelsSize = 11,
-                DataLabelsPosition = LiveChartsCore.Measure.PolarLabelsPosition.Middle,
-                DataLabelsFormatter = point =>
+                ToolTipLabelFormatter = point =>
                     $"{point.PrimaryValue:N0} ({point.PrimaryValue / total * 100:N1}%)"
             }).ToArray();
         }
@@ -807,10 +804,7 @@ namespace FSTRaK.ViewModels
                     Values = values,
                     Fill = new SolidColorPaint(SKColor.Parse("#81C784")),
                     Name = "Landings",
-                    DataLabelsPaint = new SolidColorPaint(SKColors.White),
-                    DataLabelsSize = 10,
-                    DataLabelsPosition = LiveChartsCore.Measure.DataLabelsPosition.Top,
-                    DataLabelsFormatter = point => point.PrimaryValue > 0 ? $"{point.PrimaryValue:N0}" : ""
+                    ToolTipLabelFormatter = point => $"{point.PrimaryValue:N0} landings"
                 }
             };
 
