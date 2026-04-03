@@ -952,4 +952,43 @@
         <Setter Property="FontSize" Value="12" />
 
     </Style>
+
+    <!-- Stat card styles -->
+    <Style x:Key="StatCard" TargetType="Border">
+        <Setter Property="Background" Value="{DynamicResource CardBackgroundBrush}"/>
+        <Setter Property="BorderBrush" Value="{DynamicResource CardBorderBrush}"/>
+        <Setter Property="BorderThickness" Value="1"/>
+        <Setter Property="CornerRadius" Value="8"/>
+        <Setter Property="Padding" Value="14,12"/>
+        <Setter Property="MinWidth" Value="120"/>
+    </Style>
+
+    <Style x:Key="ChartCard" TargetType="Border">
+        <Setter Property="Background" Value="{DynamicResource CardBackgroundBrush}"/>
+        <Setter Property="BorderBrush" Value="{DynamicResource CardBorderBrush}"/>
+        <Setter Property="BorderThickness" Value="1"/>
+        <Setter Property="CornerRadius" Value="8"/>
+        <Setter Property="Padding" Value="14,12"/>
+    </Style>
+
+    <Style x:Key="StatCardLabel" TargetType="TextBlock">
+        <Setter Property="Foreground" Value="{DynamicResource TextColor}"/>
+        <Setter Property="FontSize" Value="{DynamicResource SmallFontSize}"/>
+        <Setter Property="FontFamily" Value="{DynamicResource CurrentFont}"/>
+        <Setter Property="TextWrapping" Value="Wrap"/>
+    </Style>
+
+    <Style x:Key="StatCardValue" TargetType="TextBlock">
+        <Setter Property="Foreground" Value="{DynamicResource TextColor}"/>
+        <Setter Property="FontSize" Value="24"/>
+        <Setter Property="FontWeight" Value="Bold"/>
+        <Setter Property="FontFamily" Value="{DynamicResource CurrentFont}"/>
+        <Setter Property="Margin" Value="0,4,0,0"/>
+    </Style>
+
+    <Style x:Key="StatCardUnit" TargetType="TextBlock">
+        <Setter Property="Foreground" Value="{DynamicResource TextColor}"/>
+        <Setter Property="FontSize" Value="{DynamicResource SmallFontSize}"/>
+        <Setter Property="FontFamily" Value="{DynamicResource CurrentFont}"/>
+    </Style>
 </ResourceDictionary>

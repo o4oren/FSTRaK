@@ -168,7 +168,8 @@
                         <Label Style="{StaticResource FSTrAkLabel}">Top Departure Airports</Label>
                         <lvc:PieChart Series="{Binding DepAirportsSeries}"
                                       MinHeight="200"
-                                      LegendPosition="Bottom"/>
+                                      LegendPosition="Bottom"
+                                      LegendTextPaint="{Binding ChartLabelPaint}"/>
                     </StackPanel>
                 </Border>
                 <Border Grid.Column="2" Style="{StaticResource ChartCard}">
@@ -176,7 +177,8 @@
                         <Label Style="{StaticResource FSTrAkLabel}">Top Arrival Airports</Label>
                         <lvc:PieChart Series="{Binding ArrAirportsSeries}"
                                       MinHeight="200"
-                                      LegendPosition="Bottom"/>
+                                      LegendPosition="Bottom"
+                                      LegendTextPaint="{Binding ChartLabelPaint}"/>
                     </StackPanel>
                 </Border>
             </Grid>
@@ -193,7 +195,8 @@
                         <Label Style="{StaticResource FSTrAkLabel}">Top Aircraft Types</Label>
                         <lvc:PieChart Series="{Binding AircraftTypesSeries}"
                                       MinHeight="200"
-                                      LegendPosition="Bottom"/>
+                                      LegendPosition="Bottom"
+                                      LegendTextPaint="{Binding ChartLabelPaint}"/>
                     </StackPanel>
                 </Border>
                 <Border Grid.Column="2" Style="{StaticResource ChartCard}">
@@ -201,7 +204,8 @@
                         <Label Style="{StaticResource FSTrAkLabel}">Top Airlines</Label>
                         <lvc:PieChart Series="{Binding AirlinesSeries}"
                                       MinHeight="200"
-                                      LegendPosition="Bottom"/>
+                                      LegendPosition="Bottom"
+                                      LegendTextPaint="{Binding ChartLabelPaint}"/>
                     </StackPanel>
                 </Border>
             </Grid>
@@ -227,7 +231,8 @@
                         <Label Style="{StaticResource FSTrAkLabel}">Top Countries</Label>
                         <lvc:PieChart Series="{Binding CountriesSeries}"
                                       MinHeight="200"
-                                      LegendPosition="Bottom"/>
+                                      LegendPosition="Bottom"
+                                      LegendTextPaint="{Binding ChartLabelPaint}"/>
                     </StackPanel>
                 </Border>
             </Grid>
