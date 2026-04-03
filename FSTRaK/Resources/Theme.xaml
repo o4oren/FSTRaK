@@ -449,7 +449,7 @@
     </Style>
 
     <Style x:Key="StatCardUnit" TargetType="TextBlock">
-        <Setter Property="Foreground" Value="{DynamicResource SubtleTextBrush}"/>
+        <Setter Property="Foreground" Value="{DynamicResource TextColor}"/>
         <Setter Property="FontSize" Value="{DynamicResource SmallFontSize}"/>
         <Setter Property="FontFamily" Value="{DynamicResource CurrentFont}"/>
     </Style>
@@ -595,6 +595,7 @@
                         <TextBox x:Name="PART_EditableTextBox"
                    Style="{x:Null}"
                    FontFamily="{DynamicResource CurrentFont}"
+                   Foreground="{TemplateBinding Foreground}"
                    Template="{StaticResource ComboBoxTextBox}"
                    HorizontalAlignment="Left"
                    VerticalAlignment="Bottom"

@@ -35,23 +35,34 @@ namespace FSTRaK.Views
             vm.ViewLoaded();
         }
 
+        private bool _suppressMapWheelReentry;
+
         // Suppress ScrollViewer scroll when mouse is over the route map,
         // and forward the wheel event directly to the map for zooming.
         private void OnScrollViewerPreviewMouseWheel(object sender, MouseWheelEventArgs e)
         {
+            if (_suppressMapWheelReentry) return;
+
             var source = e.OriginalSource as DependencyObject;
             while (source != null)
             {
                 if (ReferenceEquals(source, RouteMap))
                 {
                     e.Handled = true;
-                    // Re-raise on the map so MapControl can zoom
-                    var args = new MouseWheelEventArgs(e.MouseDevice, e.Timestamp, e.Delta)
+                    _suppressMapWheelReentry = true;
+                    try
                     {
-                        RoutedEvent = MouseWheelEvent,
-                        Source = e.OriginalSource
-                    };
-                    RouteMap.RaiseEvent(args);
+                        var args = new MouseWheelEventArgs(e.MouseDevice, e.Timestamp, e.Delta)
+                        {
+                            RoutedEvent = MouseWheelEvent,
+                            Source = e.OriginalSource
+                        };
+                        RouteMap.RaiseEvent(args);
+                    }
+                    finally
+                    {
+                        _suppressMapWheelReentry = false;
+                    }
                     return;
                 }
                 source = VisualTreeHelper.GetParent(source);
