@@ -803,8 +803,7 @@ namespace FSTRaK.ViewModels
                 {
                     Values = values,
                     Fill = new SolidColorPaint(SKColor.Parse("#81C784")),
-                    Name = "Landings",
-                    ToolTipLabelFormatter = point => $"{point.PrimaryValue:N0} landings"
+                    Name = "Landings"
                 }
             };
 
