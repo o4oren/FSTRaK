@@ -169,6 +169,30 @@ namespace FSTRaK.ViewModels
             }
         }
 
+        public int TileServerPort
+        {
+            get => Properties.Settings.Default.TileServerPort;
+            set
+            {
+                if (value < 1024 || value > 65535) return;
+                Properties.Settings.Default.TileServerPort = value;
+                OnPropertyChanged();
+            }
+        }
+
+        public string TileServerStatus
+        {
+            get
+            {
+                var ts = BusinessLogic.TileServer.TileServer.Instance;
+                return ts.IsRunning
+                    ? $"● Running on http://localhost:{ts.Port}/"
+                    : "● Failed to start — port in use";
+            }
+        }
+
+        public bool TileServerIsRunning => BusinessLogic.TileServer.TileServer.Instance.IsRunning;
+
         private bool _isSaveOnlyCompleteFlights;
 
         public bool IsSaveOnlyCompleteFlights

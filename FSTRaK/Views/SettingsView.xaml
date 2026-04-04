@@ -248,7 +248,33 @@
                         FSTrAk will be the topmost window
                     </StackPanel.ToolTip>
                 </StackPanel>
-
+                <StackPanel Orientation="Horizontal" Margin="10" ToolTipService.ShowDuration="5000">
+                    <Label Style="{DynamicResource FSTrAkLabel}" Width="250">Tile Server Port</Label>
+                    <TextBox FontFamily="{DynamicResource CurrentFont}"
+                             Foreground="{DynamicResource TextColor}"
+                             Background="{DynamicResource ControlBackgroundColorBrush}"
+                             FontSize="{DynamicResource ControlFontSize}"
+                             Width="80"
+                             Text="{Binding TileServerPort, UpdateSourceTrigger=PropertyChanged}"
+                             Cursor="Arrow" TextAlignment="Center" Padding="0 8 0 0"/>
+                    <TextBlock FontFamily="{DynamicResource CurrentFont}"
+                               FontSize="{DynamicResource ListFontSize}"
+                               Foreground="{DynamicResource UnselectedTextColor}"
+                               VerticalAlignment="Center"
+                               Margin="8,0,0,0"
+                               Text="Restart required to apply port change."/>
+                    <StackPanel.ToolTip>
+                        Port for the local tile server used by the MSFS tablet panel (default: 8765)
+                    </StackPanel.ToolTip>
+                </StackPanel>
+                <StackPanel Orientation="Horizontal" Margin="10,4,10,10">
+                    <Label Style="{DynamicResource FSTrAkLabel}" Width="250"/>
+                    <TextBlock FontFamily="{DynamicResource CurrentFont}"
+                               FontSize="{DynamicResource ListFontSize}"
+                               Foreground="{DynamicResource TextColor}"
+                               VerticalAlignment="Center"
+                               Text="{Binding TileServerStatus}"/>
+                </StackPanel>
 
             </StackPanel>
             <StackPanel Margin="10">
