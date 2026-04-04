@@ -820,8 +820,112 @@ function updateAircraft() {
 setInterval(updateAircraft, 1000);
 updateAircraft();
 
-// ── ATC layer placeholder (wired in Task 4) ──────────────────────────────────────────────────────────────────────────
-// ATC fetch and toggle wired in next task
+// ── ATC layer ──────────────────────────────────────────────────────────────
+let atcLayer = L.layerGroup().addTo(map);
+
+function buildPopupContent(airport) {
+  let html = `<div style="font-family:monospace;font-size:12px;min-width:180px">`;
+  html += `<b style="font-size:13px">${airport.callsign}</b><br>`;
+  if (airport.controllers && airport.controllers.length > 0) {
+    html += `<table style="width:100%;margin-top:4px;border-collapse:collapse">`;
+    for (const c of airport.controllers) {
+      html += `<tr><td>${c.callsign}</td><td style="text-align:right;padding-left:8px">${c.frequency}</td><td style="text-align:right;padding-left:8px;color:#888">${c.type}</td></tr>`;
+    }
+    html += `</table>`;
+  }
+  if (airport.atis) {
+    html += `<hr style="margin:6px 0;border-color:#444">`;
+    html += `<div style="color:#aaa;font-size:11px;white-space:pre-wrap">${airport.atis}</div>`;
+  }
+  html += `</div>`;
+  return html;
+}
+
+function renderAtcState(state) {
+  atcLayer.clearLayers();
+
+  atcVisible = state.atcVisible;
+  const btn = document.getElementById('btn-atc');
+  btn.classList.toggle('atc-off', !atcVisible);
+
+  if (!state.atcVisible) return;
+
+  // FIR polygons
+  if (state.firs) {
+    for (const feature of state.firs) {
+      if (!feature.geometry || !feature.geometry.coordinates) continue;
+      const coords = feature.geometry.coordinates[0].map(c => [c[1], c[0]]);
+      if (coords.length < 3) continue;
+      L.polygon(coords, {
+        color: '#4fc3f7',
+        weight: 1,
+        fillColor: '#4fc3f7',
+        fillOpacity: 0.08
+      }).bindTooltip(feature.properties.callsign || '', { sticky: true }).addTo(atcLayer);
+    }
+  }
+
+  // Airport markers, polygons/circles
+  if (state.airports) {
+    for (const airport of state.airports) {
+      // Dot marker
+      const dotIcon = L.divIcon({
+        className: '',
+        html: `<svg width="10" height="10" viewBox="0 0 10 10" xmlns="http://www.w3.org/2000/svg">
+          <circle cx="5" cy="5" r="4" fill="#ff9800" stroke="#fff" stroke-width="1"/>
+        </svg>`,
+        iconSize: [10, 10],
+        iconAnchor: [5, 5]
+      });
+
+      L.marker([airport.lat, airport.lon], { icon: dotIcon, zIndexOffset: 500 })
+        .bindPopup(buildPopupContent(airport), { maxWidth: 280 })
+        .addTo(atcLayer);
+
+      // TRACON polygon or circle
+      if (airport.polygon && airport.polygon.length >= 3) {
+        const coords = airport.polygon.map(c => [c[1], c[0]]);
+        L.polygon(coords, {
+          color: '#ff9800',
+          weight: 1,
+          fillColor: '#ff9800',
+          fillOpacity: 0.08
+        }).addTo(atcLayer);
+      } else if (airport.radius) {
+        L.circle([airport.lat, airport.lon], {
+          radius: airport.radius * 1852,
+          color: '#ff9800',
+          weight: 1,
+          fillColor: '#ff9800',
+          fillOpacity: 0.06
+        }).addTo(atcLayer);
+      }
+    }
+  }
+}
+
+async function fetchAtcState() {
+  try {
+    const resp = await fetch(STATE_URL);
+    if (!resp.ok) return;
+    const state = await resp.json();
+    renderAtcState(state);
+  } catch (e) {
+    // tile server not running — silently skip
+  }
+}
+
+document.getElementById('btn-atc').addEventListener('click', async () => {
+  try {
+    const resp = await fetch(TOGGLE_URL, { method: 'POST' });
+    if (!resp.ok) return;
+  } catch (e) {}
+  await fetchAtcState();
+});
+
+// Initial fetch and periodic refresh
+fetchAtcState();
+setInterval(fetchAtcState, 30000);
 </script>
 </body>
 </html>
