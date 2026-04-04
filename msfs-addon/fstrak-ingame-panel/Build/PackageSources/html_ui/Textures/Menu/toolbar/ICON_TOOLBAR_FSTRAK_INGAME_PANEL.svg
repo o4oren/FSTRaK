@@ -1,0 +1,16 @@
+<svg id="Titre" xmlns="http://www.w3.org/2000/svg" width="64.000000px" height="64.000000px" viewBox="0 0 64 64">
+    <title>ICON_TOOLBAR_FSTRAK</title>
+    <g id="HIGHLIGHT">
+        <g fill="#000000" stroke="none">
+            <!-- Top-down airplane silhouette (nose up) -->
+            <!-- Fuselage -->
+            <path d="M32 4 C29 4 28 8 28 12 L28 44 C28 48 29 52 32 54 C35 52 36 48 36 44 L36 12 C36 8 35 4 32 4 Z"/>
+            <!-- Main wings -->
+            <path d="M28 22 C24 20 12 20 6 24 C6 26 8 27 10 27 L28 26 Z"/>
+            <path d="M36 22 C40 20 52 20 58 24 C58 26 56 27 54 27 L36 26 Z"/>
+            <!-- Tail fins -->
+            <path d="M28 46 C24 45 18 46 16 49 C16 50 17 51 19 51 L28 49 Z"/>
+            <path d="M36 46 C40 45 46 46 48 49 C48 50 47 51 45 51 L36 49 Z"/>
+        </g>
+    </g>
+</svg>

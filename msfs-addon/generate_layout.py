@@ -1,12 +1,16 @@
 import os
 import json
 
-addon_dir = os.path.join(os.path.dirname(os.path.abspath(__file__)), "maximus-ingamepanels-custom")
+addon_dir = os.path.join(os.path.dirname(os.path.abspath(__file__)), "fstrak-ingame-panel")
 content = []
 
+SKIP_DIRS = {"Build", "_Temp"}
+
 for root, dirs, files in os.walk(addon_dir):
+    # Skip Build and temp directories — not part of the MSFS runtime package
+    dirs[:] = [d for d in dirs if d not in SKIP_DIRS]
     for fname in files:
-        if fname == "layout.json":
+        if fname in ("layout.json", "README.txt"):
             continue
         fpath = os.path.join(root, fname)
         rel = os.path.relpath(fpath, addon_dir).replace("\\", "/")
