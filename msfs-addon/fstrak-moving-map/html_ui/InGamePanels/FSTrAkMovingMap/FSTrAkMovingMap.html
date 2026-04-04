@@ -703,8 +703,16 @@ html, body { width: 100%; height: 100%; background: #1a1a2e; overflow: hidden; }
   transform-origin: center center;
 }
 </style>
+<script type="text/javascript" src="/JS/coherent.js"></script>
+<script type="text/javascript" src="/JS/common.js"></script>
+<link rel="import" href="/templates/ingameUi/ingameUi.html" />
+<link rel="import" href="/templates/ingameUiHeader/ingameUiHeader.html" />
 </head>
 <body>
+<ingamepanel-custom>
+<ingame-ui id="FSTrAkMovingMap" panel-id="PANEL_FSTRAK_MOVING_MAP"
+  title="FSTrAk Moving Map" class="ingameUiFrame panelInvisible"
+  content-fit="false" min-width="400" min-height="300">
 
 <div id="hud">
   <span id="hud-alt">ALT: --- ft</span>
@@ -944,5 +952,7 @@ document.getElementById('btn-atc').addEventListener('click', async () => {
 fetchAtcState();
 setInterval(fetchAtcState, 30000);
 </script>
+</ingame-ui>
+</ingamepanel-custom>
 </body>
 </html>

@@ -2,13 +2,13 @@
   "content": [
     {
       "path": "manifest.json",
-      "size": 298,
-      "date": 134197819299303694
+      "size": 541,
+      "date": 134197845782374646
     },
     {
-      "path": "html_ui/panel/index.html",
-      "size": 172286,
-      "date": 134197830150614140
+      "path": "html_ui/InGamePanels/FSTrAkMovingMap/FSTrAkMovingMap.html",
+      "size": 172861,
+      "date": 134197845628776824
     }
   ]
 }
