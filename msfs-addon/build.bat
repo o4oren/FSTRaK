@@ -14,7 +14,7 @@ if not exist %TOOL% (
     exit /b 1
 )
 
-%TOOL% "fstrak-ingame-panel\Build\fstrak-ingame-panel.xml" -nomirroring
+%TOOL% "fstrak-ingame-panel\Build\fstrak-ingame-panel.xml"
 
 if %errorlevel% neq 0 (
     echo ERROR: Build failed. See output above.
