@@ -1,81 +1,43 @@
 @echo off
 echo Building FSTrAk InGame Panel SPB...
 
-REM Get the directory of this batch file (no trailing backslash)
-set BAT_DIR=%~dp0
-set BAT_DIR=%BAT_DIR:~0,-1%
-
-REM fspackagetool.exe path — MSFS SDK sets MSFS_SDK env var automatically.
-REM Strip any trailing backslash from MSFS_SDK before appending our path.
 if "%MSFS_SDK%"=="" set MSFS_SDK=C:\MSFS SDK
 if "%MSFS_SDK:~-1%"=="\" set MSFS_SDK=%MSFS_SDK:~0,-1%
 
 set TOOL=%MSFS_SDK%\Tools\bin\fspackagetool.exe
+set BAT_DIR=%~dp0
+set BAT_DIR=%BAT_DIR:~0,-1%
 
 if not exist "%TOOL%" (
     echo ERROR: fspackagetool.exe not found at: %TOOL%
-    echo Please install the MSFS SDK or update the MSFS_SDK path in this file.
     pause
     exit /b 1
 )
 
-set PROJECT=%BAT_DIR%\fstrak-ingame-panel\Build\fstrak-ingame-panel.xml
-
-if not exist "%PROJECT%" (
-    echo ERROR: Project file not found at: %PROJECT%
-    pause
-    exit /b 1
-)
-
-echo Tool:    %TOOL%
-echo WorkDir: %BAT_DIR%\fstrak-ingame-panel
+echo Tool: %TOOL%
 echo.
 
-REM Try calling fspackagetool with the package definition directly
-REM Run from fstrak-ingame-panel\ so PackageSources\ and Build\ resolve correctly
 pushd "%BAT_DIR%\fstrak-ingame-panel"
-echo Running fspackagetool...
-"%TOOL%" "Build\fstrak-ingame-panel.xml" -outputdir "." -tempdir "_Temp" -nopause 2>&1
+"%TOOL%" package.xml 2>&1
 set BUILD_RESULT=%errorlevel%
-echo Exit: %BUILD_RESULT%
-echo.
-echo Full directory listing after build:
-dir /s /b 2>&1
 popd
+
 echo.
 echo fspackagetool exit code: %BUILD_RESULT%
 echo.
 
-REM Show whatever the tool produced
-echo Listing fstrak-ingame-panel directory after tool run:
-dir "%BAT_DIR%\fstrak-ingame-panel\" /s /b 2>&1
-echo.
-
 if %BUILD_RESULT% neq 0 (
-    echo ERROR: Build failed with exit code %BUILD_RESULT%.
+    echo ERROR: Build failed.
+    echo Listing output directory:
+    dir "%BAT_DIR%\fstrak-ingame-panel" /s /b 2>&1
     pause
     exit /b 1
 )
-
-set SPB_SRC=%BAT_DIR%\fstrak-ingame-panel\Packages\fstrak-ingame-panel\fstrak-ingame-panel.spb
-set SPB_DST=%BAT_DIR%\fstrak-ingame-panel\InGamePanels\
 
 echo Copying SPB...
-echo From: %SPB_SRC%
-echo To:   %SPB_DST%
-
-copy /Y "%SPB_SRC%" "%SPB_DST%"
-
-if %errorlevel% neq 0 (
-    echo ERROR: Copy failed.
-    echo Expected SPB at: %SPB_SRC%
-    echo Listing Build\Packages output:
-    dir "%BAT_DIR%\fstrak-ingame-panel\Build\Packages\" /s /b 2>&1
-    pause
-    exit /b 1
-)
+copy /Y "%BAT_DIR%\fstrak-ingame-panel\Packages\fstrak-ingame-panel\InGamePanels\fstrak-ingame-panel.spb" "%BAT_DIR%\fstrak-ingame-panel\InGamePanels\"
 
 echo.
-echo Build complete. fstrak-ingame-panel.spb is ready.
-echo Copy the fstrak-ingame-panel\ folder to your MSFS Community folder.
+echo Build complete! Now run: python generate_layout.py
+echo Then copy fstrak-ingame-panel\ to your MSFS Community folder.
 pause

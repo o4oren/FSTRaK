@@ -2,28 +2,8 @@
   "content": [
     {
       "path": "manifest.json",
-      "size": 535,
-      "date": 134197872651387922
-    },
-    {
-      "path": "html_ui/Textures/Menu/toolbar/ICON_TOOLBAR_FSTRAK_INGAME_PANEL.svg",
-      "size": 824,
-      "date": 134197872433559024
-    },
-    {
-      "path": "html_ui/InGamePanels/CustomPanel/CustomPanel.css",
-      "size": 1268,
-      "date": 134197872433412294
-    },
-    {
-      "path": "html_ui/InGamePanels/CustomPanel/CustomPanel.js",
-      "size": 4557,
-      "date": 134197872433477294
-    },
-    {
-      "path": "html_ui/InGamePanels/CustomPanel/CustomPanel.html",
-      "size": 1766,
-      "date": 134197872433347904
+      "size": 471,
+      "date": 134197932509305780
     }
   ]
 }

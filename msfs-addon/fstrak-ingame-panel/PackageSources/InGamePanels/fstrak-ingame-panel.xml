@@ -1,0 +1,17 @@
+<SimBase.Document Type="InGamePanels" version="1,0">
+	<InGamePanel>
+		<ID>PANEL_FSTRAK_MOVING_MAP</ID>
+		<Name>FSTrAk Moving Map</Name>
+		<URL>html_ui/InGamePanels/CustomPanel/CustomPanel.html</URL>
+		<ResizableX>true</ResizableX>
+		<ResizableY>true</ResizableY>
+		<MinX>400</MinX>
+		<MinY>300</MinY>
+		<DefaultX>600</DefaultX>
+		<DefaultY>450</DefaultY>
+		<DefaultPositionTop>50</DefaultPositionTop>
+		<DefaultPositionRight>10</DefaultPositionRight>
+		<ToolbarIcon>ICON_TOOLBAR_FSTRAK_INGAME_PANEL</ToolbarIcon>
+		<ToolBarButtonVisible>true</ToolBarButtonVisible>
+	</InGamePanel>
+</SimBase.Document>
