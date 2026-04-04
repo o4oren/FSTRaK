@@ -1,0 +1,15 @@
+{
+  "dependencies": [],
+  "content_type": "PANEL",
+  "title": "FSTrAk Moving Map",
+  "manufacturer": "FSTrAk",
+  "creator": "FSTrAk",
+  "package_version": "1.0.0",
+  "minimum_game_version": "1.0.0",
+  "release_notes": {
+    "neutral": {
+      "LastUpdate": "",
+      "OlderHistory": ""
+    }
+  }
+}
