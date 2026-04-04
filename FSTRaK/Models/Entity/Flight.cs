@@ -17,7 +17,17 @@ namespace FSTRaK.Models
     {
         [Column("ID")]
         public int Id { get; set; }
-        public virtual Aircraft Aircraft { get; set; }
+        private Aircraft _aircraft;
+        public virtual Aircraft Aircraft
+        {
+            get => _aircraft;
+            set
+            {
+                if (_aircraft == value) return;
+                _aircraft = value;
+                OnPropertyChanged();
+            }
+        }
 
         [Index(nameof(DepartureAirport))]
         public String DepartureAirport { get; set; }
@@ -104,7 +114,17 @@ namespace FSTRaK.Models
             }
         }
 
-        public string Comment { get; set; }
+        private string _comment;
+        public string Comment
+        {
+            get => _comment;
+            set
+            {
+                if (_comment == value) return;
+                _comment = value;
+                OnPropertyChanged();
+            }
+        }
 
 
         public Flight()
