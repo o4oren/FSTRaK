@@ -4,10 +4,8 @@ using Serilog;
 using System;
 using System.Collections.Concurrent;
 using System.Collections.Generic;
-using System.IO;
 using System.Net.Http;
 using System.Threading.Tasks;
-using System.Windows.Media.Imaging;
 
 namespace FSTRaK.BusinessLogic.TileServer
 {
@@ -83,16 +81,18 @@ namespace FSTRaK.BusinessLogic.TileServer
 
             try
             {
-                var response = await _httpClient.GetAsync(url);
-                if (!response.IsSuccessStatusCode)
+                using (var response = await _httpClient.GetAsync(url))
                 {
-                    Log.Debug("TileProxyService: upstream returned {Status} for {Url}", (int)response.StatusCode, url);
-                    return null;
-                }
+                    if (!response.IsSuccessStatusCode)
+                    {
+                        Log.Debug("TileProxyService: upstream returned {Status} for {Url}", (int)response.StatusCode, url);
+                        return null;
+                    }
 
-                var bytes = await response.Content.ReadAsByteArrayAsync();
-                AddToCache(cacheKey, bytes);
-                return bytes;
+                    var bytes = await response.Content.ReadAsByteArrayAsync();
+                    AddToCache(cacheKey, bytes);
+                    return bytes;
+                }
             }
             catch (Exception ex)
             {
@@ -104,22 +104,11 @@ namespace FSTRaK.BusinessLogic.TileServer
         private async Task<byte[]> GetMBTileAsync(MBTilesMapTileLayer layer, int z, int x, int y)
         {
             if (layer.TileSource == null) return null;
+            var source = layer.TileSource as MBTilesTileSource;
+            if (source == null) return null;
             try
             {
-                var imageSource = await layer.TileSource.LoadImageAsync(x, y, z);
-                if (imageSource == null) return null;
-
-                // Encode BitmapSource → PNG bytes
-                var bitmap = imageSource as BitmapSource;
-                if (bitmap == null) return null;
-
-                using (var ms = new MemoryStream())
-                {
-                    var encoder = new PngBitmapEncoder();
-                    encoder.Frames.Add(BitmapFrame.Create(bitmap));
-                    encoder.Save(ms);
-                    return ms.ToArray();
-                }
+                return await source.GetRawBytesAsync(x, y, z);
             }
             catch (Exception ex)
             {

@@ -52,5 +52,32 @@ namespace FSTRaK.Utils
                 }
             }
         }
+
+        public async Task<byte[]> GetRawBytesAsync(int column, int row, int zoomLevel)
+        {
+            if (!File.Exists(_filePath))
+                return null;
+
+            var tmsRow = (1 << zoomLevel) - 1 - row;
+
+            var csb = new SQLiteConnectionStringBuilder { DataSource = _filePath, ReadOnly = true, Version = 3 };
+            using (var connection = new SQLiteConnection(csb.ToString()))
+            {
+                await connection.OpenAsync();
+                using (var cmd = connection.CreateCommand())
+                {
+                    cmd.CommandText = "SELECT tile_data FROM tiles WHERE zoom_level=@z AND tile_column=@col AND tile_row=@row";
+                    cmd.Parameters.AddWithValue("@z", zoomLevel);
+                    cmd.Parameters.AddWithValue("@col", column);
+                    cmd.Parameters.AddWithValue("@row", tmsRow);
+
+                    var result = await cmd.ExecuteScalarAsync();
+                    if (result == null || result == DBNull.Value)
+                        return null;
+
+                    return (byte[])result;
+                }
+            }
+        }
     }
 }
