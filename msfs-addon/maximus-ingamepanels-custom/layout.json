@@ -1,0 +1,34 @@
+{
+  "content": [
+    {
+      "path": "manifest.json",
+      "size": 535,
+      "date": 134197866211238148
+    },
+    {
+      "path": "InGamePanels/maximus-ingamepanels-custom.spb",
+      "size": 698,
+      "date": 134197865734832166
+    },
+    {
+      "path": "html_ui/Textures/Menu/toolbar/ICON_TOOLBAR_MAXIMUS_CUSTOM_PANEL.svg",
+      "size": 2641,
+      "date": 134197865738092278
+    },
+    {
+      "path": "html_ui/InGamePanels/CustomPanel/CustomPanel.css",
+      "size": 1268,
+      "date": 134197865969296972
+    },
+    {
+      "path": "html_ui/InGamePanels/CustomPanel/CustomPanel.js",
+      "size": 4557,
+      "date": 134197866138576002
+    },
+    {
+      "path": "html_ui/InGamePanels/CustomPanel/CustomPanel.html",
+      "size": 1766,
+      "date": 134197865887654272
+    }
+  ]
+}

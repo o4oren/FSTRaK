@@ -30,6 +30,7 @@ namespace FSTRaK.BusinessLogic.TileServer
         private TileHandler _tileHandler;
         private readonly NetworkStateHandler _networkStateHandler = new NetworkStateHandler();
         private readonly NetworkToggleHandler _networkToggleHandler = new NetworkToggleHandler();
+        private readonly PanelHandler _panelHandler = new PanelHandler();
 
         public bool IsRunning { get; private set; }
         public int Port { get; private set; }
@@ -128,6 +129,10 @@ namespace FSTRaK.BusinessLogic.TileServer
                 else if (path.Equals("network/atc/toggle", StringComparison.OrdinalIgnoreCase) && method == "POST")
                 {
                     await _networkToggleHandler.HandleAsync(context);
+                }
+                else if (path.Equals("panel", StringComparison.OrdinalIgnoreCase) && method == "GET")
+                {
+                    await _panelHandler.HandleAsync(context);
                 }
                 else
                 {

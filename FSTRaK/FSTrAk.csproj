@@ -124,6 +124,7 @@
     <Compile Include="BusinessLogic\FlightManager\State\TaxiOutState.cs" />
     <Compile Include="BusinessLogic\TileServer\NetworkStateHandler.cs" />
     <Compile Include="BusinessLogic\TileServer\NetworkToggleHandler.cs" />
+    <Compile Include="BusinessLogic\TileServer\PanelHandler.cs" />
     <Compile Include="BusinessLogic\TileServer\TileHandler.cs" />
     <Compile Include="BusinessLogic\TileServer\TileProxyService.cs" />
     <Compile Include="BusinessLogic\TileServer\TileServer.cs" />

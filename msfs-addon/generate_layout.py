@@ -1,7 +1,7 @@
 import os
 import json
 
-addon_dir = os.path.join(os.path.dirname(os.path.abspath(__file__)), "fstrak-moving-map")
+addon_dir = os.path.join(os.path.dirname(os.path.abspath(__file__)), "maximus-ingamepanels-custom")
 content = []
 
 for root, dirs, files in os.walk(addon_dir):
