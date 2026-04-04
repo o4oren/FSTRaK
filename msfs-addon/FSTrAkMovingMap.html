@@ -668,7 +668,7 @@ svg.leaflet-image-layer.leaflet-interactive path {
 
 
 * { margin: 0; padding: 0; box-sizing: border-box; }
-html, body { width: 100%; height: 100%; background: transparent; overflow: hidden; }
+html, body { width: 100%; height: 100%; background: #1a1a2e; overflow: hidden; }
 #map { width: 100%; height: 100%; }
 
 #hud {
@@ -703,18 +703,8 @@ html, body { width: 100%; height: 100%; background: transparent; overflow: hidde
   transform-origin: center center;
 }
 </style>
-<script type="text/javascript" src="/JS/coherent.js"></script>
-<script type="text/javascript" src="/JS/common.js"></script>
-<script type="text/javascript" src="/JS/dataStorage.js"></script>
-<script type="text/javascript" src="/JS/buttons.js"></script>
-<script type="text/javascript" src="/JS/Services/ToolBarPanels.js"></script>
-<script type="text/javascript" src="/Pages/VCockpit/Instruments/Shared/BaseInstrument.js"></script>
-<link rel="import" href="/templates/ingameUi/ingameUi.html" />
-<link rel="import" href="/templates/ingameUiHeader/ingameUiHeader.html" />
 </head>
 <body>
-<ingamepanel-custom>
-<ingame-ui id="CustomPanel" panel-id="PANEL_FSTRAK_MOVING_MAP" title="FSTrAk Moving Map" class="ingameUiFrame panelInvisible" content-fit="true" min-width="400" min-height="300">
 
 <div id="hud">
   <span id="hud-alt">ALT: --- ft</span>
@@ -724,7 +714,7 @@ html, body { width: 100%; height: 100%; background: transparent; overflow: hidde
 
 <div id="map"></div>
 
-<button id="btn-recenter" title="Center on aircraft"><svg width="20" height="20" viewBox="0 0 20 20"><path d="M10 1 L12 13 L10 11 L8 13 Z" fill="white"/><path d="M5 9 L10 7 L15 9 L15 10 L10 9.5 L5 10 Z" fill="white"/></svg></button>
+<button id="btn-recenter" title="Center on aircraft">&#9992;</button>
 <button id="btn-atc" title="Toggle ATC">ATC</button>
 
 <script>
@@ -953,18 +943,6 @@ document.getElementById('btn-atc').addEventListener('click', async () => {
 // Initial fetch and periodic refresh
 fetchAtcState();
 setInterval(fetchAtcState, 30000);
-</script>
-</ingame-ui>
-</ingamepanel-custom>
-<script>
-class IngamePanelCustomPanel extends TemplateElement {
-    constructor() { super(...arguments); this.initialize(); }
-    connectedCallback() { super.connectedCallback(); }
-    initialize() {}
-    disconnectedCallback() { super.disconnectedCallback(); }
-}
-window.customElements.define("ingamepanel-custom", IngamePanelCustomPanel);
-checkAutoload();
 </script>
 </body>
 </html>
