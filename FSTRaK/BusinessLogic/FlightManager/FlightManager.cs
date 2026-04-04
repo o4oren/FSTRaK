@@ -115,6 +115,13 @@ namespace FSTRaK.BusinessLogic.FlightManager
             }
         }
 
+        public event EventHandler<int> FlightSaved;
+
+        internal void OnFlightSaved(int flightId)
+        {
+            FlightSaved?.Invoke(this, flightId);
+        }
+
         private NearestAirportRequestType _nearestAirportRequestType = NearestAirportRequestType.Departure;
 
         private void SimconnectService_OnPropertyChange(object sender, PropertyChangedEventArgs e)
