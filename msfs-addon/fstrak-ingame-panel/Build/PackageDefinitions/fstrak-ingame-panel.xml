@@ -15,8 +15,8 @@
 			<Flags>
 				<FSXCompatibility>false</FSXCompatibility>
 			</Flags>
-			<AssetDir>..\PackageSources\</AssetDir>
-			<OutputDir>..\</OutputDir>
+			<AssetDir>PackageSources\</AssetDir>
+			<OutputDir>Build\</OutputDir>
 		</AssetGroup>
 	</AssetGroups>
 </AssetPackage>

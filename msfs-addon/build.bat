@@ -28,27 +28,26 @@ if not exist "%PROJECT%" (
 )
 
 echo Tool:    %TOOL%
-echo Project: %PROJECT%
+echo Project: Build\fstrak-ingame-panel.xml
+echo WorkDir: %BAT_DIR%\fstrak-ingame-panel
 echo.
 
-"%TOOL%" "%PROJECT%" 2>&1
+REM Run from fstrak-ingame-panel\ so PackageSources\ resolves correctly
+pushd "%BAT_DIR%\fstrak-ingame-panel"
+"%TOOL%" "Build\fstrak-ingame-panel.xml" 2>&1
+set BUILD_RESULT=%errorlevel%
+popd
 echo.
-echo fspackagetool exit code: %errorlevel%
+echo fspackagetool exit code: %BUILD_RESULT%
 echo.
 
 REM Show whatever the tool produced
-echo Listing Build directory after tool run:
-dir "%BAT_DIR%\fstrak-ingame-panel\Build\" /s /b 2>&1
+echo Listing fstrak-ingame-panel directory after tool run:
+dir "%BAT_DIR%\fstrak-ingame-panel\" /s /b 2>&1
 echo.
 
-REM Check for any log files
-if exist "%BAT_DIR%\fstrak-ingame-panel\Build\_Temp" (
-    echo _Temp directory contents:
-    dir "%BAT_DIR%\fstrak-ingame-panel\Build\_Temp\" /s /b 2>&1
-)
-
-if %errorlevel% neq 0 (
-    echo ERROR: Build failed with exit code %errorlevel%.
+if %BUILD_RESULT% neq 0 (
+    echo ERROR: Build failed with exit code %BUILD_RESULT%.
     pause
     exit /b 1
 )
