@@ -15,6 +15,7 @@ namespace FSTRaK.ViewModels
         
 
         private readonly LiveViewViewModel _liveViewViewModel;
+        public LiveViewViewModel LiveViewViewModel => _liveViewViewModel;
         private readonly SettingsViewModel _settingsViewModel;
         private readonly LogbookViewModel _logbookViewModel;
         private readonly StatisticsViewModel _statisticsViewModel;

@@ -30,6 +30,8 @@ namespace FSTRaK.Views
         private void OnLoad(object sender, RoutedEventArgs e)
         {
             _flightManager.Initialize();
+            if (DataContext is ViewModels.MainWindowViewModel mainVm)
+                App.LiveViewViewModel = mainVm.LiveViewViewModel;
 
             // Tray icon
             var iconStream = Application.GetResourceStream(new Uri(@"pack://application:,,,/Resources/Images/FSTrAk.ico"))?.Stream;
