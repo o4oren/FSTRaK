@@ -882,6 +882,7 @@ function renderAtcState(state) {
   // Airport markers, polygons/circles
   if (state.airports) {
     for (const airport of state.airports) {
+      try {
       // Dot marker
       const dotIcon = L.divIcon({
         className: '',
@@ -914,6 +915,7 @@ function renderAtcState(state) {
           fillOpacity: 0.06
         }).addTo(atcLayer);
       }
+      } catch (e) { /* skip malformed airport entry */ }
     }
   }
 }
