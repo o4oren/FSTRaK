@@ -34,24 +34,13 @@ echo.
 REM Try calling fspackagetool with the package definition directly
 REM Run from fstrak-ingame-panel\ so PackageSources\ and Build\ resolve correctly
 pushd "%BAT_DIR%\fstrak-ingame-panel"
-echo Attempt 1: project XML...
-"%TOOL%" "Build\fstrak-ingame-panel.xml" 2>&1
+echo Running fspackagetool...
+"%TOOL%" "Build\fstrak-ingame-panel.xml" -outputdir "." -tempdir "_Temp" -nopause 2>&1
 set BUILD_RESULT=%errorlevel%
 echo Exit: %BUILD_RESULT%
-if %BUILD_RESULT% neq 0 (
-    echo.
-    echo Attempt 2: package definition XML directly...
-    "%TOOL%" "Build\PackageDefinitions\fstrak-ingame-panel.xml" 2>&1
-    set BUILD_RESULT=%errorlevel%
-    echo Exit: %BUILD_RESULT%
-)
-if %BUILD_RESULT% neq 0 (
-    echo.
-    echo Attempt 3: fspackagetool --help to see available options...
-    "%TOOL%" --help 2>&1
-    "%TOOL%" -help 2>&1
-    "%TOOL%" /? 2>&1
-)
+echo.
+echo Full directory listing after build:
+dir /s /b 2>&1
 popd
 echo.
 echo fspackagetool exit code: %BUILD_RESULT%
@@ -68,7 +57,7 @@ if %BUILD_RESULT% neq 0 (
     exit /b 1
 )
 
-set SPB_SRC=%BAT_DIR%\fstrak-ingame-panel\Build\Packages\fstrak-ingame-panel\fstrak-ingame-panel.spb
+set SPB_SRC=%BAT_DIR%\fstrak-ingame-panel\Packages\fstrak-ingame-panel\fstrak-ingame-panel.spb
 set SPB_DST=%BAT_DIR%\fstrak-ingame-panel\InGamePanels\
 
 echo Copying SPB...
