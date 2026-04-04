@@ -6,6 +6,7 @@ using System.Windows;
 using System.Windows.Forms;
 using System.Windows.Input;
 using FSTRaK.BusinessLogic.FlightManager;
+using FSTRaK.BusinessLogic.TileServer;
 using Application = System.Windows.Application;
 using System.Threading.Tasks;
 
@@ -30,6 +31,8 @@ namespace FSTRaK.Views
         private void OnLoad(object sender, RoutedEventArgs e)
         {
             _flightManager.Initialize();
+            if (DataContext is ViewModels.MainWindowViewModel mainVm)
+                App.LiveViewViewModel = mainVm.LiveViewViewModel;
 
             // Tray icon
             var iconStream = Application.GetResourceStream(new Uri(@"pack://application:,,,/Resources/Images/FSTrAk.ico"))?.Stream;
@@ -81,6 +84,8 @@ namespace FSTRaK.Views
 
             ImageLoader.HttpClient.DefaultRequestHeaders.Add("User-Agent", "FSTrAk - Flight Simulator logbook and tracker");
             Task.Run(() => TileImageLoader.Cache = new SQLiteCache(PathUtil.GetApplicationLocalDataPath()));
+            if (Properties.Settings.Default.IsTileServerEnabled)
+                TileServer.Instance.Start();
 
             if (Properties.Settings.Default.IsStartMinimized)
             {

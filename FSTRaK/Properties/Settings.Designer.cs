@@ -346,5 +346,29 @@ namespace FSTRaK.Properties {
                 this["OpenAipApiKey"] = value;
             }
         }
+
+        [global::System.Configuration.UserScopedSettingAttribute()]
+        [global::System.Diagnostics.DebuggerNonUserCodeAttribute()]
+        [global::System.Configuration.DefaultSettingValueAttribute("8765")]
+        public int TileServerPort {
+            get {
+                return ((int)(this["TileServerPort"]));
+            }
+            set {
+                this["TileServerPort"] = value;
+            }
+        }
+
+        [global::System.Configuration.UserScopedSettingAttribute()]
+        [global::System.Diagnostics.DebuggerNonUserCodeAttribute()]
+        [global::System.Configuration.DefaultSettingValueAttribute("False")]
+        public bool IsTileServerEnabled {
+            get {
+                return ((bool)(this["IsTileServerEnabled"]));
+            }
+            set {
+                this["IsTileServerEnabled"] = value;
+            }
+        }
     }
 }

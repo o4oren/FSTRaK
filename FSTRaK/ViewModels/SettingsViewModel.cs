@@ -40,6 +40,7 @@ namespace FSTRaK.ViewModels
                     else
                         IsShowMapTilerApiKeyField = false;
 
+                    BusinessLogic.TileServer.TileServer.Instance.ClearTileCache();
                 }
                 OnPropertyChanged();
             }
@@ -168,6 +169,52 @@ namespace FSTRaK.ViewModels
                 OnPropertyChanged();
             }
         }
+
+        public bool IsTileServerEnabled
+        {
+            get => Properties.Settings.Default.IsTileServerEnabled;
+            set
+            {
+                Properties.Settings.Default.IsTileServerEnabled = value;
+                OnPropertyChanged();
+                if (value)
+                    BusinessLogic.TileServer.TileServer.Instance.Start();
+                else
+                    BusinessLogic.TileServer.TileServer.Instance.Stop();
+                OnPropertyChanged(nameof(TileServerStatus));
+                OnPropertyChanged(nameof(TileServerIsRunning));
+            }
+        }
+
+        public int TileServerPort
+        {
+            get => Properties.Settings.Default.TileServerPort;
+            set
+            {
+                if (value < 1024 || value > 65535)
+                {
+                    OnPropertyChanged(); // revert TextBox to stored value
+                    return;
+                }
+                Properties.Settings.Default.TileServerPort = value;
+                OnPropertyChanged();
+            }
+        }
+
+        public string TileServerStatus
+        {
+            get
+            {
+                if (!Properties.Settings.Default.IsTileServerEnabled)
+                    return "● Disabled";
+                var ts = BusinessLogic.TileServer.TileServer.Instance;
+                return ts.IsRunning
+                    ? $"● Running on http://localhost:{ts.Port}/"
+                    : "● Failed to start — port in use";
+            }
+        }
+
+        public bool TileServerIsRunning => BusinessLogic.TileServer.TileServer.Instance.IsRunning;
 
         private bool _isSaveOnlyCompleteFlights;
 
@@ -419,6 +466,9 @@ namespace FSTRaK.ViewModels
                 ? "—" : Properties.Settings.Default.TraconBoundaryReleaseTag;
             VatSpyTag = string.IsNullOrEmpty(Properties.Settings.Default.VatSpyReleaseTag)
                 ? "—" : Properties.Settings.Default.VatSpyReleaseTag;
+
+            OnPropertyChanged(nameof(TileServerStatus));
+            OnPropertyChanged(nameof(TileServerIsRunning));
         }
 
         public void SaveSettings()

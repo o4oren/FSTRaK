@@ -83,5 +83,11 @@
     <Setting Name="OpenAipApiKey" Type="System.String" Scope="User">
       <Value Profile="(Default)" />
     </Setting>
+    <Setting Name="TileServerPort" Type="System.Int32" Scope="User">
+      <Value Profile="(Default)">8765</Value>
+    </Setting>
+    <Setting Name="IsTileServerEnabled" Type="System.Boolean" Scope="User">
+      <Value Profile="(Default)">False</Value>
+    </Setting>
   </Settings>
 </SettingsFile>

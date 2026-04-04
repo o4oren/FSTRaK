@@ -9,7 +9,7 @@
              xmlns:System="clr-namespace:System;assembly=mscorlib"
              d:DataContext="{d:DesignInstance Type=viewmodels:SettingsViewModel}"
              d:DesignHeight="750"
-             Loaded="OnLoaded" Width="986"
+             Loaded="OnLoaded"
 >
     <UserControl.Resources>
         <ObjectDataProvider x:Key="dataFromEnum" MethodName="GetValues"
@@ -21,7 +21,7 @@
     </UserControl.Resources>
 
     <DockPanel>
-        <!-- About footer docked to the bottom -->
+        <!-- About footer docked to the bottom — always visible -->
         <Separator DockPanel.Dock="Bottom" Background="{DynamicResource ControlBackgroundColorBrush}" Margin="0"/>
         <Border DockPanel.Dock="Bottom"
                 Padding="20,12">
@@ -112,197 +112,239 @@
             </StackPanel>
         </Border>
 
-        <!-- Existing two-column settings area -->
-        <StackPanel Orientation="Horizontal">
-            <StackPanel Margin="10">
-                <StackPanel Orientation="Horizontal" Margin="10" ToolTipService.ShowDuration="5000">
-                    <Label Style="{DynamicResource FSTrAkLabel}" Width="250">Font</Label>
-                    <ComboBox FontFamily="{DynamicResource CurrentFont}"
+        <!-- Scrollable settings area -->
+        <ScrollViewer HorizontalScrollBarVisibility="Auto" VerticalScrollBarVisibility="Auto">
+            <StackPanel Orientation="Horizontal">
+
+                <!-- Left column: map / appearance -->
+                <StackPanel Margin="10">
+                    <StackPanel Orientation="Horizontal" Margin="10" ToolTipService.ShowDuration="5000">
+                        <Label Style="{DynamicResource FSTrAkLabel}" Width="250">Font</Label>
+                        <ComboBox FontFamily="{DynamicResource CurrentFont}"
+                                  Foreground="{DynamicResource TextColor}"
+                                  FontSize="{DynamicResource ControlFontSize}"
+                                  Width="200"
+                                  ItemsSource="{Binding Fonts}"
+                                  SelectedItem="{Binding FontName}"/>
+                        <StackPanel.ToolTip>
+                            Select the font for FSTrAk
+                        </StackPanel.ToolTip>
+                    </StackPanel>
+
+                    <StackPanel Orientation="Horizontal" Margin="10" ToolTipService.ShowDuration="5000">
+                        <Label Style="{DynamicResource FSTrAkLabel}" Width="250">Theme</Label>
+                        <ComboBox FontFamily="{DynamicResource CurrentFont}"
+                                  Foreground="{DynamicResource TextColor}"
+                                  FontSize="{DynamicResource ControlFontSize}"
+                                  Width="200"
+                                  ItemsSource="{Binding Themes}"
+                                  SelectedItem="{Binding Theme}"/>
+                        <StackPanel.ToolTip>
+                            Select the theme for FSTrAk
+                        </StackPanel.ToolTip>
+                    </StackPanel>
+
+                    <StackPanel Orientation="Horizontal" Margin="10" ToolTipService.ShowDuration="5000">
+                        <Label Style="{DynamicResource FSTrAkLabel}" Width="250">Map tiles Provider</Label>
+                        <ComboBox FontFamily="{DynamicResource CurrentFont}"
                               Foreground="{DynamicResource TextColor}"
                               FontSize="{DynamicResource ControlFontSize}"
                               Width="200"
-                              ItemsSource="{Binding Fonts}"
-                              SelectedItem="{Binding FontName}"/>
-                    <StackPanel.ToolTip>
-                        Select the font for FSTrAk
-                    </StackPanel.ToolTip>
+                              ItemsSource="{Binding MapProviders}"
+                              SelectedItem="{Binding SelectedMapProvider}"/>
+                        <StackPanel.ToolTip>
+                            Select the map provider for FSTrAk
+                        </StackPanel.ToolTip>
+                    </StackPanel>
+
+                    <StackPanel Orientation="Horizontal" Margin="10" Visibility="{Binding IsShowBingApiKeyField, Converter={StaticResource BoolToVis}}" ToolTipService.ShowDuration="5000">
+                        <Label  Style="{DynamicResource FSTrAkLabel}" Width="250">Azure Maps Key</Label>
+                        <TextBox FontFamily="{DynamicResource CurrentFont}" Foreground="{DynamicResource TextColor}" Background="{DynamicResource ControlBackgroundColorBrush}" FontSize="{DynamicResource ControlFontSize}" Text="{Binding BingApiKey}" Width="200" Cursor="Arrow" TextAlignment="Center" Padding="0 6 0 0"/>
+                        <StackPanel.ToolTip>
+                            Azure Maps require a subscription key.
+                            Please see https://learn.microsoft.com/en-us/azure/azure-maps/how-to-manage-authentication
+                        </StackPanel.ToolTip>
+                    </StackPanel>
+
+                    <StackPanel Orientation="Horizontal" Margin="10" Visibility="{Binding IsShowMapTilerApiKeyField, Converter={StaticResource BoolToVis}}" ToolTipService.ShowDuration="5000">
+                        <Label  Style="{DynamicResource FSTrAkLabel}" Width="250">Maptiler API Key</Label>
+                        <TextBox FontFamily="{DynamicResource CurrentFont}" Foreground="{DynamicResource TextColor}" Background="{DynamicResource ControlBackgroundColorBrush}" FontSize="{DynamicResource ControlFontSize}" Text="{Binding MapTilerApiKey}" Width="200" Cursor="Arrow" TextAlignment="Center" Padding="0 6 0 0"/>
+                        <StackPanel.ToolTip>
+                            Maptiler maps require an API Key.
+                            Please see the instructions at https://docs.maptiler.com/cloud/api.
+                        </StackPanel.ToolTip>
+                    </StackPanel>
+
+                    <StackPanel Orientation="Horizontal" Margin="10">
+                        <Label Style="{DynamicResource FSTrAkLabel}" Width="250">Map Overlays</Label>
+                    </StackPanel>
+
+                    <StackPanel Orientation="Horizontal" Margin="10" ToolTipService.ShowDuration="5000">
+                        <Label Style="{DynamicResource FSTrAkLabel}" Width="250">Chart Overlay</Label>
+                        <ComboBox FontFamily="{DynamicResource CurrentFont}"
+                                  Foreground="{DynamicResource TextColor}"
+                                  FontSize="{DynamicResource ControlFontSize}"
+                                  Width="200"
+                                  ItemsSource="{Binding ChartOverlayProviders}"
+                                  SelectedItem="{Binding SelectedChartOverlayProvider}"/>
+                        <StackPanel.ToolTip>
+                            Select an aviation chart overlay (FAA, DFS, Israel AIP) to display above the base map
+                        </StackPanel.ToolTip>
+                    </StackPanel>
+
+                    <StackPanel Orientation="Horizontal" Margin="10" ToolTipService.ShowDuration="5000">
+                        <Label Style="{DynamicResource FSTrAkLabel}" Width="250">OpenAIP Overlay</Label>
+                        <CheckBox Style="{DynamicResource SettingsCheckbox}" FontFamily="{DynamicResource CurrentFont}" FontSize="{DynamicResource ListFontSize}" VerticalAlignment="Center" IsChecked="{Binding IsOpenAipEnabled, Mode=TwoWay}"/>
+                        <StackPanel.ToolTip>
+                            Enable OpenAIP airspace and aeronautical data overlay
+                        </StackPanel.ToolTip>
+                    </StackPanel>
+
+                    <StackPanel Orientation="Horizontal" Margin="10" Visibility="{Binding IsShowOpenAipApiKeyField, Converter={StaticResource BoolToVis}}" ToolTipService.ShowDuration="5000">
+                        <Label Style="{DynamicResource FSTrAkLabel}" Width="250">OpenAIP API Key</Label>
+                        <TextBox FontFamily="{DynamicResource CurrentFont}" Foreground="{DynamicResource TextColor}" Background="{DynamicResource ControlBackgroundColorBrush}" FontSize="{DynamicResource ControlFontSize}" Text="{Binding OpenAipApiKey}" Width="200" Cursor="Arrow" TextAlignment="Center" Padding="0 6 0 0"/>
+                        <StackPanel.ToolTip>
+                            OpenAIP requires a free API key. Register at https://www.openaip.net
+                        </StackPanel.ToolTip>
+                    </StackPanel>
+
+                    <StackPanel Orientation="Horizontal" Margin="10" ToolTipService.ShowDuration="5000">
+                        <Label Style="{DynamicResource FSTrAkLabel}" Width="250">Units</Label>
+                        <ComboBox FontFamily="{DynamicResource CurrentFont}" Foreground="{DynamicResource TextColor}" FontSize="{DynamicResource ControlFontSize}" Width="200"
+                              ItemsSource="{Binding Source={StaticResource dataFromEnum}}" SelectedItem="{Binding Units}"/>
+                        <StackPanel.ToolTip>
+                            Select Imperial or Metric weight units
+                        </StackPanel.ToolTip>
+                    </StackPanel>
+
+                    <!-- Tile server -->
+                    <StackPanel Orientation="Horizontal" Margin="10" ToolTipService.ShowDuration="5000">
+                        <Label Style="{DynamicResource FSTrAkLabel}" Width="250">Enable Tile Server</Label>
+                        <CheckBox Style="{DynamicResource SettingsCheckbox}" FontFamily="{DynamicResource CurrentFont}" FontSize="{DynamicResource ListFontSize}" VerticalAlignment="Center" IsChecked="{Binding IsTileServerEnabled, Mode=TwoWay}"/>
+                        <StackPanel.ToolTip>
+                            Start a local HTTP tile server for use with the MSFS in-sim tablet panel
+                        </StackPanel.ToolTip>
+                    </StackPanel>
+                    <StackPanel Orientation="Horizontal" Margin="10" ToolTipService.ShowDuration="5000">
+                        <Label Style="{DynamicResource FSTrAkLabel}" Width="250">Tile Server Port</Label>
+                        <TextBox FontFamily="{DynamicResource CurrentFont}"
+                                 Foreground="{DynamicResource TextColor}"
+                                 Background="{DynamicResource ControlBackgroundColorBrush}"
+                                 FontSize="{DynamicResource ControlFontSize}"
+                                 Width="80"
+                                 IsEnabled="{Binding IsTileServerEnabled}"
+                                 Text="{Binding TileServerPort, UpdateSourceTrigger=PropertyChanged, ValidatesOnExceptions=True}"
+                                 Cursor="Arrow" TextAlignment="Center" Padding="0 6 0 0"/>
+                        <TextBlock FontFamily="{DynamicResource CurrentFont}"
+                                   FontSize="{DynamicResource ListFontSize}"
+                                   Foreground="{DynamicResource UnselectedTextColor}"
+                                   VerticalAlignment="Center"
+                                   Margin="8,0,0,0"
+                                   Text="Restart required to apply port change."/>
+                        <StackPanel.ToolTip>
+                            Port for the local tile server used by the MSFS tablet panel (default: 8765)
+                        </StackPanel.ToolTip>
+                    </StackPanel>
+                    <StackPanel Orientation="Horizontal" Margin="10,4,10,10">
+                        <Label Style="{DynamicResource FSTrAkLabel}" Width="250"/>
+                        <TextBlock FontFamily="{DynamicResource CurrentFont}"
+                                   FontSize="{DynamicResource ListFontSize}"
+                                   Foreground="{DynamicResource TextColor}"
+                                   VerticalAlignment="Center"
+                                   Text="{Binding TileServerStatus}"/>
+                    </StackPanel>
                 </StackPanel>
 
-                <StackPanel Orientation="Horizontal" Margin="10" ToolTipService.ShowDuration="5000">
-                    <Label Style="{DynamicResource FSTrAkLabel}" Width="250">Theme</Label>
-                    <ComboBox FontFamily="{DynamicResource CurrentFont}"
-                              Foreground="{DynamicResource TextColor}"
-                              FontSize="{DynamicResource ControlFontSize}"
-                              Width="200"
-                              ItemsSource="{Binding Themes}"
-                              SelectedItem="{Binding Theme}"/>
-                    <StackPanel.ToolTip>
-                        Select the theme for FSTrAk
-                    </StackPanel.ToolTip>
-                </StackPanel>
+                <!-- Right column: app behaviour / network -->
+                <StackPanel Margin="10">
+                    <StackPanel Orientation="Horizontal" Margin="10" ToolTipService.ShowDuration="5000">
+                        <Label  Style="{DynamicResource FSTrAkLabel}" Width="250">Complete flights only</Label>
+                        <CheckBox Style="{DynamicResource SettingsCheckbox}" FontFamily="{DynamicResource CurrentFont}" FontSize="{DynamicResource ListFontSize}" VerticalAlignment="Center" IsChecked="{Binding IsSaveOnlyCompleteFlights, Mode=TwoWay}"/>
+                        <StackPanel.ToolTip>
+                            Only flights that are started and ended on the ground, fully stopped and with engines off are saved
+                        </StackPanel.ToolTip>
+                    </StackPanel>
+                    <StackPanel Orientation="Horizontal" Margin="10" ToolTipService.ShowDuration="5000">
+                        <Label  Style="{DynamicResource FSTrAkLabel}" Width="250">Launch FSTrAk on login</Label>
+                        <CheckBox Style="{DynamicResource SettingsCheckbox}" FontFamily="{DynamicResource CurrentFont}" FontSize="{DynamicResource ListFontSize}" VerticalAlignment="Center" IsChecked="{Binding IsStartAutomatically, Mode=TwoWay}"/>
+                        <StackPanel.ToolTip>
+                            Automatically start FSTrAk when starting Windows
+                        </StackPanel.ToolTip>
+                    </StackPanel>
+                    <StackPanel Orientation="Horizontal" Margin="10" ToolTipService.ShowDuration="5000">
+                        <Label  Style="{DynamicResource FSTrAkLabel}" Width="250">Launch FSTrAk minimized</Label>
+                        <CheckBox Style="{DynamicResource SettingsCheckbox}" FontFamily="{DynamicResource CurrentFont}" FontSize="{DynamicResource ListFontSize}" VerticalAlignment="Center" IsChecked="{Binding IsStartMinimized, Mode=TwoWay}"/>
+                        <StackPanel.ToolTip>
+                            Launch FSTrAk minimized
+                        </StackPanel.ToolTip>
+                    </StackPanel>
+                    <StackPanel Orientation="Horizontal" Margin="10" ToolTipService.ShowDuration="5000">
+                        <Label  Style="{DynamicResource FSTrAkLabel}" Width="250">Minimize to Tray on Close</Label>
+                        <CheckBox Style="{DynamicResource SettingsCheckbox}" FontFamily="{DynamicResource CurrentFont}" FontSize="{DynamicResource ListFontSize}" VerticalAlignment="Center" IsChecked="{Binding IsMinimizeToTray, Mode=TwoWay}"/>
+                        <StackPanel.ToolTip>
+                            The close button will only close the FSTrAk window, but not terminate the software. You will find it in the system tray
+                        </StackPanel.ToolTip>
+                    </StackPanel>
+                    <StackPanel Orientation="Horizontal" Margin="10" ToolTipService.ShowDuration="5000">
+                        <Label  Style="{DynamicResource FSTrAkLabel}" Width="250">Always on top</Label>
+                        <CheckBox Style="{DynamicResource SettingsCheckbox}" FontFamily="{DynamicResource CurrentFont}" FontSize="{DynamicResource ListFontSize}" VerticalAlignment="Center" IsChecked="{Binding IsAlwaysOnTop, Mode=TwoWay}"/>
+                        <StackPanel.ToolTip>
+                            FSTrAk will be the topmost window
+                        </StackPanel.ToolTip>
+                    </StackPanel>
 
-                <StackPanel Orientation="Horizontal" Margin="10" ToolTipService.ShowDuration="5000">
-                    <Label Style="{DynamicResource FSTrAkLabel}" Width="250">Map tiles Provider</Label>
-                    <ComboBox FontFamily="{DynamicResource CurrentFont}"
-                          Foreground="{DynamicResource TextColor}"
-                          FontSize="{DynamicResource ControlFontSize}"
-                          Width="200"
-                          ItemsSource="{Binding MapProviders}"
-                          SelectedItem="{Binding SelectedMapProvider}"/>
-                    <StackPanel.ToolTip>
-                        Select the map provider for FSTrAk
-                    </StackPanel.ToolTip>
+                    <StackPanel Orientation="Horizontal" Margin="10" ToolTipService.ShowDuration="5000">
+                        <Label Style="{DynamicResource FSTrAkLabel}" Width="250">VATSIM ID</Label>
+                        <TextBox FontFamily="{DynamicResource CurrentFont}"
+                                  Foreground="{DynamicResource TextColor}"
+                                  Background="{DynamicResource ControlBackgroundColorBrush}"
+                                  FontSize="{DynamicResource ControlFontSize}"
+                                  Width="200"
+                                  Text="{Binding VatsimId}" Cursor="Arrow" TextAlignment="Center" Padding="0 6 0 0"/>
+                        <StackPanel.ToolTip>
+                            Type your VATSIM ID to prevent duplicate representation of your aircraft when VATSIM aircraft are shown on the map
+                        </StackPanel.ToolTip>
+                    </StackPanel>
+                    <StackPanel Orientation="Horizontal" Margin="10" ToolTipService.ShowDuration="5000">
+                        <Label Style="{DynamicResource FSTrAkLabel}" Width="250">StatSim API Key</Label>
+                        <TextBox FontFamily="{DynamicResource CurrentFont}"
+                                 Foreground="{DynamicResource TextColor}"
+                                 Background="{DynamicResource ControlBackgroundColorBrush}"
+                                 FontSize="{DynamicResource ControlFontSize}"
+                                 Width="200"
+                                 Text="{Binding StatSimApiKey}" Cursor="Arrow" TextAlignment="Center" Padding="0 6 0 0"/>
+                        <StackPanel.ToolTip>
+                            Optional: Enter your StatSim API key (statsim.net) to enable full VATSIM flight track history
+                        </StackPanel.ToolTip>
+                    </StackPanel>
+                    <StackPanel Orientation="Horizontal" Margin="10" ToolTipService.ShowDuration="5000">
+                        <Label Style="{DynamicResource FSTrAkLabel}" Width="250">IVAO ID</Label>
+                        <TextBox FontFamily="{DynamicResource CurrentFont}"
+                                 Foreground="{DynamicResource TextColor}"
+                                 Background="{DynamicResource ControlBackgroundColorBrush}"
+                                 FontSize="{DynamicResource ControlFontSize}"
+                                 Width="200"
+                                 Text="{Binding IvaoId}" Cursor="Arrow" TextAlignment="Center" Padding="0 6 0 0"/>
+                        <StackPanel.ToolTip>
+                            Type your IVAO ID to prevent duplicate representation of your aircraft when IVAO aircraft are shown on the map
+                        </StackPanel.ToolTip>
+                    </StackPanel>
+                    <StackPanel Orientation="Horizontal" Margin="10" ToolTipService.ShowDuration="5000">
+                        <Label Style="{DynamicResource FSTrAkLabel}" Width="250">IVAO API Key</Label>
+                        <TextBox FontFamily="{DynamicResource CurrentFont}"
+                                 Foreground="{DynamicResource TextColor}"
+                                 Background="{DynamicResource ControlBackgroundColorBrush}"
+                                 FontSize="{DynamicResource ControlFontSize}"
+                                 Width="200"
+                                 Text="{Binding IvaoApiKey}" Cursor="Arrow" TextAlignment="Center" Padding="0 6 0 0"/>
+                        <StackPanel.ToolTip>
+                            Optional: Enter your IVAO API key to enable full flight track history when selecting an IVAO aircraft
+                        </StackPanel.ToolTip>
+                    </StackPanel>
                 </StackPanel>
-
-                <StackPanel Orientation="Horizontal" Margin="10" Visibility="{Binding IsShowBingApiKeyField, Converter={StaticResource BoolToVis}}" ToolTipService.ShowDuration="5000">
-                    <Label  Style="{DynamicResource FSTrAkLabel}" Width="250">Azure Maps Key</Label>
-                    <TextBox FontFamily="{DynamicResource CurrentFont}" Foreground="{DynamicResource TextColor}" Background="{DynamicResource ControlBackgroundColorBrush}" FontSize="{DynamicResource ControlFontSize}" Text="{Binding BingApiKey}" Width="200"/>
-                    <StackPanel.ToolTip>
-                        Azure Maps require a subscription key.
-                        Please see https://learn.microsoft.com/en-us/azure/azure-maps/how-to-manage-authentication
-                    </StackPanel.ToolTip>
-                </StackPanel>
-
-                <StackPanel Orientation="Horizontal" Margin="10" Visibility="{Binding IsShowMapTilerApiKeyField, Converter={StaticResource BoolToVis}}" ToolTipService.ShowDuration="5000">
-                    <Label  Style="{DynamicResource FSTrAkLabel}" Width="250">Maptiler API Key</Label>
-                    <TextBox FontFamily="{DynamicResource CurrentFont}" Foreground="{DynamicResource TextColor}" Background="{DynamicResource ControlBackgroundColorBrush}" FontSize="{DynamicResource ControlFontSize}" Text="{Binding MapTilerApiKey}" Width="200"/>
-                    <StackPanel.ToolTip>
-                        Maptiler maps require an API Key.
-                        Please see the instructions at https://docs.maptiler.com/cloud/api.
-                    </StackPanel.ToolTip>
-                </StackPanel>
-
-                <StackPanel Orientation="Horizontal" Margin="10">
-                    <Label Style="{DynamicResource FSTrAkLabel}" Width="250">Map Overlays</Label>
-                </StackPanel>
-
-                <StackPanel Orientation="Horizontal" Margin="10" ToolTipService.ShowDuration="5000">
-                    <Label Style="{DynamicResource FSTrAkLabel}" Width="250">Chart Overlay</Label>
-                    <ComboBox FontFamily="{DynamicResource CurrentFont}"
-                              Foreground="{DynamicResource TextColor}"
-                              FontSize="{DynamicResource ControlFontSize}"
-                              Width="200"
-                              ItemsSource="{Binding ChartOverlayProviders}"
-                              SelectedItem="{Binding SelectedChartOverlayProvider}"/>
-                    <StackPanel.ToolTip>
-                        Select an aviation chart overlay (FAA, DFS, Israel AIP) to display above the base map
-                    </StackPanel.ToolTip>
-                </StackPanel>
-
-                <StackPanel Orientation="Horizontal" Margin="10" ToolTipService.ShowDuration="5000">
-                    <Label Style="{DynamicResource FSTrAkLabel}" Width="250">OpenAIP Overlay</Label>
-                    <CheckBox Style="{DynamicResource SettingsCheckbox}" FontFamily="{DynamicResource CurrentFont}" FontSize="{DynamicResource ListFontSize}" VerticalAlignment="Center" IsChecked="{Binding IsOpenAipEnabled, Mode=TwoWay}"/>
-                    <StackPanel.ToolTip>
-                        Enable OpenAIP airspace and aeronautical data overlay
-                    </StackPanel.ToolTip>
-                </StackPanel>
-
-                <StackPanel Orientation="Horizontal" Margin="10" Visibility="{Binding IsShowOpenAipApiKeyField, Converter={StaticResource BoolToVis}}" ToolTipService.ShowDuration="5000">
-                    <Label Style="{DynamicResource FSTrAkLabel}" Width="250">OpenAIP API Key</Label>
-                    <TextBox FontFamily="{DynamicResource CurrentFont}" Foreground="{DynamicResource TextColor}" Background="{DynamicResource ControlBackgroundColorBrush}" FontSize="{DynamicResource ControlFontSize}" Text="{Binding OpenAipApiKey}" Width="200"/>
-                    <StackPanel.ToolTip>
-                        OpenAIP requires a free API key. Register at https://www.openaip.net
-                    </StackPanel.ToolTip>
-                </StackPanel>
-
-                <StackPanel Orientation="Horizontal" Margin="10" ToolTipService.ShowDuration="5000">
-                    <Label Style="{DynamicResource FSTrAkLabel}" Width="250">Units</Label>
-                    <ComboBox FontFamily="{DynamicResource CurrentFont}" Foreground="{DynamicResource TextColor}" FontSize="{DynamicResource ControlFontSize}" Width="200"
-                          ItemsSource="{Binding Source={StaticResource dataFromEnum}}" SelectedItem="{Binding Units}"/>
-                    <StackPanel.ToolTip>
-                        Select Imperial or Metric weight units
-                    </StackPanel.ToolTip>
-                </StackPanel>
-                <StackPanel Orientation="Horizontal" Margin="10" ToolTipService.ShowDuration="5000">
-                    <Label  Style="{DynamicResource FSTrAkLabel}" Width="250">Complete flights only</Label>
-                    <CheckBox Style="{DynamicResource SettingsCheckbox}" FontFamily="{DynamicResource CurrentFont}" FontSize="{DynamicResource ListFontSize}" VerticalAlignment="Center" IsChecked="{Binding IsSaveOnlyCompleteFlights, Mode=TwoWay}"/>
-                    <StackPanel.ToolTip>
-                        Only flights that are started and ended on the ground, fully stopped and with engines off are saved
-                    </StackPanel.ToolTip>
-                </StackPanel>
-                <StackPanel Orientation="Horizontal" Margin="10" ToolTipService.ShowDuration="5000">
-                    <Label  Style="{DynamicResource FSTrAkLabel}" Width="250">Launch FSTrAk on login</Label>
-                    <CheckBox Style="{DynamicResource SettingsCheckbox}" FontFamily="{DynamicResource CurrentFont}" FontSize="{DynamicResource ListFontSize}" VerticalAlignment="Center" IsChecked="{Binding IsStartAutomatically, Mode=TwoWay}"/>
-                    <StackPanel.ToolTip>
-                        Automatically start FSTrAk when starting Windows
-                    </StackPanel.ToolTip>
-                </StackPanel>
-                <StackPanel Orientation="Horizontal" Margin="10" ToolTipService.ShowDuration="5000">
-                    <Label  Style="{DynamicResource FSTrAkLabel}" Width="250">launch FSTrAk minimized</Label>
-                    <CheckBox Style="{DynamicResource SettingsCheckbox}" FontFamily="{DynamicResource CurrentFont}" FontSize="{DynamicResource ListFontSize}" VerticalAlignment="Center" IsChecked="{Binding IsStartMinimized, Mode=TwoWay}"/>
-                    <StackPanel.ToolTip>
-                        Launch FSTrAk minimized
-                    </StackPanel.ToolTip>
-                </StackPanel>
-                <StackPanel Orientation="Horizontal" Margin="10" ToolTipService.ShowDuration="5000">
-                    <Label  Style="{DynamicResource FSTrAkLabel}" Width="250">Minimize to Tray on Close</Label>
-                    <CheckBox Style="{DynamicResource SettingsCheckbox}" FontFamily="{DynamicResource CurrentFont}" FontSize="{DynamicResource ListFontSize}" VerticalAlignment="Center" IsChecked="{Binding IsMinimizeToTray, Mode=TwoWay}"/>
-                    <StackPanel.ToolTip>
-                        The close button will only close the FSTrAk window, but not terminate the software. You will find it in the system tray
-                    </StackPanel.ToolTip>
-                </StackPanel>
-                <StackPanel Orientation="Horizontal" Margin="10" ToolTipService.ShowDuration="5000">
-                    <Label  Style="{DynamicResource FSTrAkLabel}" Width="250">Always on top</Label>
-                    <CheckBox Style="{DynamicResource SettingsCheckbox}" FontFamily="{DynamicResource CurrentFont}" FontSize="{DynamicResource ListFontSize}" VerticalAlignment="Center" IsChecked="{Binding IsAlwaysOnTop, Mode=TwoWay}"/>
-                    <StackPanel.ToolTip>
-                        FSTrAk will be the topmost window
-                    </StackPanel.ToolTip>
-                </StackPanel>
-
 
             </StackPanel>
-            <StackPanel Margin="10">
-                <StackPanel Orientation="Horizontal" Margin="10" ToolTipService.ShowDuration="5000">
-                    <Label Style="{DynamicResource FSTrAkLabel}" Width="250">VATSIM ID</Label>
-                    <TextBox FontFamily="{DynamicResource CurrentFont}"
-                              Foreground="{DynamicResource TextColor}"
-                              Background="{DynamicResource ControlBackgroundColorBrush}"
-                              FontSize="{DynamicResource ControlFontSize}"
-                              Width="200"
-                              Text="{Binding VatsimId}" Cursor="Arrow" TextAlignment="Center" Padding="0 8 0 0"
-                              />
-                    <StackPanel.ToolTip>
-                        Type your VATSIM ID to prevent duplicate representation of your aircraft when VATSIM aircraft are shown on the map
-                    </StackPanel.ToolTip>
-                </StackPanel>
-                <StackPanel Orientation="Horizontal" Margin="10" ToolTipService.ShowDuration="5000">
-                    <Label Style="{DynamicResource FSTrAkLabel}" Width="250">StatSim API Key</Label>
-                    <TextBox FontFamily="{DynamicResource CurrentFont}"
-                             Foreground="{DynamicResource TextColor}"
-                             Background="{DynamicResource ControlBackgroundColorBrush}"
-                             FontSize="{DynamicResource ControlFontSize}"
-                             Width="200"
-                             Text="{Binding StatSimApiKey}" Cursor="Arrow" TextAlignment="Center" Padding="0 8 0 0"/>
-                    <StackPanel.ToolTip>
-                        Optional: Enter your StatSim API key (statsim.net) to enable full VATSIM flight track history
-                    </StackPanel.ToolTip>
-                </StackPanel>
-                <StackPanel Orientation="Horizontal" Margin="10" ToolTipService.ShowDuration="5000">
-                    <Label Style="{DynamicResource FSTrAkLabel}" Width="250">IVAO ID</Label>
-                    <TextBox FontFamily="{DynamicResource CurrentFont}"
-                             Foreground="{DynamicResource TextColor}"
-                             Background="{DynamicResource ControlBackgroundColorBrush}"
-                             FontSize="{DynamicResource ControlFontSize}"
-                             Width="200"
-                             Text="{Binding IvaoId}" Cursor="Arrow" TextAlignment="Center" Padding="0 8 0 0"/>
-                    <StackPanel.ToolTip>
-                        Type your IVAO ID to prevent duplicate representation of your aircraft when IVAO aircraft are shown on the map
-                    </StackPanel.ToolTip>
-                </StackPanel>
-                <StackPanel Orientation="Horizontal" Margin="10" ToolTipService.ShowDuration="5000">
-                    <Label Style="{DynamicResource FSTrAkLabel}" Width="250">IVAO API Key</Label>
-                    <TextBox FontFamily="{DynamicResource CurrentFont}"
-                             Foreground="{DynamicResource TextColor}"
-                             Background="{DynamicResource ControlBackgroundColorBrush}"
-                             FontSize="{DynamicResource ControlFontSize}"
-                             Width="200"
-                             Text="{Binding IvaoApiKey}" Cursor="Arrow" TextAlignment="Center" Padding="0 8 0 0"/>
-                    <StackPanel.ToolTip>
-                        Optional: Enter your IVAO API key to enable full flight track history when selecting an IVAO aircraft
-                    </StackPanel.ToolTip>
-                </StackPanel>
-            </StackPanel>
-        </StackPanel>
+        </ScrollViewer>
     </DockPanel>
 
 </UserControl>

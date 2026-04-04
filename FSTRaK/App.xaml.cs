@@ -14,6 +14,7 @@ using System.Diagnostics;
 using System.Runtime.InteropServices;
 using FSTRaK.BusinessLogic.SimconnectService;
 using FSTRaK.BusinessLogic.VatsimService;
+using FSTRaK.ViewModels;
 
 namespace FSTRaK
 {
@@ -25,6 +26,7 @@ namespace FSTRaK
         private static Mutex _mutex = null;
 
         internal static Task DbWarmupTask { get; private set; } = Task.CompletedTask;
+        internal static LiveViewViewModel LiveViewViewModel { get; set; }
 
         const string AppName = "FSTrAk";
 
@@ -125,6 +127,7 @@ namespace FSTRaK
             {
                 smc.Close();
             }
+            BusinessLogic.TileServer.TileServer.Instance.Stop();
             FSTRaK.Properties.Settings.Default.Save();
             Log.Information("FSTrAk Exited.");
         }
