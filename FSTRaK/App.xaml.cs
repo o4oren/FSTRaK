@@ -127,6 +127,7 @@ namespace FSTRaK
             {
                 smc.Close();
             }
+            BusinessLogic.TileServer.TileServer.Instance.Stop();
             FSTRaK.Properties.Settings.Default.Save();
             Log.Information("FSTrAk Exited.");
         }
