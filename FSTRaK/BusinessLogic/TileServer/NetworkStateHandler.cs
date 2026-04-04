@@ -103,7 +103,8 @@ namespace FSTRaK.BusinessLogic.TileServer
             {
                 ["atcVisible"] = lvm.IsShowVatsimAtc || lvm.IsShowIvaoAtc,
                 ["network"] = network,
-                ["firs"] = features
+                ["firs"] = features,
+                ["airports"] = BuildAirports(lvm)
             };
         }
 
@@ -143,12 +144,141 @@ namespace FSTRaK.BusinessLogic.TileServer
             return null;
         }
 
+        private static JArray BuildAirports(LiveViewViewModel lvm)
+        {
+            var airports = new JArray();
+
+            // VATSIM controlled airports
+            if (lvm.IsVatsimActive && lvm.IsShowVatsimAtc)
+            {
+                foreach (var airport in lvm.VatsimControlledAirports)
+                {
+                    var controllers = new JArray();
+                    foreach (var c in airport.Controllers)
+                    {
+                        controllers.Add(new JObject
+                        {
+                            ["callsign"] = c.callsign,
+                            ["frequency"] = c.frequency,
+                            ["type"] = MapFacilityType(c.facility)
+                        });
+                    }
+
+                    // ATIS: join all text_atis lines from all Atis entries
+                    string atisText = null;
+                    if (airport.Atis != null)
+                    {
+                        var lines = new System.Collections.Generic.List<string>();
+                        foreach (var a in airport.Atis)
+                        {
+                            if (a.text_atis != null)
+                                lines.AddRange(a.text_atis);
+                        }
+                        if (lines.Count > 0)
+                            atisText = string.Join("\n", lines);
+                    }
+
+                    JArray polygon = null;
+                    int? radius = null;
+                    if (airport.IsShowTraconPolygon && airport.TraconPolygons.Count > 0)
+                    {
+                        polygon = new JArray();
+                        foreach (var loc in airport.TraconPolygons[0])
+                            polygon.Add(new JArray(loc.Longitude, loc.Latitude));
+                    }
+                    else
+                    {
+                        radius = 25;
+                    }
+
+                    var entry = new JObject
+                    {
+                        ["callsign"] = airport.Callsign,
+                        ["lat"] = airport.Airport.Latitude,
+                        ["lon"] = airport.Airport.Longitude,
+                        ["controllers"] = controllers,
+                        ["atis"] = atisText
+                    };
+                    if (polygon != null) entry["polygon"] = polygon;
+                    if (radius != null) entry["radius"] = radius;
+
+                    airports.Add(entry);
+                }
+            }
+
+            // IVAO airport-type entries (non-CTR)
+            if (lvm.IsIvaoActive && lvm.IsShowIvaoAtc)
+            {
+                foreach (var atc in lvm.IvaoAtcList)
+                {
+                    if (atc.IsCtr) continue;
+
+                    var controllers = new JArray();
+                    if (atc.AtcEntries != null)
+                    {
+                        foreach (var e in atc.AtcEntries)
+                        {
+                            controllers.Add(new JObject
+                            {
+                                ["callsign"] = e.callsign,
+                                ["frequency"] = e.atcSession?.frequency.ToString("F3") ?? "",
+                                ["type"] = e.atcSession?.position ?? ""
+                            });
+                        }
+                    }
+
+                    JArray polygon = null;
+                    int? radius = null;
+                    if (atc.ControlPolygon != null && atc.ControlPolygon.Count >= 3)
+                    {
+                        polygon = new JArray();
+                        foreach (var loc in atc.ControlPolygon)
+                            polygon.Add(new JArray(loc.Longitude, loc.Latitude));
+                    }
+                    else
+                    {
+                        radius = 25;
+                    }
+
+                    var entry = new JObject
+                    {
+                        ["callsign"] = atc.Callsign,
+                        ["lat"] = atc.Location.Latitude,
+                        ["lon"] = atc.Location.Longitude,
+                        ["controllers"] = controllers,
+                        ["atis"] = (string)null
+                    };
+                    if (polygon != null) entry["polygon"] = polygon;
+                    if (radius != null) entry["radius"] = radius;
+
+                    airports.Add(entry);
+                }
+            }
+
+            return airports;
+        }
+
+        private static string MapFacilityType(int facility)
+        {
+            switch (facility)
+            {
+                case 1: return "FSS";
+                case 2: return "DEL";
+                case 3: return "GND";
+                case 4: return "TWR";
+                case 5: return "APP";
+                case 6: return "CTR";
+                default: return "OBS";
+            }
+        }
+
         private static JObject BuildEmptyResponse() =>
             new JObject
             {
                 ["atcVisible"] = false,
                 ["network"] = "none",
-                ["firs"] = new JArray()
+                ["firs"] = new JArray(),
+                ["airports"] = new JArray()
             };
     }
 }
