@@ -22,8 +22,11 @@ namespace FSTRaK.ViewModels
             set
             {
                 if (_flight == value) return;
+                if (_flight != null)
+                    _flight.PropertyChanged -= OnFlightPropertyChanged;
                 _flight = value;
                 if (_flight == null) return;
+                _flight.PropertyChanged += OnFlightPropertyChanged;
 
                 FlightDetailsParamsViewModel = new FlightDetailsParamsViewModel(_flight);
                 OnPropertyChanged(nameof(Flight));
@@ -43,6 +46,12 @@ namespace FSTRaK.ViewModels
                     OnPropertyChanged(nameof(AltSpeedGroundAltDictionary));
                 }
             }
+        }
+
+        private void OnFlightPropertyChanged(object sender, System.ComponentModel.PropertyChangedEventArgs e)
+        {
+            if (e.PropertyName == nameof(Flight.Comment) || e.PropertyName == nameof(Flight.Aircraft))
+                FlightDetailsParamsViewModel = new FlightDetailsParamsViewModel(_flight);
         }
 
         private FlightDetailsParamsViewModel _flightDetailsParamsViewModel;
