@@ -71,6 +71,11 @@
 	mix-blend-mode: plus-lighter;
 }
 
+/* This is a hack to fix the issue with the tile server flickering MSFS 2024 */
+.leaflet-container img.leaflet-tile {
+    mix-blend-mode: unset !important;
+}
+
 .leaflet-container.leaflet-touch-zoom {
 	-ms-touch-action: pan-x pan-y;
 	touch-action: pan-x pan-y;
