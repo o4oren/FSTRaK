@@ -159,7 +159,7 @@
 
                     <StackPanel Orientation="Horizontal" Margin="10" Visibility="{Binding IsShowBingApiKeyField, Converter={StaticResource BoolToVis}}" ToolTipService.ShowDuration="5000">
                         <Label  Style="{DynamicResource FSTrAkLabel}" Width="250">Azure Maps Key</Label>
-                        <TextBox FontFamily="{DynamicResource CurrentFont}" Foreground="{DynamicResource TextColor}" Background="{DynamicResource ControlBackgroundColorBrush}" FontSize="{DynamicResource ControlFontSize}" Text="{Binding BingApiKey}" Width="200" Cursor="Arrow" TextAlignment="Center" Padding="0 8 0 0"/>
+                        <TextBox FontFamily="{DynamicResource CurrentFont}" Foreground="{DynamicResource TextColor}" Background="{DynamicResource ControlBackgroundColorBrush}" FontSize="{DynamicResource ControlFontSize}" Text="{Binding BingApiKey}" Width="200" Cursor="Arrow" TextAlignment="Center"/>
                         <StackPanel.ToolTip>
                             Azure Maps require a subscription key.
                             Please see https://learn.microsoft.com/en-us/azure/azure-maps/how-to-manage-authentication
@@ -168,7 +168,7 @@
 
                     <StackPanel Orientation="Horizontal" Margin="10" Visibility="{Binding IsShowMapTilerApiKeyField, Converter={StaticResource BoolToVis}}" ToolTipService.ShowDuration="5000">
                         <Label  Style="{DynamicResource FSTrAkLabel}" Width="250">Maptiler API Key</Label>
-                        <TextBox FontFamily="{DynamicResource CurrentFont}" Foreground="{DynamicResource TextColor}" Background="{DynamicResource ControlBackgroundColorBrush}" FontSize="{DynamicResource ControlFontSize}" Text="{Binding MapTilerApiKey}" Width="200" Cursor="Arrow" TextAlignment="Center" Padding="0 8 0 0"/>
+                        <TextBox FontFamily="{DynamicResource CurrentFont}" Foreground="{DynamicResource TextColor}" Background="{DynamicResource ControlBackgroundColorBrush}" FontSize="{DynamicResource ControlFontSize}" Text="{Binding MapTilerApiKey}" Width="200" Cursor="Arrow" TextAlignment="Center"/>
                         <StackPanel.ToolTip>
                             Maptiler maps require an API Key.
                             Please see the instructions at https://docs.maptiler.com/cloud/api.
@@ -202,7 +202,7 @@
 
                     <StackPanel Orientation="Horizontal" Margin="10" Visibility="{Binding IsShowOpenAipApiKeyField, Converter={StaticResource BoolToVis}}" ToolTipService.ShowDuration="5000">
                         <Label Style="{DynamicResource FSTrAkLabel}" Width="250">OpenAIP API Key</Label>
-                        <TextBox FontFamily="{DynamicResource CurrentFont}" Foreground="{DynamicResource TextColor}" Background="{DynamicResource ControlBackgroundColorBrush}" FontSize="{DynamicResource ControlFontSize}" Text="{Binding OpenAipApiKey}" Width="200" Cursor="Arrow" TextAlignment="Center" Padding="0 8 0 0"/>
+                        <TextBox FontFamily="{DynamicResource CurrentFont}" Foreground="{DynamicResource TextColor}" Background="{DynamicResource ControlBackgroundColorBrush}" FontSize="{DynamicResource ControlFontSize}" Text="{Binding OpenAipApiKey}" Width="200" Cursor="Arrow" TextAlignment="Center"/>
                         <StackPanel.ToolTip>
                             OpenAIP requires a free API key. Register at https://www.openaip.net
                         </StackPanel.ToolTip>
@@ -234,7 +234,7 @@
                                  Width="80"
                                  IsEnabled="{Binding IsTileServerEnabled}"
                                  Text="{Binding TileServerPort, UpdateSourceTrigger=PropertyChanged, ValidatesOnExceptions=True}"
-                                 Cursor="Arrow" TextAlignment="Center" Padding="0 8 0 0"/>
+                                 Cursor="Arrow" TextAlignment="Center"/>
                         <TextBlock FontFamily="{DynamicResource CurrentFont}"
                                    FontSize="{DynamicResource ListFontSize}"
                                    Foreground="{DynamicResource UnselectedTextColor}"
@@ -300,7 +300,7 @@
                                   Background="{DynamicResource ControlBackgroundColorBrush}"
                                   FontSize="{DynamicResource ControlFontSize}"
                                   Width="200"
-                                  Text="{Binding VatsimId}" Cursor="Arrow" TextAlignment="Center" Padding="0 8 0 0"/>
+                                  Text="{Binding VatsimId}" Cursor="Arrow" TextAlignment="Center"/>
                         <StackPanel.ToolTip>
                             Type your VATSIM ID to prevent duplicate representation of your aircraft when VATSIM aircraft are shown on the map
                         </StackPanel.ToolTip>
@@ -312,7 +312,7 @@
                                  Background="{DynamicResource ControlBackgroundColorBrush}"
                                  FontSize="{DynamicResource ControlFontSize}"
                                  Width="200"
-                                 Text="{Binding StatSimApiKey}" Cursor="Arrow" TextAlignment="Center" Padding="0 8 0 0"/>
+                                 Text="{Binding StatSimApiKey}" Cursor="Arrow" TextAlignment="Center"/>
                         <StackPanel.ToolTip>
                             Optional: Enter your StatSim API key (statsim.net) to enable full VATSIM flight track history
                         </StackPanel.ToolTip>
@@ -324,7 +324,7 @@
                                  Background="{DynamicResource ControlBackgroundColorBrush}"
                                  FontSize="{DynamicResource ControlFontSize}"
                                  Width="200"
-                                 Text="{Binding IvaoId}" Cursor="Arrow" TextAlignment="Center" Padding="0 8 0 0"/>
+                                 Text="{Binding IvaoId}" Cursor="Arrow" TextAlignment="Center"/>
                         <StackPanel.ToolTip>
                             Type your IVAO ID to prevent duplicate representation of your aircraft when IVAO aircraft are shown on the map
                         </StackPanel.ToolTip>
@@ -336,7 +336,7 @@
                                  Background="{DynamicResource ControlBackgroundColorBrush}"
                                  FontSize="{DynamicResource ControlFontSize}"
                                  Width="200"
-                                 Text="{Binding IvaoApiKey}" Cursor="Arrow" TextAlignment="Center" Padding="0 8 0 0"/>
+                                 Text="{Binding IvaoApiKey}" Cursor="Arrow" TextAlignment="Center"/>
                         <StackPanel.ToolTip>
                             Optional: Enter your IVAO API key to enable full flight track history when selecting an IVAO aircraft
                         </StackPanel.ToolTip>
