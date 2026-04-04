@@ -170,6 +170,22 @@ namespace FSTRaK.ViewModels
             }
         }
 
+        public bool IsTileServerEnabled
+        {
+            get => Properties.Settings.Default.IsTileServerEnabled;
+            set
+            {
+                Properties.Settings.Default.IsTileServerEnabled = value;
+                OnPropertyChanged();
+                if (value)
+                    BusinessLogic.TileServer.TileServer.Instance.Start();
+                else
+                    BusinessLogic.TileServer.TileServer.Instance.Stop();
+                OnPropertyChanged(nameof(TileServerStatus));
+                OnPropertyChanged(nameof(TileServerIsRunning));
+            }
+        }
+
         public int TileServerPort
         {
             get => Properties.Settings.Default.TileServerPort;
@@ -189,6 +205,8 @@ namespace FSTRaK.ViewModels
         {
             get
             {
+                if (!Properties.Settings.Default.IsTileServerEnabled)
+                    return "● Disabled";
                 var ts = BusinessLogic.TileServer.TileServer.Instance;
                 return ts.IsRunning
                     ? $"● Running on http://localhost:{ts.Port}/"

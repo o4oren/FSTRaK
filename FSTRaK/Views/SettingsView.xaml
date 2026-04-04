@@ -249,12 +249,20 @@
                     </StackPanel.ToolTip>
                 </StackPanel>
                 <StackPanel Orientation="Horizontal" Margin="10" ToolTipService.ShowDuration="5000">
+                    <Label Style="{DynamicResource FSTrAkLabel}" Width="250">Enable Tile Server</Label>
+                    <CheckBox Style="{DynamicResource SettingsCheckbox}" FontFamily="{DynamicResource CurrentFont}" FontSize="{DynamicResource ListFontSize}" VerticalAlignment="Center" IsChecked="{Binding IsTileServerEnabled, Mode=TwoWay}"/>
+                    <StackPanel.ToolTip>
+                        Start a local HTTP tile server for use with the MSFS in-sim tablet panel
+                    </StackPanel.ToolTip>
+                </StackPanel>
+                <StackPanel Orientation="Horizontal" Margin="10" ToolTipService.ShowDuration="5000">
                     <Label Style="{DynamicResource FSTrAkLabel}" Width="250">Tile Server Port</Label>
                     <TextBox FontFamily="{DynamicResource CurrentFont}"
                              Foreground="{DynamicResource TextColor}"
                              Background="{DynamicResource ControlBackgroundColorBrush}"
                              FontSize="{DynamicResource ControlFontSize}"
                              Width="80"
+                             IsEnabled="{Binding IsTileServerEnabled}"
                              Text="{Binding TileServerPort, UpdateSourceTrigger=PropertyChanged, ValidatesOnExceptions=True}"
                              Cursor="Arrow" TextAlignment="Center" Padding="0 8 0 0"/>
                     <TextBlock FontFamily="{DynamicResource CurrentFont}"
