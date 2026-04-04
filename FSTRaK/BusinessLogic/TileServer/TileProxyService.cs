@@ -42,20 +42,24 @@ namespace FSTRaK.BusinessLogic.TileServer
         }
 
         /// <summary>
-        /// Returns raw tile bytes, or null if the tile is not available.
-        /// providerKey is used as cache namespace (e.g. "OpenStreetMap", "CVFR").
+        /// Returns raw tile bytes for an MBTiles provider, or null if not available.
         /// </summary>
-        public async Task<byte[]> GetTileAsync(MapTileLayerBase provider, string providerKey, int z, int x, int y)
+        public async Task<byte[]> GetMBTilesBytesAsync(MBTilesMapTileLayer layer, int z, int x, int y)
         {
-            if (provider == null) return null;
-
-            if (provider is MBTilesMapTileLayer mbLayer)
-                return await GetMBTileAsync(mbLayer, z, x, y);
-
-            return await GetWebTileAsync(provider, providerKey, z, x, y);
+            return await GetMBTileAsync(layer, z, x, y);
         }
 
-        private async Task<byte[]> GetWebTileAsync(MapTileLayerBase provider, string providerKey, int z, int x, int y)
+        /// <summary>
+        /// Returns raw tile bytes for a web provider given a fully-resolved upstream URL.
+        /// providerKey is used as cache namespace (e.g. "OpenStreetMap").
+        /// The URL must already have {z}/{x}/{y} substituted and the API key injected.
+        /// </summary>
+        public async Task<byte[]> GetWebTileBytesAsync(string url, string providerKey, int z, int x, int y)
+        {
+            return await GetWebTileAsync(url, providerKey, z, x, y);
+        }
+
+        private async Task<byte[]> GetWebTileAsync(string url, string providerKey, int z, int x, int y)
         {
             var cacheKey = $"{providerKey}:{z}/{x}/{y}";
 
@@ -69,15 +73,6 @@ namespace FSTRaK.BusinessLogic.TileServer
                     return cached;
                 }
             }
-
-            // Resolve upstream URL from provider's UriTemplate (API key already substituted)
-            var uriTemplate = provider.TileSource?.UriTemplate;
-            if (string.IsNullOrEmpty(uriTemplate)) return null;
-
-            var url = uriTemplate
-                .Replace("{z}", z.ToString())
-                .Replace("{x}", x.ToString())
-                .Replace("{y}", y.ToString());
 
             try
             {

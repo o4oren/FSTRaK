@@ -11,6 +11,11 @@ namespace FSTRaK.BusinessLogic.TileServer
     ///   GET /tiles/base/{z}/{x}/{y}
     ///   GET /tiles/overlay/chart/{z}/{x}/{y}
     ///   GET /tiles/overlay/openaip/{z}/{x}/{y}
+    ///
+    /// Provider objects (MapTileLayerBase) are DependencyObjects and must only be accessed
+    /// on the UI thread. This handler reads UriTemplate inside Dispatcher.InvokeAsync,
+    /// then passes the resolved URL string (and MBTiles layer ref) to TileProxyService,
+    /// which runs entirely off the UI thread.
     /// </summary>
     internal class TileHandler
     {
@@ -26,52 +31,56 @@ namespace FSTRaK.BusinessLogic.TileServer
             // route examples: "base/5/12/10"  "overlay/chart/5/12/10"  "overlay/openaip/5/12/10"
             var parts = route.TrimStart('/').Split('/');
 
-            MapControl.MapTileLayerBase provider = null;
-            string providerKey = null;
-
             try
             {
-                // Determine provider type from route prefix
                 if (route.StartsWith("base/", StringComparison.OrdinalIgnoreCase))
                 {
-                    // parts: ["base", z, x, y]
-                    provider = await System.Windows.Application.Current.Dispatcher.InvokeAsync(
-                        () => MapProviderResolver.GetMapProvider());
-                    providerKey = FSTRaK.Properties.Settings.Default.MapTileProvider;
-
                     if (!TryParseZXY(parts, 1, out int z, out int x, out int y))
                     { Respond404(context); return; }
 
-                    await ServeTile(context, provider, providerKey, z, x, y);
+                    var providerKey = FSTRaK.Properties.Settings.Default.MapTileProvider;
+                    var (url, mbLayer) = await System.Windows.Application.Current.Dispatcher.InvokeAsync(() =>
+                    {
+                        var p = MapProviderResolver.GetMapProvider();
+                        if (p is MBTilesMapTileLayer mb) return ((string)null, mb);
+                        return (ResolveUrl(p, z, x, y), (MBTilesMapTileLayer)null);
+                    });
+
+                    await ServeTile(context, url, mbLayer, providerKey, z, x, y);
                 }
                 else if (route.StartsWith("overlay/chart/", StringComparison.OrdinalIgnoreCase))
                 {
-                    // parts: ["overlay", "chart", z, x, y]
-                    provider = await System.Windows.Application.Current.Dispatcher.InvokeAsync(
-                        () => MapProviderResolver.GetChartOverlayProvider());
-                    if (provider == null) { Respond404(context); return; }
-                    providerKey = FSTRaK.Properties.Settings.Default.ChartOverlayProvider;
-
                     if (!TryParseZXY(parts, 2, out int z, out int x, out int y))
                     { Respond404(context); return; }
 
-                    await ServeTile(context, provider, providerKey, z, x, y);
+                    var providerKey = FSTRaK.Properties.Settings.Default.ChartOverlayProvider;
+                    var (url, mbLayer) = await System.Windows.Application.Current.Dispatcher.InvokeAsync(() =>
+                    {
+                        var p = MapProviderResolver.GetChartOverlayProvider();
+                        if (p == null) return ((string)null, (MBTilesMapTileLayer)null);
+                        if (p is MBTilesMapTileLayer mb) return ((string)null, mb);
+                        return (ResolveUrl(p, z, x, y), (MBTilesMapTileLayer)null);
+                    });
+
+                    if (url == null && mbLayer == null) { Respond404(context); return; }
+                    await ServeTile(context, url, mbLayer, providerKey, z, x, y);
                 }
                 else if (route.StartsWith("overlay/openaip/", StringComparison.OrdinalIgnoreCase))
                 {
-                    // parts: ["overlay", "openaip", z, x, y]
                     if (!FSTRaK.Properties.Settings.Default.IsOpenAipEnabled)
                     { Respond404(context); return; }
-
-                    provider = await System.Windows.Application.Current.Dispatcher.InvokeAsync(
-                        () => MapProviderResolver.GetOpenAipLayer());
-                    if (provider == null) { Respond404(context); return; }
-                    providerKey = "OpenAIP";
 
                     if (!TryParseZXY(parts, 2, out int z, out int x, out int y))
                     { Respond404(context); return; }
 
-                    await ServeTile(context, provider, providerKey, z, x, y);
+                    var url = await System.Windows.Application.Current.Dispatcher.InvokeAsync(() =>
+                    {
+                        var p = MapProviderResolver.GetOpenAipLayer();
+                        return p == null ? null : ResolveUrl(p, z, x, y);
+                    });
+
+                    if (url == null) { Respond404(context); return; }
+                    await ServeTile(context, url, null, "OpenAIP", z, x, y);
                 }
                 else
                 {
@@ -85,10 +94,25 @@ namespace FSTRaK.BusinessLogic.TileServer
             }
         }
 
-        private async Task ServeTile(HttpListenerContext context, MapControl.MapTileLayerBase provider,
+        /// <summary>Resolves the upstream tile URL from a web provider. Must be called on the UI thread.</summary>
+        private static string ResolveUrl(MapControl.MapTileLayerBase provider, int z, int x, int y)
+        {
+            var template = provider?.TileSource?.UriTemplate;
+            if (string.IsNullOrEmpty(template)) return null;
+            return template
+                .Replace("{z}", z.ToString())
+                .Replace("{x}", x.ToString())
+                .Replace("{y}", y.ToString());
+        }
+
+        private async Task ServeTile(HttpListenerContext context, string url, MBTilesMapTileLayer mbLayer,
             string providerKey, int z, int x, int y)
         {
-            var bytes = await _proxy.GetTileAsync(provider, providerKey, z, x, y);
+            byte[] bytes;
+            if (mbLayer != null)
+                bytes = await _proxy.GetMBTilesBytesAsync(mbLayer, z, x, y);
+            else
+                bytes = await _proxy.GetWebTileBytesAsync(url, providerKey, z, x, y);
             if (bytes == null || bytes.Length == 0)
             {
                 Respond404(context);
