@@ -791,31 +791,37 @@ document.getElementById('btn-recenter').addEventListener('click', () => {
   document.getElementById('btn-recenter').classList.remove('visible');
 });
 
-// ── Aircraft position — receives SimVar data from parent panel via postMessage ──
-window.addEventListener('message', function(event) {
-  if (!event.data || event.data.type !== 'simvar') return;
-  var d = event.data;
-  var lat = d.lat || 0;
-  var lon = d.lon || 0;
-  var hdg = d.hdg || 0;
-  var alt = Math.round(d.alt || 0);
-  var spd = Math.round(d.spd || 0);
+// ── Aircraft position — polls /simvar endpoint written by MSFS panel shell ──
+async function fetchSimVars() {
+  try {
+    var resp = await fetch('http://127.0.0.1:8765/simvar');
+    if (!resp.ok) return;
+    var d = await resp.json();
+    var lat = d.lat || 0;
+    var lon = d.lon || 0;
+    var hdg = d.hdg || 0;
+    var alt = Math.round(d.alt || 0);
+    var spd = Math.round(d.spd || 0);
 
-  lastLat = lat; lastLon = lon;
+    lastLat = lat; lastLon = lon;
 
-  aircraftMarker.setLatLng([lat, lon]);
-  aircraftMarker.setIcon(makeAircraftIcon(hdg));
+    aircraftMarker.setLatLng([lat, lon]);
+    aircraftMarker.setIcon(makeAircraftIcon(hdg));
 
-  document.getElementById('hud-alt').textContent = 'ALT: ' + alt + ' ft';
-  document.getElementById('hud-spd').textContent = 'GS: ' + spd + ' kt';
-  document.getElementById('hud-hdg').textContent = 'HDG: ' + Math.round(hdg) + '\u00B0';
+    document.getElementById('hud-alt').textContent = 'ALT: ' + alt + ' ft';
+    document.getElementById('hud-spd').textContent = 'GS: ' + spd + ' kt';
+    document.getElementById('hud-hdg').textContent = 'HDG: ' + Math.round(hdg) + '\u00B0';
 
-  if (!userPanned) {
-    _programmaticMove = true;
-    map.setView([lat, lon], map.getZoom(), { animate: false });
-    _programmaticMove = false;
-  }
-});
+    if (!userPanned) {
+      _programmaticMove = true;
+      map.setView([lat, lon], map.getZoom(), { animate: false });
+      _programmaticMove = false;
+    }
+  } catch(e) {}
+}
+
+setInterval(fetchSimVars, 1000);
+fetchSimVars();
 
 // ── ATC layer ──────────────────────────────────────────────────────────────
 let atcLayer = L.layerGroup().addTo(map);

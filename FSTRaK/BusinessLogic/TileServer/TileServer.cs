@@ -31,6 +31,7 @@ namespace FSTRaK.BusinessLogic.TileServer
         private readonly NetworkStateHandler _networkStateHandler = new NetworkStateHandler();
         private readonly NetworkToggleHandler _networkToggleHandler = new NetworkToggleHandler();
         private readonly PanelHandler _panelHandler = new PanelHandler();
+        private readonly SimVarHandler _simVarHandler = new SimVarHandler();
 
         public bool IsRunning { get; private set; }
         public int Port { get; private set; }
@@ -134,6 +135,10 @@ namespace FSTRaK.BusinessLogic.TileServer
                 else if (path.Equals("panel", StringComparison.OrdinalIgnoreCase) && method == "GET")
                 {
                     await _panelHandler.HandleAsync(context);
+                }
+                else if (path.Equals("simvar", StringComparison.OrdinalIgnoreCase))
+                {
+                    await _simVarHandler.HandleAsync(context);
                 }
                 else
                 {

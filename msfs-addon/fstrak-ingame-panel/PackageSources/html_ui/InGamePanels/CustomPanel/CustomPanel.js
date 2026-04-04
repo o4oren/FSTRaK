@@ -37,17 +37,20 @@ class IngamePanelCustomPanel extends TemplateElement {
         var self = this;
         if (this.simvarInterval) return;
         this.simvarInterval = setInterval(function() {
-            if (!self.panelActive || !self.iframeElement || !self.iframeElement.contentWindow) return;
+            if (!self.panelActive) return;
             try {
-                var data = {
-                    type: 'simvar',
+                var data = JSON.stringify({
                     lat: SimVar.GetSimVarValue("PLANE LATITUDE", "degrees"),
                     lon: SimVar.GetSimVarValue("PLANE LONGITUDE", "degrees"),
                     hdg: SimVar.GetSimVarValue("PLANE HEADING DEGREES MAGNETIC", "degrees"),
                     alt: SimVar.GetSimVarValue("INDICATED ALTITUDE", "feet"),
                     spd: SimVar.GetSimVarValue("GPS GROUND SPEED", "knots")
-                };
-                self.iframeElement.contentWindow.postMessage(data, '*');
+                });
+                fetch('http://127.0.0.1:8765/simvar', {
+                    method: 'POST',
+                    headers: { 'Content-Type': 'application/json' },
+                    body: data
+                }).catch(function() {});
             } catch(e) {}
         }, 1000);
     }
