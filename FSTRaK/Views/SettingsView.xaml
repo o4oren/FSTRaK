@@ -255,7 +255,7 @@
                              Background="{DynamicResource ControlBackgroundColorBrush}"
                              FontSize="{DynamicResource ControlFontSize}"
                              Width="80"
-                             Text="{Binding TileServerPort, UpdateSourceTrigger=PropertyChanged}"
+                             Text="{Binding TileServerPort, UpdateSourceTrigger=PropertyChanged, ValidatesOnExceptions=True}"
                              Cursor="Arrow" TextAlignment="Center" Padding="0 8 0 0"/>
                     <TextBlock FontFamily="{DynamicResource CurrentFont}"
                                FontSize="{DynamicResource ListFontSize}"

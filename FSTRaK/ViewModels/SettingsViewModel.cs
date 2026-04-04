@@ -174,7 +174,11 @@ namespace FSTRaK.ViewModels
             get => Properties.Settings.Default.TileServerPort;
             set
             {
-                if (value < 1024 || value > 65535) return;
+                if (value < 1024 || value > 65535)
+                {
+                    OnPropertyChanged(); // revert TextBox to stored value
+                    return;
+                }
                 Properties.Settings.Default.TileServerPort = value;
                 OnPropertyChanged();
             }
@@ -443,6 +447,9 @@ namespace FSTRaK.ViewModels
                 ? "—" : Properties.Settings.Default.TraconBoundaryReleaseTag;
             VatSpyTag = string.IsNullOrEmpty(Properties.Settings.Default.VatSpyReleaseTag)
                 ? "—" : Properties.Settings.Default.VatSpyReleaseTag;
+
+            OnPropertyChanged(nameof(TileServerStatus));
+            OnPropertyChanged(nameof(TileServerIsRunning));
         }
 
         public void SaveSettings()
