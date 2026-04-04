@@ -28,14 +28,30 @@ if not exist "%PROJECT%" (
 )
 
 echo Tool:    %TOOL%
-echo Project: Build\fstrak-ingame-panel.xml
 echo WorkDir: %BAT_DIR%\fstrak-ingame-panel
 echo.
 
-REM Run from fstrak-ingame-panel\ so PackageSources\ resolves correctly
+REM Try calling fspackagetool with the package definition directly
+REM Run from fstrak-ingame-panel\ so PackageSources\ and Build\ resolve correctly
 pushd "%BAT_DIR%\fstrak-ingame-panel"
+echo Attempt 1: project XML...
 "%TOOL%" "Build\fstrak-ingame-panel.xml" 2>&1
 set BUILD_RESULT=%errorlevel%
+echo Exit: %BUILD_RESULT%
+if %BUILD_RESULT% neq 0 (
+    echo.
+    echo Attempt 2: package definition XML directly...
+    "%TOOL%" "Build\PackageDefinitions\fstrak-ingame-panel.xml" 2>&1
+    set BUILD_RESULT=%errorlevel%
+    echo Exit: %BUILD_RESULT%
+)
+if %BUILD_RESULT% neq 0 (
+    echo.
+    echo Attempt 3: fspackagetool --help to see available options...
+    "%TOOL%" --help 2>&1
+    "%TOOL%" -help 2>&1
+    "%TOOL%" /? 2>&1
+)
 popd
 echo.
 echo fspackagetool exit code: %BUILD_RESULT%
