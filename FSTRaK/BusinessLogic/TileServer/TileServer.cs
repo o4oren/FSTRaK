@@ -45,6 +45,7 @@ namespace FSTRaK.BusinessLogic.TileServer
 
             _listener = new HttpListener();
             _listener.Prefixes.Add($"http://localhost:{Port}/");
+            _listener.Prefixes.Add($"http://127.0.0.1:{Port}/");
 
             try
             {
