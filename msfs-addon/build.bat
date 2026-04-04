@@ -17,7 +17,7 @@ if not exist "%TOOL%" (
 echo Running: "%TOOL%"
 echo Project: fstrak-ingame-panel\Build\fstrak-ingame-panel.xml
 echo.
-"%TOOL%" "fstrak-ingame-panel\Build\fstrak-ingame-panel.xml"
+"%TOOL%" "fstrak-ingame-panel\Build\fstrak-ingame-panel.xml" 2>&1
 echo.
 echo fspackagetool exit code: %errorlevel%
 echo.
