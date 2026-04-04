@@ -15,7 +15,7 @@ namespace FSTRaK.BusinessLogic.TileServer
     /// </summary>
     internal class NetworkToggleHandler
     {
-        public Task HandleAsync(HttpListenerContext context)
+        public async Task HandleAsync(HttpListenerContext context)
         {
             try
             {
@@ -24,11 +24,11 @@ namespace FSTRaK.BusinessLogic.TileServer
 
                 if (lvm != null)
                 {
-                    newValue = Application.Current.Dispatcher.Invoke(() =>
+                    await Application.Current.Dispatcher.InvokeAsync(() =>
                     {
                         lvm.IsShowAtc = !lvm.IsShowAtc;
-                        return lvm.IsShowAtc;
                     });
+                    newValue = await Application.Current.Dispatcher.InvokeAsync(() => lvm.IsShowVatsimAtc || lvm.IsShowIvaoAtc);
                 }
 
                 var json = new JObject { ["atcVisible"] = newValue }.ToString(Formatting.None);
@@ -49,8 +49,6 @@ namespace FSTRaK.BusinessLogic.TileServer
             {
                 context.Response.OutputStream.Close();
             }
-
-            return Task.CompletedTask;
         }
     }
 }

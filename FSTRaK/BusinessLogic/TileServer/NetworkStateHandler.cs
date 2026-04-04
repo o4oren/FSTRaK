@@ -18,7 +18,7 @@ namespace FSTRaK.BusinessLogic.TileServer
     /// </summary>
     internal class NetworkStateHandler
     {
-        public Task HandleAsync(HttpListenerContext context)
+        public async Task HandleAsync(HttpListenerContext context)
         {
             try
             {
@@ -32,7 +32,7 @@ namespace FSTRaK.BusinessLogic.TileServer
                 }
                 else
                 {
-                    response = Application.Current.Dispatcher.Invoke(() => BuildResponse(lvm));
+                    response = await Application.Current.Dispatcher.InvokeAsync(() => BuildResponse(lvm));
                 }
 
                 var json = response.ToString(Formatting.None);
@@ -54,7 +54,6 @@ namespace FSTRaK.BusinessLogic.TileServer
                 context.Response.OutputStream.Close();
             }
 
-            return Task.CompletedTask;
         }
 
         private static JObject BuildResponse(LiveViewViewModel lvm)
@@ -117,11 +116,10 @@ namespace FSTRaK.BusinessLogic.TileServer
                 ring.Add(new JArray(loc.Longitude, loc.Latitude));
 
             // Close the ring if not already closed
-            if (locations.Count > 0)
-            {
-                var first = locations[0];
-                ring.Add(new JArray(first.Longitude, first.Latitude));
-            }
+            var firstLoc = locations[0];
+            var lastLoc = locations[locations.Count - 1];
+            if (firstLoc.Latitude != lastLoc.Latitude || firstLoc.Longitude != lastLoc.Longitude)
+                ring.Add(new JArray(firstLoc.Longitude, firstLoc.Latitude));
 
             var props = new JObject { ["callsign"] = callsign };
             if (frequency != null) props["frequency"] = frequency;
