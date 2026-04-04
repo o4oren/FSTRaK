@@ -737,12 +737,12 @@ const TRANSPARENT  = 'data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAAAEAAAABCAYA
 // ── State ─────────────────────────────────────────────────────────────────────────────────────
 let userPanned = false;
 let atcVisible = true;
-let lastLat = 0, lastLon = 0, lastHdg = 0;
+let lastLat = 0, lastLon = 0;
 
 // ── Map init ───────────────────────────────────────────────────────────────────────────────
 const map = L.map('map', { zoomControl: true, attributionControl: false }).setView([0, 0], 10);
 
-L.tileLayer(TILE_BASE, { maxZoom: 18, minZoom: 3 }).addTo(map);
+L.tileLayer(TILE_BASE, { maxZoom: 18, minZoom: 3, errorTileUrl: TRANSPARENT }).addTo(map);
 L.tileLayer(TILE_CHART,   { maxZoom: 18, minZoom: 3, opacity: 0.8, errorTileUrl: TRANSPARENT }).addTo(map);
 L.tileLayer(TILE_OPENAIP, { maxZoom: 18, minZoom: 3, opacity: 0.8, errorTileUrl: TRANSPARENT }).addTo(map);
 
@@ -766,9 +766,18 @@ const aircraftMarker = L.marker([0, 0], {
 }).addTo(map);
 
 // ── Pan/zoom tracking ─────────────────────────────────────────────────────────────────────────────
-map.on('dragstart zoomstart', () => {
+let _programmaticMove = false;
+
+map.on('dragstart', () => {
   userPanned = true;
   document.getElementById('btn-recenter').classList.add('visible');
+});
+
+map.on('zoomstart', () => {
+  if (!_programmaticMove) {
+    userPanned = true;
+    document.getElementById('btn-recenter').classList.add('visible');
+  }
 });
 
 document.getElementById('btn-recenter').addEventListener('click', () => {
@@ -790,9 +799,9 @@ function updateAircraft() {
   const lon = getSimVar('PLANE LONGITUDE', 'degrees');
   const hdg = getSimVar('PLANE HEADING DEGREES MAGNETIC', 'degrees');
   const alt = Math.round(getSimVar('INDICATED ALTITUDE', 'feet'));
-  const spd = Math.round(getSimVar('AIRSPEED INDICATED', 'knots'));
+  const spd = Math.round(getSimVar('GPS GROUND SPEED', 'knots'));
 
-  lastLat = lat; lastLon = lon; lastHdg = hdg;
+  lastLat = lat; lastLon = lon;
 
   aircraftMarker.setLatLng([lat, lon]);
   aircraftMarker.setIcon(makeAircraftIcon(hdg));
@@ -802,7 +811,9 @@ function updateAircraft() {
   document.getElementById('hud-hdg').textContent = `HDG: ${Math.round(hdg)}°`;
 
   if (!userPanned) {
+    _programmaticMove = true;
     map.setView([lat, lon], map.getZoom(), { animate: false });
+    _programmaticMove = false;
   }
 }
 
