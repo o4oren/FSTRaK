@@ -1,0 +1,79 @@
+<RPTErrors>
+	<RPTError>
+		<Package Name="fstrak-ingame-panel"/>
+		<Locations>
+			<Location Message="PackageBuilder | EndExecuteCommandsForPackage : Failed to build package fstrak-ingame-panel" Source=":0"/>
+		</Locations>
+		<AttachedErrors>
+			<RPTError>
+				<Package Name="fstrak-ingame-panel"/>
+				<Locations>
+					<Location Message="PackageBuilder | Package 'fstrak-ingame-panel' have encountered errors during _EndTreatCommands. See attached" Source=":0"/>
+				</Locations>
+				<AttachedErrors>
+					<RPTError>
+						<Package Name="fstrak-ingame-panel"/>
+						<Locations>
+							<Location Message="SPBCompiler | Failed to compile files ! See attached" Source=":0"/>
+						</Locations>
+						<AttachedErrors>
+							<RPTError>
+								<File Path="C:\Users\Oren\source\repos\FSTRaK\msfs-addon\fstrak-ingame-panel\PackageSources\InGamePanels\fstrak-ingame-panel.xml"/>
+								<Package Name="fstrak-ingame-panel"/>
+								<Locations>
+									<Location Message="SPBCompiler | Failed to compile 'C:\Users\Oren\source\repos\FSTRaK\msfs-addon\fstrak-ingame-panel\PackageSources\InGamePanels\fstrak-ingame-panel.xml' to binary" Source=":0"/>
+								</Locations>
+							</RPTError>
+						</AttachedErrors>
+					</RPTError>
+					<RPTError>
+						<File Path="C:\Users\Oren\source\repos\FSTRaK\msfs-addon\fstrak-ingame-panel\Packages\fstrak-ingame-panel\InGamePanels\fstrak-ingame-panel.spb"/>
+						<Package Name="fstrak-ingame-panel"/>
+						<Locations>
+							<Location Message="PackageBuilder | Output path does not exist: C:\Users\Oren\source\repos\FSTRaK\msfs-addon\fstrak-ingame-panel\Packages\fstrak-ingame-panel\InGamePanels\fstrak-ingame-panel.spb" Source=":0"/>
+						</Locations>
+					</RPTError>
+				</AttachedErrors>
+			</RPTError>
+		</AttachedErrors>
+	</RPTError>
+	<RPTError>
+		<Package Name="fstrak-ingame-panel"/>
+		<Locations>
+			<Location Message="PackageBuilder | EndExecuteCommandsForPackage : Failed to build package fstrak-ingame-panel" Source=":0"/>
+		</Locations>
+		<AttachedErrors>
+			<RPTError>
+				<Package Name="fstrak-ingame-panel"/>
+				<Locations>
+					<Location Message="PackageBuilder | Package 'fstrak-ingame-panel' have encountered errors during _EndTreatCommands. See attached" Source=":0"/>
+				</Locations>
+				<AttachedErrors>
+					<RPTError>
+						<Package Name="fstrak-ingame-panel"/>
+						<Locations>
+							<Location Message="SPBCompiler | Failed to compile files ! See attached" Source=":0"/>
+						</Locations>
+						<AttachedErrors>
+							<RPTError>
+								<File Path="C:\Users\Oren\source\repos\FSTRaK\msfs-addon\fstrak-ingame-panel\PackageSources\InGamePanels\fstrak-ingame-panel.xml"/>
+								<Package Name="fstrak-ingame-panel"/>
+								<Locations>
+									<Location Message="SPBCompiler | Failed to compile 'C:\Users\Oren\source\repos\FSTRaK\msfs-addon\fstrak-ingame-panel\PackageSources\InGamePanels\fstrak-ingame-panel.xml' to binary" Source=":0"/>
+								</Locations>
+							</RPTError>
+						</AttachedErrors>
+					</RPTError>
+					<RPTError>
+						<File Path="C:\Users\Oren\source\repos\FSTRaK\msfs-addon\fstrak-ingame-panel\Packages\fstrak-ingame-panel\InGamePanels\fstrak-ingame-panel.spb"/>
+						<Package Name="fstrak-ingame-panel"/>
+						<Locations>
+							<Location Message="PackageBuilder | Output path does not exist: C:\Users\Oren\source\repos\FSTRaK\msfs-addon\fstrak-ingame-panel\Packages\fstrak-ingame-panel\InGamePanels\fstrak-ingame-panel.spb" Source=":0"/>
+						</Locations>
+					</RPTError>
+				</AttachedErrors>
+			</RPTError>
+		</AttachedErrors>
+	</RPTError>
+</RPTErrors>
+

@@ -1,6 +1,7 @@
-<AssetPackage Name="fstrak-ingame-panel" Version="1.0.0">
+<?xml version="1.0" encoding="utf-8"?>
+<AssetPackage Version="1.0.0">
 	<ItemSettings>
-		<ContentType>SPB</ContentType>
+		<ContentType>MISC</ContentType>
 		<Title>FSTrAk Moving Map</Title>
 		<Manufacturer>FSTrAk</Manufacturer>
 		<Creator>FSTrAk</Creator>
@@ -9,9 +10,18 @@
 		<VisibleInStore>false</VisibleInStore>
 		<CanBeReferenced>false</CanBeReferenced>
 	</Flags>
+	<PackageOrderHint>PANEL_PATCH</PackageOrderHint>
 	<AssetGroups>
+		<AssetGroup Name="ContentInfo">
+			<Type Version="0">ContentInfo</Type>
+			<Flags>
+				<FSXCompatibility>false</FSXCompatibility>
+			</Flags>
+			<AssetDir>PackageDefinitions\fstrak-ingame-panel\ContentInfo</AssetDir>
+			<OutputDir>ContentInfo\fstrak-ingame-panel</OutputDir>
+		</AssetGroup>
 		<AssetGroup Name="fstrak-ingame-panel">
-			<Type>SPB</Type>
+			<Type Version="0">SPB</Type>
 			<Flags>
 				<FSXCompatibility>false</FSXCompatibility>
 			</Flags>
@@ -19,7 +29,7 @@
 			<OutputDir>InGamePanels\</OutputDir>
 		</AssetGroup>
 		<AssetGroup Name="html-ui">
-			<Type>Copy</Type>
+			<Type Version="0">Copy</Type>
 			<Flags>
 				<FSXCompatibility>false</FSXCompatibility>
 			</Flags>
@@ -28,3 +38,4 @@
 		</AssetGroup>
 	</AssetGroups>
 </AssetPackage>
+

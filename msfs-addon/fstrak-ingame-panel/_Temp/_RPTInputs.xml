@@ -1,0 +1,17 @@
+<RPTInputs>
+	<RPTInput Path="C:\Users\Oren\source\repos\FSTRaK\msfs-addon\fstrak-ingame-panel\PackageDefinitions\fstrak-ingame-panel\ContentInfo\Thumbnail.jpg">
+		<Package Name="fstrak-ingame-panel">
+			<AssetGroup Name="ContentInfo"/>
+			<AssetGroup Name="ContentInfo"/>
+			<AssetGroup Name="ContentInfo"/>
+		</Package>
+	</RPTInput>
+	<RPTInput Path="C:\Users\Oren\source\repos\FSTRaK\msfs-addon\fstrak-ingame-panel\PackageSources\InGamePanels\fstrak-ingame-panel.xml">
+		<Package Name="fstrak-ingame-panel">
+			<AssetGroup Name="fstrak-ingame-panel"/>
+			<AssetGroup Name="fstrak-ingame-panel"/>
+			<AssetGroup Name="fstrak-ingame-panel"/>
+		</Package>
+	</RPTInput>
+</RPTInputs>
+
