@@ -35,7 +35,7 @@ namespace FSTRaK.BusinessLogic.TileServer
                 if (route.StartsWith("base/", StringComparison.OrdinalIgnoreCase))
                 {
                     // parts: ["base", z, x, y]
-                    provider = System.Windows.Application.Current.Dispatcher.Invoke(
+                    provider = await System.Windows.Application.Current.Dispatcher.InvokeAsync(
                         () => MapProviderResolver.GetMapProvider());
                     providerKey = FSTRaK.Properties.Settings.Default.MapTileProvider;
 
@@ -47,7 +47,7 @@ namespace FSTRaK.BusinessLogic.TileServer
                 else if (route.StartsWith("overlay/chart/", StringComparison.OrdinalIgnoreCase))
                 {
                     // parts: ["overlay", "chart", z, x, y]
-                    provider = System.Windows.Application.Current.Dispatcher.Invoke(
+                    provider = await System.Windows.Application.Current.Dispatcher.InvokeAsync(
                         () => MapProviderResolver.GetChartOverlayProvider());
                     if (provider == null) { Respond404(context); return; }
                     providerKey = FSTRaK.Properties.Settings.Default.ChartOverlayProvider;
@@ -63,7 +63,7 @@ namespace FSTRaK.BusinessLogic.TileServer
                     if (!FSTRaK.Properties.Settings.Default.IsOpenAipEnabled)
                     { Respond404(context); return; }
 
-                    provider = System.Windows.Application.Current.Dispatcher.Invoke(
+                    provider = await System.Windows.Application.Current.Dispatcher.InvokeAsync(
                         () => MapProviderResolver.GetOpenAipLayer());
                     if (provider == null) { Respond404(context); return; }
                     providerKey = "OpenAIP";
@@ -96,11 +96,29 @@ namespace FSTRaK.BusinessLogic.TileServer
             }
 
             context.Response.StatusCode = 200;
-            context.Response.ContentType = "image/png";
+            context.Response.ContentType = DetectContentType(bytes);
             context.Response.Headers.Add("Access-Control-Allow-Origin", "*");
             context.Response.ContentLength64 = bytes.Length;
-            await context.Response.OutputStream.WriteAsync(bytes, 0, bytes.Length);
-            context.Response.OutputStream.Close();
+            try
+            {
+                await context.Response.OutputStream.WriteAsync(bytes, 0, bytes.Length);
+            }
+            finally
+            {
+                context.Response.OutputStream.Close();
+            }
+        }
+
+        private static string DetectContentType(byte[] bytes)
+        {
+            if (bytes.Length >= 3 && bytes[0] == 0xFF && bytes[1] == 0xD8 && bytes[2] == 0xFF)
+                return "image/jpeg";
+            if (bytes.Length >= 4 && bytes[0] == 0x89 && bytes[1] == 0x50 && bytes[2] == 0x4E && bytes[3] == 0x47)
+                return "image/png";
+            if (bytes.Length >= 12 && bytes[0] == 0x52 && bytes[1] == 0x49 && bytes[2] == 0x46 && bytes[3] == 0x46
+                && bytes[8] == 0x57 && bytes[9] == 0x45 && bytes[10] == 0x42 && bytes[11] == 0x50)
+                return "image/webp";
+            return "application/octet-stream";
         }
 
         private static bool TryParseZXY(string[] parts, int offset, out int z, out int x, out int y)
