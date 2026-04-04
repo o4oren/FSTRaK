@@ -157,9 +157,10 @@ namespace FSTRaK.BusinessLogic.FlightManager.State
                         {
                             logbookContext.Aircraft.Attach(Context.ActiveFlight.Aircraft);
                         }
-                        
+
                         logbookContext.Flights.Add(Context.ActiveFlight);
                         logbookContext.SaveChanges();
+                        Context.OnFlightSaved(Context.ActiveFlight.Id);
                     }
                     catch (Exception ex)
                     {
