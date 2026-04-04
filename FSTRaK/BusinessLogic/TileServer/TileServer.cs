@@ -38,6 +38,7 @@ namespace FSTRaK.BusinessLogic.TileServer
 
         public void Start()
         {
+            if (IsRunning) return;
             Port = FSTRaK.Properties.Settings.Default.TileServerPort;
             _tileHandler = new TileHandler(_proxy);
 
@@ -80,19 +81,27 @@ namespace FSTRaK.BusinessLogic.TileServer
                 {
                     context = await _listener.GetContextAsync();
                 }
-                catch (Exception)
+                catch (Exception ex)
                 {
-                    // Listener was stopped — exit loop
+                    if (!ct.IsCancellationRequested)
+                        Log.Warning(ex, "TileServer: listen loop exiting unexpectedly");
                     break;
                 }
 
                 // Handle OPTIONS preflight (CORS)
                 if (context.Request.HttpMethod == "OPTIONS")
                 {
-                    context.Response.Headers.Add("Access-Control-Allow-Origin", "*");
-                    context.Response.Headers.Add("Access-Control-Allow-Methods", "GET, POST, OPTIONS");
-                    context.Response.StatusCode = 204;
-                    context.Response.OutputStream.Close();
+                    try
+                    {
+                        context.Response.Headers.Add("Access-Control-Allow-Origin", "*");
+                        context.Response.Headers.Add("Access-Control-Allow-Methods", "GET, POST, OPTIONS");
+                        context.Response.StatusCode = 204;
+                        context.Response.OutputStream.Close();
+                    }
+                    catch (Exception ex)
+                    {
+                        Log.Debug(ex, "TileServer: OPTIONS response write failed");
+                    }
                     continue;
                 }
 
