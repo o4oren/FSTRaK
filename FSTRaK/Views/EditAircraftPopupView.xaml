@@ -29,9 +29,6 @@
                         <Setter Property="Margin" Value="5"/>
                         <Setter Property="VerticalAlignment" Value="Center"/>
                     </Style>
-                    <Style TargetType="{x:Type TextBox}" BasedOn="{StaticResource FSTrAkTextBox}">
-                        <Setter Property="Margin" Value="5"/>
-                    </Style>
                 </Grid.Resources>
                 <Grid.ColumnDefinitions>
                     <ColumnDefinition Width="110"/>
@@ -54,19 +51,24 @@
                     TextTrimming="CharacterEllipsis"/>
 
                 <TextBlock Grid.Column="0" Grid.Row="1">Manufacturer</TextBlock>
-                <TextBox Grid.Column="1" Grid.Row="1" Text="{Binding Aircraft.Manufacturer, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}"/>
+                <TextBox Grid.Column="1" Grid.Row="1" Style="{DynamicResource FSTrAkTextBox}" Margin="5"
+                    Text="{Binding Aircraft.Manufacturer, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}"/>
 
                 <TextBlock Grid.Column="0" Grid.Row="2">Type</TextBlock>
-                <TextBox Grid.Column="1" Grid.Row="2" Text="{Binding Aircraft.AircraftType, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}"/>
+                <TextBox Grid.Column="1" Grid.Row="2" Style="{DynamicResource FSTrAkTextBox}" Margin="5"
+                    Text="{Binding Aircraft.AircraftType, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}"/>
 
                 <TextBlock Grid.Column="0" Grid.Row="3">Model</TextBlock>
-                <TextBox Grid.Column="1" Grid.Row="3" Text="{Binding Aircraft.Model, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}"/>
+                <TextBox Grid.Column="1" Grid.Row="3" Style="{DynamicResource FSTrAkTextBox}" Margin="5"
+                    Text="{Binding Aircraft.Model, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}"/>
 
                 <TextBlock Grid.Column="0" Grid.Row="4">Airline</TextBlock>
-                <TextBox Grid.Column="1" Grid.Row="4" Text="{Binding Aircraft.Airline, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}"/>
+                <TextBox Grid.Column="1" Grid.Row="4" Style="{DynamicResource FSTrAkTextBox}" Margin="5"
+                    Text="{Binding Aircraft.Airline, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}"/>
 
                 <TextBlock Grid.Column="0" Grid.Row="5">Tail Number</TextBlock>
-                <TextBox Grid.Column="1" Grid.Row="5" Text="{Binding Aircraft.TailNumber, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}"/>
+                <TextBox Grid.Column="1" Grid.Row="5" Style="{DynamicResource FSTrAkTextBox}" Margin="5"
+                    Text="{Binding Aircraft.TailNumber, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}"/>
 
                 <StackPanel Grid.Column="0" Grid.Row="6" Grid.ColumnSpan="2"
                     Orientation="Horizontal" Margin="5,8,5,3">
