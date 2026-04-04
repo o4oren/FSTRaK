@@ -40,6 +40,7 @@ namespace FSTRaK.ViewModels
                     else
                         IsShowMapTilerApiKeyField = false;
 
+                    BusinessLogic.TileServer.TileServer.Instance.ClearTileCache();
                 }
                 OnPropertyChanged();
             }
