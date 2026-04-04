@@ -2,17 +2,16 @@ using FSTRaK.Models;
 using FSTRaK.Models.Entity;
 using Serilog;
 using System;
+using System.Collections.Generic;
 using System.Collections.ObjectModel;
+using System.ComponentModel;
 using System.Data.Entity;
 using System.Diagnostics;
 using System.Linq;
-using System.Threading;
 using System.Threading.Tasks;
 using System.Timers;
 
 using FSTRaK.BusinessLogic.FlightManager;
-using FSTRaK.BusinessLogic.FlightManager.State;
-using Newtonsoft.Json.Linq;
 
 namespace FSTRaK.ViewModels
 {
@@ -156,30 +155,12 @@ namespace FSTRaK.ViewModels
             _flightDetailsViewModel = new FlightDetailsViewModel();
             _typingTimer = new System.Timers.Timer(500);
 
-            _flightManager.PropertyChanged += async (s, e) =>
+            _flightManager.FlightSaved += (s, savedId) =>
             {
-                if (e.PropertyName.Equals(nameof(_flightManager.State)) && (_flightManager.State is FlightEndedState))
+                App.Current.Dispatcher.Invoke(() =>
                 {
-                    using (var logbookContext = new LogbookContext())
-                    {
-                        try
-                        {
-                            await LoadFlights(500);
-                            if (logbookContext.Flights == null)
-                                return;
-                            var latestId = logbookContext.Flights.Max(f => f.Id);
-                            SelectedFlight = logbookContext.Flights
-                            .Where(f => f.Id == latestId)
-                            .Include(f => f.Aircraft)
-                            .SingleOrDefault();
-                        }
-                        catch (Exception ex)
-                        {
-                            Log.Error(ex, ex.Message);
-                        }
-
-                    }
-                }
+                    LoadFlights(newFlightId: savedId, search: _searchText);
+                });
             };
 
 
@@ -207,29 +188,39 @@ namespace FSTRaK.ViewModels
 
             OpenEditAircraftPopupCommand = new RelayCommand(o =>
             {
-
                 var editAircraftViewModel = new EditAircraftViewModel(SelectedFlight.Aircraft)
                 {
                     IsShow = true
                 };
-                editAircraftViewModel.PropertyChanged += (sender, args) =>
+                PropertyChangedEventHandler handler = null;
+                handler = (sender, args) =>
                 {
                     if (editAircraftViewModel.WasUpdated)
-                        LoadFlights();
+                    {
+                        editAircraftViewModel.PropertyChanged -= handler;
+                        LoadFlights(search: _searchText);
+                    }
                 };
+                editAircraftViewModel.PropertyChanged += handler;
                 EditAircraftViewModel = editAircraftViewModel;
             });
 
-            OpenAddCommentPopupCommand = new RelayCommand(o => {
+            OpenAddCommentPopupCommand = new RelayCommand(o =>
+            {
                 var addCommentViewModel = new AddCommentViewModel(SelectedFlight)
                 {
                     IsShow = true
                 };
-                addCommentViewModel.PropertyChanged += (sender, args) =>
+                PropertyChangedEventHandler handler = null;
+                handler = (sender, args) =>
                 {
                     if (addCommentViewModel.WasUpdated)
-                        LoadFlights();
+                    {
+                        addCommentViewModel.PropertyChanged -= handler;
+                        LoadFlights(search: _searchText);
+                    }
                 };
+                addCommentViewModel.PropertyChanged += handler;
                 AddCommentViewModel = addCommentViewModel;
             });
 
@@ -240,7 +231,7 @@ namespace FSTRaK.ViewModels
 
         private void _typingTimer_Elapsed(object sender, ElapsedEventArgs e)
         {
-            SearchFlights();
+            LoadFlights(search: _searchText);
             _typingTimer.Stop();
         }
 
@@ -258,69 +249,72 @@ namespace FSTRaK.ViewModels
         }
 
 
-        private Task LoadFlights()
+        private Task LoadFlights(int? newFlightId = null, string search = null)
         {
-            return LoadFlights(0);
-        }
-        private Task LoadFlights(int delay)
-        {
-            return Task.Run(() => {
-
-                Thread.Sleep(delay);
+            return Task.Run(() =>
+            {
                 using (var logbookContext = new LogbookContext())
                 {
                     try
                     {
-                        var flights = logbookContext.Flights
-                            .Select(f => f)
+                        IQueryable<Flight> query = logbookContext.Flights
                             .OrderByDescending(f => f.Id)
                             .Include(f => f.Aircraft);
 
-                        System.Windows.Application.Current.Dispatcher.Invoke((Action)delegate
+                        if (!string.IsNullOrEmpty(search))
                         {
-                            Flights = new ObservableCollection<Flight>(flights);
-                            OnPropertyChanged(nameof(Flights));
+                            var s = search.ToLower();
+                            query = query.Where(f =>
+                                f.DepartureAirport.ToLower().Equals(s)
+                                || f.ArrivalAirport.ToLower().Equals(s)
+                                || f.Aircraft.Title.ToLower().Contains(s)
+                                || f.Aircraft.Model.ToLower().Contains(s)
+                                || f.Aircraft.Airline.ToLower().StartsWith(s)
+                                || f.Aircraft.TailNumber.ToLower().StartsWith(s)
+                            );
+                        }
+
+                        var dbFlights = query.ToList();
+
+                        App.Current.Dispatcher.Invoke(() =>
+                        {
+                            // Remove flights no longer in the result
+                            var dbIds = new HashSet<int>(dbFlights.Select(f => f.Id));
+                            foreach (var existing in Flights.ToList())
+                            {
+                                if (!dbIds.Contains(existing.Id))
+                                    Flights.Remove(existing);
+                            }
+
+                            // Update existing and add new
+                            var existingById = Flights.ToDictionary(f => f.Id);
+                            foreach (var dbFlight in dbFlights)
+                            {
+                                if (existingById.TryGetValue(dbFlight.Id, out var existing))
+                                {
+                                    // Update editable properties in place
+                                    existing.Comment = dbFlight.Comment;
+                                    existing.Aircraft = dbFlight.Aircraft;
+                                }
+                                else
+                                {
+                                    // New flight — insert at index 0 (list is descending by Id)
+                                    Flights.Insert(0, dbFlight);
+                                }
+                            }
+
+                            // Select the newly saved flight if requested
+                            if (newFlightId.HasValue)
+                            {
+                                var saved = Flights.FirstOrDefault(f => f.Id == newFlightId.Value);
+                                if (saved != null)
+                                    SelectedFlight = saved;
+                            }
                         });
                     }
                     catch (Exception ex)
                     {
-                        Log.Error(ex, "Unhandled error occurred!");
-                    }
-                }
-            });
-        }
-
-        private Task SearchFlights()
-        {
-            if (SearchText == null || SearchText.Equals(string.Empty))
-                return LoadFlights();
-
-            return Task.Run(() => {
-                using (var logbookContext = new LogbookContext())
-                {
-                    try
-                    {
-                        var flights = logbookContext.Flights
-                        .Where(f =>
-                            f.DepartureAirport.ToLower().Equals(SearchText.ToLower())
-                            || f.ArrivalAirport.ToLower().Equals(SearchText.ToLower())
-                            || f.Aircraft.Title.ToLower().Contains(SearchText.ToLower())
-                            || f.Aircraft.Model.ToLower().Contains(SearchText.ToLower())
-                            || f.Aircraft.Airline.ToLower().StartsWith(SearchText.ToLower())
-                            || f.Aircraft.TailNumber.ToLower().StartsWith(SearchText.ToLower())
-                        )
-                        .OrderByDescending(f => f.Id)
-                        .Include(f => f.Aircraft);
-
-                        App.Current.Dispatcher.Invoke((Action)delegate
-                        {
-                            Flights = new ObservableCollection<Flight>(flights);
-                            OnPropertyChanged(nameof(Flights));
-                        });
-                    }
-                    catch (Exception ex)
-                    {
-                        Log.Error(ex, "Exception fetching Flights!");
+                        Log.Error(ex, "Unhandled error occurred in LoadFlights!");
                     }
                 }
             });
