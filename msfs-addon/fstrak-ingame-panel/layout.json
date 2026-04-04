@@ -2,8 +2,13 @@
   "content": [
     {
       "path": "manifest.json",
-      "size": 471,
-      "date": 134197932509305780
+      "size": 487,
+      "date": 134197934055296740
+    },
+    {
+      "path": "package.xml.user",
+      "size": 249,
+      "date": 134197966976315210
     }
   ]
 }
