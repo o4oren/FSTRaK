@@ -122,6 +122,7 @@
     <Compile Include="BusinessLogic\FlightManager\State\TakeoffRollState.cs" />
     <Compile Include="BusinessLogic\FlightManager\State\TaxiInState.cs" />
     <Compile Include="BusinessLogic\FlightManager\State\TaxiOutState.cs" />
+    <Compile Include="BusinessLogic\TileServer\TileHandler.cs" />
     <Compile Include="BusinessLogic\TileServer\TileProxyService.cs" />
     <Compile Include="BusinessLogic\SimconnectService\SimConnectService.cs" />
     <Compile Include="BusinessLogic\VatsimService\VatsimModel\Atis.cs" />
