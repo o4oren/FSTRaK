@@ -822,26 +822,40 @@ updateAircraft();
 
 // ── ATC layer ──────────────────────────────────────────────────────────────
 let atcLayer = L.layerGroup().addTo(map);
+let _lastAtcJson = null;
+
+function escapeHtml(str) {
+  if (str == null) return '';
+  return String(str)
+    .replace(/&/g, '&amp;')
+    .replace(/</g, '&lt;')
+    .replace(/>/g, '&gt;')
+    .replace(/"/g, '&quot;')
+    .replace(/'/g, '&#39;');
+}
 
 function buildPopupContent(airport) {
   let html = `<div style="font-family:monospace;font-size:12px;min-width:180px">`;
-  html += `<b style="font-size:13px">${airport.callsign}</b><br>`;
+  html += `<b style="font-size:13px">${escapeHtml(airport.callsign)}</b><br>`;
   if (airport.controllers && airport.controllers.length > 0) {
     html += `<table style="width:100%;margin-top:4px;border-collapse:collapse">`;
     for (const c of airport.controllers) {
-      html += `<tr><td>${c.callsign}</td><td style="text-align:right;padding-left:8px">${c.frequency}</td><td style="text-align:right;padding-left:8px;color:#888">${c.type}</td></tr>`;
+      html += `<tr><td>${escapeHtml(c.callsign)}</td><td style="text-align:right;padding-left:8px">${escapeHtml(c.frequency)}</td><td style="text-align:right;padding-left:8px;color:#888">${escapeHtml(c.type)}</td></tr>`;
     }
     html += `</table>`;
   }
   if (airport.atis) {
     html += `<hr style="margin:6px 0;border-color:#444">`;
-    html += `<div style="color:#aaa;font-size:11px;white-space:pre-wrap">${airport.atis}</div>`;
+    html += `<div style="color:#aaa;font-size:11px;white-space:pre-wrap">${escapeHtml(airport.atis)}</div>`;
   }
   html += `</div>`;
   return html;
 }
 
 function renderAtcState(state) {
+  const json = JSON.stringify(state);
+  if (json === _lastAtcJson) return;
+  _lastAtcJson = json;
   atcLayer.clearLayers();
 
   atcVisible = state.atcVisible;
@@ -861,7 +875,7 @@ function renderAtcState(state) {
         weight: 1,
         fillColor: '#4fc3f7',
         fillOpacity: 0.08
-      }).bindTooltip(feature.properties.callsign || '', { sticky: true }).addTo(atcLayer);
+      }).bindTooltip((feature.properties && feature.properties.callsign) || '', { sticky: true }).addTo(atcLayer);
     }
   }
 
@@ -920,6 +934,7 @@ document.getElementById('btn-atc').addEventListener('click', async () => {
     const resp = await fetch(TOGGLE_URL, { method: 'POST' });
     if (!resp.ok) return;
   } catch (e) {}
+  await new Promise(r => setTimeout(r, 200));
   await fetchAtcState();
 });
 
