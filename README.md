@@ -14,6 +14,7 @@ FSTrAk monitors your simulator silently, and will detect when a flight is starte
 * Multiple map providers including FAA ArcGIS charts, OpenAIP, SkyVector, OpenTopoMap, Bing, MapTiler, and more.
 * Flight analysis and scoring.
 * Live flight tracking with a moving map.
+* **MSFS 2024 in-sim moving map** — an MSFS Community addon panel that mirrors your FSTrAk map selection, showing chart overlays, live ATC coverage, and your aircraft position inside the simulator.
 * **VATSIM and IVAO live network support** — view pilots and ATC on the live map.
 * Statistics (most used aircraft, most used airlines, average and max payload, distance, etc.)
 * Dark mode.
@@ -57,6 +58,7 @@ Without an API key, IVAO pilots show a geodesic line from departure to their cur
 - [ ] Display bearing/distance to a designated point on the map.
 - [x] VATSIM integration (display live traffic and ATC on the map).
 - [x] IVAO integration (display live traffic and ATC on the map).
+- [x] MSFS 2024 in-sim moving map tablet panel.
 
 #### Flight Analysis
 <img width="1024" alt="Flight Analysis" src="https://github.com/o4oren/FSTRaK/assets/23486326/e6047bcc-df6a-4235-ac85-da6de6de8cd5">
