@@ -157,10 +157,7 @@ namespace FSTRaK.ViewModels
 
             _flightManager.FlightSaved += (s, savedId) =>
             {
-                App.Current.Dispatcher.Invoke(() =>
-                {
-                    LoadFlights(newFlightId: savedId, search: _searchText);
-                });
+                LoadFlights(newFlightId: savedId, search: _searchText);
             };
 
 
@@ -286,7 +283,7 @@ namespace FSTRaK.ViewModels
                                     Flights.Remove(existing);
                             }
 
-                            // Update existing and add new
+                            // Update existing and add new in correct descending-Id order
                             var existingById = Flights.ToDictionary(f => f.Id);
                             foreach (var dbFlight in dbFlights)
                             {
@@ -298,8 +295,13 @@ namespace FSTRaK.ViewModels
                                 }
                                 else
                                 {
-                                    // New flight — insert at index 0 (list is descending by Id)
-                                    Flights.Insert(0, dbFlight);
+                                    // New flight — insert at correct position to maintain descending-Id order
+                                    // dbFlights is already OrderByDescending(Id), and Flights is also descending by Id
+                                    // Insert before the first existing flight with a lower Id
+                                    int insertIndex = 0;
+                                    while (insertIndex < Flights.Count && Flights[insertIndex].Id > dbFlight.Id)
+                                        insertIndex++;
+                                    Flights.Insert(insertIndex, dbFlight);
                                 }
                             }
 
