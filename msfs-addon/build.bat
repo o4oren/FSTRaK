@@ -31,10 +31,23 @@ echo Tool:    %TOOL%
 echo Project: %PROJECT%
 echo.
 
-"%TOOL%" "%PROJECT%" 2>&1
+pushd "%BAT_DIR%\fstrak-ingame-panel\Build"
+"%TOOL%" "fstrak-ingame-panel.xml" 2>&1
+popd
 echo.
 echo fspackagetool exit code: %errorlevel%
 echo.
+
+REM Show whatever the tool produced
+echo Listing Build directory after tool run:
+dir "%BAT_DIR%\fstrak-ingame-panel\Build\" /s /b 2>&1
+echo.
+
+REM Check for any log files
+if exist "%BAT_DIR%\fstrak-ingame-panel\Build\_Temp" (
+    echo _Temp directory contents:
+    dir "%BAT_DIR%\fstrak-ingame-panel\Build\_Temp\" /s /b 2>&1
+)
 
 if %errorlevel% neq 0 (
     echo ERROR: Build failed with exit code %errorlevel%.
