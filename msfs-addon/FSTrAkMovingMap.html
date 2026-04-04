@@ -786,39 +786,31 @@ document.getElementById('btn-recenter').addEventListener('click', () => {
   document.getElementById('btn-recenter').classList.remove('visible');
 });
 
-// ── SimVar polling ────────────────────────────────────────────────────────────────────────────────────
-function getSimVar(name, unit) {
-  if (typeof SimVar !== 'undefined') {
-    try { return SimVar.GetSimVarValue(name, unit); } catch(e) {}
-  }
-  return 0;
-}
-
-function updateAircraft() {
-  const lat = getSimVar('PLANE LATITUDE', 'degrees');
-  const lon = getSimVar('PLANE LONGITUDE', 'degrees');
-  const hdg = getSimVar('PLANE HEADING DEGREES MAGNETIC', 'degrees');
-  const alt = Math.round(getSimVar('INDICATED ALTITUDE', 'feet'));
-  const spd = Math.round(getSimVar('GPS GROUND SPEED', 'knots'));
+// ── Aircraft position — receives SimVar data from parent panel via postMessage ──
+window.addEventListener('message', function(event) {
+  if (!event.data || event.data.type !== 'simvar') return;
+  var d = event.data;
+  var lat = d.lat || 0;
+  var lon = d.lon || 0;
+  var hdg = d.hdg || 0;
+  var alt = Math.round(d.alt || 0);
+  var spd = Math.round(d.spd || 0);
 
   lastLat = lat; lastLon = lon;
 
   aircraftMarker.setLatLng([lat, lon]);
   aircraftMarker.setIcon(makeAircraftIcon(hdg));
 
-  document.getElementById('hud-alt').textContent = `ALT: ${alt} ft`;
-  document.getElementById('hud-spd').textContent = `GS: ${spd} kt`;
-  document.getElementById('hud-hdg').textContent = `HDG: ${Math.round(hdg)}°`;
+  document.getElementById('hud-alt').textContent = 'ALT: ' + alt + ' ft';
+  document.getElementById('hud-spd').textContent = 'GS: ' + spd + ' kt';
+  document.getElementById('hud-hdg').textContent = 'HDG: ' + Math.round(hdg) + '\u00B0';
 
   if (!userPanned) {
     _programmaticMove = true;
     map.setView([lat, lon], map.getZoom(), { animate: false });
     _programmaticMove = false;
   }
-}
-
-setInterval(updateAircraft, 1000);
-updateAircraft();
+});
 
 // ── ATC layer ──────────────────────────────────────────────────────────────
 let atcLayer = L.layerGroup().addTo(map);
