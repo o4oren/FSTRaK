@@ -1,23 +1,37 @@
 @echo off
 echo Building FSTrAk InGame Panel SPB...
 
-REM The MSFS SDK sets the MSFS_SDK environment variable automatically.
-REM If it is not set, update the path below to match your SDK installation.
+REM Get the directory of this batch file (no trailing backslash)
+set BAT_DIR=%~dp0
+set BAT_DIR=%BAT_DIR:~0,-1%
+
+REM fspackagetool.exe path — MSFS SDK sets MSFS_SDK env var automatically.
+REM Strip any trailing backslash from MSFS_SDK before appending our path.
 if "%MSFS_SDK%"=="" set MSFS_SDK=C:\MSFS SDK
+if "%MSFS_SDK:~-1%"=="\" set MSFS_SDK=%MSFS_SDK:~0,-1%
 
 set TOOL=%MSFS_SDK%\Tools\bin\fspackagetool.exe
 
 if not exist "%TOOL%" (
-    echo ERROR: fspackagetool.exe not found at %MSFS_SDK%\Tools\bin\
+    echo ERROR: fspackagetool.exe not found at: %TOOL%
     echo Please install the MSFS SDK or update the MSFS_SDK path in this file.
     pause
     exit /b 1
 )
 
-echo Running: "%TOOL%"
-echo Project: fstrak-ingame-panel\Build\fstrak-ingame-panel.xml
+set PROJECT=%BAT_DIR%\fstrak-ingame-panel\Build\fstrak-ingame-panel.xml
+
+if not exist "%PROJECT%" (
+    echo ERROR: Project file not found at: %PROJECT%
+    pause
+    exit /b 1
+)
+
+echo Tool:    %TOOL%
+echo Project: %PROJECT%
 echo.
-"%TOOL%" "fstrak-ingame-panel\Build\fstrak-ingame-panel.xml" 2>&1
+
+"%TOOL%" "%PROJECT%" 2>&1
 echo.
 echo fspackagetool exit code: %errorlevel%
 echo.
@@ -28,11 +42,20 @@ if %errorlevel% neq 0 (
     exit /b 1
 )
 
-echo Copying SPB to InGamePanels...
-copy /Y "fstrak-ingame-panel\Build\Packages\fstrak-ingame-panel\Build\fstrak-ingame-panel.spb" "fstrak-ingame-panel\InGamePanels\"
+set SPB_SRC=%BAT_DIR%\fstrak-ingame-panel\Build\Packages\fstrak-ingame-panel\Build\fstrak-ingame-panel.spb
+set SPB_DST=%BAT_DIR%\fstrak-ingame-panel\InGamePanels\
+
+echo Copying SPB...
+echo From: %SPB_SRC%
+echo To:   %SPB_DST%
+
+copy /Y "%SPB_SRC%" "%SPB_DST%"
 
 if %errorlevel% neq 0 (
-    echo ERROR: Copy failed. Check the Build\Packages output directory.
+    echo ERROR: Copy failed.
+    echo Expected SPB at: %SPB_SRC%
+    echo Listing Build\Packages output:
+    dir "%BAT_DIR%\fstrak-ingame-panel\Build\Packages\" /s /b 2>&1
     pause
     exit /b 1
 )
