@@ -95,7 +95,7 @@ namespace FSTRaK.BusinessLogic.FlightManager.State
 
                 if (Context.ActiveFlight.FlightOutcome == FlightOutcome.Completed || !Properties.Settings.Default.IsSaveOnlyCompleteFlights)
                 {
-                    SaveFlight();
+                    _ = SaveFlight();
                 }
                 Log.Information($"Flight Ended!\n{Context.ActiveFlight.ToString()}");
                 _isEnded = true;

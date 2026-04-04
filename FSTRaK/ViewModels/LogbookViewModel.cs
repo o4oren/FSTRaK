@@ -155,6 +155,8 @@ namespace FSTRaK.ViewModels
             _flightDetailsViewModel = new FlightDetailsViewModel();
             _typingTimer = new System.Timers.Timer(500);
 
+            // LogbookViewModel is a singleton (readonly field in MainWindowViewModel) so
+            // this subscription lives for the application lifetime — no unsubscribe needed.
             _flightManager.FlightSaved += (s, savedId) =>
             {
                 LoadFlights(newFlightId: savedId, search: _searchText);
