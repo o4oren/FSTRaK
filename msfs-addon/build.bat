@@ -31,9 +31,7 @@ echo Tool:    %TOOL%
 echo Project: %PROJECT%
 echo.
 
-pushd "%BAT_DIR%\fstrak-ingame-panel\Build"
-"%TOOL%" "fstrak-ingame-panel.xml" 2>&1
-popd
+"%TOOL%" "%PROJECT%" 2>&1
 echo.
 echo fspackagetool exit code: %errorlevel%
 echo.
@@ -55,7 +53,7 @@ if %errorlevel% neq 0 (
     exit /b 1
 )
 
-set SPB_SRC=%BAT_DIR%\fstrak-ingame-panel\Build\Packages\fstrak-ingame-panel\Build\fstrak-ingame-panel.spb
+set SPB_SRC=%BAT_DIR%\fstrak-ingame-panel\Build\Packages\fstrak-ingame-panel\fstrak-ingame-panel.spb
 set SPB_DST=%BAT_DIR%\fstrak-ingame-panel\InGamePanels\
 
 echo Copying SPB...
