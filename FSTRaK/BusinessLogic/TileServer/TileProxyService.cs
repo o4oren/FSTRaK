@@ -1,5 +1,4 @@
 using FSTRaK.Utils;
-using MapControl;
 using Serilog;
 using System;
 using System.Collections.Concurrent;
@@ -42,11 +41,21 @@ namespace FSTRaK.BusinessLogic.TileServer
         }
 
         /// <summary>
-        /// Returns raw tile bytes for an MBTiles provider, or null if not available.
+        /// Returns raw tile bytes for an MBTiles source, or null if not available.
+        /// Accepts MBTilesTileSource directly (not MBTilesMapTileLayer) to avoid UI-thread access.
         /// </summary>
-        public async Task<byte[]> GetMBTilesBytesAsync(MBTilesMapTileLayer layer, int z, int x, int y)
+        public async Task<byte[]> GetMBTilesBytesAsync(MBTilesTileSource source, int z, int x, int y)
         {
-            return await GetMBTileAsync(layer, z, x, y);
+            if (source == null) return null;
+            try
+            {
+                return await source.GetRawBytesAsync(x, y, z);
+            }
+            catch (Exception ex)
+            {
+                Log.Debug(ex, "TileProxyService: MBTiles read failed for {z}/{x}/{y}", z, x, y);
+                return null;
+            }
         }
 
         /// <summary>
@@ -92,22 +101,6 @@ namespace FSTRaK.BusinessLogic.TileServer
             catch (Exception ex)
             {
                 Log.Debug(ex, "TileProxyService: failed to fetch {Url}", url);
-                return null;
-            }
-        }
-
-        private async Task<byte[]> GetMBTileAsync(MBTilesMapTileLayer layer, int z, int x, int y)
-        {
-            if (layer.TileSource == null) return null;
-            var source = layer.TileSource as MBTilesTileSource;
-            if (source == null) return null;
-            try
-            {
-                return await source.GetRawBytesAsync(x, y, z);
-            }
-            catch (Exception ex)
-            {
-                Log.Debug(ex, "TileProxyService: MBTiles read failed for {z}/{x}/{y}", z, x, y);
                 return null;
             }
         }

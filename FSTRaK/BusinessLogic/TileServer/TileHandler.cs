@@ -39,14 +39,14 @@ namespace FSTRaK.BusinessLogic.TileServer
                     { Respond404(context); return; }
 
                     var providerKey = FSTRaK.Properties.Settings.Default.MapTileProvider;
-                    var (url, mbLayer) = await System.Windows.Application.Current.Dispatcher.InvokeAsync(() =>
+                    var (url, mbSource) = await System.Windows.Application.Current.Dispatcher.InvokeAsync(() =>
                     {
                         var p = MapProviderResolver.GetMapProvider();
-                        if (p is MBTilesMapTileLayer mb) return ((string)null, mb);
-                        return (ResolveUrl(p, z, x, y), (MBTilesMapTileLayer)null);
+                        if (p is MBTilesMapTileLayer mb) return ((string)null, mb.TileSource as MBTilesTileSource);
+                        return (ResolveUrl(p, z, x, y), (MBTilesTileSource)null);
                     });
 
-                    await ServeTile(context, url, mbLayer, providerKey, z, x, y);
+                    await ServeTile(context, url, mbSource, providerKey, z, x, y);
                 }
                 else if (route.StartsWith("overlay/chart/", StringComparison.OrdinalIgnoreCase))
                 {
@@ -54,16 +54,16 @@ namespace FSTRaK.BusinessLogic.TileServer
                     { Respond404(context); return; }
 
                     var providerKey = FSTRaK.Properties.Settings.Default.ChartOverlayProvider;
-                    var (url, mbLayer) = await System.Windows.Application.Current.Dispatcher.InvokeAsync(() =>
+                    var (url, mbSource) = await System.Windows.Application.Current.Dispatcher.InvokeAsync(() =>
                     {
                         var p = MapProviderResolver.GetChartOverlayProvider();
-                        if (p == null) return ((string)null, (MBTilesMapTileLayer)null);
-                        if (p is MBTilesMapTileLayer mb) return ((string)null, mb);
-                        return (ResolveUrl(p, z, x, y), (MBTilesMapTileLayer)null);
+                        if (p == null) return ((string)null, (MBTilesTileSource)null);
+                        if (p is MBTilesMapTileLayer mb) return ((string)null, mb.TileSource as MBTilesTileSource);
+                        return (ResolveUrl(p, z, x, y), (MBTilesTileSource)null);
                     });
 
-                    if (url == null && mbLayer == null) { Respond404(context); return; }
-                    await ServeTile(context, url, mbLayer, providerKey, z, x, y);
+                    if (url == null && mbSource == null) { Respond404(context); return; }
+                    await ServeTile(context, url, mbSource, providerKey, z, x, y);
                 }
                 else if (route.StartsWith("overlay/openaip/", StringComparison.OrdinalIgnoreCase))
                 {
@@ -105,12 +105,12 @@ namespace FSTRaK.BusinessLogic.TileServer
                 .Replace("{y}", y.ToString());
         }
 
-        private async Task ServeTile(HttpListenerContext context, string url, MBTilesMapTileLayer mbLayer,
+        private async Task ServeTile(HttpListenerContext context, string url, MBTilesTileSource mbSource,
             string providerKey, int z, int x, int y)
         {
             byte[] bytes;
-            if (mbLayer != null)
-                bytes = await _proxy.GetMBTilesBytesAsync(mbLayer, z, x, y);
+            if (mbSource != null)
+                bytes = await _proxy.GetMBTilesBytesAsync(mbSource, z, x, y);
             else
                 bytes = await _proxy.GetWebTileBytesAsync(url, providerKey, z, x, y);
             if (bytes == null || bytes.Length == 0)
