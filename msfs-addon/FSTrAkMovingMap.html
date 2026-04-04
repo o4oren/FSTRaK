@@ -743,8 +743,8 @@ let lastLat = 0, lastLon = 0;
 const map = L.map('map', { zoomControl: true, attributionControl: false }).setView([0, 0], 10);
 
 L.tileLayer(TILE_BASE, { maxZoom: 18, minZoom: 3, errorTileUrl: TRANSPARENT }).addTo(map);
-L.tileLayer(TILE_CHART,   { maxZoom: 18, minZoom: 3, opacity: 0.8, errorTileUrl: TRANSPARENT }).addTo(map);
-L.tileLayer(TILE_OPENAIP, { maxZoom: 18, minZoom: 3, opacity: 0.8, errorTileUrl: TRANSPARENT }).addTo(map);
+L.tileLayer(TILE_CHART,   { maxZoom: 18, minZoom: 3, errorTileUrl: TRANSPARENT }).addTo(map);
+L.tileLayer(TILE_OPENAIP, { maxZoom: 18, minZoom: 3, errorTileUrl: TRANSPARENT }).addTo(map);
 
 // ── Aircraft marker ──────────────────────────────────────────────────────────────────────────────────
 function makeAircraftIcon(hdg) {
