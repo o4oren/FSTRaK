@@ -100,10 +100,13 @@ namespace FSTRaK.BusinessLogic.TileServer
             if (lvm.IsVatsimActive) network = "vatsim";
             else if (lvm.IsIvaoActive) network = "ivao";
 
-            Log.Debug("NetworkStateHandler: atcVisible={AtcVisible} network={Network} firs={FirCount} vatsimFirs={VatsimFirCount} uirs={UirCount} isVatsimActive={IsVatsimActive} isShowVatsimAtc={IsShowVatsimAtc}",
+            var firstFirSample = features.Count > 0
+                ? (features[0] as JObject)?["geometry"]?["coordinates"]?[0]?[0]?.ToString()
+                : "none";
+            Log.Debug("NetworkStateHandler: atcVisible={AtcVisible} network={Network} firs={FirCount} vatsimFirs={VatsimFirCount} uirs={UirCount} isVatsimActive={IsVatsimActive} isShowVatsimAtc={IsShowVatsimAtc} firstCoord={FirstCoord}",
                 lvm.IsShowVatsimAtc || lvm.IsShowIvaoAtc, network, features.Count,
                 lvm.VatsimControlledFirs.Count, lvm.VatsimControlledUirs.Count,
-                lvm.IsVatsimActive, lvm.IsShowVatsimAtc);
+                lvm.IsVatsimActive, lvm.IsShowVatsimAtc, firstFirSample);
 
             return new JObject
             {
