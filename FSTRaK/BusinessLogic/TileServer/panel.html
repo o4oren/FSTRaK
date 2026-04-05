@@ -889,8 +889,7 @@ function renderAtcState(state) {
   if (state.firs) {
     for (const feature of state.firs) {
       if (!feature.geometry || !feature.geometry.coordinates) { console.log('[FSTRaK] FIR skipped: no geometry'); continue; }
-      const ring = feature.geometry.coordinates[0];
-      console.log('[FSTRaK] FIR ring type:', typeof ring, Array.isArray(ring), 'len:', ring ? ring.length : 'null', 'first:', ring && ring[0]);
+      const ring = feature.geometry.coordinates;
       const coords = ring.map(c => [c[1], c[0]]);
       if (coords.length < 3) { console.log('[FSTRaK] FIR skipped: coords.length < 3'); continue; }
       L.polygon(coords, {
