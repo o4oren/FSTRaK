@@ -1,4 +1,3 @@
-using FSTRaK.BusinessLogic.FlightManager;
 using Serilog;
 using System;
 using System.Globalization;
@@ -19,7 +18,7 @@ namespace FSTRaK.BusinessLogic.TileServer
         {
             try
             {
-                var p = FlightManager.Instance.CurrentFlightParams;
+                var p = FlightManager.FlightManager.Instance.CurrentFlightParams;
                 var json = string.Format(
                     CultureInfo.InvariantCulture,
                     "{{\"lat\":{0},\"lon\":{1},\"hdg\":{2},\"alt\":{3},\"spd\":{4}}}",
