@@ -885,11 +885,14 @@ function renderAtcState(state) {
   if (!state.atcVisible) return;
 
   // FIR polygons
+  console.log('[FSTRaK] firs count:', state.firs ? state.firs.length : 'null');
   if (state.firs) {
     for (const feature of state.firs) {
-      if (!feature.geometry || !feature.geometry.coordinates) continue;
-      const coords = feature.geometry.coordinates[0].map(c => [c[1], c[0]]);
-      if (coords.length < 3) continue;
+      if (!feature.geometry || !feature.geometry.coordinates) { console.log('[FSTRaK] FIR skipped: no geometry'); continue; }
+      const ring = feature.geometry.coordinates[0];
+      console.log('[FSTRaK] FIR ring type:', typeof ring, Array.isArray(ring), 'len:', ring ? ring.length : 'null', 'first:', ring && ring[0]);
+      const coords = ring.map(c => [c[1], c[0]]);
+      if (coords.length < 3) { console.log('[FSTRaK] FIR skipped: coords.length < 3'); continue; }
       L.polygon(coords, {
         color: '#080658',
         weight: 1,
