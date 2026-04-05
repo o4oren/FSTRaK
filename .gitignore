@@ -404,3 +404,6 @@ FodyWeavers.xsd
 .claude/
 .bmad/
 .worktrees/
+
+_bmad/
+_bmad-output/
