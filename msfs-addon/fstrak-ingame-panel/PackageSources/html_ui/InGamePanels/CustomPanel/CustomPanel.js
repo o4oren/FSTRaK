@@ -16,13 +16,22 @@ class IngamePanelCustomPanel extends TemplateElement {
         this.m_MainDisplay.classList.add("hidden");
         this.m_Footer = document.querySelector("#Footer");
         this.m_Footer.classList.add("hidden");
+
+        // Load the iframe and start polling unconditionally — the panel HTML only
+        // runs while the toolbar panel is open, so panelActive is always true here.
+        this.panelActive = true;
+        if (this.iframeElement) {
+            this.iframeElement.src = 'http://127.0.0.1:8765/panel';
+        }
+        this.startSimVarPolling();
+
         if (this.ingameUi) {
             this.ingameUi.addEventListener("panelActive", function(e) {
                 self.panelActive = true;
-                if (self.iframeElement) {
+                if (self.iframeElement && !self.iframeElement.src) {
                     self.iframeElement.src = 'http://127.0.0.1:8765/panel';
                 }
-                self.startSimVarPolling();
+                if (!self.simvarInterval) self.startSimVarPolling();
             });
             this.ingameUi.addEventListener("panelInactive", function(e) {
                 self.panelActive = false;
