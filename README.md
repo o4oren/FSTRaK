@@ -91,7 +91,7 @@ Without an API key, IVAO pilots show a geodesic line from departure to their cur
 <img width="1024" alt="Scoring" src="https://github.com/o4oren/FSTRaK/assets/23486326/0242d88c-c1c1-4b58-8150-28da3c01f1d9">
 
 #### Live map with VATSIM ATC coverage
-<img width="1024" alt="Live map" src="https://cdn.flightsim.to/images/28/20260306_183842_d075feab363a86a1_fstrak.png">
+<img width="1024" alt="Live map" src="docs/images/screenshot-live-map.png">
 
 #### MSFS in-sim moving map tablet panel
-<img width="1024" alt="In-sim panel" src="https://cdn.flightsim.to/images/28/20260403_022930_cc00457edce4993a_fstrak.png">
+<img width="1024" alt="In-sim panel" src="docs/images/screenshot-insim-panel.png">
