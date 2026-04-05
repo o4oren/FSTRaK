@@ -91,7 +91,7 @@ namespace FSTRaK.BusinessLogic.TileServer
                 {
                     if (atc.ControlPolygon != null && atc.ControlPolygon.Count > 0)
                     {
-                        var feature = BuildPolygonFeature(atc.ControlPolygon, atc.Callsign, null);
+                        var feature = BuildPolygonFeature(atc.ControlPolygon, atc.Callsign, Enumerable.Empty<FSTRaK.BusinessLogic.VatsimService.VatsimModel.Controller>());
                         if (feature != null) features.Add(feature);
                     }
                 }
@@ -135,42 +135,6 @@ namespace FSTRaK.BusinessLogic.TileServer
             var controllerArray = new JArray();
             foreach (var c in controllers ?? Enumerable.Empty<FSTRaK.BusinessLogic.VatsimService.VatsimModel.Controller>())
                 controllerArray.Add(new JObject { ["callsign"] = c.callsign, ["frequency"] = c.frequency });
-
-            var props = new JObject
-            {
-                ["callsign"] = callsign,
-                ["controllers"] = controllerArray
-            };
-
-            return new JObject
-            {
-                ["type"] = "Feature",
-                ["geometry"] = new JObject
-                {
-                    ["type"] = "Polygon",
-                    ["coordinates"] = new JArray(ring)
-                },
-                ["properties"] = props
-            };
-        }
-
-        // kept for IVAO CTR which has no controller list
-        private static JObject BuildPolygonFeature(LocationCollection locations, string callsign, string frequency)
-        {
-            if (locations == null || locations.Count < 3) return null;
-
-            var ring = new JArray();
-            foreach (var loc in locations)
-                ring.Add(new JArray(loc.Longitude, loc.Latitude));
-
-            var firstLoc = locations[0];
-            var lastLoc = locations[locations.Count - 1];
-            if (firstLoc.Latitude != lastLoc.Latitude || firstLoc.Longitude != lastLoc.Longitude)
-                ring.Add(new JArray(firstLoc.Longitude, firstLoc.Latitude));
-
-            var controllerArray = new JArray();
-            if (frequency != null)
-                controllerArray.Add(new JObject { ["callsign"] = callsign, ["frequency"] = frequency });
 
             var props = new JObject
             {
