@@ -389,6 +389,9 @@
     <Resource Include="Resources\Images\Aircraft\003884\E195-image.png" />
     <Resource Include="Resources\Images\Aircraft\003884\ERJ-image.png" />
     <Resource Include="Resources\Images\Aircraft\003884\Helicopter-image.png" />
+    <Resource Include="Resources\Readme.txt">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </Resource>
     <Content Include="System.Buffers.dll">
       <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
     </Content>
