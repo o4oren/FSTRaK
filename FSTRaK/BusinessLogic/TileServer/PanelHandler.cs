@@ -10,7 +10,7 @@ namespace FSTRaK.BusinessLogic.TileServer
 {
     /// <summary>
     /// GET /panel
-    /// Serves the moving map panel HTML from the msfs-addon folder alongside the executable.
+    /// Serves the moving map panel HTML (panel.html) from the same directory as the executable.
     /// The MSFS toolbar panel iframe loads this URL when the panel is opened.
     /// </summary>
     internal class PanelHandler
@@ -20,7 +20,7 @@ namespace FSTRaK.BusinessLogic.TileServer
         private static string ResolvePanelPath()
         {
             var exeDir = Path.GetDirectoryName(Assembly.GetExecutingAssembly().Location);
-            return Path.Combine(exeDir, "msfs-addon", "FSTrAkMovingMap.html");
+            return Path.Combine(exeDir, "panel.html");
         }
 
         public async Task HandleAsync(HttpListenerContext context)
