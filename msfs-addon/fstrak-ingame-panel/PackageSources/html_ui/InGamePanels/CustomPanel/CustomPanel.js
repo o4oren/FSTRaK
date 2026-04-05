@@ -10,12 +10,10 @@ class IngamePanelCustomPanel extends TemplateElement {
     connectedCallback() {
         super.connectedCallback();
         console.log('[FSTRaK] connectedCallback fired');
-        if (typeof SimVar !== 'undefined' && SimVar.Init) {
-            SimVar.Init();
-            console.log('[FSTRaK] SimVar.Init() called');
-        } else {
-            console.warn('[FSTRaK] SimVar not available');
-        }
+        console.log('[FSTRaK] typeof SimVar=' + typeof SimVar);
+        console.log('[FSTRaK] typeof simVarManager=' + typeof simVarManager);
+        console.log('[FSTRaK] typeof RegisterSimVar=' + typeof RegisterSimVar);
+        console.log('[FSTRaK] typeof Simplane=' + typeof Simplane);
         var self = this;
         this.ingameUi = this.querySelector('ingame-ui');
         this.iframeElement = document.getElementById("CustomPanelIframe");
@@ -59,6 +57,10 @@ class IngamePanelCustomPanel extends TemplateElement {
                 return;
             }
             try {
+                if (typeof SimVar === 'undefined') {
+                    console.error('[FSTRaK] SimVar still undefined in poll tick');
+                    return;
+                }
                 var lat = SimVar.GetSimVarValue("PLANE LATITUDE", "degrees");
                 var lon = SimVar.GetSimVarValue("PLANE LONGITUDE", "degrees");
                 var hdg = SimVar.GetSimVarValue("PLANE HEADING DEGREES MAGNETIC", "degrees");
