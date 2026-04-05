@@ -1,8 +1,5 @@
-using Newtonsoft.Json;
-using Newtonsoft.Json.Linq;
 using Serilog;
 using System;
-using System.IO;
 using System.Net;
 using System.Text;
 using System.Threading.Tasks;
@@ -10,11 +7,12 @@ using System.Threading.Tasks;
 namespace FSTRaK.BusinessLogic.TileServer
 {
     /// <summary>
-    /// GET  /simvar — returns latest aircraft position/state posted by the MSFS panel shell
-    /// POST /simvar — receives aircraft position/state from the MSFS panel shell (coui:// origin)
+    /// GET /simvar                          — returns latest aircraft position/state as JSON (for iframe)
+    /// GET /simvar?lat=&lon=&hdg=&alt=&spd= — stores new values from MSFS panel shell, returns 204
     ///
-    /// The MSFS panel shell (CustomPanel.js) can call SimVar but cannot reach the iframe via postMessage
-    /// due to cross-origin restrictions. Instead it POSTs SimVar data here, and the iframe polls GET.
+    /// The MSFS panel shell (CustomPanel.js) can call SimVar but Coherent GT blocks cross-origin POSTs.
+    /// Using a plain GET with query-string params avoids the CORS preflight entirely.
+    /// The iframe polls GET /simvar (no params) to read the latest values.
     /// </summary>
     internal class SimVarHandler
     {
@@ -25,29 +23,26 @@ namespace FSTRaK.BusinessLogic.TileServer
         {
             try
             {
-                var method = context.Request.HttpMethod.ToUpperInvariant();
+                var query = context.Request.QueryString;
+                var hasParams = query["lat"] != null;
 
-                if (method == "POST")
+                if (hasParams)
                 {
-                    using (var reader = new StreamReader(context.Request.InputStream, Encoding.UTF8))
-                    {
-                        var body = reader.ReadToEnd();
-                        if (!string.IsNullOrWhiteSpace(body))
-                        {
-                            // Validate it's parseable JSON before storing
-                            JObject.Parse(body);
-                            lock (_lock) { _latestJson = body; }
-                            Log.Debug("SimVarHandler: POST received — {Body}", body);
-                        }
-                        else
-                        {
-                            Log.Warning("SimVarHandler: POST received with empty body");
-                        }
-                    }
+                    // Panel shell is writing new SimVar values via query string
+                    double.TryParse(query["lat"], System.Globalization.NumberStyles.Float, System.Globalization.CultureInfo.InvariantCulture, out var lat);
+                    double.TryParse(query["lon"], System.Globalization.NumberStyles.Float, System.Globalization.CultureInfo.InvariantCulture, out var lon);
+                    double.TryParse(query["hdg"], System.Globalization.NumberStyles.Float, System.Globalization.CultureInfo.InvariantCulture, out var hdg);
+                    double.TryParse(query["alt"], System.Globalization.NumberStyles.Float, System.Globalization.CultureInfo.InvariantCulture, out var alt);
+                    double.TryParse(query["spd"], System.Globalization.NumberStyles.Float, System.Globalization.CultureInfo.InvariantCulture, out var spd);
+                    var json = $"{{\"lat\":{lat},\"lon\":{lon},\"hdg\":{hdg},\"alt\":{alt},\"spd\":{spd}}}";
+                    lock (_lock) { _latestJson = json; }
+                    Log.Debug("SimVarHandler: update received — {Json}", json);
                     context.Response.StatusCode = 204;
+                    context.Response.Headers.Add("Access-Control-Allow-Origin", "*");
                 }
                 else
                 {
+                    // iframe is polling for latest values
                     string json;
                     lock (_lock) { json = _latestJson; }
                     Log.Debug("SimVarHandler: GET — serving {Json}", json);

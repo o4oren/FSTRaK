@@ -59,15 +59,11 @@ class IngamePanelCustomPanel extends TemplateElement {
                 var alt = SimVar.GetSimVarValue("INDICATED ALTITUDE", "feet");
                 var spd = SimVar.GetSimVarValue("GPS GROUND SPEED", "knots");
                 console.log('[FSTRaK] SimVars: lat=' + lat + ' lon=' + lon + ' hdg=' + hdg + ' alt=' + alt + ' spd=' + spd);
-                var data = JSON.stringify({ lat: lat, lon: lon, hdg: hdg, alt: alt, spd: spd });
-                fetch('http://127.0.0.1:8765/simvar', {
-                    method: 'POST',
-                    headers: { 'Content-Type': 'application/json' },
-                    body: data
-                }).then(function(resp) {
-                    console.log('[FSTRaK] POST /simvar response: ' + resp.status);
+                var url = 'http://127.0.0.1:8765/simvar?lat=' + lat + '&lon=' + lon + '&hdg=' + hdg + '&alt=' + alt + '&spd=' + spd;
+                fetch(url).then(function(resp) {
+                    console.log('[FSTRaK] GET /simvar response: ' + resp.status);
                 }).catch(function(err) {
-                    console.error('[FSTRaK] POST /simvar failed: ' + err);
+                    console.error('[FSTRaK] GET /simvar failed: ' + err);
                 });
             } catch(e) {
                 console.error('[FSTRaK] SimVar read error: ' + e);
