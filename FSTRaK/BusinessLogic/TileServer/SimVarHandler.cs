@@ -37,6 +37,11 @@ namespace FSTRaK.BusinessLogic.TileServer
                             // Validate it's parseable JSON before storing
                             JObject.Parse(body);
                             lock (_lock) { _latestJson = body; }
+                            Log.Debug("SimVarHandler: POST received — {Body}", body);
+                        }
+                        else
+                        {
+                            Log.Warning("SimVarHandler: POST received with empty body");
                         }
                     }
                     context.Response.StatusCode = 204;
@@ -45,6 +50,7 @@ namespace FSTRaK.BusinessLogic.TileServer
                 {
                     string json;
                     lock (_lock) { json = _latestJson; }
+                    Log.Debug("SimVarHandler: GET — serving {Json}", json);
                     var bytes = Encoding.UTF8.GetBytes(json);
                     context.Response.StatusCode = 200;
                     context.Response.ContentType = "application/json";

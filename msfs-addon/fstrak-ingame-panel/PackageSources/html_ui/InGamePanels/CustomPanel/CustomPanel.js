@@ -9,6 +9,7 @@ class IngamePanelCustomPanel extends TemplateElement {
     }
     connectedCallback() {
         super.connectedCallback();
+        console.log('[FSTRaK] connectedCallback fired');
         var self = this;
         this.ingameUi = this.querySelector('ingame-ui');
         this.iframeElement = document.getElementById("CustomPanelIframe");
@@ -45,22 +46,32 @@ class IngamePanelCustomPanel extends TemplateElement {
     startSimVarPolling() {
         var self = this;
         if (this.simvarInterval) return;
+        console.log('[FSTRaK] startSimVarPolling: starting interval');
         this.simvarInterval = setInterval(function() {
-            if (!self.panelActive) return;
+            if (!self.panelActive) {
+                console.log('[FSTRaK] poll tick: panelActive=false, skipping');
+                return;
+            }
             try {
-                var data = JSON.stringify({
-                    lat: SimVar.GetSimVarValue("PLANE LATITUDE", "degrees"),
-                    lon: SimVar.GetSimVarValue("PLANE LONGITUDE", "degrees"),
-                    hdg: SimVar.GetSimVarValue("PLANE HEADING DEGREES MAGNETIC", "degrees"),
-                    alt: SimVar.GetSimVarValue("INDICATED ALTITUDE", "feet"),
-                    spd: SimVar.GetSimVarValue("GPS GROUND SPEED", "knots")
-                });
+                var lat = SimVar.GetSimVarValue("PLANE LATITUDE", "degrees");
+                var lon = SimVar.GetSimVarValue("PLANE LONGITUDE", "degrees");
+                var hdg = SimVar.GetSimVarValue("PLANE HEADING DEGREES MAGNETIC", "degrees");
+                var alt = SimVar.GetSimVarValue("INDICATED ALTITUDE", "feet");
+                var spd = SimVar.GetSimVarValue("GPS GROUND SPEED", "knots");
+                console.log('[FSTRaK] SimVars: lat=' + lat + ' lon=' + lon + ' hdg=' + hdg + ' alt=' + alt + ' spd=' + spd);
+                var data = JSON.stringify({ lat: lat, lon: lon, hdg: hdg, alt: alt, spd: spd });
                 fetch('http://127.0.0.1:8765/simvar', {
                     method: 'POST',
                     headers: { 'Content-Type': 'application/json' },
                     body: data
-                }).catch(function() {});
-            } catch(e) {}
+                }).then(function(resp) {
+                    console.log('[FSTRaK] POST /simvar response: ' + resp.status);
+                }).catch(function(err) {
+                    console.error('[FSTRaK] POST /simvar failed: ' + err);
+                });
+            } catch(e) {
+                console.error('[FSTRaK] SimVar read error: ' + e);
+            }
         }, 1000);
     }
     stopSimVarPolling() {
