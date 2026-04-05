@@ -29,9 +29,10 @@ namespace FSTRaK.BusinessLogic.TileServer
                 var path = Path.Combine(exeDir, "Resources", "AircraftIconsDictionary.xaml");
                 if (!File.Exists(path))
                 {
-                    Log.Warning("AircraftIconHandler: {Path} not found", path);
+                    Log.Warning("AircraftIconHandler: dictionary not found at {Path}", path);
                     return result;
                 }
+                Log.Debug("AircraftIconHandler: loading from {Path}", path);
                 var xaml = File.ReadAllText(path);
                 var matches = Regex.Matches(xaml, @"x:Key=""([^""]+)""\s+x:Shared=""True"">([^<]+)<");
                 foreach (Match m in matches)
@@ -45,6 +46,9 @@ namespace FSTRaK.BusinessLogic.TileServer
             return result;
         }
 
+        // Fallback generic airplane path used when AircraftIconsDictionary.xaml is unavailable
+        private const string FallbackPath = "M16 2 L19 26 L16 23 L13 26 Z M8 15 L16 13 L24 15 L24 18 L16 16 L8 18 Z M11 27 L16 25 L21 27 L21 29 L16 27.5 L11 29 Z";
+
         public Task HandleAsync(HttpListenerContext context)
         {
             try
@@ -54,8 +58,12 @@ namespace FSTRaK.BusinessLogic.TileServer
                     ? AircraftResolver.GetAircraftIcon(aircraft)
                     : ("B737", 0.75);
 
-                if (!_geometries.TryGetValue(iconKey, out var pathData))
-                    pathData = _geometries.ContainsKey("B737") ? _geometries["B737"] : "";
+                if (!_geometries.TryGetValue(iconKey, out var pathData) || string.IsNullOrEmpty(pathData))
+                {
+                    if (!_geometries.TryGetValue("B737", out pathData) || string.IsNullOrEmpty(pathData))
+                        pathData = FallbackPath;
+                    Log.Debug("AircraftIconHandler: geometry for {Key} not found, using fallback. Loaded keys: {Count}", iconKey, _geometries.Count);
+                }
 
                 // Geometry is in a 32×32 coordinate space; scale and center in a 48×48 SVG
                 var size = 48;
