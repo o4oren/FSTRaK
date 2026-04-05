@@ -9,33 +9,29 @@ A moving map toolbar panel for Microsoft Flight Simulator 2024 that shows your c
 
 ## Installation
 
-1. **Enable the tile server in FSTrAk**
-   Open FSTrAk → Settings → check **Enable Tile Server**. The status line should show `● Running on http://localhost:8765/`.
+1. **Install FSTrAk**
+   Run the FSTrAk installer. `panel.html` is included automatically — no extra file copying needed.
 
 2. **Copy the addon to your Community folder**
-   Copy the entire `fstrak-ingame-panel/` folder into your MSFS Community folder.
+   Copy the entire `fstrak-ingame-panel/` folder (found in the zip alongside the FSTrAk installer) into your MSFS Community folder.
    Default locations:
-   - Microsoft Store: `%LocalAppData%\Packages\Microsoft.FlightSimulator_8wekyb3d8bbwe\LocalCache\Packages\Community`
+   - Microsoft Store / Xbox App: `%LocalAppData%\Packages\Microsoft.FlightSimulator_8wekyb3d8bbwe\LocalCache\Packages\Community`
    - Steam: `%AppData%\Microsoft Flight Simulator\Packages\Community`
 
-3. **Copy `FSTrAkMovingMap.html` to the FSTrAk folder**
-   Copy `FSTrAkMovingMap.html` to the same folder where `FSTrAk.exe` is installed, inside a subfolder called `msfs-addon`:
-   ```
-   C:\Program Files\FSTrAk\msfs-addon\FSTrAkMovingMap.html
-   ```
+3. **Start MSFS 2024**
+   The addon will appear as **FSTrAk Moving Map** in the toolbar.
 
-4. **Start MSFS 2024**
-   The addon will appear in the Content Manager as **FSTrAk Moving Map**.
-
-5. **Open the panel in-sim**
-   Click the FSTrAk airplane icon in the instrument toolbar to open the moving map.
+4. **Open the panel in-sim**
+   Click the FSTrAk airplane icon in the instrument toolbar to open the moving map. FSTrAk must be running for the map to work.
 
 ## Usage
 
 - **Map follows your aircraft** by default. Pan or zoom to explore freely.
-- **✈ button** (bottom-right): re-centers the map on your aircraft after panning.
-- **◉ button** (above ✈): toggles ATC overlay on/off. This also toggles ATC visibility in FSTrAk's live view.
+- **+ / −** (top-left): zoom in/out.
+- **Crosshair button** (bottom-right): re-centers the map on your aircraft after panning.
+- **ATC button** (above crosshair): toggles ATC overlay on/off. Also toggles ATC visibility in FSTrAk's live view.
 - **ATC polygons** update every 30 seconds from FSTrAk.
+- **Hover over a FIR/UIR** to see controller callsigns and frequencies.
 - **Click an airport dot** to see active controllers, frequencies, and ATIS (VATSIM only).
 
 ## Verify the tile server is working

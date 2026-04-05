@@ -19,6 +19,27 @@ FSTrAk monitors your simulator silently, and will detect when a flight is starte
 * Statistics (most used aircraft, most used airlines, average and max payload, distance, etc.)
 * Dark mode.
 
+## Installation
+
+### FSTrAk Desktop App
+
+1. Download the latest release zip from [GitHub Releases](https://github.com/o4oren/FSTRaK/releases).
+2. Run the FSTrAk installer included in the zip.
+3. Launch FSTrAk — it will connect to MSFS automatically when the simulator is running.
+
+### MSFS In-Sim Moving Map Panel (optional)
+
+The zip also contains a `fstrak-ingame-panel/` folder. To enable the in-sim moving map tablet panel:
+
+1. Copy the `fstrak-ingame-panel/` folder into your MSFS **Community** folder:
+   - **Microsoft Store / Xbox App:** `%LocalAppData%\Packages\Microsoft.FlightSimulator_8wekyb3d8bbwe\LocalCache\Packages\Community`
+   - **Steam:** `%AppData%\Microsoft Flight Simulator\Packages\Community`
+2. Restart MSFS 2024.
+3. The **FSTrAk Moving Map** icon will appear in the in-sim toolbar. Click it to open the panel.
+4. FSTrAk must be running on the same PC for the panel to display map tiles and aircraft position.
+
+---
+
 ## API Keys
 
 Some features require optional API keys, configured in the **Settings** view.
