@@ -769,16 +769,15 @@ L.tileLayer(TILE_CHART,   { maxZoom: 18, minZoom: 3, errorTileUrl: TRANSPARENT }
 L.tileLayer(TILE_OPENAIP, { maxZoom: 18, minZoom: 3, errorTileUrl: TRANSPARENT }).addTo(map);
 
 // ── Aircraft marker ──────────────────────────────────────────────────────────────────────────────────
+const ICON_URL = 'http://127.0.0.1:8765/aircraft-icon';
+let _lastIconUrl = null;
+
 function makeAircraftIcon(hdg) {
   return L.divIcon({
     className: 'aircraft-icon',
-    html: `<svg width="42" height="42" viewBox="0 0 42 42" style="transform:rotate(${hdg}deg)" xmlns="http://www.w3.org/2000/svg">
-      <path d="M21 3 L25 27 L21 24 L17 27 Z" fill="#cc0000" stroke="#fff" stroke-width="2" stroke-linejoin="round"/>
-      <path d="M10 18 L21 15 L32 18 L32 21 L21 19 L10 21 Z" fill="#cc0000" stroke="#fff" stroke-width="1.5" stroke-linejoin="round"/>
-      <path d="M15 29 L21 27 L27 29 L27 31 L21 29.5 L15 31 Z" fill="#cc0000" stroke="#fff" stroke-width="1.5" stroke-linejoin="round"/>
-    </svg>`,
-    iconSize: [42, 42],
-    iconAnchor: [21, 21]
+    html: `<img src="${ICON_URL}" width="48" height="48" style="transform:rotate(${hdg}deg);transform-origin:center center;display:block"/>`,
+    iconSize: [48, 48],
+    iconAnchor: [24, 24]
   });
 }
 
@@ -909,7 +908,7 @@ function renderAtcState(state) {
       const dotIcon = L.divIcon({
         className: '',
         html: `<svg width="10" height="10" viewBox="0 0 10 10" xmlns="http://www.w3.org/2000/svg">
-          <circle cx="5" cy="5" r="4" fill="#ff9800" stroke="#fff" stroke-width="1"/>
+          <circle cx="5" cy="5" r="4" fill="#080658" stroke="#fff" stroke-width="1"/>
         </svg>`,
         iconSize: [10, 10],
         iconAnchor: [5, 5]

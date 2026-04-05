@@ -32,6 +32,7 @@ namespace FSTRaK.BusinessLogic.TileServer
         private readonly NetworkToggleHandler _networkToggleHandler = new NetworkToggleHandler();
         private readonly PanelHandler _panelHandler = new PanelHandler();
         private readonly SimVarHandler _simVarHandler = new SimVarHandler();
+        private readonly AircraftIconHandler _aircraftIconHandler = new AircraftIconHandler();
 
         public bool IsRunning { get; private set; }
         public int Port { get; private set; }
@@ -140,6 +141,10 @@ namespace FSTRaK.BusinessLogic.TileServer
                 else if (path.Equals("simvar", StringComparison.OrdinalIgnoreCase))
                 {
                     await _simVarHandler.HandleAsync(context);
+                }
+                else if (path.Equals("aircraft-icon", StringComparison.OrdinalIgnoreCase))
+                {
+                    await _aircraftIconHandler.HandleAsync(context);
                 }
                 else
                 {
