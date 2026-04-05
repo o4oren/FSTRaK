@@ -1,0 +1,578 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="utf-8"/>
+  <meta name="viewport" content="width=device-width, initial-scale=1"/>
+  <title>FSTRaK — Flight Tracker & Logbook for MSFS</title>
+  <style>
+    :root {
+      --bg: #0d1117;
+      --surface: #161b22;
+      --border: #30363d;
+      --text: #e6edf3;
+      --muted: #8b949e;
+      --accent: #cc0000;
+      --accent2: #388bfd;
+      --tag-bg: #1f2937;
+    }
+    * { box-sizing: border-box; margin: 0; padding: 0; }
+    body {
+      background: var(--bg);
+      color: var(--text);
+      font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Helvetica, Arial, sans-serif;
+      font-size: 16px;
+      line-height: 1.6;
+    }
+    a { color: var(--accent2); text-decoration: none; }
+    a:hover { text-decoration: underline; }
+
+    /* Nav */
+    nav {
+      background: var(--surface);
+      border-bottom: 1px solid var(--border);
+      padding: 0 2rem;
+      display: flex;
+      align-items: center;
+      gap: 2rem;
+      height: 56px;
+      position: sticky;
+      top: 0;
+      z-index: 100;
+    }
+    nav .logo { font-weight: 700; font-size: 1.1rem; color: var(--text); }
+    nav a { color: var(--muted); font-size: 0.9rem; }
+    nav a:hover { color: var(--text); text-decoration: none; }
+
+    /* Hero */
+    .hero {
+      text-align: center;
+      padding: 5rem 2rem 3rem;
+      background: linear-gradient(180deg, #1a0505 0%, var(--bg) 100%);
+    }
+    .hero img.banner {
+      max-width: 640px;
+      width: 100%;
+      border-radius: 8px;
+      margin-bottom: 2rem;
+    }
+    .hero h1 {
+      font-size: 2.8rem;
+      font-weight: 700;
+      margin-bottom: 0.75rem;
+    }
+    .hero h1 span { color: var(--accent); }
+    .hero p.tagline {
+      font-size: 1.15rem;
+      color: var(--muted);
+      max-width: 600px;
+      margin: 0 auto 2rem;
+    }
+    .btn {
+      display: inline-block;
+      padding: 0.65rem 1.5rem;
+      border-radius: 6px;
+      font-size: 0.95rem;
+      font-weight: 600;
+      cursor: pointer;
+      transition: opacity 0.15s;
+    }
+    .btn:hover { opacity: 0.85; text-decoration: none; }
+    .btn-primary { background: var(--accent); color: #fff; }
+    .btn-secondary { background: var(--surface); color: var(--text); border: 1px solid var(--border); }
+    .hero .btns { display: flex; gap: 1rem; justify-content: center; flex-wrap: wrap; }
+
+    /* Sections */
+    section {
+      max-width: 900px;
+      margin: 0 auto;
+      padding: 3rem 2rem;
+      border-bottom: 1px solid var(--border);
+    }
+    section:last-child { border-bottom: none; }
+    h2 {
+      font-size: 1.6rem;
+      font-weight: 700;
+      margin-bottom: 1.25rem;
+      padding-bottom: 0.5rem;
+      border-bottom: 1px solid var(--border);
+    }
+    h3 { font-size: 1.1rem; font-weight: 600; margin: 1.25rem 0 0.5rem; color: var(--text); }
+
+    /* Features grid */
+    .features {
+      display: grid;
+      grid-template-columns: repeat(auto-fill, minmax(260px, 1fr));
+      gap: 1rem;
+    }
+    .feature {
+      background: var(--surface);
+      border: 1px solid var(--border);
+      border-radius: 8px;
+      padding: 1.1rem 1.25rem;
+    }
+    .feature-icon { font-size: 1.4rem; margin-bottom: 0.5rem; }
+    .feature h3 { margin: 0 0 0.35rem; font-size: 0.95rem; }
+    .feature p { color: var(--muted); font-size: 0.875rem; margin: 0; }
+
+    /* Screenshots */
+    .screenshots {
+      display: grid;
+      grid-template-columns: repeat(auto-fill, minmax(380px, 1fr));
+      gap: 1rem;
+    }
+    .screenshots img {
+      width: 100%;
+      border-radius: 8px;
+      border: 1px solid var(--border);
+    }
+    .screenshots figcaption {
+      font-size: 0.8rem;
+      color: var(--muted);
+      margin-top: 0.35rem;
+      text-align: center;
+    }
+
+    /* Install steps */
+    .steps { counter-reset: step; }
+    .step {
+      display: flex;
+      gap: 1rem;
+      margin-bottom: 1.25rem;
+      align-items: flex-start;
+    }
+    .step-num {
+      counter-increment: step;
+      flex-shrink: 0;
+      width: 2rem;
+      height: 2rem;
+      border-radius: 50%;
+      background: var(--accent);
+      color: #fff;
+      font-weight: 700;
+      font-size: 0.9rem;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+    }
+    .step-num::before { content: counter(step); }
+    .step-body { padding-top: 0.2rem; }
+    .step-body p { color: var(--muted); font-size: 0.9rem; margin-top: 0.25rem; }
+    code {
+      background: var(--tag-bg);
+      padding: 0.15em 0.4em;
+      border-radius: 4px;
+      font-size: 0.875em;
+      font-family: "SFMono-Regular", Consolas, monospace;
+    }
+    .path-list {
+      list-style: none;
+      margin: 0.5rem 0 0 0;
+      padding: 0;
+    }
+    .path-list li {
+      color: var(--muted);
+      font-size: 0.875rem;
+      padding: 0.2rem 0;
+    }
+    .path-list li strong { color: var(--text); }
+
+    /* Release notes */
+    .release {
+      background: var(--surface);
+      border: 1px solid var(--border);
+      border-radius: 8px;
+      padding: 1.1rem 1.25rem;
+      margin-bottom: 1rem;
+    }
+    .release-header {
+      display: flex;
+      align-items: center;
+      gap: 0.75rem;
+      margin-bottom: 0.6rem;
+      flex-wrap: wrap;
+    }
+    .release-version {
+      font-weight: 700;
+      font-size: 1rem;
+    }
+    .release-date {
+      color: var(--muted);
+      font-size: 0.85rem;
+    }
+    .badge {
+      background: var(--accent);
+      color: #fff;
+      font-size: 0.72rem;
+      font-weight: 600;
+      padding: 0.1em 0.5em;
+      border-radius: 4px;
+    }
+    .release ul {
+      margin: 0.5rem 0 0 1.25rem;
+      color: var(--muted);
+      font-size: 0.9rem;
+    }
+    .release ul li { margin-bottom: 0.2rem; }
+
+    /* Attributions table */
+    table {
+      width: 100%;
+      border-collapse: collapse;
+      font-size: 0.9rem;
+    }
+    th, td {
+      text-align: left;
+      padding: 0.6rem 0.75rem;
+      border-bottom: 1px solid var(--border);
+    }
+    th { color: var(--muted); font-weight: 600; }
+    td a { color: var(--accent2); }
+
+    /* Sister apps */
+    .app-card {
+      display: flex;
+      gap: 1.25rem;
+      background: var(--surface);
+      border: 1px solid var(--border);
+      border-radius: 8px;
+      padding: 1.25rem;
+      align-items: flex-start;
+    }
+    .app-card-body h3 { margin: 0 0 0.35rem; }
+    .app-card-body p { color: var(--muted); font-size: 0.9rem; margin-bottom: 0.75rem; }
+
+    /* Footer */
+    footer {
+      text-align: center;
+      padding: 2rem;
+      color: var(--muted);
+      font-size: 0.85rem;
+      border-top: 1px solid var(--border);
+    }
+  </style>
+</head>
+<body>
+
+<nav>
+  <span class="logo">FSTRaK</span>
+  <a href="#features">Features</a>
+  <a href="#install">Install</a>
+  <a href="#releases">Releases</a>
+  <a href="#attributions">Credits</a>
+  <a href="https://github.com/o4oren/FSTRaK" target="_blank">GitHub</a>
+</nav>
+
+<!-- Hero -->
+<div class="hero">
+  <img class="banner" src="https://github.com/o4oren/FSTRaK/assets/23486326/024542ad-ca3d-4e81-9fe8-7dec53ea6ab1" alt="FSTRaK banner"/>
+  <h1>FS<span>TR</span>aK</h1>
+  <p class="tagline">Automatic flight tracker and logbook for Microsoft Flight Simulator. Install it once, forget it's there — FSTRaK silently monitors your flights, tracks them on a map, and saves them to a local logbook.</p>
+  <div class="btns">
+    <a class="btn btn-primary" href="https://flightsim.to/addon/56761/fstrak" target="_blank">Download on flightsim.to</a>
+    <a class="btn btn-secondary" href="https://github.com/o4oren/FSTRaK" target="_blank">View on GitHub</a>
+  </div>
+</div>
+
+<!-- Features -->
+<section id="features">
+  <h2>Features</h2>
+  <div class="features">
+    <div class="feature">
+      <div class="feature-icon">✈</div>
+      <h3>Automatic Flight Tracking</h3>
+      <p>Detects takeoff, flight, landing, and shutdown automatically. No buttons to press.</p>
+    </div>
+    <div class="feature">
+      <div class="feature-icon">📖</div>
+      <h3>Flight Logbook</h3>
+      <p>Every completed flight is saved to a local SQLite database with route, duration, distance, payload, and more.</p>
+    </div>
+    <div class="feature">
+      <div class="feature-icon">🗺</div>
+      <h3>Live Moving Map</h3>
+      <p>Track your aircraft in real time on FAA ArcGIS, OpenAIP, MapTiler, Bing, OpenTopoMap, and more.</p>
+    </div>
+    <div class="feature">
+      <div class="feature-icon">📊</div>
+      <h3>Flight Analysis & Scoring</h3>
+      <p>Review each flight with event markers, altitude/speed graphs, landing rate, and a scoring system.</p>
+    </div>
+    <div class="feature">
+      <div class="feature-icon">📈</div>
+      <h3>Statistics</h3>
+      <p>Most-flown aircraft, airlines, airports, total distance, average and max payload, and more.</p>
+    </div>
+    <div class="feature">
+      <div class="feature-icon">🌐</div>
+      <h3>VATSIM &amp; IVAO Live Traffic</h3>
+      <p>View live pilots and ATC on the map. Click any aircraft or controller for details, frequencies, and flight tracks.</p>
+    </div>
+    <div class="feature">
+      <div class="feature-icon">📱</div>
+      <h3>MSFS In-Sim Moving Map Panel</h3>
+      <p>An MSFS Community addon toolbar panel showing your chart selection, live ATC coverage, and aircraft position inside the simulator.</p>
+    </div>
+    <div class="feature">
+      <div class="feature-icon">🌙</div>
+      <h3>Dark Mode</h3>
+      <p>Full dark theme support.</p>
+    </div>
+    <div class="feature">
+      <div class="feature-icon">🔇</div>
+      <h3>Silent &amp; Hands-Free</h3>
+      <p>Starts with Windows, connects to MSFS automatically, and requires no manual intervention to track flights.</p>
+    </div>
+  </div>
+</section>
+
+<!-- Screenshots -->
+<section id="screenshots">
+  <h2>Screenshots</h2>
+  <div class="screenshots">
+    <figure>
+      <img src="https://github.com/o4oren/FSTRaK/assets/23486326/e6047bcc-df6a-4235-ac85-da6de6de8cd5" alt="Flight Analysis"/>
+      <figcaption>Flight analysis with event markers</figcaption>
+    </figure>
+    <figure>
+      <img src="https://github.com/o4oren/FSTRaK/assets/23486326/7dfcfb9d-31e8-402c-914a-ff24d2760754" alt="Live Tracking"/>
+      <figcaption>Live tracking with OpenTopoMap</figcaption>
+    </figure>
+    <figure>
+      <img src="https://github.com/o4oren/FSTRaK/assets/23486326/0242d88c-c1c1-4b58-8150-28da3c01f1d9" alt="Scoring"/>
+      <figcaption>Scoring events with Bing Hybrid map</figcaption>
+    </figure>
+    <figure>
+      <img src="images/screenshot-live-map.png" alt="FSTRaK live map"/>
+      <figcaption>Live map with VATSIM ATC coverage</figcaption>
+    </figure>
+    <figure>
+      <img src="images/screenshot-insim-panel.png" alt="FSTRaK in-sim panel"/>
+      <figcaption>MSFS in-sim moving map tablet panel</figcaption>
+    </figure>
+  </div>
+</section>
+
+<!-- Install -->
+<section id="install">
+  <h2>Installation</h2>
+
+  <h3>FSTRaK Desktop App</h3>
+  <div class="steps">
+    <div class="step"><div class="step-num"></div><div class="step-body">
+      <strong>Download</strong> the latest release zip from <a href="https://flightsim.to/addon/56761/fstrak" target="_blank">flightsim.to</a> or <a href="https://github.com/o4oren/FSTRaK/releases" target="_blank">GitHub Releases</a>.
+    </div></div>
+    <div class="step"><div class="step-num"></div><div class="step-body">
+      <strong>Run the installer</strong> included in the zip. FSTRaK installs to <code>%LocalAppData%\Programs\FSTRaK</code> by default.
+    </div></div>
+    <div class="step"><div class="step-num"></div><div class="step-body">
+      <strong>Launch FSTRaK.</strong> It will connect to MSFS automatically when the simulator is running — no configuration needed.
+    </div></div>
+  </div>
+
+  <h3>MSFS In-Sim Moving Map Panel (optional)</h3>
+  <p style="color:var(--muted);font-size:0.9rem;margin-bottom:1rem">Adds a moving map toolbar panel inside MSFS 2024 that mirrors your FSTRaK map, shows live ATC coverage, and tracks your aircraft position.</p>
+  <div class="steps">
+    <div class="step"><div class="step-num"></div><div class="step-body">
+      <strong>Locate the addon folder</strong> in the zip. It is named <code>fstrak-ingame-panel</code> and sits alongside the FSTRaK installer.
+    </div></div>
+    <div class="step"><div class="step-num"></div><div class="step-body">
+      <strong>Copy <code>fstrak-ingame-panel</code></strong> into your MSFS 2024 <strong>Community</strong> folder:
+      <ul class="path-list">
+        <li><strong>Microsoft Store / Xbox App:</strong> <code>%LocalAppData%\Packages\Microsoft.FlightSimulator_8wekyb3d8bbwe\LocalCache\Packages\Community</code></li>
+        <li><strong>Steam:</strong> <code>%AppData%\Microsoft Flight Simulator\Packages\Community</code></li>
+      </ul>
+    </div></div>
+    <div class="step"><div class="step-num"></div><div class="step-body">
+      <strong>Restart MSFS 2024.</strong> The <em>FSTRaK Moving Map</em> icon will appear in the in-sim toolbar.
+    </div></div>
+    <div class="step"><div class="step-num"></div><div class="step-body">
+      <strong>Start FSTRaK</strong> on the same PC before launching the panel. The panel displays a "FSTRaK is not running" message if FSTRaK is not reachable.
+    </div></div>
+  </div>
+
+  <h3>Optional API Keys</h3>
+  <p style="color:var(--muted);font-size:0.9rem;margin-bottom:0.75rem">Configure in FSTRaK → Settings.</p>
+  <table>
+    <thead><tr><th>Key</th><th>Feature</th><th>Where to get it</th></tr></thead>
+    <tbody>
+      <tr><td>StatSim</td><td>VATSIM full flight track history</td><td><a href="https://statsim.net/about" target="_blank">statsim.net</a> — login with VATSIM</td></tr>
+      <tr><td>IVAO API</td><td>IVAO flight tracks &amp; enriched details</td><td><a href="https://developer.ivao.aero" target="_blank">developer.ivao.aero</a></td></tr>
+      <tr><td>MapTiler</td><td>MapTiler map tiles</td><td><a href="https://cloud.maptiler.com" target="_blank">cloud.maptiler.com</a> — free tier</td></tr>
+      <tr><td>OpenAIP</td><td>Aviation chart overlay</td><td><a href="https://www.openaip.net" target="_blank">openaip.net</a> — free registration</td></tr>
+      <tr><td>Azure Maps</td><td>Azure Maps tile layers</td><td><a href="https://portal.azure.com" target="_blank">portal.azure.com</a> — free tier</td></tr>
+    </tbody>
+  </table>
+</section>
+
+<!-- Release Notes -->
+<section id="releases">
+  <h2>Release Notes</h2>
+
+  <div class="release">
+    <div class="release-header">
+      <span class="release-version">3.6.0</span>
+      <span class="badge">Latest</span>
+      <span class="release-date">April 2026</span>
+    </div>
+    <ul>
+      <li>In-sim moving map panel: aircraft position now sourced directly from SimConnect via FSTRaK — no SimVar access needed in the MSFS panel JS</li>
+      <li>In-sim panel: aircraft icon matches the type-specific icon used in FSTRaK's live map (B737, A320, C172, helicopter, and more)</li>
+      <li>In-sim panel: aircraft marker and HUD hidden when no flight is active</li>
+      <li>In-sim panel: FIR/UIR and TRACON boundaries now use the same colors as FSTRaK's light theme</li>
+      <li>In-sim panel: hover tooltip on FIR/UIR shows all controller callsigns and frequencies</li>
+      <li>In-sim panel: approach circles only shown for airports with an APP/DEP controller and no TRACON polygon</li>
+      <li>In-sim panel: custom zoom buttons replacing Leaflet's default control for reliable rendering in Coherent GT</li>
+      <li>In-sim panel: "FSTRaK is not running" overlay when the tile server is unreachable</li>
+      <li>In-sim panel: larger HUD text, wider spacing, dark blue airport dots</li>
+    </ul>
+  </div>
+
+  <div class="release">
+    <div class="release-header">
+      <span class="release-version">3.5.0</span>
+      <span class="release-date">April 2026</span>
+    </div>
+    <ul>
+      <li>MSFS 2024 in-sim moving map tablet panel — live ATC, chart overlays, aircraft position</li>
+      <li>Bug fix: statistics page crash in dark mode</li>
+    </ul>
+  </div>
+
+  <div class="release">
+    <div class="release-header">
+      <span class="release-version">3.4.0</span>
+      <span class="release-date">March 2026</span>
+    </div>
+    <ul>
+      <li>IVAO live traffic and detailed client info panel</li>
+      <li>About section in Settings with version info and license</li>
+      <li>VATSpy.dat update mechanism fixed to use GitHub releases</li>
+    </ul>
+  </div>
+
+  <div class="release">
+    <div class="release-header">
+      <span class="release-version">3.2.1</span>
+      <span class="release-date">March 2026</span>
+    </div>
+    <ul>
+      <li>Real TRACON boundary polygons for APP/DEP controllers (sourced from simaware-tracon-project)</li>
+      <li>Automatic updates for FIR boundaries, TRACON data, and VATSpy.dat from GitHub on startup</li>
+      <li>Bug fixes and stability improvements</li>
+      <li>Improved aircraft icon mappings</li>
+      <li>Flight path color restored to bold red in light theme</li>
+    </ul>
+  </div>
+
+  <div class="release">
+    <div class="release-header">
+      <span class="release-version">1.6.0</span>
+      <span class="release-date">January 2024</span>
+    </div>
+    <ul>
+      <li>VATSIM live traffic integration — view pilots and ATC on the live map</li>
+      <li>Additional aircraft type icons</li>
+      <li>Helicopter support</li>
+      <li>Bug fixes</li>
+    </ul>
+  </div>
+
+  <div class="release">
+    <div class="release-header">
+      <span class="release-version">1.5.0</span>
+      <span class="release-date">December 2023</span>
+    </div>
+    <ul>
+      <li>Statistics view — most-flown aircraft, airlines, airports, total distance, payload averages</li>
+    </ul>
+  </div>
+
+  <div class="release">
+    <div class="release-header">
+      <span class="release-version">1.2.0</span>
+      <span class="release-date">June 2023</span>
+    </div>
+    <ul>
+      <li>Configurable overlay font</li>
+    </ul>
+  </div>
+
+  <div class="release">
+    <div class="release-header">
+      <span class="release-version">1.1.1</span>
+      <span class="release-date">June 2023</span>
+    </div>
+    <ul>
+      <li>Migrated database from SQL CE to SQLite</li>
+      <li>Tile cache moved to local app folder</li>
+    </ul>
+  </div>
+
+  <div class="release">
+    <div class="release-header">
+      <span class="release-version">1.0.0</span>
+      <span class="release-date">June 2023</span>
+    </div>
+    <ul>
+      <li>Initial public release</li>
+    </ul>
+  </div>
+
+  <div class="release">
+    <div class="release-header">
+      <span class="release-version">0.9.x</span>
+      <span class="release-date">May–June 2023</span>
+    </div>
+    <ul>
+      <li>Beta releases — OSM base map, map tile caching, logbook sidebar, airport properties</li>
+    </ul>
+  </div>
+</section>
+
+<!-- Sister App -->
+<section id="related">
+  <h2>Related Apps</h2>
+  <div class="app-card">
+    <div class="app-card-body">
+      <h3><a href="https://o4oren.github.io/VatView/" target="_blank">VatView</a></h3>
+      <p>A companion app by the same author — a live VATSIM network viewer. Browse pilots, ATC, and FIRs on a world map outside the simulator.</p>
+      <a class="btn btn-secondary" href="https://o4oren.github.io/VatView/" target="_blank">Visit VatView →</a>
+    </div>
+  </div>
+</section>
+
+<!-- Attributions -->
+<section id="attributions">
+  <h2>Credits &amp; Attributions</h2>
+  <table>
+    <thead><tr><th>Component</th><th>License / Terms</th></tr></thead>
+    <tbody>
+      <tr><td><a href="https://vatsim.net" target="_blank">VATSIM</a></td><td>Live network data used under VATSIM public data policy</td></tr>
+      <tr><td><a href="https://ivao.aero" target="_blank">IVAO</a></td><td>Live network data via IVAO public API</td></tr>
+      <tr><td><a href="https://github.com/clemensv/xmapcontrol" target="_blank">XAML Map Control</a></td><td>MS-PL — map rendering and tile layer management</td></tr>
+      <tr><td><a href="https://leafletjs.com" target="_blank">Leaflet</a></td><td>BSD 2-Clause — in-sim panel map rendering</td></tr>
+      <tr><td><a href="https://www.newtonsoft.com/json" target="_blank">Newtonsoft.Json</a></td><td>MIT</td></tr>
+      <tr><td><a href="https://serilog.net" target="_blank">Serilog</a></td><td>Apache 2.0 — structured logging</td></tr>
+      <tr><td><a href="https://learn.microsoft.com/en-us/ef/" target="_blank">Entity Framework 6</a></td><td>Apache 2.0 — database ORM</td></tr>
+      <tr><td><a href="https://system.data.sqlite.org" target="_blank">System.Data.SQLite</a></td><td>Public domain — SQLite database</td></tr>
+      <tr><td><a href="https://livecharts.dev" target="_blank">LiveCharts</a></td><td>MIT — flight analysis charts</td></tr>
+      <tr><td><a href="https://www.openaip.net" target="_blank">OpenAIP</a></td><td>Aviation chart overlay — requires free API key</td></tr>
+      <tr><td><a href="https://www.opentopomap.org" target="_blank">OpenTopoMap</a></td><td>CC-BY-SA — topographic map tiles</td></tr>
+      <tr><td><a href="https://www.openstreetmap.org/copyright" target="_blank">OpenStreetMap contributors</a></td><td>ODbL — base map data</td></tr>
+      <tr><td><a href="https://statsim.net" target="_blank">StatSim</a></td><td>VATSIM flight track history — requires API key</td></tr>
+      <tr><td><a href="https://github.com/vatsimnetwork/simaware-tracon-project" target="_blank">SimAware TRACON Project</a></td><td>TRACON boundary polygon data</td></tr>
+      <tr><td><a href="https://github.com/vatsimnetwork/vatspy-data-project" target="_blank">VATSpy Data Project</a></td><td>FIR/UIR boundary data</td></tr>
+      <tr><td><a href="https://ourairports.com" target="_blank">OurAirports</a></td><td>Airport database (airports.csv)</td></tr>
+    </tbody>
+  </table>
+</section>
+
+<footer>
+  &copy; 2023–2026 Oren Geva &nbsp;·&nbsp;
+  <a href="https://github.com/o4oren/FSTRaK/blob/main/LICENSE" target="_blank">License</a> &nbsp;·&nbsp;
+  <a href="https://github.com/o4oren/FSTRaK/issues" target="_blank">Report an issue</a> &nbsp;·&nbsp;
+  <a href="https://flightsim.to/addon/56761/fstrak" target="_blank">Download on flightsim.to</a>
+</footer>
+
+</body>
+</html>

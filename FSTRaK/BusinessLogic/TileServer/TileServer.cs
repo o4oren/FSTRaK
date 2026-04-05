@@ -30,6 +30,9 @@ namespace FSTRaK.BusinessLogic.TileServer
         private TileHandler _tileHandler;
         private readonly NetworkStateHandler _networkStateHandler = new NetworkStateHandler();
         private readonly NetworkToggleHandler _networkToggleHandler = new NetworkToggleHandler();
+        private readonly PanelHandler _panelHandler = new PanelHandler();
+        private readonly SimVarHandler _simVarHandler = new SimVarHandler();
+        private readonly AircraftIconHandler _aircraftIconHandler = new AircraftIconHandler();
 
         public bool IsRunning { get; private set; }
         public int Port { get; private set; }
@@ -44,6 +47,7 @@ namespace FSTRaK.BusinessLogic.TileServer
 
             _listener = new HttpListener();
             _listener.Prefixes.Add($"http://localhost:{Port}/");
+            _listener.Prefixes.Add($"http://127.0.0.1:{Port}/");
 
             try
             {
@@ -95,6 +99,7 @@ namespace FSTRaK.BusinessLogic.TileServer
                     {
                         context.Response.Headers.Add("Access-Control-Allow-Origin", "*");
                         context.Response.Headers.Add("Access-Control-Allow-Methods", "GET, POST, OPTIONS");
+                        context.Response.Headers.Add("Access-Control-Allow-Headers", "Content-Type");
                         context.Response.StatusCode = 204;
                         context.Response.OutputStream.Close();
                     }
@@ -128,6 +133,18 @@ namespace FSTRaK.BusinessLogic.TileServer
                 else if (path.Equals("network/atc/toggle", StringComparison.OrdinalIgnoreCase) && method == "POST")
                 {
                     await _networkToggleHandler.HandleAsync(context);
+                }
+                else if (path.Equals("panel", StringComparison.OrdinalIgnoreCase) && method == "GET")
+                {
+                    await _panelHandler.HandleAsync(context);
+                }
+                else if (path.Equals("simvar", StringComparison.OrdinalIgnoreCase))
+                {
+                    await _simVarHandler.HandleAsync(context);
+                }
+                else if (path.Equals("aircraft-icon", StringComparison.OrdinalIgnoreCase))
+                {
+                    await _aircraftIconHandler.HandleAsync(context);
                 }
                 else
                 {

@@ -11,12 +11,34 @@ FSTrAk monitors your simulator silently, and will detect when a flight is starte
 * Automatic silent start-up.
 * Automatic flight tracking (hands-free experience).
 * Option (default) to save only complete flights - i.e. flight ended in parking state, with engines off and parking brake set, after having flown.
-* Multiple map providers including FAA ArcGIS charts, OpenAIP, SkyVector, OpenTopoMap, Bing, MapTiler, and more.
+* Multiple map providers including FAA ArcGIS charts, OpenAIP, OpenTopoMap, Bing, MapTiler, and more.
 * Flight analysis and scoring.
 * Live flight tracking with a moving map.
+* **MSFS 2024 in-sim moving map** — an MSFS Community addon panel that mirrors your FSTrAk map selection, showing chart overlays, live ATC coverage, and your aircraft position inside the simulator.
 * **VATSIM and IVAO live network support** — view pilots and ATC on the live map.
 * Statistics (most used aircraft, most used airlines, average and max payload, distance, etc.)
 * Dark mode.
+
+## Installation
+
+### FSTrAk Desktop App
+
+1. Download the latest release zip from [GitHub Releases](https://github.com/o4oren/FSTRaK/releases).
+2. Run the FSTrAk installer included in the zip.
+3. Launch FSTrAk — it will connect to MSFS automatically when the simulator is running.
+
+### MSFS In-Sim Moving Map Panel (optional)
+
+The zip also contains a `fstrak-ingame-panel/` folder. To enable the in-sim moving map tablet panel:
+
+1. Copy the `fstrak-ingame-panel/` folder into your MSFS **Community** folder:
+   - **Microsoft Store / Xbox App:** `%LocalAppData%\Packages\Microsoft.FlightSimulator_8wekyb3d8bbwe\LocalCache\Packages\Community`
+   - **Steam:** `%AppData%\Microsoft Flight Simulator\Packages\Community`
+2. Restart MSFS 2024.
+3. The **FSTrAk Moving Map** icon will appear in the in-sim toolbar. Click it to open the panel.
+4. FSTrAk must be running on the same PC for the panel to display map tiles and aircraft position.
+
+---
 
 ## API Keys
 
@@ -57,6 +79,7 @@ Without an API key, IVAO pilots show a geodesic line from departure to their cur
 - [ ] Display bearing/distance to a designated point on the map.
 - [x] VATSIM integration (display live traffic and ATC on the map).
 - [x] IVAO integration (display live traffic and ATC on the map).
+- [x] MSFS 2024 in-sim moving map tablet panel.
 
 #### Flight Analysis
 <img width="1024" alt="Flight Analysis" src="https://github.com/o4oren/FSTRaK/assets/23486326/e6047bcc-df6a-4235-ac85-da6de6de8cd5">
@@ -67,8 +90,8 @@ Without an API key, IVAO pilots show a geodesic line from departure to their cur
 #### Scoring events in flight analysis, with Bing Hybrid map
 <img width="1024" alt="Scoring" src="https://github.com/o4oren/FSTRaK/assets/23486326/0242d88c-c1c1-4b58-8150-28da3c01f1d9">
 
-#### SkyVector VFR map tiles
-<img width="1024" alt="SkyVector" src="https://github.com/o4oren/FSTRaK/assets/23486326/54ae3f96-a6a8-4845-a5c6-94472a1826d4">
+#### Live map with VATSIM ATC coverage
+<img width="1024" alt="Live map" src="docs/images/screenshot-live-map.png">
 
-#### Analyzing route over SkyVector IFR map tiles
-<img width="1024" alt="ifr" src="https://github.com/o4oren/FSTRaK/assets/23486326/3a44c195-8086-48ba-b9bb-2021fd6459f8">
+#### MSFS in-sim moving map tablet panel
+<img width="1024" alt="In-sim panel" src="docs/images/screenshot-insim-panel.png">
