@@ -99,6 +99,11 @@ namespace FSTRaK.BusinessLogic.TileServer
             if (lvm.IsVatsimActive) network = "vatsim";
             else if (lvm.IsIvaoActive) network = "ivao";
 
+            Log.Debug("NetworkStateHandler: atcVisible={AtcVisible} network={Network} firs={FirCount} vatsimFirs={VatsimFirCount} uirs={UirCount} isVatsimActive={IsVatsimActive} isShowVatsimAtc={IsShowVatsimAtc}",
+                lvm.IsShowVatsimAtc || lvm.IsShowIvaoAtc, network, features.Count,
+                lvm.VatsimControlledFirs.Count, lvm.VatsimControlledUirs.Count,
+                lvm.IsVatsimActive, lvm.IsShowVatsimAtc);
+
             return new JObject
             {
                 ["atcVisible"] = lvm.IsShowVatsimAtc || lvm.IsShowIvaoAtc,
