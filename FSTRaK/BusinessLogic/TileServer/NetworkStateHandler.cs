@@ -37,6 +37,7 @@ namespace FSTRaK.BusinessLogic.TileServer
 
                 var json = response.ToString(Formatting.None);
                 var bytes = Encoding.UTF8.GetBytes(json);
+                Log.Debug("NetworkStateHandler: response size={Bytes} bytes", bytes.Length);
 
                 context.Response.StatusCode = 200;
                 context.Response.ContentType = "application/json";
