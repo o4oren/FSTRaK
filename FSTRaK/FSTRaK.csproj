@@ -122,6 +122,7 @@
     <Compile Include="BusinessLogic\FlightManager\State\TakeoffRollState.cs" />
     <Compile Include="BusinessLogic\FlightManager\State\TaxiInState.cs" />
     <Compile Include="BusinessLogic\FlightManager\State\TaxiOutState.cs" />
+    <Compile Include="BusinessLogic\TileServer\AircraftIconHandler.cs" />
     <Compile Include="BusinessLogic\TileServer\NetworkStateHandler.cs" />
     <Compile Include="BusinessLogic\TileServer\NetworkToggleHandler.cs" />
     <Compile Include="BusinessLogic\TileServer\PanelHandler.cs" />
@@ -266,6 +267,9 @@
       <Generator>MSBuild:Compile</Generator>
       <SubType>Designer</SubType>
     </Page>
+    <None Include="Resources\AircraftIconsDictionary.xaml">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </None>
     <Page Include="Resources\ButtonsTheme.xaml">
       <SubType>Designer</SubType>
       <Generator>MSBuild:Compile</Generator>
