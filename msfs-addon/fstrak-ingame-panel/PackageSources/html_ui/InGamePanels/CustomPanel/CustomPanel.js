@@ -10,6 +10,12 @@ class IngamePanelCustomPanel extends TemplateElement {
     connectedCallback() {
         super.connectedCallback();
         console.log('[FSTRaK] connectedCallback fired');
+        if (typeof SimVar !== 'undefined' && SimVar.Init) {
+            SimVar.Init();
+            console.log('[FSTRaK] SimVar.Init() called');
+        } else {
+            console.warn('[FSTRaK] SimVar not available');
+        }
         var self = this;
         this.ingameUi = this.querySelector('ingame-ui');
         this.iframeElement = document.getElementById("CustomPanelIframe");
@@ -52,14 +58,12 @@ class IngamePanelCustomPanel extends TemplateElement {
                 console.log('[FSTRaK] poll tick: panelActive=false, skipping');
                 return;
             }
-            Promise.all([
-                Coherent.call("GET_SimVar_VALUE", "PLANE LATITUDE", "degrees"),
-                Coherent.call("GET_SimVar_VALUE", "PLANE LONGITUDE", "degrees"),
-                Coherent.call("GET_SimVar_VALUE", "PLANE HEADING DEGREES MAGNETIC", "degrees"),
-                Coherent.call("GET_SimVar_VALUE", "INDICATED ALTITUDE", "feet"),
-                Coherent.call("GET_SimVar_VALUE", "GPS GROUND SPEED", "knots")
-            ]).then(function(vals) {
-                var lat = vals[0], lon = vals[1], hdg = vals[2], alt = vals[3], spd = vals[4];
+            try {
+                var lat = SimVar.GetSimVarValue("PLANE LATITUDE", "degrees");
+                var lon = SimVar.GetSimVarValue("PLANE LONGITUDE", "degrees");
+                var hdg = SimVar.GetSimVarValue("PLANE HEADING DEGREES MAGNETIC", "degrees");
+                var alt = SimVar.GetSimVarValue("INDICATED ALTITUDE", "feet");
+                var spd = SimVar.GetSimVarValue("GPS GROUND SPEED", "knots");
                 console.log('[FSTRaK] SimVars: lat=' + lat + ' lon=' + lon + ' hdg=' + hdg + ' alt=' + alt + ' spd=' + spd);
                 var url = 'http://127.0.0.1:8765/simvar?lat=' + lat + '&lon=' + lon + '&hdg=' + hdg + '&alt=' + alt + '&spd=' + spd;
                 fetch(url).then(function(resp) {
@@ -67,9 +71,9 @@ class IngamePanelCustomPanel extends TemplateElement {
                 }).catch(function(err) {
                     console.error('[FSTRaK] GET /simvar failed: ' + err);
                 });
-            }).catch(function(e) {
-                console.error('[FSTRaK] Coherent SimVar read error: ' + e);
-            });
+            } catch(e) {
+                console.error('[FSTRaK] SimVar read error: ' + e);
+            }
         }, 1000);
     }
     stopSimVarPolling() {
