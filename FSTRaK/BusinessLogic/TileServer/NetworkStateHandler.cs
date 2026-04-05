@@ -203,7 +203,7 @@ namespace FSTRaK.BusinessLogic.TileServer
                         foreach (var loc in airport.TraconPolygons[0])
                             polygon.Add(new JArray(loc.Longitude, loc.Latitude));
                     }
-                    else
+                    else if (airport.Controllers.Any(c => c.facility == 5))
                     {
                         radius = 25;
                     }
@@ -252,7 +252,7 @@ namespace FSTRaK.BusinessLogic.TileServer
                         foreach (var loc in atc.ControlPolygon)
                             polygon.Add(new JArray(loc.Longitude, loc.Latitude));
                     }
-                    else
+                    else if (atc.AtcEntries != null && atc.AtcEntries.Any(e => e.atcSession?.position == "APP" || e.atcSession?.position == "DEP"))
                     {
                         radius = 25;
                     }
