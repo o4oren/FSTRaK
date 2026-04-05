@@ -4,6 +4,7 @@ using Newtonsoft.Json.Linq;
 using Serilog;
 using System;
 using System.Collections.Generic;
+using System.Linq;
 using System.Net;
 using System.Text;
 using System.Threading.Tasks;
@@ -68,7 +69,7 @@ namespace FSTRaK.BusinessLogic.TileServer
                 {
                     foreach (var locations in fir.Locations ?? new System.Collections.Generic.List<LocationCollection>())
                     {
-                        var feature = BuildPolygonFeature(locations, fir.Callsign, GetFirstFrequency(fir.Controllers));
+                        var feature = BuildPolygonFeature(locations, fir.Callsign, fir.Controllers);
                         if (feature != null) features.Add(feature);
                     }
                 }
@@ -77,7 +78,7 @@ namespace FSTRaK.BusinessLogic.TileServer
                 {
                     foreach (var locations in uir.FirLocations ?? new System.Collections.Generic.List<LocationCollection>())
                     {
-                        var feature = BuildPolygonFeature(locations, uir.Callsign, GetFirstFrequency(uir.Controllers));
+                        var feature = BuildPolygonFeature(locations, uir.Callsign, uir.Controllers);
                         if (feature != null) features.Add(feature);
                     }
                 }
@@ -117,7 +118,7 @@ namespace FSTRaK.BusinessLogic.TileServer
             };
         }
 
-        private static JObject BuildPolygonFeature(LocationCollection locations, string callsign, string frequency)
+        private static JObject BuildPolygonFeature(LocationCollection locations, string callsign, IEnumerable<FSTRaK.BusinessLogic.VatsimService.VatsimModel.Controller> controllers)
         {
             if (locations == null || locations.Count < 3) return null;
 
@@ -131,8 +132,51 @@ namespace FSTRaK.BusinessLogic.TileServer
             if (firstLoc.Latitude != lastLoc.Latitude || firstLoc.Longitude != lastLoc.Longitude)
                 ring.Add(new JArray(firstLoc.Longitude, firstLoc.Latitude));
 
-            var props = new JObject { ["callsign"] = callsign };
-            if (frequency != null) props["frequency"] = frequency;
+            var controllerArray = new JArray();
+            foreach (var c in controllers ?? Enumerable.Empty<FSTRaK.BusinessLogic.VatsimService.VatsimModel.Controller>())
+                controllerArray.Add(new JObject { ["callsign"] = c.callsign, ["frequency"] = c.frequency });
+
+            var props = new JObject
+            {
+                ["callsign"] = callsign,
+                ["controllers"] = controllerArray
+            };
+
+            return new JObject
+            {
+                ["type"] = "Feature",
+                ["geometry"] = new JObject
+                {
+                    ["type"] = "Polygon",
+                    ["coordinates"] = new JArray(ring)
+                },
+                ["properties"] = props
+            };
+        }
+
+        // kept for IVAO CTR which has no controller list
+        private static JObject BuildPolygonFeature(LocationCollection locations, string callsign, string frequency)
+        {
+            if (locations == null || locations.Count < 3) return null;
+
+            var ring = new JArray();
+            foreach (var loc in locations)
+                ring.Add(new JArray(loc.Longitude, loc.Latitude));
+
+            var firstLoc = locations[0];
+            var lastLoc = locations[locations.Count - 1];
+            if (firstLoc.Latitude != lastLoc.Latitude || firstLoc.Longitude != lastLoc.Longitude)
+                ring.Add(new JArray(firstLoc.Longitude, firstLoc.Latitude));
+
+            var controllerArray = new JArray();
+            if (frequency != null)
+                controllerArray.Add(new JObject { ["callsign"] = callsign, ["frequency"] = frequency });
+
+            var props = new JObject
+            {
+                ["callsign"] = callsign,
+                ["controllers"] = controllerArray
+            };
 
             return new JObject
             {

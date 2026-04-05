@@ -901,12 +901,20 @@ function renderAtcState(state) {
       const ring = feature.geometry.coordinates;
       const coords = ring.map(c => [c[1], c[0]]);
       if (coords.length < 3) { console.log('[FSTRaK] FIR skipped: coords.length < 3'); continue; }
+      var p = feature.properties || {};
+      var tipLines = [p.callsign || ''];
+      if (p.controllers && p.controllers.length) {
+        for (var ci = 0; ci < p.controllers.length; ci++) {
+          var ctrl = p.controllers[ci];
+          tipLines.push(ctrl.callsign + '  ' + ctrl.frequency);
+        }
+      }
       L.polygon(coords, {
         color: '#080658',
         weight: 1,
         fillColor: '#91C8E4',
         fillOpacity: 0.3
-      }).bindTooltip((feature.properties && feature.properties.callsign) || '', { sticky: true }).addTo(atcLayer);
+      }).bindTooltip(tipLines.join('<br>'), { sticky: true }).addTo(atcLayer);
     }
   }
 
