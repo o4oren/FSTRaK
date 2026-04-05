@@ -18,10 +18,13 @@ namespace FSTRaK.BusinessLogic.TileServer
         {
             try
             {
-                var p = FlightManager.FlightManager.Instance.CurrentFlightParams;
+                var fm = FlightManager.FlightManager.Instance;
+                var active = fm.SimConnectIsConnected && fm.ActiveFlight != null;
+                var p = fm.CurrentFlightParams;
                 var json = string.Format(
                     CultureInfo.InvariantCulture,
-                    "{{\"lat\":{0},\"lon\":{1},\"hdg\":{2},\"alt\":{3},\"spd\":{4}}}",
+                    "{{\"active\":{0},\"lat\":{1},\"lon\":{2},\"hdg\":{3},\"alt\":{4},\"spd\":{5}}}",
+                    active ? "true" : "false",
                     p.Latitude, p.Longitude, p.Heading, p.Altitude, p.GroundSpeed);
 
                 Log.Debug("SimVarHandler: GET — {Json}", json);

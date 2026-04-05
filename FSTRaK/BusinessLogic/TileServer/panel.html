@@ -783,7 +783,8 @@ function makeAircraftIcon(hdg) {
 
 const aircraftMarker = L.marker([0, 0], {
   icon: makeAircraftIcon(0),
-  zIndexOffset: 1000
+  zIndexOffset: 1000,
+  opacity: 0
 }).addTo(map);
 
 // ── Pan/zoom tracking ─────────────────────────────────────────────────────────────────────────────
@@ -813,17 +814,26 @@ async function fetchSimVars() {
     var resp = await fetch('http://127.0.0.1:8765/simvar');
     if (!resp.ok) return;
     var d = await resp.json();
-    var lat = d.lat || 0;
-    var lon = d.lon || 0;
+
+    if (!d.active) {
+      aircraftMarker.setOpacity(0);
+      document.getElementById('hud').style.visibility = 'hidden';
+      return;
+    }
+
+    var lat = d.lat;
+    var lon = d.lon;
     var hdg = d.hdg || 0;
     var alt = Math.round(d.alt || 0);
     var spd = Math.round(d.spd || 0);
 
     lastLat = lat; lastLon = lon;
 
+    aircraftMarker.setOpacity(1);
     aircraftMarker.setLatLng([lat, lon]);
     aircraftMarker.setIcon(makeAircraftIcon(hdg));
 
+    document.getElementById('hud').style.visibility = 'visible';
     document.getElementById('hud-alt').textContent = 'ALT: ' + alt + ' ft';
     document.getElementById('hud-spd').textContent = 'GS: ' + spd + ' kt';
     document.getElementById('hud-hdg').textContent = 'HDG: ' + Math.round(hdg) + '\u00B0';
