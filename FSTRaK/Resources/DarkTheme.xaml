@@ -744,7 +744,7 @@
                 Padding="2"
                 SnapsToDevicePixels="true"
                             BorderThickness="1"
-                            CornerRadius="15"
+                            CornerRadius="0"
                             Background="{DynamicResource TextBoxBackgroundBrush}"
                             >
                         <Border.BorderBrush>
