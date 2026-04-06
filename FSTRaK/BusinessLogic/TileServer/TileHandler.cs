@@ -11,6 +11,7 @@ namespace FSTRaK.BusinessLogic.TileServer
     ///   GET /tiles/base/{z}/{x}/{y}
     ///   GET /tiles/overlay/chart/{z}/{x}/{y}
     ///   GET /tiles/overlay/openaip/{z}/{x}/{y}
+    ///   GET /tiles/overlay/ofm/{z}/{x}/{y}
     ///
     /// Provider objects (MapTileLayerBase) are DependencyObjects and must only be accessed
     /// on the UI thread. This handler reads UriTemplate inside Dispatcher.InvokeAsync,
@@ -75,12 +76,29 @@ namespace FSTRaK.BusinessLogic.TileServer
 
                     var url = await System.Windows.Application.Current.Dispatcher.InvokeAsync(() =>
                     {
-                        var p = MapProviderResolver.GetOpenAipLayer();
+                        var p = MapProviderResolver.GetAeroOverlayLayer();
                         return p == null ? null : ResolveUrl(p, z, x, y);
                     });
 
                     if (url == null) { Respond404(context); return; }
                     await ServeTile(context, url, null, "OpenAIP", z, x, y);
+                }
+                else if (route.StartsWith("overlay/ofm/", StringComparison.OrdinalIgnoreCase))
+                {
+                    if (!FSTRaK.Properties.Settings.Default.IsOpenFlightMapsEnabled)
+                    { Respond404(context); return; }
+
+                    if (!TryParseZXY(parts, 2, out int z, out int x, out int y))
+                    { Respond404(context); return; }
+
+                    var url = await System.Windows.Application.Current.Dispatcher.InvokeAsync(() =>
+                    {
+                        var p = MapProviderResolver.GetAeroOverlayLayer();
+                        return p == null ? null : ResolveUrl(p, z, x, y);
+                    });
+
+                    if (url == null) { Respond404(context); return; }
+                    await ServeTile(context, url, null, "OpenFlightMaps", z, x, y);
                 }
                 else
                 {
