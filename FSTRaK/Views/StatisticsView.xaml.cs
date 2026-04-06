@@ -13,7 +13,7 @@ namespace FSTRaK.Views
 {
     public partial class StatisticsView : UserControl
     {
-        private MapTileLayerBase _currentOpenAipLayer;
+        private MapTileLayerBase _currentAeroOverlayLayer;
         private MapTileLayerBase _currentChartLayer;
 
         public StatisticsView()
@@ -23,7 +23,7 @@ namespace FSTRaK.Views
 
         private void OnLoaded(object sender, RoutedEventArgs e)
         {
-            MapLayerHelper.UpdateMapLayers(RouteMap, ref _currentOpenAipLayer, ref _currentChartLayer);
+            MapLayerHelper.UpdateMapLayers(RouteMap, ref _currentAeroOverlayLayer, ref _currentChartLayer);
 
             // Catch the bubble phase of MouseWheel on the map and stop it there,
             // so it never reaches the ScrollViewer. MapControl zooms via PreviewMouseWheel
