@@ -123,6 +123,7 @@
     <Compile Include="BusinessLogic\FlightManager\State\TaxiInState.cs" />
     <Compile Include="BusinessLogic\FlightManager\State\TaxiOutState.cs" />
     <Compile Include="BusinessLogic\TileServer\AircraftIconHandler.cs" />
+    <Compile Include="BusinessLogic\TileServer\FlightPathHandler.cs" />
     <Compile Include="BusinessLogic\TileServer\NetworkStateHandler.cs" />
     <Compile Include="BusinessLogic\TileServer\NetworkToggleHandler.cs" />
     <Compile Include="BusinessLogic\TileServer\PanelHandler.cs" />
@@ -368,6 +369,9 @@
     <None Include="App.config" />
   </ItemGroup>
   <ItemGroup>
+    <Content Include="BusinessLogic\TileServer\panel.html">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </Content>
     <Content Include="lib\x64\SQLite.Interop.dll" />
     <Content Include="lib\x86\SQLite.Interop.dll" />
     <Resource Include="Resources\Images\tower-64.png" />
