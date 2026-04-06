@@ -702,6 +702,14 @@ html, body { width: 100%; height: 100%; background: #1a1a2e; overflow: hidden; }
 }
 #btn-atc.atc-off { color: #666; }
 
+#btn-path {
+  position: absolute; bottom: 128px; right: 10px; z-index: 1000;
+  width: 36px; height: 36px; border-radius: 4px; border: none; cursor: pointer;
+  background: rgba(0,0,0,0.7); color: #81c784; font-size: 11px; font-weight: bold;
+  display: flex; align-items: center; justify-content: center;
+}
+#btn-path.path-off { color: #666; }
+
 /* Hide Leaflet's default zoom control — replaced by custom buttons */
 .leaflet-control-zoom { display: none !important; }
 
@@ -755,6 +763,7 @@ html, body { width: 100%; height: 100%; background: #1a1a2e; overflow: hidden; }
 <div id="btn-zoom-in"  class="map-btn" title="Zoom in">+</div>
 <div id="btn-zoom-out" class="map-btn" title="Zoom out">-</div>
 <div id="btn-recenter" class="map-btn" title="Center on aircraft"><div class="crosshair"></div></div>
+<div id="btn-path" class="path-off" title="Toggle flight path">TRK</div>
 <div id="btn-atc" title="Toggle ATC">ATC</div>
 
 <script>
@@ -1007,6 +1016,40 @@ document.getElementById('btn-atc').addEventListener('click', async () => {
 // Initial fetch and periodic refresh
 fetchAtcState();
 setInterval(fetchAtcState, 30000);
+
+// ── Flight path layer ───────────────────────────────────────────────────────
+const FLIGHT_PATH_URL = 'http://127.0.0.1:8765/flight/path';
+let pathVisible = false;
+let flightPathPolyline = L.polyline([], {
+  color: '#81c784',
+  weight: 2,
+  opacity: 0.85
+});
+
+async function fetchFlightPath() {
+  if (!pathVisible) return;
+  try {
+    const resp = await fetch(FLIGHT_PATH_URL);
+    if (!resp.ok) return;
+    const coords = await resp.json();
+    flightPathPolyline.setLatLngs(coords);
+  } catch (e) {
+    // tile server not running — silently skip
+  }
+}
+
+document.getElementById('btn-path').addEventListener('click', () => {
+  pathVisible = !pathVisible;
+  document.getElementById('btn-path').classList.toggle('path-off', !pathVisible);
+  if (pathVisible) {
+    flightPathPolyline.addTo(map);
+    fetchFlightPath();
+  } else {
+    flightPathPolyline.remove();
+  }
+});
+
+setInterval(fetchFlightPath, 5000);
 </script>
 </body>
 </html>
