@@ -779,6 +779,7 @@ html, body { width: 100%; height: 100%; background: #1a1a2e; overflow: hidden; }
 const TILE_BASE    = 'http://127.0.0.1:8765/tiles/base/{z}/{x}/{y}';
 const TILE_CHART   = 'http://127.0.0.1:8765/tiles/overlay/chart/{z}/{x}/{y}';
 const TILE_OPENAIP = 'http://127.0.0.1:8765/tiles/overlay/openaip/{z}/{x}/{y}';
+const TILE_OFM     = 'http://127.0.0.1:8765/tiles/overlay/ofm/{z}/{x}/{y}';
 const STATE_URL    = 'http://127.0.0.1:8765/network/state';
 const TOGGLE_URL   = 'http://127.0.0.1:8765/network/atc/toggle';
 const TRANSPARENT  = 'data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAAEAAAABACAYAAACqaXHeAAAAJUlEQVR42u3BAQ0AAADCoPdPbQ43oAAAAAAAAAAAAAAAAAAAYNcBAA9+AAGV453HAAAAAElFTkSuQmCC';
@@ -794,6 +795,7 @@ const map = L.map('map', { zoomControl: false, attributionControl: false }).setV
 L.tileLayer(TILE_BASE, { maxZoom: 18, minZoom: 3, errorTileUrl: TRANSPARENT }).addTo(map);
 L.tileLayer(TILE_CHART,   { maxZoom: 18, minZoom: 3, errorTileUrl: TRANSPARENT }).addTo(map);
 L.tileLayer(TILE_OPENAIP, { maxZoom: 18, minZoom: 3, errorTileUrl: TRANSPARENT }).addTo(map);
+L.tileLayer(TILE_OFM,     { maxZoom: 18, minZoom: 3, errorTileUrl: TRANSPARENT }).addTo(map);
 
 // ── Aircraft marker ──────────────────────────────────────────────────────────────────────────────────
 const ICON_URL = 'http://127.0.0.1:8765/aircraft-icon';
