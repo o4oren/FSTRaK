@@ -123,6 +123,7 @@
     <Compile Include="BusinessLogic\FlightManager\State\TaxiInState.cs" />
     <Compile Include="BusinessLogic\FlightManager\State\TaxiOutState.cs" />
     <Compile Include="BusinessLogic\TileServer\AircraftIconHandler.cs" />
+    <Compile Include="BusinessLogic\TileServer\FlightPathHandler.cs" />
     <Compile Include="BusinessLogic\TileServer\NetworkStateHandler.cs" />
     <Compile Include="BusinessLogic\TileServer\NetworkToggleHandler.cs" />
     <Compile Include="BusinessLogic\TileServer\PanelHandler.cs" />
