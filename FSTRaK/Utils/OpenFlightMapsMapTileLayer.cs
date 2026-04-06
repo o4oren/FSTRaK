@@ -26,12 +26,15 @@ namespace FSTRaK.Utils
             while (cycleStart.AddDays(28) <= today)
             {
                 cycleStart = cycleStart.AddDays(28);
-                cycleWithinYear++;
-                // When we cross into a new calendar year, reset cycle counter
                 if (cycleStart.Year > cycleYear)
                 {
+                    // Crossed into a new calendar year — reset cycle counter
                     cycleYear = cycleStart.Year;
                     cycleWithinYear = 1;
+                }
+                else
+                {
+                    cycleWithinYear++;
                 }
             }
 
