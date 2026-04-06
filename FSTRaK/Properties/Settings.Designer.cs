@@ -337,6 +337,18 @@ namespace FSTRaK.Properties {
 
         [global::System.Configuration.UserScopedSettingAttribute()]
         [global::System.Diagnostics.DebuggerNonUserCodeAttribute()]
+        [global::System.Configuration.DefaultSettingValueAttribute("False")]
+        public bool IsOpenFlightMapsEnabled {
+            get {
+                return ((bool)(this["IsOpenFlightMapsEnabled"]));
+            }
+            set {
+                this["IsOpenFlightMapsEnabled"] = value;
+            }
+        }
+
+        [global::System.Configuration.UserScopedSettingAttribute()]
+        [global::System.Diagnostics.DebuggerNonUserCodeAttribute()]
         [global::System.Configuration.DefaultSettingValueAttribute("")]
         public string OpenAipApiKey {
             get {
