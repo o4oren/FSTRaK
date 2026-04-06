@@ -87,7 +87,8 @@ namespace FSTRaK.Views
         {
             if (e.PropertyName == "MapTileProvider" ||
                 e.PropertyName == "ChartOverlayProvider" ||
-                e.PropertyName == "IsOpenAipEnabled")
+                e.PropertyName == "IsOpenAipEnabled" ||
+                e.PropertyName == "IsOpenFlightMapsEnabled")
             {
                 var vm = DataContext as FlightDetailsViewModel;
                 vm?.NotifyMapProviderChanged();
