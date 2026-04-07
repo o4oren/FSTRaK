@@ -193,7 +193,7 @@
                     </StackPanel>
 
                     <StackPanel Orientation="Horizontal" Margin="10" ToolTipService.ShowDuration="5000">
-                        <Label Style="{DynamicResource FSTrAkLabel}" Width="250">OpenAIP Overlay (Worldwide)</Label>
+                        <Label Style="{DynamicResource FSTrAkLabel}" Width="250">OpenAIP Overlay</Label>
                         <CheckBox Style="{DynamicResource SettingsCheckbox}" FontFamily="{DynamicResource CurrentFont}" FontSize="{DynamicResource ListFontSize}" VerticalAlignment="Center" IsChecked="{Binding IsOpenAipEnabled, Mode=TwoWay}"/>
                         <StackPanel.ToolTip>
                             Enable OpenAIP airspace and aeronautical data overlay
