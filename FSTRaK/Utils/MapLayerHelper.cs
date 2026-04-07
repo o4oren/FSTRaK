@@ -6,14 +6,14 @@ namespace FSTRaK.Utils
     {
         public static void UpdateMapLayers(
             MapBase map,
-            ref MapTileLayerBase currentOpenAipLayer,
+            ref MapTileLayerBase currentAeroOverlayLayer,
             ref MapTileLayerBase currentChartLayer)
         {
             // Tear down existing overlay layers
-            if (currentOpenAipLayer != null)
+            if (currentAeroOverlayLayer != null)
             {
-                map.Children.Remove(currentOpenAipLayer);
-                currentOpenAipLayer = null;
+                map.Children.Remove(currentAeroOverlayLayer);
+                currentAeroOverlayLayer = null;
             }
             if (currentChartLayer != null)
             {
@@ -30,16 +30,16 @@ namespace FSTRaK.Utils
             var baseIndex = map.Children.IndexOf(baseLayer);
             var insertAt = baseIndex >= 0 ? baseIndex + 1 : 0;
 
-            // Insert OpenAIP above base
-            var openAipLayer = MapProviderResolver.GetOpenAipLayer();
-            if (openAipLayer != null)
+            // Insert aero overlay (OpenAIP or OFM) above base
+            var aeroLayer = MapProviderResolver.GetAeroOverlayLayer();
+            if (aeroLayer != null)
             {
-                map.Children.Insert(insertAt, openAipLayer);
-                currentOpenAipLayer = openAipLayer;
+                map.Children.Insert(insertAt, aeroLayer);
+                currentAeroOverlayLayer = aeroLayer;
                 insertAt++;
             }
 
-            // Insert chart overlay above OpenAIP (or above base)
+            // Insert chart overlay above aero overlay (or above base)
             var chartLayer = MapProviderResolver.GetChartOverlayProvider();
             if (chartLayer != null)
             {

@@ -23,7 +23,7 @@ namespace FSTRaK.Views
     /// </summary>
     public partial class LiveView : System.Windows.Controls.UserControl
     {
-        private MapTileLayerBase _currentOpenAipLayer;
+        private MapTileLayerBase _currentAeroOverlayLayer;
         private MapTileLayerBase _currentChartLayer;
         private System.Windows.Point _mouseDownPosition;
         private const double DragThreshold = 5.0; // pixels
@@ -55,10 +55,10 @@ namespace FSTRaK.Views
 
             Properties.Settings.Default.PropertyChanged -= OnSettingsPropertyChanged;
             KeyDown -= OnKeyDown;
-            if (_currentOpenAipLayer != null)
+            if (_currentAeroOverlayLayer != null)
             {
-                xMap.Children.Remove(_currentOpenAipLayer);
-                _currentOpenAipLayer = null;
+                xMap.Children.Remove(_currentAeroOverlayLayer);
+                _currentAeroOverlayLayer = null;
             }
             if (_currentChartLayer != null)
             {
@@ -88,7 +88,8 @@ namespace FSTRaK.Views
         {
             if (e.PropertyName == "MapTileProvider" ||
                 e.PropertyName == "ChartOverlayProvider" ||
-                e.PropertyName == "IsOpenAipEnabled")
+                e.PropertyName == "IsOpenAipEnabled" ||
+                e.PropertyName == "IsOpenFlightMapsEnabled")
             {
                 var vm = DataContext as LiveViewViewModel;
                 vm?.NotifyMapProviderChanged();
@@ -105,7 +106,7 @@ namespace FSTRaK.Views
 
         private void UpdateMapLayers()
         {
-            MapLayerHelper.UpdateMapLayers(xMap, ref _currentOpenAipLayer, ref _currentChartLayer);
+            MapLayerHelper.UpdateMapLayers(xMap, ref _currentAeroOverlayLayer, ref _currentChartLayer);
         }
 
         private void OnMapMouseDown(object sender, System.Windows.Input.MouseButtonEventArgs e)

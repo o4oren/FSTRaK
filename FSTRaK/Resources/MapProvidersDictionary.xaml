@@ -107,6 +107,13 @@
         Description="© [DFS Deutsche Flugsicherung GmbH](https://www.dfs.de/homepage/de)"
         UpdateWhileViewportChanging="true"
         x:Shared="false"/>
+    <utils:OpenFlightMapsMapTileLayer
+        x:Key="Open Flightmaps"
+        TileSource="https://nwy-tiles-api.prod.newaydata.com/tiles/{z}/{x}/{y}.png?path={AiracCycle}/aero/latest"
+        SourceName="OpenFlightMaps"
+        Description="© [Open Flightmaps (Europe)](https://openflightmaps.org/)"
+        UpdateWhileViewportChanging="true"
+        x:Shared="false"/>
 
     <utils:MapTilerMapTileLayer
         x:Key="MapTiler Dataviz"
@@ -210,4 +217,7 @@
         MinZoomLevel="0" MaxZoomLevel="20"
         UpdateWhileViewportChanging="true"
         x:Shared="false"/>
+
+
+    
 </ResourceDictionary>

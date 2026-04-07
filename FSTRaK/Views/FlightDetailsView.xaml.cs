@@ -21,7 +21,7 @@ namespace FSTRaK.Views
     /// </summary>
     public partial class FlightDetailsView : UserControl
     {
-        private MapTileLayerBase _currentOpenAipLayer;
+        private MapTileLayerBase _currentAeroOverlayLayer;
         private MapTileLayerBase _currentChartLayer;
 
         public FlightDetailsView()
@@ -71,10 +71,10 @@ namespace FSTRaK.Views
             ((FlightDetailsViewModel)DataContext).PropertyChanged -= DataModel_OnPropertyChange;
 
             Properties.Settings.Default.PropertyChanged -= OnSettingsPropertyChanged;
-            if (_currentOpenAipLayer != null)
+            if (_currentAeroOverlayLayer != null)
             {
-                LogbookMap.Children.Remove(_currentOpenAipLayer);
-                _currentOpenAipLayer = null;
+                LogbookMap.Children.Remove(_currentAeroOverlayLayer);
+                _currentAeroOverlayLayer = null;
             }
             if (_currentChartLayer != null)
             {
@@ -87,7 +87,8 @@ namespace FSTRaK.Views
         {
             if (e.PropertyName == "MapTileProvider" ||
                 e.PropertyName == "ChartOverlayProvider" ||
-                e.PropertyName == "IsOpenAipEnabled")
+                e.PropertyName == "IsOpenAipEnabled" ||
+                e.PropertyName == "IsOpenFlightMapsEnabled")
             {
                 var vm = DataContext as FlightDetailsViewModel;
                 vm?.NotifyMapProviderChanged();
@@ -96,7 +97,7 @@ namespace FSTRaK.Views
 
         private void UpdateMapLayers()
         {
-            MapLayerHelper.UpdateMapLayers(LogbookMap, ref _currentOpenAipLayer, ref _currentChartLayer);
+            MapLayerHelper.UpdateMapLayers(LogbookMap, ref _currentAeroOverlayLayer, ref _currentChartLayer);
         }
 
         private void DataModel_OnPropertyChange(object sender, PropertyChangedEventArgs e)

@@ -1,4 +1,4 @@
-﻿using System.Windows;
+using System.Windows;
 using MapControl;
 
 namespace FSTRaK.Utils
@@ -22,10 +22,13 @@ namespace FSTRaK.Utils
             return Application.Current.Resources[key] as MapTileLayerBase;
         }
 
-        public static MapTileLayerBase GetOpenAipLayer()
+        public static MapTileLayerBase GetAeroOverlayLayer()
         {
-            if (!Properties.Settings.Default.IsOpenAipEnabled) return null;
-            return Application.Current.Resources["OpenAIP"] as MapTileLayerBase;
+            if (Properties.Settings.Default.IsOpenAipEnabled)
+                return Application.Current.Resources["OpenAIP"] as MapTileLayerBase;
+            if (Properties.Settings.Default.IsOpenFlightMapsEnabled)
+                return Application.Current.Resources["Open Flightmaps"] as MapTileLayerBase;
+            return null;
         }
     }
 }

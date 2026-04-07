@@ -209,6 +209,14 @@
                     </StackPanel>
 
                     <StackPanel Orientation="Horizontal" Margin="10" ToolTipService.ShowDuration="5000">
+                        <Label Style="{DynamicResource FSTrAkLabel}" Width="250">Open Flightmaps (Europe)</Label>
+                        <CheckBox Style="{DynamicResource SettingsCheckbox}" FontFamily="{DynamicResource CurrentFont}" FontSize="{DynamicResource ListFontSize}" VerticalAlignment="Center" IsChecked="{Binding IsOpenFlightMapsEnabled, Mode=TwoWay}"/>
+                        <StackPanel.ToolTip>
+                            Enable Open Flightmaps aeronautical chart overlay (Europe coverage, updated per AIRAC cycle)
+                        </StackPanel.ToolTip>
+                    </StackPanel>
+
+                    <StackPanel Orientation="Horizontal" Margin="10" ToolTipService.ShowDuration="5000">
                         <Label Style="{DynamicResource FSTrAkLabel}" Width="250">Units</Label>
                         <ComboBox FontFamily="{DynamicResource CurrentFont}" Foreground="{DynamicResource TextColor}" FontSize="{DynamicResource ControlFontSize}" Width="200"
                               ItemsSource="{Binding Source={StaticResource dataFromEnum}}" SelectedItem="{Binding Units}"/>

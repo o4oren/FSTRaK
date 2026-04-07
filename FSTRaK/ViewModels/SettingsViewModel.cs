@@ -130,6 +130,12 @@ namespace FSTRaK.ViewModels
                 _isOpenAipEnabled = value;
                 Properties.Settings.Default.IsOpenAipEnabled = _isOpenAipEnabled;
                 IsShowOpenAipApiKeyField = _isOpenAipEnabled;
+                if (_isOpenAipEnabled)
+                {
+                    _isOpenFlightMapsEnabled = false;
+                    Properties.Settings.Default.IsOpenFlightMapsEnabled = false;
+                    OnPropertyChanged(nameof(IsOpenFlightMapsEnabled));
+                }
                 OnPropertyChanged();
             }
         }
@@ -143,6 +149,25 @@ namespace FSTRaK.ViewModels
                 _openAipApiKey = value;
                 Properties.Settings.Default.OpenAipApiKey = _openAipApiKey;
                 OpenAipMapTileLayer.ApiKey = _openAipApiKey;
+                OnPropertyChanged();
+            }
+        }
+
+        private bool _isOpenFlightMapsEnabled;
+        public bool IsOpenFlightMapsEnabled
+        {
+            get => _isOpenFlightMapsEnabled;
+            set
+            {
+                _isOpenFlightMapsEnabled = value;
+                Properties.Settings.Default.IsOpenFlightMapsEnabled = _isOpenFlightMapsEnabled;
+                if (_isOpenFlightMapsEnabled)
+                {
+                    _isOpenAipEnabled = false;
+                    Properties.Settings.Default.IsOpenAipEnabled = false;
+                    IsShowOpenAipApiKeyField = false;
+                    OnPropertyChanged(nameof(IsOpenAipEnabled));
+                }
                 OnPropertyChanged();
             }
         }
@@ -424,9 +449,9 @@ namespace FSTRaK.ViewModels
                 {
                     chartLayers.Add(provider.Key.ToString());
                 }
-                else if (provider.Value is OpenAipMapTileLayer)
+                else if (provider.Value is OpenAipMapTileLayer || provider.Value is OpenFlightMapsMapTileLayer)
                 {
-                    // OpenAIP is handled separately — exclude from both dropdowns
+                    // OpenAIP and OFM are handled as separate overlays — exclude from both dropdowns
                 }
                 else if (provider.Value is MapTileLayerBase || provider.Value is WmsImageLayer)
                 {
@@ -459,6 +484,7 @@ namespace FSTRaK.ViewModels
 
             SelectedChartOverlayProvider = Properties.Settings.Default.ChartOverlayProvider;
             IsOpenAipEnabled = Properties.Settings.Default.IsOpenAipEnabled;
+            IsOpenFlightMapsEnabled = Properties.Settings.Default.IsOpenFlightMapsEnabled;
             OpenAipApiKey = Properties.Settings.Default.OpenAipApiKey;
             FirBoundaryTag = string.IsNullOrEmpty(Properties.Settings.Default.FirBoundaryReleaseTag)
                 ? "—" : Properties.Settings.Default.FirBoundaryReleaseTag;

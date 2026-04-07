@@ -858,8 +858,8 @@ namespace FSTRaK.ViewModels
                 var parts = new List<string>();
                 var baseProvider = MapProviderResolver.GetMapProvider();
                 if (baseProvider?.Description != null) parts.Add(baseProvider.Description);
-                if (Properties.Settings.Default.IsOpenAipEnabled)
-                    parts.Add("© [OpenAIP](https://www.openaip.net)");
+                var aeroLayer = MapProviderResolver.GetAeroOverlayLayer();
+                if (aeroLayer?.Description != null) parts.Add(aeroLayer.Description);
                 var chartProvider = MapProviderResolver.GetChartOverlayProvider();
                 if (chartProvider?.Description != null) parts.Add(chartProvider.Description);
                 return string.Join(" | ", parts);
