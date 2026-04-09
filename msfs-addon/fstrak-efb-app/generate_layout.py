@@ -9,7 +9,8 @@ SKIP_DIRS = {"Build", "_Temp", "PackageSources", "PackageDefinitions", "Packages
 for root, dirs, files in os.walk(addon_dir):
     dirs[:] = [d for d in dirs if d not in SKIP_DIRS]
     for fname in files:
-        if fname in ("layout.json", "README.txt", "package.xml"):
+        if fname in ("layout.json", "README.txt", "package.xml", "package-lock.json",
+                     "generate_layout.py", ".gitignore"):
             continue
         fpath = os.path.join(root, fname)
         rel = os.path.relpath(fpath, addon_dir).replace("\\", "/")

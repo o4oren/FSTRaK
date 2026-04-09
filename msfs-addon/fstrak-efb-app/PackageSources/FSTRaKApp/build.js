@@ -15,7 +15,7 @@ const baseConfig = {
   outdir: '../../html_ui/efb_ui/efb_apps/FSTRaKApp',
   loader: { '.svg': 'copy', '.png': 'copy' },
   plugins: [
-    sassPlugin({ type: 'css-text' }),
+    sassPlugin({ type: 'css' }),
   ],
   // @efb/efb-api is provided by the MSFS EFB runtime — must NOT be bundled
   external: ['@efb/efb-api'],
