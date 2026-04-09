@@ -103,28 +103,23 @@ The `fstrak-ingame-panel/InGamePanels/fstrak-ingame-panel.spb` must be rebuilt v
 
 The EFB app requires a build step (TypeScript → JavaScript via esbuild). Run this **once after cloning or after updating source files**:
 
-1. **Copy `efb_api/` from the MSFS SDK:**
-   The build depends on `@efb/efb-api` which is not committed to git (it ships with the MSFS 2024 SDK).
-   - Install the MSFS 2024 SDK via Developer Mode → Help → SDK Installer.
-   - Copy the `efb_api/` folder from `<SDK install path>\EFB\TemplateApp\efb_api\` into `msfs-addon/fstrak-efb-app/PackageSources/efb_api/`.
-
-2. **Install npm dependencies:**
+1. **Install npm dependencies:**
    ```
    cd msfs-addon/fstrak-efb-app/PackageSources/FSTRaKApp
    npm install
    ```
 
-3. **Build the bundle:**
+2. **Build the bundle:**
    ```
    npm run build
    ```
    Output lands in `PackageSources/FSTRaKApp/dist/`.
 
-4. **Regenerate `layout.json`:**
+3. **Regenerate `layout.json`:**
    ```
    cd msfs-addon
    python generate_layout.py
    ```
    (The script auto-targets `fstrak-efb-app/`.)
 
-5. During active development, use `npm run watch` to rebuild automatically on save.
+4. During active development, use `npm run watch` to rebuild automatically on save.
