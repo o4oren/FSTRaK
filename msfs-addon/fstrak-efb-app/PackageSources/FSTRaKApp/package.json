@@ -12,7 +12,8 @@
     "watch": "cross-env SERVING_MODE=WATCH node ./build.js"
   },
   "dependencies": {
-    "@efb/efb-api": "file:../efb_api/dist/"
+    "@efb/efb-api": "file:../efb_api/dist/",
+    "@microsoft/msfs-sdk": "file:../efb_api/node_modules/@microsoft/msfs-sdk"
   },
   "devDependencies": {
     "@fal-works/esbuild-plugin-global-externals": "^2.1.2",

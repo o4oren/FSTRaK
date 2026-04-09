@@ -9,17 +9,20 @@ const WATCH = process.env.SERVING_MODE === 'WATCH';
 const MINIFY = process.env.MINIFY === 'true';
 
 const baseConfig = {
+  entryPoints: ['src/FSTRaKApp.tsx'],
+  keepNames: true,
   bundle: true,
-  minify: MINIFY,
-  sourcemap: false,
-  target: ['es2017'],
   outdir: '../../html_ui/efb_ui/efb_apps/FSTRaKApp',
-  loader: { '.svg': 'copy', '.png': 'copy' },
+  sourcemap: false,
+  minify: MINIFY,
+  target: 'es2017',
+  define: {
+    BASE_URL: '"coui://html_ui/efb_ui/efb_apps/FSTRaKApp"',
+  },
   plugins: [
-    // Map @efb/efb-api to the global EFB_API exposed by the MSFS EFB runtime
     globalExternals({
-      '@efb/efb-api': {
-        varName: 'EFB_API',
+      '@microsoft/msfs-sdk': {
+        varName: 'msfssdk',
         type: 'cjs',
       },
     }),
@@ -27,21 +30,10 @@ const baseConfig = {
   ],
 };
 
-const appConfig = {
-  ...baseConfig,
-  entryPoints: ['src/FSTRaKApp.tsx'],
-  format: 'iife',
-};
-
-async function build() {
-  if (WATCH) {
-    const ctx = await esbuild.context(appConfig);
-    await ctx.watch();
-    console.log('[FSTRaK EFB] watching for changes...');
-  } else {
-    await esbuild.build(appConfig);
+if (WATCH) {
+  esbuild.context(baseConfig).then((ctx) => ctx.watch());
+} else {
+  esbuild.build(baseConfig).then(() => {
     console.log('[FSTRaK EFB] build complete → html_ui/efb_ui/efb_apps/FSTRaKApp/');
-  }
+  });
 }
-
-build().catch((e) => { console.error(e); process.exit(1); });
