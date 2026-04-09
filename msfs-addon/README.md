@@ -103,9 +103,9 @@ The `fstrak-ingame-panel/InGamePanels/fstrak-ingame-panel.spb` must be rebuilt v
 
 The EFB app requires a build step (TypeScript → JavaScript via esbuild). Run this **once after cloning or after updating source files**:
 
-1. **Install npm dependencies:**
+1. **Install npm dependencies** (first time only):
    ```
-   cd msfs-addon/fstrak-efb-app/PackageSources/FSTRaKApp
+   cd msfs-addon\fstrak-efb-app\PackageSources\FSTRaKApp
    npm install
    ```
 
@@ -113,13 +113,32 @@ The EFB app requires a build step (TypeScript → JavaScript via esbuild). Run t
    ```
    npm run build
    ```
-   Output lands in `PackageSources/FSTRaKApp/dist/`.
+   Output lands in `fstrak-efb-app\html_ui\efb_ui\efb_apps\FSTRaKApp\`.
 
 3. **Regenerate `layout.json`:**
    ```
-   cd msfs-addon
+   cd msfs-addon\fstrak-efb-app
    python generate_layout.py
    ```
-   (The script auto-targets `fstrak-efb-app/`.)
 
 4. During active development, use `npm run watch` to rebuild automatically on save.
+
+### What goes into the Community folder
+
+The `fstrak-efb-app\` folder can be copied as-is into the Community folder — MSFS reads only the files listed in `layout.json` and ignores everything else (`PackageSources\`, `PackageDefinitions\`, etc.). The runtime files are:
+
+```
+fstrak-efb-app\
+  manifest.json
+  layout.json
+  html_ui\
+    Icons\
+      ICON_FSTRAK_EFB_APP.svg
+    efb_ui\
+      efb_apps\
+        FSTRaKApp\
+          FSTRaKApp.js
+          FSTRaKApp.css
+```
+
+Make sure `html_ui\` is present (built and committed) before packaging a release.
