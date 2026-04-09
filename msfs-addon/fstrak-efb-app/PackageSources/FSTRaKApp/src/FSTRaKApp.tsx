@@ -16,18 +16,15 @@ import {
  * The tile server must be running (FSTRaK desktop app must be open).
  */
 class FSTRaKAppView extends AppView<RequiredProps<AppViewProps, 'bus'>> {
-  protected defaultView = 'MapView';
-
-  protected registerViews(): void {
-    this.appViewService.registerPage('MapView', () => (
-      <div class="fstrak-efb-container">
-        <iframe src="http://127.0.0.1:8765/panel" class="fstrak-efb-iframe" />
-      </div>
-    ));
-  }
-
   public render(): VNode {
-    return <div class="fstrak-efb-root">{super.render()}</div>;
+    return (
+      <div style="width:100%;height:100%;overflow:hidden;display:flex;">
+        <iframe
+          src="http://127.0.0.1:8765/panel"
+          style="width:100%;height:100%;border:none;flex:1;"
+        />
+      </div>
+    );
   }
 }
 
@@ -47,7 +44,6 @@ class FSTRaKApp extends App {
   public SuspendMode = AppSuspendMode.SLEEP;
 
   public async install(_props: AppInstallProps): Promise<void> {
-    Efb.loadCss('coui://html_ui/efb_ui/efb_apps/FSTRaKApp/FSTRaKApp.css');
     return Promise.resolve();
   }
 
