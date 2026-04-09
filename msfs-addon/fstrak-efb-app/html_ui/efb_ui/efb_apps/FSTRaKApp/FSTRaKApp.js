@@ -4161,15 +4161,14 @@
 
   // src/FSTRaKApp.tsx
   var _FSTRaKAppView = class _FSTRaKAppView extends AppView {
-    constructor() {
-      super(...arguments);
-      this.defaultView = "MapView";
-    }
-    registerViews() {
-      this.appViewService.registerPage("MapView", () => /* @__PURE__ */ import_msfs_sdk2.FSComponent.buildComponent("div", { class: "fstrak-efb-container" }, /* @__PURE__ */ import_msfs_sdk2.FSComponent.buildComponent("iframe", { src: "http://127.0.0.1:8765/panel", class: "fstrak-efb-iframe" })));
-    }
     render() {
-      return /* @__PURE__ */ import_msfs_sdk2.FSComponent.buildComponent("div", { class: "fstrak-efb-root" }, super.render());
+      return /* @__PURE__ */ import_msfs_sdk2.FSComponent.buildComponent("div", { style: "width:100%;height:100%;overflow:hidden;display:flex;" }, /* @__PURE__ */ import_msfs_sdk2.FSComponent.buildComponent(
+        "iframe",
+        {
+          src: "http://127.0.0.1:8765/panel",
+          style: "width:100%;height:100%;border:none;flex:1;"
+        }
+      ));
     }
   };
   __name(_FSTRaKAppView, "FSTRaKAppView");
@@ -4187,7 +4186,6 @@
       return "coui://html_ui/Icons/ICON_FSTRAK_EFB_APP.svg";
     }
     async install(_props) {
-      Efb.loadCss("coui://html_ui/efb_ui/efb_apps/FSTRaKApp/FSTRaKApp.css");
       return Promise.resolve();
     }
     render() {
