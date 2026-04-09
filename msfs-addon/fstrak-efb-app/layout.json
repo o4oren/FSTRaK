@@ -1,29 +1,19 @@
 {
   "content": [
     {
-      "path": ".gitignore",
-      "size": 80,
-      "date": 134201924592968974
-    },
-    {
-      "path": "generate_layout.py",
-      "size": 983,
-      "date": 134201919069016090
-    },
-    {
       "path": "manifest.json",
       "size": 414,
       "date": 134201889932970950
     },
     {
-      "path": "package-lock.json",
-      "size": 93,
-      "date": 134201905842260408
-    },
-    {
       "path": "html_ui/efb_ui/efb_apps/FSTRaKApp/FSTRaKApp.js",
       "size": 2168,
-      "date": 134201924813197370
+      "date": 134201931349068620
+    },
+    {
+      "path": "html_ui/Icons/ICON_FSTRAK_EFB_APP.svg",
+      "size": 8586,
+      "date": 134201931192406642
     }
   ]
 }
