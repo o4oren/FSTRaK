@@ -4,7 +4,7 @@ import json
 addon_dir = os.path.dirname(os.path.abspath(__file__))
 content = []
 
-SKIP_DIRS = {"Build", "_Temp", "PackageSources", "PackageDefinitions", "Packages"}
+SKIP_DIRS = {"Build", "_Temp", "PackageSources", "PackageDefinitions", "Packages", "src", "node_modules"}
 
 for root, dirs, files in os.walk(addon_dir):
     dirs[:] = [d for d in dirs if d not in SKIP_DIRS]

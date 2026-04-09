@@ -12,7 +12,7 @@ const baseConfig = {
   minify: MINIFY,
   sourcemap: false,
   target: ['es2017'],
-  outdir: 'dist',
+  outdir: '../../../html_ui/efb_ui/efb_apps/FSTRaKApp',
   loader: { '.svg': 'copy', '.png': 'copy' },
   plugins: [
     sassPlugin({ type: 'css-text' }),
@@ -34,7 +34,7 @@ async function build() {
     console.log('[FSTRaK EFB] watching for changes...');
   } else {
     await esbuild.build(appConfig);
-    console.log('[FSTRaK EFB] build complete → dist/');
+    console.log('[FSTRaK EFB] build complete → html_ui/efb_ui/efb_apps/FSTRaKApp/');
   }
 }
 
