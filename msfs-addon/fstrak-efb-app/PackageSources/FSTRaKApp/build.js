@@ -12,7 +12,7 @@ const baseConfig = {
   minify: MINIFY,
   sourcemap: false,
   target: ['es2017'],
-  outdir: '../../../html_ui/efb_ui/efb_apps/FSTRaKApp',
+  outdir: '../../html_ui/efb_ui/efb_apps/FSTRaKApp',
   loader: { '.svg': 'copy', '.png': 'copy' },
   plugins: [
     sassPlugin({ type: 'css-text' }),
