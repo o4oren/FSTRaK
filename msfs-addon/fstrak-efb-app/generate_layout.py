@@ -1,7 +1,7 @@
 import os
 import json
 
-addon_dir = os.path.join(os.path.dirname(os.path.abspath(__file__)), "fstrak-efb-app")
+addon_dir = os.path.dirname(os.path.abspath(__file__))
 content = []
 
 SKIP_DIRS = {"Build", "_Temp", "PackageSources", "PackageDefinitions", "Packages"}
