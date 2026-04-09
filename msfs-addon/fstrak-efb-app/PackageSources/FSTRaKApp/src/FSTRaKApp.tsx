@@ -9,20 +9,23 @@ import {
   TVNode,
 } from '@efb/efb-api';
 
+// FSComponent is provided by the MSFS runtime — declared here to satisfy TypeScript
+declare const FSComponent: any;
+
 /**
  * Full-screen iframe view — loads the FSTRaK moving map from the tile server.
  * The tile server must be running (FSTRaK desktop app must be open).
  */
 class FSTRaKAppView extends AppView<RequiredProps> {
   public render(): TVNode {
-    return (
-      <div class="fstrak-efb-container">
-        <iframe
-          src="http://127.0.0.1:8765/panel"
-          class="fstrak-efb-iframe"
-        />
-      </div>
-    ) as unknown as TVNode;
+    return FSComponent.buildComponent(
+      'div',
+      { class: 'fstrak-efb-container' },
+      FSComponent.buildComponent('iframe', {
+        src: 'http://127.0.0.1:8765/panel',
+        class: 'fstrak-efb-iframe',
+      })
+    ) as TVNode;
   }
 }
 
@@ -53,7 +56,7 @@ class FSTRaKApp extends App {
   }
 
   public render(props: AppViewProps): TVNode {
-    return (<FSTRaKAppView {...props} />) as unknown as TVNode;
+    return new FSTRaKAppView(props) as unknown as TVNode;
   }
 }
 

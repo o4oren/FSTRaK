@@ -3,6 +3,7 @@
 require('dotenv').config();
 const esbuild = require('esbuild');
 const { sassPlugin } = require('esbuild-sass-plugin');
+const { globalExternals } = require('@fal-works/esbuild-plugin-global-externals');
 
 const WATCH = process.env.SERVING_MODE === 'WATCH';
 const MINIFY = process.env.MINIFY === 'true';
@@ -15,10 +16,15 @@ const baseConfig = {
   outdir: '../../html_ui/efb_ui/efb_apps/FSTRaKApp',
   loader: { '.svg': 'copy', '.png': 'copy' },
   plugins: [
+    // Map @efb/efb-api to the global EFB_API exposed by the MSFS EFB runtime
+    globalExternals({
+      '@efb/efb-api': {
+        varName: 'EFB_API',
+        type: 'cjs',
+      },
+    }),
     sassPlugin({ type: 'css' }),
   ],
-  // @efb/efb-api is provided by the MSFS EFB runtime — must NOT be bundled
-  external: ['@efb/efb-api'],
 };
 
 const appConfig = {
