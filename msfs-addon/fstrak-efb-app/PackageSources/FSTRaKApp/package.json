@@ -1,0 +1,30 @@
+{
+  "name": "@efb/fstrakapp",
+  "version": "1.0.0",
+  "license": "MIT",
+  "author": "FSTrAk",
+  "scripts": {
+    "build": "node ./build.js",
+    "clean": "npm run clean:dist && npm run clean:node_modules",
+    "clean:dist": "if exist ./dist/ (rmdir /s /q dist)",
+    "clean:node_modules": "if exist ./node_modules/ (rmdir /s /q node_modules)",
+    "rebuild": "npm run clean:dist && npm run build",
+    "watch": "cross-env SERVING_MODE=WATCH node ./build.js"
+  },
+  "dependencies": {
+    "@efb/efb-api": "file:../efb_api/dist/"
+  },
+  "devDependencies": {
+    "@fal-works/esbuild-plugin-global-externals": "^2.1.2",
+    "@jgoz/esbuild-plugin-typecheck": "^3.0.2",
+    "@types/node": "^18.15.5",
+    "cross-env": "^7.0.3",
+    "dotenv": "^16.0.3",
+    "esbuild": "^0.21.3",
+    "esbuild-sass-plugin": "^3.3.0",
+    "postcss": "^8.4.30",
+    "postcss-prefix-selector": "^1.16.0",
+    "prettier": "^2.7.1",
+    "typescript": "~5.6.2"
+  }
+}
