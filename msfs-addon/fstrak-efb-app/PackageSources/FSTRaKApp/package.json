@@ -21,7 +21,7 @@
     "cross-env": "^7.0.3",
     "dotenv": "^16.0.3",
     "esbuild": "^0.21.3",
-    "esbuild-sass-plugin": "^3.3.0",
+    "esbuild-sass-plugin": "3.3.0",
     "postcss": "^8.4.30",
     "postcss-prefix-selector": "^1.16.0",
     "prettier": "^2.7.1",
