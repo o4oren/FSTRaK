@@ -423,6 +423,13 @@ internal sealed class SimConnectService : INotifyPropertyChanged
         _simconnect.AddToDataDefinition(DataDefinitions.FlightData, "GENERAL ENG THROTTLE LEVER POSITION:4", "percent",
             SIMCONNECT_DATATYPE.FLOAT64, 0.0f, SimConnect.SIMCONNECT_UNUSED);
 
+        _simconnect.AddToDataDefinition(DataDefinitions.FlightData, "G FORCE", "GForce",
+            SIMCONNECT_DATATYPE.FLOAT64, 0.0f, SimConnect.SIMCONNECT_UNUSED);
+        _simconnect.AddToDataDefinition(DataDefinitions.FlightData, "PLANE PITCH DEGREES", "degrees",
+            SIMCONNECT_DATATYPE.FLOAT64, 0.0f, SimConnect.SIMCONNECT_UNUSED);
+        _simconnect.AddToDataDefinition(DataDefinitions.FlightData, "PLANE BANK DEGREES", "degrees",
+            SIMCONNECT_DATATYPE.FLOAT64, 0.0f, SimConnect.SIMCONNECT_UNUSED);
+
         _simconnect.RegisterDataDefineStruct<AircraftData>(DataDefinitions.AircraftData);
         _simconnect.RegisterDataDefineStruct<FlightData>(DataDefinitions.FlightData);
 
