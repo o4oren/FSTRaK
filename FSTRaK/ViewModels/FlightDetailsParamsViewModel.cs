@@ -47,6 +47,8 @@ namespace FSTRaK.ViewModels
 
         public double LandingVerticalSpeed { get; set; }
 
+        public string TouchdownGForce { get; set; }
+
         public double Score { get; set; }
 
         public string Comment { get; set; }
@@ -66,6 +68,7 @@ namespace FSTRaK.ViewModels
             Payload = flight.TotalPayloadLbs;
             BlockTime = flight.FlightTime;
             LandingVerticalSpeed = CalculateLandingVs(flight);
+            TouchdownGForce = CalculateTouchdownGForce(flight);
             Score = flight.Score;
             ArrivedOrCrashedText = flight.FlightOutcome == FlightOutcome.Crashed ? "Crashed near: " : "Arrived at: ";
             FuelUnit = Properties.Settings.Default.Units == (int)Units.Imperial ? "Lbs" : "Kg";
@@ -83,6 +86,17 @@ namespace FSTRaK.ViewModels
             }
 
             return 0;
+        }
+
+        private string CalculateTouchdownGForce(Flight flight)
+        {
+            var landingEvent = (LandingEvent)flight.FlightEvents.FirstOrDefault(e => e is LandingEvent);
+            if (landingEvent?.TouchdownGForce != null)
+            {
+                return $"{landingEvent.TouchdownGForce:F2} G";
+            }
+
+            return "—";
         }
 
         private string GetAirportText(Airport airport)

@@ -73,6 +73,9 @@
                 <Run Text="Landing VS: "/><Run Text="{Binding LandingVerticalSpeed, StringFormat=N0}"/> ft/m
                 <LineBreak/>
 
+                <Run Text="Touchdown G: "/><Run Text="{Binding TouchdownGForce}"/>
+                <LineBreak/>
+
                 <Run Text="Score: "/><Run Text="{Binding Score}"/>
                 
                 <LineBreak/>

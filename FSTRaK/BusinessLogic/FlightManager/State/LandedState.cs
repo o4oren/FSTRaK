@@ -1,4 +1,4 @@
-using System;
+﻿using System;
 using FSTRaK.DataTypes;
 using FSTRaK.Models;
 using Serilog;
