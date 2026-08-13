@@ -24,8 +24,7 @@ namespace FSTRaK.BusinessLogic.FlightManager.State
         {
             var le = new LandingEvent()
             {
-                VerticalSpeed = landingData.VerticalSpeed,
-                FuelWeightLbs = landingData.FuelWeightLbs
+                VerticalSpeed = landingData.VerticalSpeed
             };
 
             if (landingData.VerticalSpeed < -500)
@@ -58,7 +57,7 @@ namespace FSTRaK.BusinessLogic.FlightManager.State
             }
 
             // TODO future handling of pitch
-            Log.Information($"Landed! Flaps: {le.FlapsPosition}, VS: {le.VerticalSpeed:F0} fpm, with {le.FuelWeightLbs} Lbs of fuel.");
+            Log.Information($"Landed! Flaps: {le.FlapsPosition}, VS: {le.VerticalSpeed:F0} fpm, with {landingData.FuelWeightLbs} Lbs of fuel.");
 
 
             AddFlightEvent(landingData, le);
@@ -76,11 +75,7 @@ namespace FSTRaK.BusinessLogic.FlightManager.State
 
             if (data.GroundVelocity < 35 && data.MaxThrottlePosition() < 50)
             {
-                var ti = new TaxiInEvent()
-                {
-                    FuelWeightLbs = data.FuelWeightLbs
-                };
-                AddFlightEvent(data, ti);
+                AddFlightEvent(data, new TaxiInEvent());
                 Context.State = new TaxiInState(Context);
                 return;
             }

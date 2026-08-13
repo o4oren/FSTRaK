@@ -7,7 +7,5 @@ namespace FSTRaK.Models
     {
         [Column("FlapsPosition")]
         public double FlapsPosition { get; set; }
-        [Column("FuelWeightLbs")]
-        public double FuelWeightLbs { get; set; }
     }
 }

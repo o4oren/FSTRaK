@@ -45,7 +45,6 @@ namespace FSTRaK.BusinessLogic.FlightManager.State
             if (IsCameraLive(data.CameraState) && Context.ActiveFlight.FlightEvents.Count == 0)
             {
                 _prevFuelQuantity = data.FuelWeightLbs;
-                _flightStartedEvent.FuelWeightLbs = data.FuelWeightLbs;
                 _fuelingStopwatch.Start();
                 AddFlightEvent(data, _flightStartedEvent);
                 Context.ActiveFlight.StartTime = _flightStartedEvent.Time;
@@ -67,10 +66,7 @@ namespace FSTRaK.BusinessLogic.FlightManager.State
             if ( IsCameraLive(data.CameraState) &&
                 (Math.Abs(data.Latitude - Context.CurrentFlightParams.Latitude) > 0.0000001 || Math.Abs(data.Longitude - Context.CurrentFlightParams.Longitude) > 0.0000001) && data.GroundVelocity > 1)
             {
-                var to = new TaxiOutEvent
-                {
-                    FuelWeightLbs = data.FuelWeightLbs
-                };
+                var to = new TaxiOutEvent();
                 AddFlightEvent(data, to);
                 Log.Information($"Taxi out! with {to.FuelWeightLbs} Lbs of fuel.");
 

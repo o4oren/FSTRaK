@@ -59,6 +59,7 @@ namespace FSTRaK.BusinessLogic.FlightManager.State
             fe.TrueHeading = data.TrueHeading;
             fe.IndicatedAirspeed = data.IndicatedAirspeed;
             fe.GroundSpeed = data.GroundVelocity;
+            fe.FuelWeightLbs = data.FuelWeightLbs;
             fe.Time = time;
             Context.ActiveFlight.FlightEvents.Add(fe);
         }

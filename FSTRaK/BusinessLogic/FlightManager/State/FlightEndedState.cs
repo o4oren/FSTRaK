@@ -29,10 +29,7 @@ namespace FSTRaK.BusinessLogic.FlightManager.State
             if(!_isEnded)
             {
 
-                var fe = new FlightEndedEvent
-                {
-                    FuelWeightLbs = data.FuelWeightLbs
-                };
+                var fe = new FlightEndedEvent();
 
                 SetFlightOutcome();
 
@@ -54,18 +51,18 @@ namespace FSTRaK.BusinessLogic.FlightManager.State
                                 parkingEvent)
                             {
                                 Context.ActiveFlight.TotalFuelUsed =
-                                    startEvent.FuelWeightLbs - parkingEvent.FuelWeightLbs;
+                                    (startEvent.FuelWeightLbs - parkingEvent.FuelWeightLbs) ?? 0;
                             }
                             else
                             {
-                                Context.ActiveFlight.TotalFuelUsed = taxiOutEvent.FuelWeightLbs - fe.FuelWeightLbs;
+                                Context.ActiveFlight.TotalFuelUsed = (taxiOutEvent.FuelWeightLbs - fe.FuelWeightLbs) ?? 0;
                             }
                         }
                         else
                         {
                             if (Context.ActiveFlight.FlightEvents.FirstOrDefault(e => e is ParkingEvent) is ParkingEvent parkingEvent)
                             {
-                                Context.ActiveFlight.TotalFuelUsed = startEvent.FuelWeightLbs - parkingEvent.FuelWeightLbs;
+                                Context.ActiveFlight.TotalFuelUsed = (startEvent.FuelWeightLbs - parkingEvent.FuelWeightLbs) ?? 0;
                             }
                         }
                         Context.ActiveFlight.FlightTime = flightTime;
@@ -76,13 +73,13 @@ namespace FSTRaK.BusinessLogic.FlightManager.State
 
                         if (fe.FuelWeightLbs > 0)
                         {
-                            Context.ActiveFlight.TotalFuelUsed = startEvent.FuelWeightLbs - fe.FuelWeightLbs;
+                            Context.ActiveFlight.TotalFuelUsed = (startEvent.FuelWeightLbs - fe.FuelWeightLbs) ?? 0;
                         }
                         else
                         {
                             if (Context.ActiveFlight.FlightEvents.FirstOrDefault(e => e is ParkingEvent) is ParkingEvent parkingEvent)
                             {
-                                Context.ActiveFlight.TotalFuelUsed = startEvent.FuelWeightLbs - parkingEvent.FuelWeightLbs;
+                                Context.ActiveFlight.TotalFuelUsed = (startEvent.FuelWeightLbs - parkingEvent.FuelWeightLbs) ?? 0;
                             }
                         }
                         Context.ActiveFlight.FlightTime = flightTime;

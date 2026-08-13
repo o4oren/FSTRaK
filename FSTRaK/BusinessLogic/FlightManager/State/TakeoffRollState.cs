@@ -21,7 +21,7 @@ namespace FSTRaK.BusinessLogic.FlightManager.State
 
             if (!Convert.ToBoolean(data.SimOnGround))
             {
-                var to = new TakeoffEvent() { FlapsPosition = data.FlapPosition, FuelWeightLbs = data.FuelWeightLbs };
+                var to = new TakeoffEvent() { FlapsPosition = data.FlapPosition };
                 AddFlightEvent(data, to);
                 if (Context.ActiveFlight.Aircraft?.EmptyWeightLbs != null)
                     Context.ActiveFlight.TotalPayloadLbs =

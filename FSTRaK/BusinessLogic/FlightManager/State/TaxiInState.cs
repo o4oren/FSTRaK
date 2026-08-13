@@ -33,10 +33,9 @@ namespace FSTRaK.BusinessLogic.FlightManager.State
             {
                 var pe = new ParkingEvent
                 {
-                    FlapsPosition = data.FlapPosition,
-                    FuelWeightLbs = data.FuelWeightLbs
+                    FlapsPosition = data.FlapPosition
                 };
-                Log.Information($"Parked! Flaps: {pe.FlapsPosition}, with {pe.FuelWeightLbs} Lbs of fuel.");
+                Log.Information($"Parked! Flaps: {pe.FlapsPosition}, with {data.FuelWeightLbs} Lbs of fuel.");
 
                 AddFlightEvent(data, pe);
                 Context.State = new FlightEndedState(Context);

@@ -10,8 +10,6 @@ namespace FSTRaK.Models
         public double FlapsPosition { get; set; }
         public double VerticalSpeed { get; set; }
 
-        [Column("FuelWeightLbs")]
-        public double FuelWeightLbs { get; set; }
 
         public LandingRate LandingRate { get; set; }
 
