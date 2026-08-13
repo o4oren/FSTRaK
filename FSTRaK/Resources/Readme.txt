@@ -12,12 +12,19 @@ FSTRaK Desktop AppDownload:
 
 MSFS In-Sim Moving Map Panel (Optional)
 
-This adds a moving map toolbar panel inside MSFS 2024 that mirrors your FSTRaK map, shows live ATC coverage, and tracks aircraft position.Locate 
+This release adds a moving map toolbar panel inside MSFS 2024 that mirrors your FSTRaK map, shows live ATC coverage, and tracks aircraft position.Locate 
 - Folder: Find the fstrak-ingame-panel folder inside the zip alongside the installer.
 - Copy to Community Folder: Move that folder into your MSFS 2024 Community folder:
 For Microsoft Store / Xbox App: %LocalAppData%\Packages\Microsoft.FlightSimulator_8wekyb3d8bbwe\LocalCache\Packages\Community 
 For Steam: %AppData%\Microsoft Flight Simulator\Packages\Community 
 - Restart MSFS: The FSTRaK Moving Map icon will appear in the in-sim toolbar.🛠️ 
+
+This release adds a moving map EFB app inside MSFS 2024 that mirrors your FSTRaK map, shows live ATC coverage, and tracks aircraft position.Locate 
+- Folder: Find the fstrak-efb-app folder inside the zip alongside the installer.
+- Copy to Community Folder: Move that folder into your MSFS 2024 Community folder:
+For Microsoft Store / Xbox App: %LocalAppData%\Packages\Microsoft.FlightSimulator_8wekyb3d8bbwe\LocalCache\Packages\Community 
+For Steam: %AppData%\Microsoft Flight Simulator\Packages\Community 
+- Restart MSFS: The FSTRaK Moving Map icon will appear in the EFB.🛠️ 
 
 Usage Notes
 
