@@ -16,11 +16,18 @@ namespace FSTRaK.Models
         public double TouchDownPitchDegrees { get; set; }
         public double TouchDownBankDegress { get; set; }
 
+        public double? TouchdownGForce { get; set; }
+
         [NotMapped] public override string EventName { get; set; } = "Landing";
 
         public override string ToString()
         {
-            return $"{LandingRate}\n" + base.ToString() + $"\n{VerticalSpeed:F0} fpm";
+            var text = $"{LandingRate}\n" + base.ToString() + $"\n{VerticalSpeed:F0} fpm";
+            if (TouchdownGForce != null)
+            {
+                text += $"\n{TouchdownGForce:F2} G";
+            }
+            return text;
         }
 
     }
