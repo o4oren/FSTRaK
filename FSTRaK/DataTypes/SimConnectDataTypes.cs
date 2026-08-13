@@ -154,6 +154,10 @@ namespace FSTRaK.DataTypes
         public double Throttle3Position;
         public double Throttle4Position;
 
+        public double GForce;
+        public double PitchDegrees;
+        public double BankDegrees;
+
         /// <summary>
         /// Used to determine negine start up
         /// </summary>
