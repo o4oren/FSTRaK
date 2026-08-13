@@ -17,6 +17,11 @@ namespace FSTRaK.Models
         public double TrueHeading { get; set; }
         public double GroundAltitude { get; set; }
 
+        // Nullable because events persisted before this column was populated on
+        // every event have NULL for route points.
+        [Column("FuelWeightLbs")]
+        public double? FuelWeightLbs { get; set; }
+
         [Index(nameof(FlightId))]
         public int FlightId { get; set; }
 
