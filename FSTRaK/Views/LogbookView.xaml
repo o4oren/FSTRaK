@@ -101,6 +101,7 @@
                 <ContextMenu>
                     <MenuItem Header="Add/Edit Comment" Command="{Binding OpenAddCommentPopupCommand}"></MenuItem>
                     <MenuItem Header="Edit Aircraft" Command="{Binding OpenEditAircraftPopupCommand}"></MenuItem>
+                    <MenuItem Header="Edit Flight" Command="{Binding OpenEditFlightPopupCommand}"></MenuItem>
                     <MenuItem Header="Delete Flight" Command="{Binding DeleteFlightCommand}"></MenuItem>
                 </ContextMenu>
             </ListView.ContextMenu>
@@ -120,7 +121,7 @@
                                 <RowDefinition />
                             </Grid.RowDefinitions>
                             <TextBlock Grid.Row="0" Grid.Column="0" HorizontalAlignment="Left" FontFamily="{DynamicResource CurrentFont}" FontSize="{DynamicResource ListFontSize}" Foreground="{DynamicResource TextColor}">
-                                <Run Text="{Binding DepartureAirport, Mode=OneTime}"/>
+                                <Run Text="{Binding DepartureAirport, Mode=OneWay}"/>
                             </TextBlock>
                             <TextBlock Grid.Column="0" Grid.Row="1" HorizontalAlignment="Left" FontFamily="{DynamicResource CurrentFont}" FontSize="{DynamicResource SmallFontSize}" Foreground="{DynamicResource TextColor}">
                                 <Run Text="{Binding StartTime, Mode=OneTime}"/>
@@ -139,7 +140,7 @@
                             </ContentControl>
 
                             <TextBlock Grid.Row="0" Grid.Column="2" HorizontalAlignment="Left" FontFamily="{DynamicResource CurrentFont}" FontSize="{DynamicResource ListFontSize}" Foreground="{DynamicResource TextColor}">
-                                <Run Text="{Binding ArrivalAirport, Mode=OneTime}"/>
+                                <Run Text="{Binding ArrivalAirport, Mode=OneWay}"/>
                             </TextBlock>
                             <TextBlock Grid.Column="2" Grid.Row="1" HorizontalAlignment="Left" FontFamily="{DynamicResource CurrentFont}" FontSize="{DynamicResource SmallFontSize}" Foreground="{DynamicResource TextColor}">
                                 <Run Text="{Binding EndTime, Mode=OneTime}"/>
@@ -162,6 +163,10 @@
             <views:EditAircraftPopupView
                 x:Name="EditAircraftPopupView"
                 DataContext="{Binding EditAircraftViewModel}"
+            />
+            <views:EditFlightPopupView
+                x:Name="EditFlightPopupView"
+                DataContext="{Binding EditFlightViewModel}"
             />
             <views:AddCommentPopupView
                 x:Name="AddCommentPopupView"

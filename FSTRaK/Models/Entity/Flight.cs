@@ -29,11 +29,35 @@ namespace FSTRaK.Models
             }
         }
 
+        private string _departureAirport;
         [Index(nameof(DepartureAirport))]
-        public String DepartureAirport { get; set; }
+        public String DepartureAirport
+        {
+            get => _departureAirport;
+            set
+            {
+                if (_departureAirport == value) return;
+                _departureAirport = value;
+                _departureAirportDetails = null;
+                OnPropertyChanged();
+                OnPropertyChanged(nameof(DepartureAirportDetails));
+            }
+        }
 
+        private string _arrivalAirport;
         [Index(nameof(ArrivalAirport))]
-        public String ArrivalAirport { get; set; }
+        public String ArrivalAirport
+        {
+            get => _arrivalAirport;
+            set
+            {
+                if (_arrivalAirport == value) return;
+                _arrivalAirport = value;
+                _arrivalAirportDetails = null;
+                OnPropertyChanged();
+                OnPropertyChanged(nameof(ArrivalAirportDetails));
+            }
+        }
 
         [Index(nameof(StartTime))]
         public DateTime StartTime { get; set; }

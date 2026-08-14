@@ -6,18 +6,52 @@ namespace FSTRaK.BusinessLogic.FlightManager.State
 {
     internal class FlightState : AbstractState
     {
+        // Ground contact within this time after liftoff is ignored - settling back onto the
+        // gear right after rotation is not a landing.
+        private const int TakeoffGraceMs = 5000;
+
         public sealed override string Name { get; set; }
         public sealed override bool IsMovementState { get; set; }
-        public FlightState(FlightManager context) : base(context)
+
+        private TouchdownTracker _pendingTouchdown;
+        private readonly bool _justTookOff;
+        private readonly System.Diagnostics.Stopwatch _airborneStopwatch = new System.Diagnostics.Stopwatch();
+
+        public FlightState(FlightManager context, TouchdownTracker pendingTouchdown = null, bool justTookOff = false) : base(context)
         {
             this.EventInterval = 10000;
             this.Name = "In flight";
             this.IsMovementState = true;
+            _pendingTouchdown = pendingTouchdown;
+            _justTookOff = justTookOff;
+            if (_pendingTouchdown != null || _justTookOff)
+            {
+                _airborneStopwatch.Start();
+            }
         }
         public override void ProcessFlightData(FlightData data)
         {
+            if (_pendingTouchdown != null && _airborneStopwatch.ElapsedMilliseconds >= LandedState.BounceWindowMs)
+            {
+                // Stayed airborne past the bounce window - a go-around; the landing sequence is over.
+                _pendingTouchdown.FinalizeLanding();
+                _pendingTouchdown = null;
+            }
+
             if (data.SimOnGround == 1)
             {
+                if (_pendingTouchdown != null)
+                {
+                    Context.State = new LandedState(Context, data, _pendingTouchdown);
+                    return;
+                }
+
+                if (_justTookOff && _airborneStopwatch.ElapsedMilliseconds < TakeoffGraceMs)
+                {
+                    // Ignore a brief settle-back onto the runway right after liftoff.
+                    return;
+                }
+
                 Context.State = new LandedState(Context, data);
                 return;
             }
@@ -44,6 +78,16 @@ namespace FSTRaK.BusinessLogic.FlightManager.State
                 AddFlightEvent(data, fe);
                 Stopwatch.Restart();
             }
+        }
+
+        public override void HandleFlightExitEvent()
+        {
+            // Called on every data tick - only finalize when the sim actually left flight mode.
+            if (!Context.SimConnectInFlight)
+            {
+                _pendingTouchdown?.FinalizeLanding();
+            }
+            base.HandleFlightExitEvent();
         }
 
         private BaseFlightEvent CheckEnvelopeExceedingEvents(FlightData data)
