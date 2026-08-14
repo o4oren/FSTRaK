@@ -11,10 +11,11 @@ FSTrAk monitors your simulator silently, and will detect when a flight is starte
 * Automatic silent start-up.
 * Automatic flight tracking (hands-free experience).
 * Option (default) to save only complete flights - i.e. flight ended in parking state, with engines off and parking brake set, after having flown.
-* Multiple map providers including FAA ArcGIS charts, OpenAIP, OpenTopoMap, Bing, MapTiler, and more.
-* Flight analysis and scoring.
+* Multiple map providers including FAA ArcGIS charts, OpenAIP, Open Flightmaps, OpenTopoMap, Bing, MapTiler, and more.
+* Flight analysis and scoring, including landing rate (FPM) and touchdown G force, with protection against bounced landings and post-takeoff settle-backs.
+* Editable logbook — correct detected departure/arrival airports, edit aircraft details, and add comments to flights.
 * Live flight tracking with a moving map.
-* **MSFS 2024 in-sim moving map** — an MSFS Community addon panel that mirrors your FSTrAk map selection, showing chart overlays, live ATC coverage, and your aircraft position inside the simulator.
+* **MSFS in-sim moving map** — MSFS Community addons (a toolbar panel and an MSFS 2024 EFB tablet app) that mirror your FSTrAk map selection, showing chart overlays, live ATC coverage, your flight path, and your aircraft position inside the simulator.
 * **VATSIM and IVAO live network support** — view pilots and ATC on the live map.
 * Statistics (most used aircraft, most used airlines, average and max payload, distance, etc.)
 * Dark mode.
@@ -27,16 +28,21 @@ FSTrAk monitors your simulator silently, and will detect when a flight is starte
 2. Run the FSTrAk installer included in the zip.
 3. Launch FSTrAk — it will connect to MSFS automatically when the simulator is running.
 
-### MSFS In-Sim Moving Map Panel (optional)
+### MSFS In-Sim Moving Map Addons (optional)
 
-The zip also contains a `fstrak-ingame-panel/` folder. To enable the in-sim moving map tablet panel:
+The zip also contains two MSFS Community addons:
 
-1. Copy the `fstrak-ingame-panel/` folder into your MSFS **Community** folder:
+- `fstrak-ingame-panel/` — a moving map **toolbar panel** (MSFS 2020 and 2024).
+- `fstrak-efb-app/` — the same moving map as an **EFB app** on the MSFS 2024 tablet home screen.
+
+To enable them:
+
+1. Copy the addon folder(s) into your MSFS **Community** folder:
    - **Microsoft Store / Xbox App:** `%LocalAppData%\Packages\Microsoft.FlightSimulator_8wekyb3d8bbwe\LocalCache\Packages\Community`
    - **Steam:** `%AppData%\Microsoft Flight Simulator\Packages\Community`
-2. Restart MSFS 2024.
-3. The **FSTrAk Moving Map** icon will appear in the in-sim toolbar. Click it to open the panel.
-4. FSTrAk must be running on the same PC for the panel to display map tiles and aircraft position.
+2. Restart MSFS.
+3. The **FSTrAk Moving Map** icon will appear in the in-sim toolbar (panel) or on the tablet home screen (EFB app).
+4. FSTrAk must be running on the same PC for the addons to display map tiles and aircraft position.
 
 ---
 

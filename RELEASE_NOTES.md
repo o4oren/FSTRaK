@@ -1,23 +1,32 @@
-# FSTRaK 3.2.1 Release Notes
+# FSTRaK 3.6.1 Release Notes
 
 ## New Features
 
-**TRACON Boundary Polygons**
-APP/DEP controllers on the VATSIM overlay now display real TRACON boundary polygons instead of a generic 80km circle. Polygon data is sourced from the [simaware-tracon-project](https://github.com/vatsimnetwork/simaware-tracon-project). When no polygon exists for an airport, the 80km circle fallback is retained.
+**Touchdown G Force**
+The peak G force at touchdown is now captured and shown in the flight details and the landing event popup. Landings are scored on the worst of the vertical-speed (FPM) rating and the G-force rating, so a flat-but-hard slam no longer scores as a greaser. Older flights without G data simply show no G value.
 
-**Automatic Data File Updates**
-`Boundaries.geojson`, `TRACONBoundaries.geojson`, and `VATSpy.dat` are no longer bundled with the installer. On startup, FSTRaK checks for newer releases on GitHub/VATSIM and downloads updated files automatically to `%LOCALAPPDATA%\FSTRaK\Data\`. Previously downloaded files are used as fallback if the download fails.
+**Edit Flight Airports**
+A new **Edit Flight** option in the logbook context menu lets you correct a flight's departure and arrival airports — useful when the automatic nearest-airport detection picks a neighboring field. The editor suggests the airports closest to where the flight actually started and ended (with distances), and also accepts any airport ident code, validated against the airport database.
 
-**SkyVector Maps Fixed**
-SkyVector VFR, IFR High, and IFR Low charts are working again. The tile server authentication key rotates with each AIRAC cycle and is now fetched dynamically from the SkyVector API rather than being hardcoded. The key and AIRAC code are refreshed automatically when the current cycle expires.
+**Bounce and Settle-Back Protection**
+Landing measurements are now protected against transient ground contacts:
+- A brief settle-back onto the runway within 5 seconds of liftoff is no longer logged as a landing.
+- Touchdowns within 5 seconds of each other are merged into a single landing event that keeps the worst vertical speed and the peak G force across all touchdowns, so a bounced landing is scored on its hardest impact instead of producing duplicate landing events.
+
+**MSFS 2024 EFB App**
+The FSTrAk moving map is now also available as an EFB app on the MSFS 2024 tablet home screen, in addition to the toolbar panel. Both addons are included in the release zip — copy `fstrak-efb-app/` (and/or `fstrak-ingame-panel/`) into your Community folder.
+
+**Flight Path in the In-Sim Moving Map**
+The in-sim moving map (toolbar panel and EFB app) now draws the active flight's path.
+
+**Open Flightmaps Overlay**
+Added an Open Flightmaps aeronautical chart overlay (European coverage).
 
 ## Improvements
 
-- Aircraft icon mappings improved with additional type coverage
-- Flight path color restored to bold red in light theme
+- Fuel quantity is now recorded on every flight event and shown in event popups (events from older flights show no fuel data).
 
 ## Bug Fixes
 
-- Fixed blank UI on startup caused by a deadlock in SkyVector tile source initialization
-- Fixed crash in Live View when no flight is active (null geometry cast)
-- Fixed `System.Buffers` assembly version conflict when loading SkyVector tiles on .NET Framework 4.7.2
+- Touchdown G force now correctly reflects the peak over the two seconds following touchdown; previously only the touchdown instant was sampled.
+- Bounced landings no longer create duplicate landing events or double score penalties.

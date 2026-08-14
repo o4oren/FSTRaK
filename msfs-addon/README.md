@@ -10,7 +10,7 @@ A moving map toolbar panel for MSFS 2020 and 2024. Appears as an airplane icon i
 
 ### Prerequisites
 
-- FSTrAk v3.7.0 or later installed and running
+- FSTrAk v3.6.1 or later installed and running
 - Microsoft Flight Simulator 2020 or 2024
 
 ### Installation
@@ -41,7 +41,7 @@ The same moving map as a tablet (EFB) app, available on the MSFS 2024 tablet's h
 
 ### Prerequisites
 
-- FSTrAk v3.7.0 or later installed and running
+- FSTrAk v3.6.1 or later installed and running
 - Microsoft Flight Simulator **2024** (EFB does not exist in MSFS 2020)
 
 ### Installation
