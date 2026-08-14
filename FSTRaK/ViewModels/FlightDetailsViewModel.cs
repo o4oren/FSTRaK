@@ -50,7 +50,8 @@ namespace FSTRaK.ViewModels
 
         private void OnFlightPropertyChanged(object sender, System.ComponentModel.PropertyChangedEventArgs e)
         {
-            if (e.PropertyName == nameof(Flight.Comment) || e.PropertyName == nameof(Flight.Aircraft))
+            if (e.PropertyName == nameof(Flight.Comment) || e.PropertyName == nameof(Flight.Aircraft)
+                || e.PropertyName == nameof(Flight.DepartureAirport) || e.PropertyName == nameof(Flight.ArrivalAirport))
                 FlightDetailsParamsViewModel = new FlightDetailsParamsViewModel(_flight);
         }
 

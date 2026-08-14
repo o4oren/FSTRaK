@@ -28,7 +28,7 @@ namespace FSTRaK.BusinessLogic.FlightManager.State
                         data.TotalWeightLbs - data.FuelWeightLbs - Context.ActiveFlight.Aircraft.EmptyWeightLbs;
                 Log.Information($"Take off! Flaps: {to.FlapsPosition}, with {to.FuelWeightLbs} Lbs of fuel, and {Context.ActiveFlight.TotalPayloadLbs} lbs of payload!");
 
-                Context.State = new FlightState(Context);
+                Context.State = new FlightState(Context, justTookOff: true);
                 return;
             }
 

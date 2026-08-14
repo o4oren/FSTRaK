@@ -121,6 +121,7 @@
     <Compile Include="BusinessLogic\FlightManager\State\SimNotInFlightState.cs" />
     <Compile Include="BusinessLogic\FlightManager\State\TakeoffRollState.cs" />
     <Compile Include="BusinessLogic\FlightManager\State\TaxiInState.cs" />
+    <Compile Include="BusinessLogic\FlightManager\State\TouchdownTracker.cs" />
     <Compile Include="BusinessLogic\FlightManager\State\TaxiOutState.cs" />
     <Compile Include="BusinessLogic\TileServer\AircraftIconHandler.cs" />
     <Compile Include="BusinessLogic\TileServer\FlightPathHandler.cs" />
@@ -210,6 +211,7 @@
     <Compile Include="Utils\UnitsUtil.cs" />
     <Compile Include="ViewModels\AddCommentViewModel.cs" />
     <Compile Include="ViewModels\EditAircraftViewModel.cs" />
+    <Compile Include="ViewModels\EditFlightViewModel.cs" />
     <Compile Include="ViewModels\FlightDetailsParamsViewModel.cs" />
     <Compile Include="ViewModels\FlightDetailsViewModel.cs" />
     <Compile Include="ViewModels\LogbookViewModel.cs" />
@@ -220,6 +222,9 @@
     </Compile>
     <Compile Include="Views\EditAircraftPopupView.xaml.cs">
       <DependentUpon>EditAircraftPopupView.xaml</DependentUpon>
+    </Compile>
+    <Compile Include="Views\EditFlightPopupView.xaml.cs">
+      <DependentUpon>EditFlightPopupView.xaml</DependentUpon>
     </Compile>
     <Compile Include="Views\FlightDetailsParamsView.xaml.cs">
       <DependentUpon>FlightDetailsParamsView.xaml</DependentUpon>
@@ -281,6 +286,10 @@
       <SubType>Designer</SubType>
     </Page>
     <Page Include="Views\EditAircraftPopupView.xaml">
+      <SubType>Designer</SubType>
+      <Generator>MSBuild:Compile</Generator>
+    </Page>
+    <Page Include="Views\EditFlightPopupView.xaml">
       <SubType>Designer</SubType>
       <Generator>MSBuild:Compile</Generator>
     </Page>

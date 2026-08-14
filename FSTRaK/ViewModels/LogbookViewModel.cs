@@ -25,6 +25,7 @@ namespace FSTRaK.ViewModels
         public RelayCommand OpenAddCommentPopupCommand { get; set; }
         public RelayCommand OpenEditAircraftPopupCommand { get; set; }
         public RelayCommand CloseEditAircraftPopupCommand { get; set; }
+        public RelayCommand OpenEditFlightPopupCommand { get; set; }
 
         private FlightDetailsViewModel _flightDetailsViewModel;
 
@@ -133,6 +134,20 @@ namespace FSTRaK.ViewModels
             }
         }
 
+        private EditFlightViewModel _editFlightViewModel;
+        public EditFlightViewModel EditFlightViewModel
+        {
+            get => _editFlightViewModel;
+            set
+            {
+                if (value != null && _editFlightViewModel != value)
+                {
+                    _editFlightViewModel = value;
+                    OnPropertyChanged();
+                }
+            }
+        }
+
         private AddCommentViewModel _addCommentViewModel;
         public AddCommentViewModel AddCommentViewModel
         {
@@ -202,6 +217,25 @@ namespace FSTRaK.ViewModels
                 };
                 editAircraftViewModel.PropertyChanged += handler;
                 EditAircraftViewModel = editAircraftViewModel;
+            });
+
+            OpenEditFlightPopupCommand = new RelayCommand(o =>
+            {
+                var editFlightViewModel = new EditFlightViewModel(SelectedFlight)
+                {
+                    IsShow = true
+                };
+                PropertyChangedEventHandler handler = null;
+                handler = (sender, args) =>
+                {
+                    if (editFlightViewModel.WasUpdated)
+                    {
+                        editFlightViewModel.PropertyChanged -= handler;
+                        LoadFlights(search: _searchText);
+                    }
+                };
+                editFlightViewModel.PropertyChanged += handler;
+                EditFlightViewModel = editFlightViewModel;
             });
 
             OpenAddCommentPopupCommand = new RelayCommand(o =>
@@ -294,6 +328,8 @@ namespace FSTRaK.ViewModels
                                     // Update editable properties in place
                                     existing.Comment = dbFlight.Comment;
                                     existing.Aircraft = dbFlight.Aircraft;
+                                    existing.DepartureAirport = dbFlight.DepartureAirport;
+                                    existing.ArrivalAirport = dbFlight.ArrivalAirport;
                                 }
                                 else
                                 {
