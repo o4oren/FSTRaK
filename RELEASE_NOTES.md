@@ -16,9 +16,6 @@ Landing measurements are now protected against transient ground contacts:
 **MSFS 2024 EFB App**
 The FSTrAk moving map is now also available as an EFB app on the MSFS 2024 tablet home screen, in addition to the toolbar panel. Both addons are included in the release zip — copy `fstrak-efb-app/` (and/or `fstrak-ingame-panel/`) into your Community folder.
 
-**Flight Path in the In-Sim Moving Map**
-The in-sim moving map (toolbar panel and EFB app) now draws the active flight's path.
-
 **Open Flightmaps Overlay**
 Added an Open Flightmaps aeronautical chart overlay (European coverage).
 
