@@ -28,24 +28,17 @@ jobs:
           if (-not $vsPath) { throw 'Visual Studio not found' }
           "VSPATH=$vsPath" | Out-File -FilePath $env:GITHUB_ENV -Append
 
-      - name: Restore and build (Release x64)
-        run: msbuild FSTRaK.Tests/FSTRaK.Tests.csproj /t:Restore,Build /p:Configuration=Release /p:Platform=x64 /m /v:m
-
-      - name: Run unit tests
-        shell: pwsh
-        run: |
-          $vstest = Join-Path $env:VSPATH 'Common7\IDE\CommonExtensions\Microsoft\TestWindow\vstest.console.exe'
-          $dll = Get-ChildItem -Path FSTRaK.Tests\bin -Recurse -Filter FSTRaK.Tests.dll |
-                 Select-Object -First 1 -ExpandProperty FullName
-          if (-not $dll) { throw 'FSTRaK.Tests.dll not found - build failed?' }
-          & $vstest $dll /Platform:x64
-          if ($LASTEXITCODE -ne 0) { exit $LASTEXITCODE }
-
       # GitHub runners do not ship the "Microsoft Visual Studio Installer Projects"
       # extension needed to build Setup.vdproj, so install it from the Marketplace.
+      # This MUST run before any MSBuild step: lingering MSBuild processes block
+      # VSIXInstaller with exit code 8006.
       - name: Install VS Installer Projects extension
         shell: pwsh
         run: |
+          # Kill any process that would block the VSIX install (8006).
+          foreach ($p in 'msbuild', 'VBCSCompiler', 'devenv', 'MSBuildTaskHost') {
+            taskkill /f /im "$p.exe" 2>$null | Out-Null
+          }
           $url = 'https://marketplace.visualstudio.com/_apis/public/gallery/publishers/VisualStudioClient/vsextensions/MicrosoftVisualStudio2022InstallerProjects/latest/vspackage'
           Invoke-WebRequest -Uri $url -OutFile InstallerProjects.vsix -UserAgent 'Mozilla/5.0'
           $installer = Join-Path $env:VSPATH 'Common7\IDE\VSIXInstaller.exe'
@@ -64,6 +57,24 @@ jobs:
           Push-Location $dir
           & .\DisableOutOfProcBuild.exe
           Pop-Location
+
+      - name: Restore and build (Release x64)
+        run: msbuild FSTRaK.Tests/FSTRaK.Tests.csproj /t:Restore,Build /p:Configuration=Release /p:Platform=x64 /m /nr:false /v:m
+
+      - name: Run unit tests
+        shell: pwsh
+        run: |
+          $vstest = Join-Path $env:VSPATH 'Common7\IDE\CommonExtensions\Microsoft\TestWindow\vstest.console.exe'
+          $dll = Get-ChildItem -Path FSTRaK.Tests\bin -Recurse -Filter FSTRaK.Tests.dll |
+                 Select-Object -First 1 -ExpandProperty FullName
+          if (-not $dll) { throw 'FSTRaK.Tests.dll not found - build failed?' }
+          # /TestAdapterPath is required: vstest does not auto-load the xunit
+          # adapter from the output directory, and reports success with 0 tests.
+          $log = & $vstest $dll /Platform:x64 "/TestAdapterPath:$(Split-Path $dll)" 2>&1
+          $log | Out-Host
+          if ($LASTEXITCODE -ne 0) { exit $LASTEXITCODE }
+          if ($log -match 'No test is available') { throw 'No tests were discovered' }
+          if (-not ($log -match 'Passed!')) { throw 'Test run did not report a passing summary' }
 
       - name: Build installer (Setup.vdproj)
         shell: pwsh

@@ -15,7 +15,7 @@ jobs:
         uses: microsoft/setup-msbuild@v2
 
       - name: Restore and build (Release x64)
-        run: msbuild FSTRaK.Tests/FSTRaK.Tests.csproj /t:Restore,Build /p:Configuration=Release /p:Platform=x64 /m /v:m
+        run: msbuild FSTRaK.Tests/FSTRaK.Tests.csproj /t:Restore,Build /p:Configuration=Release /p:Platform=x64 /m /nr:false /v:m
 
       - name: Run unit tests
         shell: pwsh
@@ -26,5 +26,10 @@ jobs:
           $dll = Get-ChildItem -Path FSTRaK.Tests\bin -Recurse -Filter FSTRaK.Tests.dll |
                  Select-Object -First 1 -ExpandProperty FullName
           if (-not $dll) { throw 'FSTRaK.Tests.dll not found - build failed?' }
-          & $vstest $dll /Platform:x64
-          exit $LASTEXITCODE
+          # /TestAdapterPath is required: vstest does not auto-load the xunit
+          # adapter from the output directory, and reports success with 0 tests.
+          $log = & $vstest $dll /Platform:x64 "/TestAdapterPath:$(Split-Path $dll)" 2>&1
+          $log | Out-Host
+          if ($LASTEXITCODE -ne 0) { exit $LASTEXITCODE }
+          if ($log -match 'No test is available') { throw 'No tests were discovered' }
+          if (-not ($log -match 'Passed!')) { throw 'Test run did not report a passing summary' }
