@@ -37,7 +37,7 @@ jobs:
       # VSIXInstaller with exit code 8006.
       - name: Install VS Installer Projects extension
         shell: pwsh
-        timeout-minutes: 20
+        timeout-minutes: 35
         run: |
           # Kill any process that would block the VSIX install (8006).
           foreach ($p in 'msbuild', 'VBCSCompiler', 'devenv', 'MSBuildTaskHost') {
@@ -52,17 +52,30 @@ jobs:
           Invoke-WebRequest -Uri $url -OutFile InstallerProjects.vsix -UserAgent 'Mozilla/5.0'
           Write-Host ("Downloaded {0:N0} bytes" -f (Get-Item InstallerProjects.vsix).Length)
           $installer = Join-Path $env:VSPATH 'Common7\IDE\VSIXInstaller.exe'
-          Write-Host 'Running VSIXInstaller (typically 5-10 minutes)...'
-          $proc = Start-Process -FilePath $installer -ArgumentList '/quiet', '/admin', "$PWD\InstallerProjects.vsix" -PassThru -Wait
-          Write-Host "VSIXInstaller exit code: $($proc.ExitCode)"
-          # 0 = installed, 1001 = already installed
-          if ($proc.ExitCode -ne 0 -and $proc.ExitCode -ne 1001) {
+          # VSIXInstaller nondeterministically hangs on fresh runners; cap each
+          # attempt and retry once instead of letting the whole step time out.
+          $ok = $false
+          foreach ($attempt in 1, 2) {
+            Write-Host "VSIXInstaller attempt $attempt (max 15 minutes)..."
+            $proc = Start-Process -FilePath $installer -ArgumentList '/quiet', '/admin', "$PWD\InstallerProjects.vsix" -PassThru
+            if ($proc.WaitForExit(900000)) {
+              Write-Host "VSIXInstaller exit code: $($proc.ExitCode)"
+              # 0 = installed, 1001 = already installed
+              if ($proc.ExitCode -eq 0 -or $proc.ExitCode -eq 1001) { $ok = $true; break }
+            } else {
+              Write-Host 'VSIXInstaller hung; killing and retrying...'
+              taskkill /f /im VSIXInstaller.exe 2>$null | Out-Null
+              $global:LASTEXITCODE = 0
+            }
+            Start-Sleep -Seconds 15
+          }
+          if (-not $ok) {
             Get-ChildItem $env:TEMP -Filter 'VSIX*.log' -ErrorAction SilentlyContinue |
               Sort-Object LastWriteTime | Select-Object -Last 1 | ForEach-Object {
                 Write-Host "--- $($_.FullName) (tail) ---"
                 Get-Content $_.FullName -Tail 60 | Out-Host
               }
-            throw "VSIXInstaller failed with exit code $($proc.ExitCode)"
+            throw 'VSIXInstaller did not complete successfully after 2 attempts'
           }
           exit 0
 
