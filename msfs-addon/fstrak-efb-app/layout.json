@@ -2,18 +2,18 @@
   "content": [
     {
       "path": "manifest.json",
-      "size": 414,
-      "date": 134201889932970950
+      "size": 399,
+      "date": 134312784653682918
+    },
+    {
+      "path": "html_ui/Icons/ICON_FSTRAK_EFB_APP.svg",
+      "size": 10067,
+      "date": 134312784653662644
     },
     {
       "path": "html_ui/efb_ui/efb_apps/FSTRaKApp/FSTRaKApp.js",
       "size": 152446,
-      "date": 134201961596438776
-    },
-    {
-      "path": "html_ui/Icons/ICON_FSTRAK_EFB_APP.svg",
-      "size": 265,
-      "date": 134201947757957980
+      "date": 134312812311121394
     }
   ]
 }
