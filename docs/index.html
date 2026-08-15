@@ -431,11 +431,15 @@
 
   <div class="release">
     <div class="release-header">
-      <span class="release-version">3.7.0</span>
+      <span class="release-version">3.6.1</span>
       <span class="badge">Latest</span>
-      <span class="release-date">April 2026</span>
+      <span class="release-date">August 2026</span>
     </div>
     <ul>
+      <li>Edit Flight — correct a flight's departure and arrival airports from the logbook context menu, with nearest-airport suggestions and ident validation</li>
+      <li>Fuel quantity recorded on every flight event and shown in event popups</li>
+      <li>Touchdown G force captured and shown in flight details and the landing popup; landings scored on the worst of the vertical-speed and G-force ratings</li>
+      <li>Bounce and settle-back protection — brief settle-backs after takeoff are not logged as landings, and bounced touchdowns are merged into a single landing event scored on the hardest impact</li>
       <li>MSFS 2024 EFB tablet app — the moving map is now available as an EFB app on the tablet home screen, in addition to the existing toolbar panel</li>
       <li>OpenFlightMaps aeronautical chart overlay support</li>
     </ul>
@@ -454,6 +458,7 @@
       <li>In-sim panel: hover tooltip on FIR/UIR shows all controller callsigns and frequencies</li>
       <li>In-sim panel: approach circles only shown for airports with an APP/DEP controller and no TRACON polygon</li>
       <li>In-sim panel: custom zoom buttons replacing Leaflet's default control for reliable rendering in Coherent GT</li>
+      <li>In-sim panel: active flight's path drawn on the moving map</li>
       <li>In-sim panel: "FSTRaK is not running" overlay when the tile server is unreachable</li>
       <li>In-sim panel: larger HUD text, wider spacing, dark blue airport dots</li>
     </ul>
