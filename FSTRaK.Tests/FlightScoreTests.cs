@@ -86,21 +86,79 @@ namespace FSTRaK.Tests
         }
 
         [Fact]
-        public void GetScoreDetails_LandingLine_ContainsRateAndPoints()
+        public void UpdateScore_SetsLandingGForceFromLandingEvent()
+        {
+            var flight = new Flight();
+            flight.FlightEvents.Add(new LandingEvent { VerticalSpeed = -200, ScoreDelta = 0, TouchdownGForce = 1.42 });
+
+            flight.UpdateScore();
+
+            Assert.Equal(1.42, flight.LandingGForce);
+        }
+
+        [Fact]
+        public void GetScoreDetails_LandingLine_ContainsRateFpmGForceAndPoints()
         {
             var flight = new Flight();
             flight.FlightEvents.Add(new LandingEvent
             {
                 VerticalSpeed = -600,
                 LandingRate = LandingRate.Hard,
-                ScoreDelta = -35
+                ScoreDelta = -35,
+                TouchdownGForce = 1.62
             });
 
             var details = flight.GetScoreDetails();
 
             Assert.Contains("Hard", details);
             Assert.Contains("Landing", details);
+            Assert.Contains($"{-600.0:F0} fpm", details);
+            Assert.Contains($"{1.62:F2} G", details);
             Assert.Contains("-35 Points", details);
+        }
+
+        [Fact]
+        public void GetScoreDetails_LandingWithoutGForce_OmitsGForce()
+        {
+            var flight = new Flight();
+            flight.FlightEvents.Add(new LandingEvent
+            {
+                VerticalSpeed = -600,
+                LandingRate = LandingRate.Hard,
+                ScoreDelta = -35,
+                TouchdownGForce = null
+            });
+
+            var details = flight.GetScoreDetails();
+
+            Assert.Contains($"{-600.0:F0} fpm", details);
+            Assert.DoesNotContain(" G)", details);
+        }
+
+        [Fact]
+        public void LandingText_WithFpmAndGForce_ShowsBoth()
+        {
+            var flight = new Flight { LandingFpm = -250, LandingGForce = 1.32 };
+
+            Assert.Equal($"Landing: {-250.0:F0} fpm / {1.32:F2} G", flight.LandingText);
+        }
+
+        [Fact]
+        public void LandingText_WithoutGForce_ShowsFpmOnly()
+        {
+            var flight = new Flight { LandingFpm = -250 };
+
+            Assert.Equal($"Landing: {-250.0:F0} fpm", flight.LandingText);
+        }
+
+        [Theory]
+        [InlineData(null)]
+        [InlineData(-1)]
+        public void LandingText_NoRecordedLanding_IsEmpty(double? landingFpm)
+        {
+            var flight = new Flight { LandingFpm = landingFpm };
+
+            Assert.Equal(string.Empty, flight.LandingText);
         }
 
         [Fact]
