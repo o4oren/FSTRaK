@@ -12,10 +12,29 @@ permissions:
 
 jobs:
   release:
-    runs-on: windows-latest
+    # Pinned to windows-2022: the VS Installer Projects extension needed for
+    # Setup.vdproj targets Visual Studio 2022 (v17) and will not install into
+    # the newer VS shipped on windows-latest.
+    runs-on: windows-2022
     steps:
       - name: Checkout
         uses: actions/checkout@v4
+
+      # The .mbtiles chart data is stored in Git LFS; without pulling it the
+      # MSI packages 130-byte pointer files instead of the real data. The
+      # objects rarely change, so cache them to spare the LFS bandwidth quota.
+      - name: Compute LFS assets key
+        shell: pwsh
+        run: git lfs ls-files -l | ForEach-Object { $_.Split(' ')[0] } | Sort-Object | Out-File .lfs-assets-id -Encoding ascii
+
+      - name: Cache LFS objects
+        uses: actions/cache@v4
+        with:
+          path: .git/lfs
+          key: lfs-${{ hashFiles('.lfs-assets-id') }}
+
+      - name: Pull LFS content
+        run: git lfs pull
 
       - name: Add MSBuild to PATH
         uses: microsoft/setup-msbuild@v2
@@ -28,32 +47,53 @@ jobs:
           if (-not $vsPath) { throw 'Visual Studio not found' }
           "VSPATH=$vsPath" | Out-File -FilePath $env:GITHUB_ENV -Append
 
-      - name: Restore and build (Release x64)
-        run: msbuild FSTRaK.Tests/FSTRaK.Tests.csproj /t:Restore,Build /p:Configuration=Release /p:Platform=x64 /m /v:m
-
-      - name: Run unit tests
-        shell: pwsh
-        run: |
-          $vstest = Join-Path $env:VSPATH 'Common7\IDE\CommonExtensions\Microsoft\TestWindow\vstest.console.exe'
-          $dll = Get-ChildItem -Path FSTRaK.Tests\bin -Recurse -Filter FSTRaK.Tests.dll |
-                 Select-Object -First 1 -ExpandProperty FullName
-          if (-not $dll) { throw 'FSTRaK.Tests.dll not found - build failed?' }
-          & $vstest $dll /Platform:x64
-          if ($LASTEXITCODE -ne 0) { exit $LASTEXITCODE }
-
       # GitHub runners do not ship the "Microsoft Visual Studio Installer Projects"
       # extension needed to build Setup.vdproj, so install it from the Marketplace.
+      # This MUST run before any MSBuild step: lingering MSBuild processes block
+      # VSIXInstaller with exit code 8006.
       - name: Install VS Installer Projects extension
         shell: pwsh
+        timeout-minutes: 35
         run: |
-          $url = 'https://marketplace.visualstudio.com/_apis/public/gallery/publishers/VisualStudioClient/vsextensions/MicrosoftVisualStudio2022InstallerProjects/latest/vspackage'
-          Invoke-WebRequest -Uri $url -OutFile InstallerProjects.vsix -UserAgent 'Mozilla/5.0'
-          $installer = Join-Path $env:VSPATH 'Common7\IDE\VSIXInstaller.exe'
-          $proc = Start-Process -FilePath $installer -ArgumentList '/quiet', '/admin', "$PWD\InstallerProjects.vsix" -PassThru -Wait
-          # 0 = installed, 1001 = already installed
-          if ($proc.ExitCode -ne 0 -and $proc.ExitCode -ne 1001) {
-            throw "VSIXInstaller failed with exit code $($proc.ExitCode)"
+          # Kill any process that would block the VSIX install (8006).
+          foreach ($p in 'msbuild', 'VBCSCompiler', 'devenv', 'MSBuildTaskHost') {
+            taskkill /f /im "$p.exe" 2>$null | Out-Null
           }
+          # taskkill leaves a nonzero $LASTEXITCODE when nothing matched, and the
+          # Actions pwsh wrapper ends the step with `exit $LASTEXITCODE` — reset it
+          # so a successful install is not reported as a failure.
+          $global:LASTEXITCODE = 0
+          $url = 'https://marketplace.visualstudio.com/_apis/public/gallery/publishers/VisualStudioClient/vsextensions/MicrosoftVisualStudio2022InstallerProjects/latest/vspackage'
+          Write-Host 'Downloading VS Installer Projects extension...'
+          Invoke-WebRequest -Uri $url -OutFile InstallerProjects.vsix -UserAgent 'Mozilla/5.0'
+          Write-Host ("Downloaded {0:N0} bytes" -f (Get-Item InstallerProjects.vsix).Length)
+          $installer = Join-Path $env:VSPATH 'Common7\IDE\VSIXInstaller.exe'
+          # VSIXInstaller nondeterministically hangs on fresh runners; cap each
+          # attempt and retry once instead of letting the whole step time out.
+          $ok = $false
+          foreach ($attempt in 1, 2) {
+            Write-Host "VSIXInstaller attempt $attempt (max 15 minutes)..."
+            $proc = Start-Process -FilePath $installer -ArgumentList '/quiet', '/admin', "$PWD\InstallerProjects.vsix" -PassThru
+            if ($proc.WaitForExit(900000)) {
+              Write-Host "VSIXInstaller exit code: $($proc.ExitCode)"
+              # 0 = installed, 1001 = already installed
+              if ($proc.ExitCode -eq 0 -or $proc.ExitCode -eq 1001) { $ok = $true; break }
+            } else {
+              Write-Host 'VSIXInstaller hung; killing and retrying...'
+              taskkill /f /im VSIXInstaller.exe 2>$null | Out-Null
+              $global:LASTEXITCODE = 0
+            }
+            Start-Sleep -Seconds 15
+          }
+          if (-not $ok) {
+            Get-ChildItem $env:TEMP -Filter 'VSIX*.log' -ErrorAction SilentlyContinue |
+              Sort-Object LastWriteTime | Select-Object -Last 1 | ForEach-Object {
+                Write-Host "--- $($_.FullName) (tail) ---"
+                Get-Content $_.FullName -Tail 60 | Out-Host
+              }
+            throw 'VSIXInstaller did not complete successfully after 2 attempts'
+          }
+          exit 0
 
       # vdproj builds fail in headless CI with HRESULT 8000000A unless the
       # out-of-proc build server is disabled.
@@ -64,6 +104,34 @@ jobs:
           Push-Location $dir
           & .\DisableOutOfProcBuild.exe
           Pop-Location
+
+      - name: Restore and build (Release x64)
+        run: msbuild FSTRaK.Tests/FSTRaK.Tests.csproj /t:Restore,Build /p:Configuration=Release /p:Platform=x64 /m /nr:false /v:m
+
+      - name: Run unit tests
+        shell: pwsh
+        run: |
+          $vstest = Join-Path $env:VSPATH 'Common7\IDE\CommonExtensions\Microsoft\TestWindow\vstest.console.exe'
+          $dll = Get-ChildItem -Path FSTRaK.Tests\bin -Recurse -Filter FSTRaK.Tests.dll |
+                 Select-Object -First 1 -ExpandProperty FullName
+          if (-not $dll) { throw 'FSTRaK.Tests.dll not found - build failed?' }
+          $binDir = Split-Path $dll
+          # vstest needs an explicit adapter path or it reports success with 0
+          # tests. Prefer the adapter copied to bin; fall back to the NuGet cache.
+          $adapter = Get-ChildItem -Path $binDir -Filter 'xunit.runner.visualstudio.testadapter.dll' -ErrorAction SilentlyContinue |
+                     Select-Object -First 1
+          if (-not $adapter) {
+            $adapter = Get-ChildItem -Path "$env:USERPROFILE\.nuget\packages\xunit.runner.visualstudio" -Recurse -Filter 'xunit.runner.visualstudio.testadapter.dll' -ErrorAction SilentlyContinue |
+                       Where-Object { $_.FullName -match 'net4' } | Select-Object -First 1
+          }
+          if (-not $adapter) { throw 'xunit VS test adapter not found in bin or NuGet cache' }
+          $adapterDir = Split-Path $adapter.FullName
+          Write-Host "Using test adapter from: $adapterDir"
+          $log = & $vstest $dll /Platform:x64 "/TestAdapterPath:$adapterDir" 2>&1
+          $log | Out-Host
+          if ($LASTEXITCODE -ne 0) { exit $LASTEXITCODE }
+          if ($log -match 'No test is available') { throw 'No tests were discovered' }
+          if (-not ($log -match 'Test Run Successful|Passed!')) { throw 'Test run did not report a passing summary' }
 
       - name: Build installer (Setup.vdproj)
         shell: pwsh
