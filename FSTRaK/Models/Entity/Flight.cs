@@ -82,23 +82,6 @@ namespace FSTRaK.Models
 
         public double? LandingFpm { get; set; } = -1;
 
-        // Peak G force at touchdown. Null for flights recorded before the column existed
-        // or flights that never landed.
-        public double? LandingGForce { get; set; }
-
-        // One-line landing summary for list views. Empty when the flight has no recorded landing.
-        [NotMapped]
-        public string LandingText
-        {
-            get
-            {
-                if (LandingFpm == null || LandingFpm == -1) return string.Empty;
-                var text = $"Landing: {LandingFpm:F0} fpm";
-                if (LandingGForce != null) text += $" / {LandingGForce:F2} G";
-                return text;
-            }
-        }
-
         public ObservableCollection<BaseFlightEvent> FlightEvents { get; set; }
 
         private Airport _departureAirportDetails;
@@ -198,10 +181,7 @@ namespace FSTRaK.Models
             Score = MathUtils.Clamp(100 + scoringEvents.Sum(e => e.ScoreDelta), 0, 110);
             var landingEvent = scoringEvents.OfType<LandingEvent>().FirstOrDefault();
             if (landingEvent != null)
-            {
                 LandingFpm = landingEvent.VerticalSpeed;
-                LandingGForce = landingEvent.TouchdownGForce;
-            }
         }
 
         private List<ScoringEvent> GetScoringEvents()

@@ -155,19 +155,6 @@
                             <LineBreak />
                             <Run Text="{Binding Path=Aircraft.Airline}"/>
                         </TextBlock>
-                        <TextBlock
-                            FontFamily="{DynamicResource CurrentFont}" FontSize="{DynamicResource SmallFontSize}" Foreground="{DynamicResource TextColor}"
-                            Text="{Binding LandingText, Mode=OneWay}">
-                            <TextBlock.Style>
-                                <Style TargetType="TextBlock">
-                                    <Style.Triggers>
-                                        <DataTrigger Binding="{Binding LandingText}" Value="">
-                                            <Setter Property="Visibility" Value="Collapsed"/>
-                                        </DataTrigger>
-                                    </Style.Triggers>
-                                </Style>
-                            </TextBlock.Style>
-                        </TextBlock>
                         </StackPanel>
                     </DataTemplate>
                 </ListView.ItemTemplate>
