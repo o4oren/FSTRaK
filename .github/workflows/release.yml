@@ -12,7 +12,10 @@ permissions:
 
 jobs:
   release:
-    runs-on: windows-latest
+    # Pinned to windows-2022: the VS Installer Projects extension needed for
+    # Setup.vdproj targets Visual Studio 2022 (v17) and will not install into
+    # the newer VS shipped on windows-latest.
+    runs-on: windows-2022
     steps:
       - name: Checkout
         uses: actions/checkout@v4
