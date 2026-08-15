@@ -1,7 +1,11 @@
 ﻿using System.Resources;
 using System.Reflection;
+using System.Runtime.CompilerServices;
 using System.Runtime.InteropServices;
 using System.Windows;
+
+// Expose internal types to the unit test project.
+[assembly: InternalsVisibleTo("FSTRaK.Tests")]
 
 // General Information about an assembly is controlled through the following
 // set of attributes. Change these attribute values to modify the information

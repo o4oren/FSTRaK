@@ -7,6 +7,8 @@ Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "FSTrAk", "FSTRaK\FSTrAk.csp
 EndProject
 Project("{54435603-DBB4-11D2-8724-00A0C9A8B90C}") = "Setup", "Setup\Setup.vdproj", "{EAE8465A-3480-40A5-8ABA-29D8998C9CD1}"
 EndProject
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "FSTRaK.Tests", "FSTRaK.Tests\FSTRaK.Tests.csproj", "{B1AEF370-7EA5-4816-873B-38FEC33169CC}"
+EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
 		Debug|Any CPU = Debug|Any CPU
@@ -31,6 +33,14 @@ Global
 		{EAE8465A-3480-40A5-8ABA-29D8998C9CD1}.Release|Any CPU.ActiveCfg = Release
 		{EAE8465A-3480-40A5-8ABA-29D8998C9CD1}.Release|x64.ActiveCfg = Release
 		{EAE8465A-3480-40A5-8ABA-29D8998C9CD1}.Release|x86.ActiveCfg = Release
+		{B1AEF370-7EA5-4816-873B-38FEC33169CC}.Debug|Any CPU.ActiveCfg = Debug|x64
+		{B1AEF370-7EA5-4816-873B-38FEC33169CC}.Debug|x64.ActiveCfg = Debug|x64
+		{B1AEF370-7EA5-4816-873B-38FEC33169CC}.Debug|x64.Build.0 = Debug|x64
+		{B1AEF370-7EA5-4816-873B-38FEC33169CC}.Debug|x86.ActiveCfg = Debug|x64
+		{B1AEF370-7EA5-4816-873B-38FEC33169CC}.Release|Any CPU.ActiveCfg = Release|x64
+		{B1AEF370-7EA5-4816-873B-38FEC33169CC}.Release|x64.ActiveCfg = Release|x64
+		{B1AEF370-7EA5-4816-873B-38FEC33169CC}.Release|x64.Build.0 = Release|x64
+		{B1AEF370-7EA5-4816-873B-38FEC33169CC}.Release|x86.ActiveCfg = Release|x64
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE
