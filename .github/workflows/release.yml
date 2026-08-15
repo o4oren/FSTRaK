@@ -19,10 +19,22 @@ jobs:
     steps:
       - name: Checkout
         uses: actions/checkout@v4
+
+      # The .mbtiles chart data is stored in Git LFS; without pulling it the
+      # MSI packages 130-byte pointer files instead of the real data. The
+      # objects rarely change, so cache them to spare the LFS bandwidth quota.
+      - name: Compute LFS assets key
+        shell: pwsh
+        run: git lfs ls-files -l | ForEach-Object { $_.Split(' ')[0] } | Sort-Object | Out-File .lfs-assets-id -Encoding ascii
+
+      - name: Cache LFS objects
+        uses: actions/cache@v4
         with:
-          # The .mbtiles chart data is stored in Git LFS; without this the MSI
-          # packages 130-byte pointer files instead of the real data.
-          lfs: true
+          path: .git/lfs
+          key: lfs-${{ hashFiles('.lfs-assets-id') }}
+
+      - name: Pull LFS content
+        run: git lfs pull
 
       - name: Add MSBuild to PATH
         uses: microsoft/setup-msbuild@v2
