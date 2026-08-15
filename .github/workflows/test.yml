@@ -26,9 +26,21 @@ jobs:
           $dll = Get-ChildItem -Path FSTRaK.Tests\bin -Recurse -Filter FSTRaK.Tests.dll |
                  Select-Object -First 1 -ExpandProperty FullName
           if (-not $dll) { throw 'FSTRaK.Tests.dll not found - build failed?' }
-          # /TestAdapterPath is required: vstest does not auto-load the xunit
-          # adapter from the output directory, and reports success with 0 tests.
-          $log = & $vstest $dll /Platform:x64 "/TestAdapterPath:$(Split-Path $dll)" 2>&1
+          $binDir = Split-Path $dll
+          Write-Host "--- Test bin contents ---"
+          Get-ChildItem $binDir | Select-Object -ExpandProperty Name | Out-Host
+          # vstest needs an explicit adapter path or it reports success with 0
+          # tests. Prefer the adapter copied to bin; fall back to the NuGet cache.
+          $adapter = Get-ChildItem -Path $binDir -Filter 'xunit.runner.visualstudio.testadapter.dll' -ErrorAction SilentlyContinue |
+                     Select-Object -First 1
+          if (-not $adapter) {
+            $adapter = Get-ChildItem -Path "$env:USERPROFILE\.nuget\packages\xunit.runner.visualstudio" -Recurse -Filter 'xunit.runner.visualstudio.testadapter.dll' -ErrorAction SilentlyContinue |
+                       Where-Object { $_.FullName -match 'net4' } | Select-Object -First 1
+          }
+          if (-not $adapter) { throw 'xunit VS test adapter not found in bin or NuGet cache' }
+          $adapterDir = Split-Path $adapter.FullName
+          Write-Host "Using test adapter from: $adapterDir"
+          $log = & $vstest $dll /Platform:x64 "/TestAdapterPath:$adapterDir" 2>&1
           $log | Out-Host
           if ($LASTEXITCODE -ne 0) { exit $LASTEXITCODE }
           if ($log -match 'No test is available') { throw 'No tests were discovered' }
