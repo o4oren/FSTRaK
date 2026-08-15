@@ -1,0 +1,111 @@
+name: Build and Release
+
+on:
+  workflow_dispatch:
+    inputs:
+      version:
+        description: 'Release version (e.g. 3.6.2). Creates draft release v<version>.'
+        required: true
+
+permissions:
+  contents: write
+
+jobs:
+  release:
+    runs-on: windows-latest
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4
+
+      - name: Add MSBuild to PATH
+        uses: microsoft/setup-msbuild@v2
+
+      - name: Locate Visual Studio
+        shell: pwsh
+        run: |
+          $vswhere = "${env:ProgramFiles(x86)}\Microsoft Visual Studio\Installer\vswhere.exe"
+          $vsPath = & $vswhere -latest -property installationPath
+          if (-not $vsPath) { throw 'Visual Studio not found' }
+          "VSPATH=$vsPath" | Out-File -FilePath $env:GITHUB_ENV -Append
+
+      - name: Restore and build (Release x64)
+        run: msbuild FSTRaK.Tests/FSTRaK.Tests.csproj /t:Restore,Build /p:Configuration=Release /p:Platform=x64 /m /v:m
+
+      - name: Run unit tests
+        shell: pwsh
+        run: |
+          $vstest = Join-Path $env:VSPATH 'Common7\IDE\CommonExtensions\Microsoft\TestWindow\vstest.console.exe'
+          $dll = Get-ChildItem -Path FSTRaK.Tests\bin -Recurse -Filter FSTRaK.Tests.dll |
+                 Select-Object -First 1 -ExpandProperty FullName
+          if (-not $dll) { throw 'FSTRaK.Tests.dll not found - build failed?' }
+          & $vstest $dll /Platform:x64
+          if ($LASTEXITCODE -ne 0) { exit $LASTEXITCODE }
+
+      # GitHub runners do not ship the "Microsoft Visual Studio Installer Projects"
+      # extension needed to build Setup.vdproj, so install it from the Marketplace.
+      - name: Install VS Installer Projects extension
+        shell: pwsh
+        run: |
+          $url = 'https://marketplace.visualstudio.com/_apis/public/gallery/publishers/VisualStudioClient/vsextensions/MicrosoftVisualStudio2022InstallerProjects/latest/vspackage'
+          Invoke-WebRequest -Uri $url -OutFile InstallerProjects.vsix -UserAgent 'Mozilla/5.0'
+          $installer = Join-Path $env:VSPATH 'Common7\IDE\VSIXInstaller.exe'
+          $proc = Start-Process -FilePath $installer -ArgumentList '/quiet', '/admin', "$PWD\InstallerProjects.vsix" -PassThru -Wait
+          # 0 = installed, 1001 = already installed
+          if ($proc.ExitCode -ne 0 -and $proc.ExitCode -ne 1001) {
+            throw "VSIXInstaller failed with exit code $($proc.ExitCode)"
+          }
+
+      # vdproj builds fail in headless CI with HRESULT 8000000A unless the
+      # out-of-proc build server is disabled.
+      - name: Disable out-of-proc vdproj build
+        shell: pwsh
+        run: |
+          $dir = Join-Path $env:VSPATH 'Common7\IDE\CommonExtensions\Microsoft\VSI\DisableOutOfProcBuild'
+          Push-Location $dir
+          & .\DisableOutOfProcBuild.exe
+          Pop-Location
+
+      - name: Build installer (Setup.vdproj)
+        shell: pwsh
+        run: |
+          $devenv = Join-Path $env:VSPATH 'Common7\IDE\devenv.com'
+          & $devenv FSTRaK.sln /Build 'Release|x64' /Project Setup\Setup.vdproj | Out-Host
+          if ($LASTEXITCODE -ne 0) { throw "devenv failed with exit code $LASTEXITCODE" }
+          if (-not (Test-Path 'Setup/Release/Setup.msi')) { throw 'Setup.msi was not produced' }
+
+      - name: Package release zip
+        shell: pwsh
+        run: |
+          $v = '${{ github.event.inputs.version }}'
+          $staging = 'staging'
+          New-Item -ItemType Directory -Force -Path $staging | Out-Null
+
+          Copy-Item Setup/Release/*.msi $staging
+          Copy-Item Setup/Release/*.exe $staging -ErrorAction SilentlyContinue
+          Copy-Item FSTRaK/Resources/Readme.txt $staging
+
+          # Addons: runtime files only (what layout.json ships), no sources.
+          foreach ($addon in 'fstrak-ingame-panel', 'fstrak-efb-app') {
+            $src = "msfs-addon/$addon"
+            $dst = "$staging/$addon"
+            New-Item -ItemType Directory -Force -Path $dst | Out-Null
+            Copy-Item "$src/manifest.json", "$src/layout.json" $dst
+            Copy-Item "$src/html_ui" $dst -Recurse
+            if (Test-Path "$src/InGamePanels") { Copy-Item "$src/InGamePanels" $dst -Recurse }
+          }
+
+          Compress-Archive -Path "$staging/*" -DestinationPath "FSTRaK-$v.zip"
+
+      - name: Upload zip as workflow artifact
+        uses: actions/upload-artifact@v4
+        with:
+          name: FSTRaK-${{ github.event.inputs.version }}
+          path: FSTRaK-${{ github.event.inputs.version }}.zip
+
+      - name: Create draft release
+        shell: pwsh
+        env:
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+        run: |
+          $v = '${{ github.event.inputs.version }}'
+          gh release create "v$v" "FSTRaK-$v.zip" --draft --title "$v" --generate-notes

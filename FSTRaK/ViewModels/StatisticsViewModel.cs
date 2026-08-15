@@ -13,6 +13,7 @@ using Serilog;
 using FSTRaK.DataTypes;
 using Newtonsoft.Json;
 using LiveChartsCore;
+using LiveChartsCore.Defaults;
 using LiveChartsCore.SkiaSharpView;
 using LiveChartsCore.SkiaSharpView.Painting;
 using MapControl;
@@ -152,15 +153,18 @@ namespace FSTRaK.ViewModels
             get => _timePeriod;
             set
             {
+                if (_timePeriod == value) return;
                 _timePeriod = value;
                 OnPropertyChanged();
                 if (_flightsPerDay != null && _flightsPerDay.Count > 0)
                 {
                     App.Current.Dispatcher.Invoke(() =>
                     {
-                        var (series, xAxes) = BuildFlightsPerPeriod(_flightsPerDay, _timePeriod, GetChartLabelPaint());
+                        var labelPaint = GetChartLabelPaint();
+                        var (series, xAxes) = BuildFlightsPerPeriod(_flightsPerDay, _timePeriod, labelPaint);
                         FlightsPerPeriodSeries = series;
                         FlightsPerPeriodXAxes = xAxes;
+                        FlightsPerPeriodYAxes = new[] { new Axis { LabelsPaint = labelPaint } };
                     });
                 }
             }
@@ -536,16 +540,14 @@ namespace FSTRaK.ViewModels
                     var totalFuel = flights.Sum(f => f.TotalFuelUsed);
                     var totalPayload = flights.Sum(f => f.TotalPayloadLbs ?? 0);
 
-                    var avgLandingFpm = flights.Where(f => f.LandingFpm != null).Any()
-                        ? flights.Where(f => f.LandingFpm != null).Average(f => f.LandingFpm)
-                        : (double?)null;
+                    var avgLandingFpm = StatisticsCalculations.AverageLandingFpm(flights);
 
                     var aircraftDist = CalculateAircraftDistribution(flights);
                     var airlineDist = CalculateAirlineDistribution(flights);
                     var depDist = CalculateAirportDistribution(flights, AirportType.DEP);
                     var arrDist = CalculateAirportDistribution(flights, AirportType.ARR);
-                    var flightsPerDay = CalculateFlightsPerDay(flights);
-                    var landingDist = CalculateLandingRateDistribution(flights);
+                    var flightsPerDay = StatisticsCalculations.CalculateFlightsPerDay(flights);
+                    var landingDist = StatisticsCalculations.CalculateLandingRateDistribution(flights);
                     var countryDist = CalculateCountryDistribution(flights);
                     var flightRoutes = CalculateFlightRoutes(flights);
 
@@ -588,13 +590,6 @@ namespace FSTRaK.ViewModels
         }
 
         // ── Calculation helpers ───────────────────────────────────────────────
-
-        private static Dictionary<DateTime, double> CalculateFlightsPerDay(List<Flight> flights)
-        {
-            return flights
-                .GroupBy(f => f.StartTime.Date)
-                .ToDictionary(g => g.Key, g => Convert.ToDouble(g.Count()));
-        }
 
         private static Dictionary<string, double> CalculateAirlineDistribution(List<Flight> flights)
         {
@@ -693,31 +688,6 @@ namespace FSTRaK.ViewModels
             return dist;
         }
 
-        private static List<(double bucketCenter, int count)> CalculateLandingRateDistribution(List<Flight> flights)
-        {
-            const int bucketSize = 50;
-            const int minFpm = -1000;
-            const int maxFpm = 0;
-
-            var buckets = new Dictionary<int, int>();
-            for (int b = minFpm; b < maxFpm; b += bucketSize)
-                buckets[b] = 0;
-
-            foreach (var f in flights.Where(f => f.LandingFpm.HasValue))
-            {
-                var fpm = (int)f.LandingFpm.Value;
-                var bucket = (int)(Math.Floor((double)fpm / bucketSize) * bucketSize);
-                bucket = Math.Max(minFpm, Math.Min(maxFpm - bucketSize, bucket));
-                if (buckets.ContainsKey(bucket))
-                    buckets[bucket]++;
-            }
-
-            return buckets
-                .OrderBy(kv => kv.Key)
-                .Select(kv => (bucketCenter: (double)(kv.Key + bucketSize / 2), count: kv.Value))
-                .ToList();
-        }
-
         private static List<(Location dep, Location arr)> CalculateFlightRoutes(List<Flight> flights)
         {
             var routes = new List<(Location, Location)>();
@@ -764,36 +734,35 @@ namespace FSTRaK.ViewModels
         private static (ISeries[] series, Axis[] xAxes) BuildFlightsPerPeriod(
             Dictionary<DateTime, double> flightsPerDay, TimePeriod period, SolidColorPaint labelPaint)
         {
-            Dictionary<DateTime, double> data;
             string labelFormat;
+            TimeSpan unitWidth;
 
             if (period == TimePeriod.Month)
             {
-                data = flightsPerDay
-                    .GroupBy(x => new DateTime(x.Key.Year, x.Key.Month, 1))
-                    .ToDictionary(g => g.Key, g => g.Sum(x => x.Value));
                 labelFormat = "MMM yyyy";
+                unitWidth = TimeSpan.FromDays(30.4375);
             }
             else if (period == TimePeriod.Year)
             {
-                data = flightsPerDay
-                    .GroupBy(x => new DateTime(x.Key.Year, 1, 1))
-                    .ToDictionary(g => g.Key, g => g.Sum(x => x.Value));
                 labelFormat = "yyyy";
+                unitWidth = TimeSpan.FromDays(365.25);
             }
             else
             {
-                data = flightsPerDay;
                 labelFormat = "dd/MM/yy";
+                unitWidth = TimeSpan.FromDays(1);
             }
 
-            var ordered = data.OrderBy(kv => kv.Key).ToList();
-            var values = ordered.Select(kv => kv.Value).ToArray();
-            var labels = ordered.Select(kv => kv.Key.ToString(labelFormat)).ToArray();
+            // Zero-filled continuous timeline: empty periods show as gaps in activity
+            // instead of being silently compressed out of the axis.
+            var aggregated = StatisticsCalculations.AggregateByPeriod(flightsPerDay, period);
+            var values = aggregated
+                .Select(kv => new DateTimePoint(kv.Key, kv.Value))
+                .ToList();
 
             var series = new ISeries[]
             {
-                new ColumnSeries<double>
+                new ColumnSeries<DateTimePoint>
                 {
                     Values = values,
                     Fill = new SolidColorPaint(SKColor.Parse("#4FC3F7")),
@@ -801,11 +770,10 @@ namespace FSTRaK.ViewModels
                 }
             };
 
-            var xAxes = new[]
+            var xAxes = new Axis[]
             {
-                new Axis
+                new DateTimeAxis(unitWidth, date => date.ToString(labelFormat))
                 {
-                    Labels = labels,
                     LabelsRotation = -45,
                     TextSize = 10,
                     LabelsPaint = labelPaint

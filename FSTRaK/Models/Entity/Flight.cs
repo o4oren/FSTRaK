@@ -203,7 +203,10 @@ namespace FSTRaK.Models
                 {
                     if(se is LandingEvent @event)
                     {
-                        builder.AppendLine($"{@event.LandingRate} {se.EventName} {se.ScoreDelta} Points");
+                        var landingInfo = $"{@event.VerticalSpeed:F0} fpm";
+                        if (@event.TouchdownGForce != null)
+                            landingInfo += $", {@event.TouchdownGForce:F2} G";
+                        builder.AppendLine($"{@event.LandingRate} {se.EventName} ({landingInfo}) {se.ScoreDelta} Points");
                     }
                     else
                     {

@@ -16,6 +16,7 @@ namespace FSTRaK.BusinessLogic.FlightManager.State
 
         private readonly LandingEvent _landingEvent;
         private readonly System.Diagnostics.Stopwatch _touchdownStopwatch = new System.Diagnostics.Stopwatch();
+        private readonly double _initialTouchdownGForce;
         private double _maxGForce;
         private bool _finalized;
 
@@ -25,6 +26,7 @@ namespace FSTRaK.BusinessLogic.FlightManager.State
         public TouchdownTracker(LandingEvent landingEvent, FlightData touchdownData)
         {
             _landingEvent = landingEvent;
+            _initialTouchdownGForce = touchdownData.GForce;
             _maxGForce = touchdownData.GForce;
             _touchdownStopwatch.Start();
         }
@@ -96,7 +98,7 @@ namespace FSTRaK.BusinessLogic.FlightManager.State
                 _landingEvent.LandingRate = gRating;
             }
 
-            Log.Information($"Touchdown G: {_maxGForce:F2}, landing scored as {_landingEvent.LandingRate} ({_landingEvent.ScoreDelta} points).");
+            Log.Information($"Touchdown G: {_initialTouchdownGForce:F2} at touchdown, peak {_maxGForce:F2} within the {GForceWindowMs} ms window; landing scored as {_landingEvent.LandingRate} ({_landingEvent.ScoreDelta} points).");
         }
 
         /// <summary>

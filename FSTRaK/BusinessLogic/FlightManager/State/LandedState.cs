@@ -46,7 +46,7 @@ namespace FSTRaK.BusinessLogic.FlightManager.State
 
             TouchdownTracker.ApplyVerticalSpeedRating(le);
 
-            Log.Information($"Landed! Flaps: {le.FlapsPosition}, VS: {le.VerticalSpeed:F0} fpm, with {landingData.FuelWeightLbs} Lbs of fuel.");
+            Log.Information($"Landed! Flaps: {le.FlapsPosition}, VS: {le.VerticalSpeed:F0} fpm, {landingData.GForce:F2} G at touchdown, with {landingData.FuelWeightLbs} Lbs of fuel.");
 
 
             AddFlightEvent(landingData, le);

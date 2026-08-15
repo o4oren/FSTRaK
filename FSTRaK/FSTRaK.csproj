@@ -206,6 +206,7 @@
     <Compile Include="Utils\OverlayMapTileLayer.cs" />
     <Compile Include="Utils\MBTilesMapTileLayer.cs" />
     <Compile Include="Utils\MBTilesTileSource.cs" />
+    <Compile Include="Utils\StatisticsCalculations.cs" />
     <Compile Include="Utils\StringUtil.cs" />
     <Compile Include="Utils\TimeUtils.cs" />
     <Compile Include="Utils\UnitsUtil.cs" />

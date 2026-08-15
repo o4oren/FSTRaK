@@ -133,6 +133,7 @@
                     <lvc:CartesianChart Series="{Binding FlightsPerPeriodSeries}"
                                         XAxes="{Binding FlightsPerPeriodXAxes}"
                                         YAxes="{Binding FlightsPerPeriodYAxes}"
+                                        ZoomMode="X"
                                         MinHeight="200"
                                         />
                 </StackPanel>
@@ -223,6 +224,7 @@
                         <lvc:CartesianChart Series="{Binding LandingRateSeries}"
                                             XAxes="{Binding LandingRateXAxes}"
                                             YAxes="{Binding LandingRateYAxes}"
+                                            ZoomMode="X"
                                             MinHeight="200"/>
                     </StackPanel>
                 </Border>

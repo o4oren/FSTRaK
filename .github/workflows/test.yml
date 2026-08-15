@@ -1,0 +1,30 @@
+name: Tests
+
+on:
+  pull_request:
+  workflow_dispatch:
+
+jobs:
+  test:
+    runs-on: windows-latest
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4
+
+      - name: Add MSBuild to PATH
+        uses: microsoft/setup-msbuild@v2
+
+      - name: Restore and build (Release x64)
+        run: msbuild FSTRaK.Tests/FSTRaK.Tests.csproj /t:Restore,Build /p:Configuration=Release /p:Platform=x64 /m /v:m
+
+      - name: Run unit tests
+        shell: pwsh
+        run: |
+          $vswhere = "${env:ProgramFiles(x86)}\Microsoft Visual Studio\Installer\vswhere.exe"
+          $vsPath = & $vswhere -latest -property installationPath
+          $vstest = Join-Path $vsPath 'Common7\IDE\CommonExtensions\Microsoft\TestWindow\vstest.console.exe'
+          $dll = Get-ChildItem -Path FSTRaK.Tests\bin -Recurse -Filter FSTRaK.Tests.dll |
+                 Select-Object -First 1 -ExpandProperty FullName
+          if (-not $dll) { throw 'FSTRaK.Tests.dll not found - build failed?' }
+          & $vstest $dll /Platform:x64
+          exit $LASTEXITCODE
