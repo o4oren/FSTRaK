@@ -87,7 +87,7 @@ jobs:
           $log | Out-Host
           if ($LASTEXITCODE -ne 0) { exit $LASTEXITCODE }
           if ($log -match 'No test is available') { throw 'No tests were discovered' }
-          if (-not ($log -match 'Passed!')) { throw 'Test run did not report a passing summary' }
+          if (-not ($log -match 'Test Run Successful|Passed!')) { throw 'Test run did not report a passing summary' }
 
       - name: Build installer (Setup.vdproj)
         shell: pwsh
