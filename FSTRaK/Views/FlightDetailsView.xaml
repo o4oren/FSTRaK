@@ -116,9 +116,9 @@
                               Content="{DynamicResource PathButton}"/>
                 <ToggleButton Style="{DynamicResource MapToggleButton}"
                               IsChecked="{Binding IsShowPlan, Mode=TwoWay}"
-                              Visibility="{Binding HasFlightPlan, Converter={StaticResource BoolToVis}}">
-                    <TextBlock Foreground="{DynamicResource SuperBrightTextColor}">Plan</TextBlock>
-                </ToggleButton>
+                              Visibility="{Binding HasFlightPlan, Converter={StaticResource BoolToVis}}"
+                              Content="{DynamicResource PlanButton}"
+                              ToolTip="Show SimBrief flight plan"/>
                 <ToggleButton Style="{DynamicResource MapToggleButton}"
                               IsChecked="{Binding IsShowFlightDetails, Mode=TwoWay}" 
                               Content="{DynamicResource detailsButton}"/>

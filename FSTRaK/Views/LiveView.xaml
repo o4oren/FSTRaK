@@ -477,9 +477,9 @@
             <!-- SimBrief plan overlay toggle - only exists when a matching plan was fetched -->
             <ToggleButton Style="{DynamicResource MapToggleButton}"
                           IsChecked="{Binding IsShowFlightPlan}"
-                          Visibility="{Binding IsFlightPlanAvailable, Converter={StaticResource BoolToVis}}">
-                <TextBlock Foreground="{DynamicResource SuperBrightTextColor}">Plan</TextBlock>
-            </ToggleButton>
+                          Visibility="{Binding IsFlightPlanAvailable, Converter={StaticResource BoolToVis}}"
+                          Content="{DynamicResource PlanButton}"
+                          ToolTip="Show SimBrief flight plan"/>
         </StackPanel>
     </Grid>
 </UserControl>

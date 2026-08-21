@@ -64,6 +64,13 @@
                 </Path.Data>
             </Path>
     </Canvas>
+    <Canvas x:Key="PlanButton" Width="32" Height="32" ClipToBounds="True" x:Shared="false" xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation">
+        <Path Stroke="White" StrokeThickness="2" StrokeDashArray="2.5 1.8" StrokeStartLineCap="Round" StrokeEndLineCap="Round"
+              Data="M 8.7,23.3 L 13.4,18.6 M 16.8,14.2 L 23.3,8.7" />
+        <Ellipse Canvas.Left="3" Canvas.Top="22" Width="7" Height="7" Stroke="White" StrokeThickness="2"/>
+        <Ellipse Canvas.Left="12.5" Canvas.Top="13.5" Width="5" Height="5" Fill="White"/>
+        <Ellipse Canvas.Left="22" Canvas.Top="3" Width="7" Height="7" Stroke="White" StrokeThickness="2"/>
+    </Canvas>
     <Canvas x:Key="CheckV" Width="32" Height="32" ClipToBounds="True" x:Shared="false" xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation">
         <Path Fill="{StaticResource TextColor}">
             <Path.Data>
