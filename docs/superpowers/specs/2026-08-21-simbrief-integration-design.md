@@ -167,7 +167,7 @@ everything below.
 
 ## Settings
 
-One new `Properties.Settings` entry: `SimbriefUserId` (string, default empty). A
+One new `Properties.Settings` entry: `SimbriefUser` (string, default empty). A
 single textbox in `SettingsView` — "SimBrief username or pilot ID" — following the
 existing settings textbox patterns. All-digits → `userid=`, otherwise `username=`.
 Empty → feature fully dormant.
@@ -201,6 +201,20 @@ Target the pure `SimBriefOfpMapper` and helpers:
 - kgs SimBrief account → values displayed correctly in the user's units.
 - Aircraft with blank airline → backfilled from plan; non-blank never overwritten.
 - Legacy flights (no plan) → logbook and details unaffected.
+
+## Release — Version 3.7.0
+
+This feature ships as **3.7.0** (new-feature minor bump). Included in scope:
+
+- `FSTRaK/Properties/AssemblyInfo.cs` — `AssemblyVersion` and `AssemblyFileVersion`
+  → `3.7.0.0`.
+- `Setup/Setup.vdproj` — `ProductVersion` → `3.7.0`, with **new `ProductCode` and
+  `PackageCode` GUIDs** (required by MSI versioning; `UpgradeCode` stays unchanged).
+- `RELEASE_NOTES.md` — 3.7.0 entry describing the SimBrief integration.
+- Docs site (GitHub Pages): `docs/index.html` release version/notes (currently 3.6.2)
+  and a feature mention; relevant docs pages (e.g. `project-overview.md` roadmap —
+  SimBrief moves from planned to done).
+- `README.md` roadmap checkbox for SimBrief integration.
 
 ## Out of Scope
 
