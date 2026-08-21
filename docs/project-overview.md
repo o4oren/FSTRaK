@@ -10,6 +10,7 @@ FSTRaK is a flight tracker and logbook application for Microsoft Flight Simulato
 - **Live map** — Real-time aircraft position on an interactive map with multiple tile providers (OpenStreetMap, SkyVector VFR/IFR, MapTiler, Azure Maps, Bing Maps).
 - **Flight scoring** — Automatic quality scoring based on landing rate, envelope exceedances (overspeed, stall, flaps, gear), with a 0-110 point scale.
 - **VATSIM integration** — Live overlay of online pilots, controllers, FIR/UIR boundaries, and ATIS broadcasts on the tracking map.
+- **SimBrief integration** — Fetches your latest SimBrief OFP and overlays the planned route on the live map, with a planned-vs-actual comparison (fuel, block time, distance, payload, pax/cargo) saved with the flight.
 - **Flight logbook** — Browse and search completed flights with detailed replay, altitude/speed charts, and scoring breakdowns.
 - **Statistics dashboard** — Aggregate flight metrics and performance data.
 - **Theming** — Light and dark themes with configurable fonts.
@@ -32,7 +33,6 @@ FSTRaK is a flight tracker and logbook application for Microsoft Flight Simulato
 ## Roadmap
 
 From the project README:
-- SimBrief integration (passengers, planned vs actual fuel/time/route)
 - Enhanced statistics (on-time performance, passengers flown, best/worst landings)
 - VATSIM traffic and ATC display improvements
 
