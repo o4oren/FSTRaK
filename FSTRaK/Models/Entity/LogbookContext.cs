@@ -22,6 +22,8 @@ namespace FSTRaK.Models.Entity
         public DbSet<Flight> Flights { get; set; }
         public DbSet<BaseFlightEvent> FlightEvents { get; set; }
         public DbSet<Aircraft> Aircraft { get; set; }
+        public DbSet<FlightPlan> FlightPlans { get; set; }
+        public DbSet<FlightPlanPoint> FlightPlanPoints { get; set; }
 
         protected override void OnModelCreating(DbModelBuilder modelBuilder)
         {
@@ -30,6 +32,15 @@ namespace FSTRaK.Models.Entity
                 .HasMany(e => e.FlightEvents)
                 .WithRequired(e => e.Flight)
                 .HasForeignKey(e => e.FlightId);
+            modelBuilder.Entity<Flight>()
+                .HasOptional(f => f.FlightPlan)
+                .WithRequired(p => p.Flight)
+                .WillCascadeOnDelete(true);
+            modelBuilder.Entity<FlightPlan>()
+                .HasMany(p => p.Points)
+                .WithRequired(pt => pt.FlightPlan)
+                .HasForeignKey(pt => pt.FlightPlanId)
+                .WillCascadeOnDelete(true);
         }
     }
 }

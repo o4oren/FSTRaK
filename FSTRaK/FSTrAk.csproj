@@ -161,6 +161,8 @@
     <Compile Include="DataTypes\SimConnectDataTypes.cs" />
     <Compile Include="Models\AirportResolver.cs" />
     <Compile Include="Models\Entity\Airport.cs" />
+    <Compile Include="Models\Entity\FlightPlan.cs" />
+    <Compile Include="Models\Entity\FlightPlanPoint.cs" />
     <Compile Include="Models\Entity\FlightEvent\StallWarningEvent.cs" />
     <Compile Include="Models\Entity\FlightEvent\OverspeedEvent.cs" />
     <Compile Include="Models\Entity\FlightEvent\GearspeedExceededEvent.cs" />
