@@ -7,6 +7,10 @@
     <PlatformTarget>x64</PlatformTarget>
     <UseWPF>true</UseWPF>
     <IsPackable>false</IsPackable>
+    <!-- Test assemblies are DLLs; without these no .dll.config with binding redirects is generated,
+         and transitive deps (e.g. CsvHelper -> Microsoft.Bcl.AsyncInterfaces) fail to load under vstest. -->
+    <AutoGenerateBindingRedirects>true</AutoGenerateBindingRedirects>
+    <GenerateBindingRedirectsOutputType>true</GenerateBindingRedirectsOutputType>
   </PropertyGroup>
 
   <ItemGroup>
