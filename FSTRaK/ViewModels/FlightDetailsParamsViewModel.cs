@@ -71,7 +71,7 @@ namespace FSTRaK.ViewModels
             LandingVerticalSpeed = CalculateLandingVs(flight);
             TouchdownGForce = CalculateTouchdownGForce(flight);
             Score = flight.Score;
-            ArrivedOrCrashedText = flight.FlightOutcome == FlightOutcome.Crashed ? "Crashed near: " : "Arrived at: ";
+            ArrivedOrCrashedText = flight.FlightOutcome == FlightOutcome.Crashed ? "Crashed near: " : "To: ";
             FuelUnit = Properties.Settings.Default.Units == (int)Units.Imperial ? "Lbs" : "Kg";
             PayloadUnit = Payload != null ? FuelUnit : "Unknown";
             Comment = flight.Comment;
@@ -80,9 +80,10 @@ namespace FSTRaK.ViewModels
         }
 
         /// <summary>
-        /// Builds the single Flight Data card body. When a SimBrief plan exists, planned values
-        /// are merged into the corresponding rows and plan-only rows (flight number, route,
-        /// alternates, pax/cargo) are added — there is no separate plan card.
+        /// Builds the single Flight Data card body, kept deliberately compact. When a SimBrief
+        /// plan exists, planned values are folded into the corresponding rows as "(planned ...)"
+        /// suffixes; the route is not repeated here (it is drawn on the map with tooltips) and
+        /// alternates appear only on a diversion.
         /// </summary>
         private string BuildFlightDataText(Flight flight)
         {
@@ -97,44 +98,36 @@ namespace FSTRaK.ViewModels
             var sb = new StringBuilder();
             if (!string.IsNullOrEmpty(plan?.ComposedFlightNumber))
                 sb.AppendLine($"Flight: {plan.ComposedFlightNumber}");
-            sb.AppendLine($"Departed from: {DepartureAirportText}");
+            sb.AppendLine($"From: {DepartureAirportText}");
             sb.AppendLine($"{ArrivedOrCrashedText}{ArrivalAirportText}");
-            if (plan != null)
-            {
-                if (!string.Equals(plan.ArrivalAirport, flight.ArrivalAirport, StringComparison.OrdinalIgnoreCase))
-                    sb.AppendLine($"DIVERTED - planned arrival: {plan.ArrivalAirport}");
-                if (!string.IsNullOrEmpty(plan.AlternateAirports))
-                    sb.AppendLine($"Alternates: {plan.AlternateAirports}");
-                if (!string.IsNullOrEmpty(plan.Route))
-                    sb.AppendLine(plan.CruiseAltitude != null
-                        ? $"Route: {plan.Route} @ {plan.CruiseAltitude} ft"
-                        : $"Route: {plan.Route}");
-            }
+            if (plan != null && !string.Equals(plan.ArrivalAirport, flight.ArrivalAirport, StringComparison.OrdinalIgnoreCase))
+                sb.AppendLine(string.IsNullOrEmpty(plan.AlternateAirports)
+                    ? $"DIVERTED - planned arrival: {plan.ArrivalAirport}"
+                    : $"DIVERTED - planned arrival: {plan.ArrivalAirport} (alternates: {plan.AlternateAirports})");
             sb.AppendLine(plan?.ScheduledOut != null
-                ? $"Started at: {StartTime} (sched {plan.ScheduledOut:yyyy-MM-dd HH:mm}Z)"
-                : $"Started at: {StartTime}");
+                ? $"Started: {StartTime:g} (sched {plan.ScheduledOut:HH:mm}Z)"
+                : $"Started: {StartTime:g}");
             sb.AppendLine(plan?.ScheduledIn != null
-                ? $"Ended at: {EndTime} (sched {plan.ScheduledIn:yyyy-MM-dd HH:mm}Z)"
-                : $"Ended at: {EndTime}");
+                ? $"Ended: {EndTime:g} (sched {plan.ScheduledIn:HH:mm}Z)"
+                : $"Ended: {EndTime:g}");
             sb.AppendLine(plan?.EstBlockSec != null
-                ? $"Block time: {BlockTime} (planned {Duration(plan.EstBlockSec)})"
-                : $"Block time: {BlockTime}");
+                ? $"Block time: {BlockTime:hh\\:mm} (planned {Duration(plan.EstBlockSec)})"
+                : $"Block time: {BlockTime:hh\\:mm}");
             sb.AppendLine(plan?.EnrouteBurn != null
-                ? $"Total fuel used: {FuelUsed:N2} {FuelUnit} (planned burn {Weight(plan.EnrouteBurn)}, ramp {Weight(plan.PlanRampFuel)})"
-                : $"Total fuel used: {FuelUsed:N2} {FuelUnit}");
+                ? $"Fuel used: {FuelUsed:N0} {FuelUnit} (planned {Weight(plan.EnrouteBurn)})"
+                : $"Fuel used: {FuelUsed:N0} {FuelUnit}");
             sb.AppendLine(plan?.PayloadLbs != null
-                ? $"Payload: {Payload:N2} {PayloadUnit} (planned {Weight(plan.PayloadLbs)})"
-                : $"Payload: {Payload:N2} {PayloadUnit}");
-            if (plan != null)
-                sb.AppendLine($"Pax: {plan.PaxCount?.ToString() ?? "N/A"}, Bags: {plan.BagCount?.ToString() ?? "N/A"}, Cargo: {Weight(plan.CargoLbs)}");
+                ? $"Payload: {Payload:N0} {PayloadUnit} (planned {Weight(plan.PayloadLbs)})"
+                : $"Payload: {Payload:N0} {PayloadUnit}");
+            if (plan?.PaxCount != null || plan?.CargoLbs != null)
+                sb.AppendLine($"Pax: {plan.PaxCount?.ToString() ?? "N/A"}, Cargo: {Weight(plan.CargoLbs)}");
             sb.AppendLine(plan?.RouteDistanceNm != null
-                ? $"Distance flown: {Distance:N2} NM (planned {plan.RouteDistanceNm:N0} NM)"
-                : $"Distance flown: {Distance:N2} NM");
-            sb.AppendLine($"Landing VS: {LandingVerticalSpeed:N0} ft/m");
-            sb.AppendLine($"Touchdown G: {TouchdownGForce}");
-            sb.AppendLine($"Score: {Score}");
-            sb.AppendLine("Comment: ");
-            sb.Append(Comment);
+                ? $"Distance: {Distance:N0} NM (planned {plan.RouteDistanceNm:N0} NM)"
+                : $"Distance: {Distance:N0} NM");
+            sb.AppendLine($"Landing: {LandingVerticalSpeed:N0} ft/m, {TouchdownGForce}");
+            sb.Append($"Score: {Score}");
+            if (!string.IsNullOrWhiteSpace(Comment))
+                sb.Append($"\nComment: {Comment}");
             return sb.ToString();
         }
 
@@ -160,30 +153,20 @@ namespace FSTRaK.ViewModels
             return "—";
         }
 
+        // Compact identity: "LLBG (Ben Gurion Intl)" — abbreviated, no city/country; a long
+        // name simply wraps in the card. Full details stay available in the airports data.
         private string GetAirportText(Airport airport)
         {
-            StringBuilder sb = new StringBuilder();
-            sb.Append(airport.ident);
-            if (string.IsNullOrWhiteSpace(airport.icao_code))
-                sb.AppendLine($"/{airport.iata_code}");
-            else sb.Append("\n");
-
-            if (!string.IsNullOrEmpty(airport.name))
-                sb.Append($"{airport.name}, ");
-            if (!string.IsNullOrEmpty(airport.municipality))
-            {
-                sb.Append(airport.municipality);
-                if (airport.iso_country == "US")
-                {
-                    sb.Append($", {airport.iso_region.Replace("US-", "")}");
-                    sb.Append(", USA ");
-                }
-                else
-                {
-                    sb.Append($", {airport.CountryName}");
-                }
-            }
-            return sb.ToString();
+            var ident = string.IsNullOrWhiteSpace(airport.icao_code)
+                ? $"{airport.ident}/{airport.iata_code}"
+                : airport.ident;
+            if (string.IsNullOrWhiteSpace(airport.name))
+                return ident;
+            var name = airport.name
+                .Replace("International", "Intl")
+                .Replace(" Airport", "")
+                .Trim();
+            return $"{ident} ({name})";
         }
     }
 }
