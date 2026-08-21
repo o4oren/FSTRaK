@@ -103,6 +103,10 @@ namespace FSTRaK.ViewModels
                 sb.AppendLine($"Cruise altitude: {plan.CruiseAltitude} ft");
             sb.AppendLine($"Distance: planned {plan.RouteDistanceNm:N0} NM / flown {flight.FlightDistanceNm:N0} NM");
             sb.AppendLine($"Block time: planned {Duration(plan.EstBlockSec)} / actual {flight.FlightTime:hh\\:mm}");
+            if (plan.ScheduledOut != null)
+                sb.AppendLine($"Sched out: {plan.ScheduledOut:yyyy-MM-dd HH:mm}Z / actual start {flight.StartTime:yyyy-MM-dd HH:mm}");
+            if (plan.ScheduledIn != null)
+                sb.AppendLine($"Sched in: {plan.ScheduledIn:yyyy-MM-dd HH:mm}Z / actual end {flight.EndTime:yyyy-MM-dd HH:mm}");
             sb.AppendLine($"Fuel: ramp {Weight(plan.PlanRampFuel)}, planned burn {Weight(plan.EnrouteBurn)} / used {Weight(flight.TotalFuelUsed)}");
             sb.AppendLine($"Payload: planned {Weight(plan.PayloadLbs)} / actual {Weight(flight.TotalPayloadLbs)}");
             sb.Append($"Pax: {plan.PaxCount?.ToString() ?? "N/A"}, Bags: {plan.BagCount?.ToString() ?? "N/A"}, Cargo: {Weight(plan.CargoLbs)}");

@@ -34,6 +34,7 @@ namespace FSTRaK.BusinessLogic.SimBriefService
         private FlightManager.FlightManager _flightManager;
         private Flight _subscribedFlight;
         private bool _checkpoint2Done;
+        private bool _checkpoint2Fetched;
 
         private FlightPlan _matchedFlightPlan;
         public FlightPlan MatchedFlightPlan
@@ -83,33 +84,43 @@ namespace FSTRaK.BusinessLogic.SimBriefService
                     break;
                 case TaxiOutState _ when !_checkpoint2Done:
                     _checkpoint2Done = true;
-                    _ = FetchAndMatchAsync("checkpoint 2 (taxi out)");
+                    _ = FetchAndMatchAsync("checkpoint 2 (taxi out)", isCheckpoint2: true);
                     break;
             }
         }
 
         private void FlightOnPropertyChanged(object sender, PropertyChangedEventArgs e)
         {
-            // Checkpoint 1 — the departure airport resolves asynchronously after FlightStartedState is entered.
             if (e.PropertyName != nameof(Flight.DepartureAirport)) return;
+            if (string.IsNullOrEmpty(_subscribedFlight?.DepartureAirport)) return;
+            // Late resolution: checkpoint 2 fired before the departure airport was known — run it now.
+            if (_checkpoint2Done && !_checkpoint2Fetched)
+            {
+                _ = FetchAndMatchAsync("checkpoint 2 (departure resolved late)", isCheckpoint2: true);
+                return;
+            }
+            // Checkpoint 1 — the departure airport resolves asynchronously after FlightStartedState is entered.
             if (_flightManager.State is not FlightStartedState) return;
             if (_checkpoint2Done || MatchedFlightPlan != null) return;
-            if (string.IsNullOrEmpty(_subscribedFlight?.DepartureAirport)) return;
-            _ = FetchAndMatchAsync("checkpoint 1 (flight started)");
+            _ = FetchAndMatchAsync("checkpoint 1 (flight started)", isCheckpoint2: false);
         }
 
         private void Reset()
         {
             _checkpoint2Done = false;
+            _checkpoint2Fetched = false;
             MatchedFlightPlan = null;
         }
 
-        private async Task FetchAndMatchAsync(string checkpoint)
+        private async Task FetchAndMatchAsync(string checkpoint, bool isCheckpoint2)
         {
             var user = Properties.Settings.Default.SimbriefUser?.Trim();
             if (string.IsNullOrEmpty(user)) return;
             var departure = _flightManager.ActiveFlight?.DepartureAirport;
             if (string.IsNullOrEmpty(departure)) return;
+
+            if (isCheckpoint2)
+                _checkpoint2Fetched = true;
 
             try
             {

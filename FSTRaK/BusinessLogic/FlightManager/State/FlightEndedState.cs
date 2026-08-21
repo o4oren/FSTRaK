@@ -164,6 +164,21 @@ namespace FSTRaK.BusinessLogic.FlightManager.State
                     catch (Exception ex)
                     {
                         Log.Error(ex, "An error occurred while trying to persist the flight!");
+                        // Plan persistence must never lose a flight — retry once without the plan graph.
+                        if (Context.ActiveFlight.FlightPlan != null)
+                        {
+                            try
+                            {
+                                Context.ActiveFlight.FlightPlan = null;
+                                logbookContext.SaveChanges();
+                                Context.OnFlightSaved(Context.ActiveFlight.Id);
+                                Log.Warning("Flight saved without its SimBrief plan after a save failure");
+                            }
+                            catch (Exception retryEx)
+                            {
+                                Log.Error(retryEx, "Retry without SimBrief plan also failed!");
+                            }
+                        }
                     }
                 }
             });

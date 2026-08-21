@@ -90,6 +90,16 @@ namespace FSTRaK.Tests
         }
 
         [Fact]
+        public void Map_LbsUnits_PassesWeightsThroughUnconverted()
+        {
+            var json = LoadFixture().Replace("\"units\": \"kgs\"", "\"units\": \"lbs\"");
+            var plan = SimBriefOfpMapper.Map(SimBriefOfpMapper.Parse(json));
+            Assert.Equal(150, plan.TaxiFuel);
+            Assert.Equal(5416, plan.PlanRampFuel);
+            Assert.Equal(15749, plan.PayloadLbs);
+        }
+
+        [Fact]
         public void Map_Fixture_MapsTimesAndCounts()
         {
             var plan = MapFixture();

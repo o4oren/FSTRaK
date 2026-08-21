@@ -88,13 +88,6 @@ namespace FSTRaK.ViewModels
                                 App.Current.Dispatcher.Invoke(() =>
                                 {
                                     flight.FlightEvents = flightEvents;
-                                    if (flight.FlightPlan != null && (flight.FlightPlan.Points?.Count ?? 0) == 0)
-                                    {
-                                        flight.FlightPlan.Points = logbookContext.FlightPlanPoints
-                                            .Where(p => p.FlightPlanId == flight.Id)
-                                            .OrderBy(p => p.Sequence)
-                                            .ToList();
-                                    }
                                     if (_selectedFlight == flight)
                                     {
                                         Log.Debug("SelectedFlight: calling OnFlightEventsLoaded for flight {FlightId}", flight.Id);
@@ -300,7 +293,7 @@ namespace FSTRaK.ViewModels
                         IQueryable<Flight> query = logbookContext.Flights
                             .OrderByDescending(f => f.Id)
                             .Include(f => f.Aircraft)
-                            .Include(f => f.FlightPlan);
+                            .Include(f => f.FlightPlan.Points);
 
                         if (!string.IsNullOrEmpty(search))
                         {
