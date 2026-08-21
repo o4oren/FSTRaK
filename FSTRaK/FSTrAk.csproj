@@ -144,6 +144,7 @@
     <Compile Include="BusinessLogic\VatsimService\VatsimService.cs" />
     <Compile Include="BusinessLogic\SimBriefService\SimBriefModel\SimBriefOfp.cs" />
     <Compile Include="BusinessLogic\SimBriefService\SimBriefOfpMapper.cs" />
+    <Compile Include="BusinessLogic\SimBriefService\SimBriefService.cs" />
     <Compile Include="BusinessLogic\IvaoService\IvaoModel\IvaoPilot.cs" />
     <Compile Include="BusinessLogic\IvaoService\IvaoModel\IvaoLastTrack.cs" />
     <Compile Include="BusinessLogic\IvaoService\IvaoModel\IvaoFlightPlan.cs" />

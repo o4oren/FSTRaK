@@ -31,6 +31,7 @@ namespace FSTRaK.Views
         private void OnLoad(object sender, RoutedEventArgs e)
         {
             _flightManager.Initialize();
+            BusinessLogic.SimBriefService.SimBriefService.Instance.Initialize();
             if (DataContext is ViewModels.MainWindowViewModel mainVm)
                 App.LiveViewViewModel = mainVm.LiveViewViewModel;
 
