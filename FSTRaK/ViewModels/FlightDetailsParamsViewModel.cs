@@ -53,6 +53,8 @@ namespace FSTRaK.ViewModels
 
         public string Comment { get; set; }
 
+        public bool HasFlightPlan { get; }
+        public string FlightPlanText { get; }
 
         public FlightDetailsParamsViewModel(Flight flight) : base()
         {
@@ -75,6 +77,36 @@ namespace FSTRaK.ViewModels
             PayloadUnit = Payload != null ? FuelUnit : "Unknown";
             Comment = flight.Comment;
 
+            HasFlightPlan = flight.FlightPlan != null;
+            FlightPlanText = HasFlightPlan ? BuildFlightPlanText(flight) : string.Empty;
+        }
+
+        private static string BuildFlightPlanText(Flight flight)
+        {
+            var plan = flight.FlightPlan;
+            var isImperial = Properties.Settings.Default.Units == (int)Units.Imperial;
+            var weightUnit = isImperial ? "Lbs" : "Kg";
+            string Weight(double? lbs) =>
+                lbs == null ? "N/A" : $"{(isImperial ? lbs.Value : lbs.Value * Consts.LbsToKgs):N0} {weightUnit}";
+            string Duration(int? seconds) =>
+                seconds == null ? "N/A" : TimeSpan.FromSeconds(seconds.Value).ToString(@"hh\:mm");
+
+            var sb = new StringBuilder();
+            if (!string.IsNullOrEmpty(plan.ComposedFlightNumber))
+                sb.AppendLine($"Flight: {plan.ComposedFlightNumber}");
+            sb.AppendLine($"Planned: {plan.DepartureAirport} -> {plan.ArrivalAirport} (Altn: {plan.AlternateAirports ?? "N/A"})");
+            if (!string.Equals(plan.ArrivalAirport, flight.ArrivalAirport, StringComparison.OrdinalIgnoreCase))
+                sb.AppendLine($"DIVERTED to {flight.ArrivalAirport}");
+            sb.AppendLine($"Aircraft: {plan.AircraftType} {plan.AircraftReg}");
+            sb.AppendLine($"Route: {plan.Route}");
+            if (plan.CruiseAltitude != null)
+                sb.AppendLine($"Cruise altitude: {plan.CruiseAltitude} ft");
+            sb.AppendLine($"Distance: planned {plan.RouteDistanceNm:N0} NM / flown {flight.FlightDistanceNm:N0} NM");
+            sb.AppendLine($"Block time: planned {Duration(plan.EstBlockSec)} / actual {flight.FlightTime:hh\\:mm}");
+            sb.AppendLine($"Fuel: ramp {Weight(plan.PlanRampFuel)}, planned burn {Weight(plan.EnrouteBurn)} / used {Weight(flight.TotalFuelUsed)}");
+            sb.AppendLine($"Payload: planned {Weight(plan.PayloadLbs)} / actual {Weight(flight.TotalPayloadLbs)}");
+            sb.Append($"Pax: {plan.PaxCount?.ToString() ?? "N/A"}, Bags: {plan.BagCount?.ToString() ?? "N/A"}, Cargo: {Weight(plan.CargoLbs)}");
+            return sb.ToString();
         }
 
         private double CalculateLandingVs(Flight flight)

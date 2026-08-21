@@ -87,5 +87,8 @@
             </TextBlock>
             </Grid>
 
+        <local:OverlayTextCardControl Header="Flight plan (SimBrief)" Text="{Binding FlightPlanText}"
+                                      Visibility="{Binding HasFlightPlan, Converter={StaticResource BoolToVis}}"/>
+
     </StackPanel>
 </UserControl>

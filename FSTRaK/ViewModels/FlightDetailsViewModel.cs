@@ -42,6 +42,10 @@ namespace FSTRaK.ViewModels
                     _altSpeedGroundAltDictionary = null;
                     FlightPath.Clear();
                     MarkerList.Clear();
+                    PlannedRoutePath.Clear();
+                    PlannedWaypoints.Clear();
+                    OnPropertyChanged(nameof(HasFlightPlan));
+                    OnPropertyChanged(nameof(IsShowPlanOverlay));
                     ScoreboardText = "";
                     OnPropertyChanged(nameof(AltSpeedGroundAltDictionary));
                 }
@@ -109,6 +113,26 @@ namespace FSTRaK.ViewModels
             FlightDetailsParamsViewModel = new FlightDetailsParamsViewModel(_flight);
             GeneratePushpins();
 
+            PlannedRoutePath.Clear();
+            PlannedWaypoints.Clear();
+            if (_flight.FlightPlan != null)
+            {
+                foreach (var point in _flight.FlightPlan.Points.OrderBy(p => p.Sequence))
+                {
+                    var location = new Location(point.Latitude, point.Longitude);
+                    PlannedRoutePath.Add(location);
+                    if (point.Type == "apt") continue; // airports are already visible on the map
+                    PlannedWaypoints.Add(new PlannedWaypointPin
+                    {
+                        Location = location,
+                        Ident = point.Ident,
+                        Tooltip = point.TooltipText
+                    });
+                }
+            }
+            OnPropertyChanged(nameof(HasFlightPlan));
+            OnPropertyChanged(nameof(IsShowPlanOverlay));
+
             OnPropertyChanged(nameof(AltSpeedGroundAltDictionary));
         }
 
@@ -150,6 +174,32 @@ namespace FSTRaK.ViewModels
         private Dictionary<double, double[]> _altSpeedGroundAltDictionary;
 
         public ObservableCollection<Location> FlightPath { get; private set; } = new ObservableCollection<Location>();
+
+        public ObservableCollection<Location> PlannedRoutePath { get; } = new ObservableCollection<Location>();
+        public ObservableCollection<PlannedWaypointPin> PlannedWaypoints { get; } = new ObservableCollection<PlannedWaypointPin>();
+
+        public bool HasFlightPlan => PlannedRoutePath.Count > 0;
+
+        private bool _isShowPlan = true;
+        public bool IsShowPlan
+        {
+            get { return _isShowPlan; }
+            set
+            {
+                _isShowPlan = value;
+                OnPropertyChanged();
+                OnPropertyChanged(nameof(IsShowPlanOverlay));
+            }
+        }
+
+        public bool IsShowPlanOverlay => HasFlightPlan && IsShowPlan;
+
+        public class PlannedWaypointPin
+        {
+            public Location Location { get; set; }
+            public string Ident { get; set; }
+            public string Tooltip { get; set; }
+        }
 
         private ObservableCollection<FlightEventPushpin> _markerList = new ObservableCollection<FlightEventPushpin>();
 
