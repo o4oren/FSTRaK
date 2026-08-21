@@ -208,6 +208,7 @@
     <Compile Include="Utils\EnumToBoolConverter.cs" />
     <Compile Include="Utils\NetworkTypeToVisConverter.cs" />
     <Compile Include="Utils\MapTilerMapTileLayer.cs" />
+    <Compile Include="Utils\StadiaMapsMapTileLayer.cs" />
     <Compile Include="Utils\IOverlayMapTileLayer.cs" />
     <Compile Include="Utils\OverlayMapTileLayer.cs" />
     <Compile Include="Utils\MBTilesMapTileLayer.cs" />
