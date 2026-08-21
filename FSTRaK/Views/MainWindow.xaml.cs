@@ -31,6 +31,7 @@ namespace FSTRaK.Views
         private void OnLoad(object sender, RoutedEventArgs e)
         {
             _flightManager.Initialize();
+            BusinessLogic.SimBriefService.SimBriefService.Instance.Initialize();
             if (DataContext is ViewModels.MainWindowViewModel mainVm)
                 App.LiveViewViewModel = mainVm.LiveViewViewModel;
 
@@ -80,6 +81,7 @@ namespace FSTRaK.Views
 
             var maptillerApiKey = Properties.Settings.Default.MapTilerApiKey;
             MapTilerMapTileLayer.ApiKey = maptillerApiKey;
+            StadiaMapsMapTileLayer.ApiKey = Properties.Settings.Default.StadiaApiKey;
             OpenAipMapTileLayer.ApiKey = Properties.Settings.Default.OpenAipApiKey;
 
             ImageLoader.HttpClient.DefaultRequestHeaders.Add("User-Agent", "FSTrAk - Flight Simulator logbook and tracker");

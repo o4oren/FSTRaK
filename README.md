@@ -80,7 +80,7 @@ Without an API key, IVAO pilots show a geodesic line from departure to their cur
 ---
 
 ## Roadmap
-- [ ] Simbrief integration (fetch passengers, planned vs actual fuel and time, planned vs actual route).
+- [x] Simbrief integration (fetch passengers, planned vs actual fuel and time, planned vs actual route).
 - [ ] More statistics.
 - [ ] Display bearing/distance to a designated point on the map.
 - [x] VATSIM integration (display live traffic and ATC on the map).

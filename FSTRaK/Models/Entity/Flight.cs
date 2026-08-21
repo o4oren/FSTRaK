@@ -150,6 +150,19 @@ namespace FSTRaK.Models
             }
         }
 
+        public virtual FlightPlan FlightPlan { get; set; }
+
+        [NotMapped]
+        public string PlanFlightNumber => FlightPlan?.ComposedFlightNumber;
+
+        // Airline for display: the aircraft record wins; the plan's airline ICAO is the fallback.
+        [NotMapped]
+        public string DisplayAirline =>
+            !string.IsNullOrWhiteSpace(Aircraft?.Airline)
+                ? Aircraft.Airline
+                : FlightPlan?.AirlineIcao == null
+                    ? null
+                    : AirlineResolver.Instance.GetAirlineNameByIcao(FlightPlan.AirlineIcao) ?? FlightPlan.AirlineIcao;
 
         public Flight()
         {

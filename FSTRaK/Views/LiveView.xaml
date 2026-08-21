@@ -71,6 +71,33 @@
                     <ContentControl Content="{DynamicResource MaptillerLogo}"/>
                 </Hyperlink>
             </ContentControl>
+            <!-- SimBrief planned route overlay -->
+            <map:MapPolyline Locations="{Binding PlannedRouteLocations}"
+                             Stroke="{DynamicResource PlannedPathColorBrush}" StrokeThickness="2"
+                             StrokeDashArray="4 2" Opacity="0.8"
+                             Visibility="{Binding IsShowFlightPlanOverlay, Converter={StaticResource BoolToVis}}"/>
+            <map:MapItemsControl ItemsSource="{Binding PlannedWaypoints}"
+                                 Visibility="{Binding IsShowFlightPlanOverlay, Converter={StaticResource BoolToVis}}">
+                <map:MapItemsControl.ItemContainerStyle>
+                    <Style TargetType="map:MapItem">
+                        <Setter Property="Location" Value="{Binding Location}"/>
+                        <!-- Left/Center anchoring + the -4px margin on the content puts the 8px dot's center exactly on the route line -->
+                        <Setter Property="HorizontalAlignment" Value="Left"/>
+                        <Setter Property="VerticalAlignment" Value="Center"/>
+                        <Setter Property="Padding" Value="0"/>
+                    </Style>
+                </map:MapItemsControl.ItemContainerStyle>
+                <map:MapItemsControl.ItemTemplate>
+                    <DataTemplate>
+                        <StackPanel Orientation="Horizontal" Margin="-4,0,0,0" ToolTip="{Binding Tooltip}" ToolTipService.ShowDuration="10000">
+                            <Ellipse Width="8" Height="8" VerticalAlignment="Center" Fill="{DynamicResource PlannedPathColorBrush}" Stroke="White" StrokeThickness="1"/>
+                            <TextBlock Text="{Binding Ident}" Margin="4,0,0,0" FontSize="11" VerticalAlignment="Center"
+                                       FontFamily="{DynamicResource CurrentFont}"
+                                       Foreground="{DynamicResource PlannedPathColorBrush}"/>
+                        </StackPanel>
+                    </DataTemplate>
+                </map:MapItemsControl.ItemTemplate>
+            </map:MapItemsControl>
             <!-- IVAO ATC polygons (bottom) -->
             <map:MapItemsControl ItemsSource="{Binding IvaoAtcList}" Visibility="{Binding IsShowIvaoAtc, Converter={StaticResource BoolToVis}}">
                 <map:MapItemsControl.ItemTemplate>
@@ -446,6 +473,13 @@
                 </b:Interaction.Triggers>
                 <TextBlock Foreground="{DynamicResource SuperBrightTextColor}">ATC</TextBlock>
             </ToggleButton>
+
+            <!-- SimBrief plan overlay toggle - only exists when a matching plan was fetched -->
+            <ToggleButton Style="{DynamicResource MapToggleButton}"
+                          IsChecked="{Binding IsShowFlightPlan}"
+                          Visibility="{Binding IsFlightPlanAvailable, Converter={StaticResource BoolToVis}}"
+                          Content="{DynamicResource PlanButton}"
+                          ToolTip="Show SimBrief flight plan"/>
         </StackPanel>
     </Grid>
 </UserControl>

@@ -36,55 +36,18 @@
                    HorizontalAlignment="Left"
                    VerticalAlignment="Center"
             />
-            <TextBlock 
-                Grid.Row="1"                                        
+            <TextBlock
+                Grid.Row="1"
                 Foreground="{DynamicResource BrightTextColor}"
                 FontSize="{DynamicResource  TextFontSize}"
                 Margin="5"
                 FontFamily="{DynamicResource CurrentFont}"
                 TextWrapping="Wrap"
-                Text="{Binding ElementName=OverlayTextCard, Path=Text}"
+                Text="{Binding FlightDataText}"
                 HorizontalAlignment="Left"
                 VerticalAlignment="Center"
                 MaxWidth="300"
-            >
-                <Run Text="Departed from: "/><Run Text="{Binding DepartureAirportText}"/> 
-                <LineBreak />
-                <Run Text="{Binding ArrivedOrCrashedText}"/><Run Text="{Binding ArrivalAirportText}"/>
-                <LineBreak/>
-                <Run Text="Started at: "/><Run Text="{Binding StartTime}"/>
-                <LineBreak/>
-                <Run Text="Ended at: "/><Run Text="{Binding EndTime}"/>
-                <LineBreak/>
-
-                <Run Text="Block time: "/><Run Text="{Binding BlockTime}"/>
-                <LineBreak/>
-
-                <Run Text="Total fuel used: "/><Run Text="{Binding FuelUsed, StringFormat=N2}"/> <Run Text="{Binding FuelUnit}"/>
-                <LineBreak/>
-
-
-                <Run Text="Payload: "/><Run Text="{Binding Payload, StringFormat=N2}"/> <Run Text="{Binding PayloadUnit}"/>
-                <LineBreak/>
-
-                <Run Text="Distance flown: "/><Run Text="{Binding Distance, StringFormat=N2}"/> NM
-                <LineBreak/>
-
-                <Run Text="Landing VS: "/><Run Text="{Binding LandingVerticalSpeed, StringFormat=N0}"/> ft/m
-                <LineBreak/>
-
-                <Run Text="Touchdown G: "/><Run Text="{Binding TouchdownGForce}"/>
-                <LineBreak/>
-
-                <Run Text="Score: "/><Run Text="{Binding Score}"/>
-                
-                <LineBreak/>
-
-                <Run Text="Comment: "/>
-                <LineBreak />
-                <Run Text="{Binding Comment}"/>
-
-            </TextBlock>
+            />
             </Grid>
 
     </StackPanel>

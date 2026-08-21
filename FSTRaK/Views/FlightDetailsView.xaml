@@ -62,6 +62,33 @@
                         StrokeLineJoin="round"
                         Visibility="{Binding IsShowPath, Converter={StaticResource BoolToVis}}"
                         />
+                <!-- SimBrief planned route overlay -->
+                <map:MapPolyline Locations="{Binding PlannedRoutePath}"
+                                 Stroke="{DynamicResource PlannedPathColorBrush}" StrokeThickness="2"
+                                 StrokeDashArray="4 2" Opacity="0.8"
+                                 Visibility="{Binding IsShowPlanOverlay, Converter={StaticResource BoolToVis}}"/>
+                <map:MapItemsControl ItemsSource="{Binding PlannedWaypoints}"
+                                     Visibility="{Binding IsShowPlanOverlay, Converter={StaticResource BoolToVis}}">
+                    <map:MapItemsControl.ItemContainerStyle>
+                        <Style TargetType="map:MapItem">
+                            <Setter Property="Location" Value="{Binding Location}"/>
+                            <!-- Left/Center anchoring + the -4px margin on the content puts the 8px dot's center exactly on the route line -->
+                            <Setter Property="HorizontalAlignment" Value="Left"/>
+                            <Setter Property="VerticalAlignment" Value="Center"/>
+                            <Setter Property="Padding" Value="0"/>
+                        </Style>
+                    </map:MapItemsControl.ItemContainerStyle>
+                    <map:MapItemsControl.ItemTemplate>
+                        <DataTemplate>
+                            <StackPanel Orientation="Horizontal" Margin="-4,0,0,0" ToolTip="{Binding Tooltip}" ToolTipService.ShowDuration="10000">
+                                <Ellipse Width="8" Height="8" VerticalAlignment="Center" Fill="{DynamicResource PlannedPathColorBrush}" Stroke="White" StrokeThickness="1"/>
+                                <TextBlock Text="{Binding Ident}" Margin="4,0,0,0" FontSize="11" VerticalAlignment="Center"
+                                           FontFamily="{DynamicResource CurrentFont}"
+                                           Foreground="{DynamicResource PlannedPathColorBrush}"/>
+                            </StackPanel>
+                        </DataTemplate>
+                    </map:MapItemsControl.ItemTemplate>
+                </map:MapItemsControl>
                 <map:MapItemsControl ItemsSource="{Binding MarkerList}" ItemContainerStyle="{StaticResource PushpinItemStyle}"/>
                 <StackPanel Orientation="Horizontal" HorizontalAlignment="Right" VerticalAlignment="Bottom" Margin="5">
                     <TextBlock FontSize="12" Style="{DynamicResource MapAttribution}"
@@ -84,10 +111,15 @@
                 </StackPanel>
                 </StackPanel>
                 <StackPanel Margin="10" HorizontalAlignment="Right">
-                    <ToggleButton Style="{DynamicResource MapToggleButton}" 
-                              IsChecked="{Binding IsShowPath, Mode=TwoWay}" 
+                    <ToggleButton Style="{DynamicResource MapToggleButton}"
+                              IsChecked="{Binding IsShowPath, Mode=TwoWay}"
                               Content="{DynamicResource PathButton}"/>
-                <ToggleButton Style="{DynamicResource MapToggleButton}" 
+                <ToggleButton Style="{DynamicResource MapToggleButton}"
+                              IsChecked="{Binding IsShowPlan, Mode=TwoWay}"
+                              Visibility="{Binding HasFlightPlan, Converter={StaticResource BoolToVis}}"
+                              Content="{DynamicResource PlanButton}"
+                              ToolTip="Show SimBrief flight plan"/>
+                <ToggleButton Style="{DynamicResource MapToggleButton}"
                               IsChecked="{Binding IsShowFlightDetails, Mode=TwoWay}" 
                               Content="{DynamicResource detailsButton}"/>
                 <ToggleButton Style="{DynamicResource MapToggleButton}" 

@@ -175,6 +175,15 @@
                         </StackPanel.ToolTip>
                     </StackPanel>
 
+                    <StackPanel Orientation="Horizontal" Margin="10" Visibility="{Binding IsShowStadiaApiKeyField, Converter={StaticResource BoolToVis}}" ToolTipService.ShowDuration="5000">
+                        <Label  Style="{DynamicResource FSTrAkLabel}" Width="250">Stadia Maps API Key</Label>
+                        <TextBox FontFamily="{DynamicResource CurrentFont}" Foreground="{DynamicResource TextColor}" Background="{DynamicResource ControlBackgroundColorBrush}" FontSize="{DynamicResource ControlFontSize}" Text="{Binding StadiaApiKey}" Width="200" Cursor="Arrow" TextAlignment="Center" Padding="0 6 0 0"/>
+                        <StackPanel.ToolTip>
+                            Stamen map styles are hosted by Stadia Maps and require an API Key (free tier available).
+                            Please see https://docs.stadiamaps.com/authentication/.
+                        </StackPanel.ToolTip>
+                    </StackPanel>
+
                     <StackPanel Orientation="Horizontal" Margin="10">
                         <Label Style="{DynamicResource FSTrAkLabel}" Width="250">Map Overlays</Label>
                     </StackPanel>
@@ -311,6 +320,18 @@
                                   Text="{Binding VatsimId}" Cursor="Arrow" TextAlignment="Center" Padding="0 6 0 0"/>
                         <StackPanel.ToolTip>
                             Type your VATSIM ID to prevent duplicate representation of your aircraft when VATSIM aircraft are shown on the map
+                        </StackPanel.ToolTip>
+                    </StackPanel>
+                    <StackPanel Orientation="Horizontal" Margin="10" ToolTipService.ShowDuration="5000">
+                        <Label Style="{DynamicResource FSTrAkLabel}" Width="250">SimBrief username / Pilot ID</Label>
+                        <TextBox FontFamily="{DynamicResource CurrentFont}"
+                                 Foreground="{DynamicResource TextColor}"
+                                 Background="{DynamicResource ControlBackgroundColorBrush}"
+                                 FontSize="{DynamicResource ControlFontSize}"
+                                 Width="200"
+                                 Text="{Binding SimbriefUser}" Cursor="Arrow" TextAlignment="Center" Padding="0 6 0 0"/>
+                        <StackPanel.ToolTip>
+                            Enter your SimBrief username or numeric Pilot ID to fetch your flight plan when a flight starts. Leave empty to disable SimBrief integration.
                         </StackPanel.ToolTip>
                     </StackPanel>
                     <StackPanel Orientation="Horizontal" Margin="10" ToolTipService.ShowDuration="5000">

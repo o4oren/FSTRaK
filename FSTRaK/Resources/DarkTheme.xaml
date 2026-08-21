@@ -107,6 +107,7 @@
     <SolidColorBrush x:Key="SubtleTextBrush" Color="#8899AA"/>
 
     <SolidColorBrush x:Key="FlightPathColorBrush" Color="#FF6B6B"/>
+    <SolidColorBrush x:Key="PlannedPathColorBrush" Color="#7B68EE"/>
     <SolidColorBrush x:Key="FlightPathStrokeBrush" Color="#CC4444"/>
     <SolidColorBrush x:Key="MapPinStrokeBrush" Color="#FFD580"/>
     <SolidColorBrush x:Key="SelectedItemForegroundBrush" Color="#FF8C69"/>

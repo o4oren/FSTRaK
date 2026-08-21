@@ -155,6 +155,8 @@ namespace FSTRaK.BusinessLogic.FlightManager.State
                             logbookContext.Aircraft.Attach(Context.ActiveFlight.Aircraft);
                         }
 
+                        AttachFlightPlanIfEligible();
+
                         logbookContext.Flights.Add(Context.ActiveFlight);
                         logbookContext.SaveChanges();
                         Context.OnFlightSaved(Context.ActiveFlight.Id);
@@ -162,9 +164,61 @@ namespace FSTRaK.BusinessLogic.FlightManager.State
                     catch (Exception ex)
                     {
                         Log.Error(ex, "An error occurred while trying to persist the flight!");
+                        // Plan persistence must never lose a flight — retry once without the plan graph.
+                        if (Context.ActiveFlight.FlightPlan != null)
+                        {
+                            try
+                            {
+                                Context.ActiveFlight.FlightPlan = null;
+                                logbookContext.SaveChanges();
+                                Context.OnFlightSaved(Context.ActiveFlight.Id);
+                                Log.Warning("Flight saved without its SimBrief plan after a save failure");
+                            }
+                            catch (Exception retryEx)
+                            {
+                                Log.Error(retryEx, "Retry without SimBrief plan also failed!");
+                            }
+                        }
                     }
                 }
             });
+        }
+
+        /// <summary>
+        /// Attaches the matched SimBrief plan when the flight landed at the planned arrival or one
+        /// of the planned alternates. Never throws — plan persistence must not endanger the flight save.
+        /// Must be called AFTER the aircraft is attached to the context so the airline backfill is
+        /// detected as a modification.
+        /// </summary>
+        private void AttachFlightPlanIfEligible()
+        {
+            try
+            {
+                var plan = BusinessLogic.SimBriefService.SimBriefService.Instance.MatchedFlightPlan;
+                if (plan == null)
+                    return;
+
+                if (!BusinessLogic.SimBriefService.SimBriefOfpMapper.ShouldSavePlan(plan, Context.ActiveFlight.ArrivalAirport))
+                {
+                    Log.Information($"SimBrief: not saving plan - arrival {Context.ActiveFlight.ArrivalAirport} matches neither planned arrival {plan.ArrivalAirport} nor alternates {plan.AlternateAirports}");
+                    return;
+                }
+
+                Context.ActiveFlight.FlightPlan = plan;
+                Log.Information($"SimBrief: plan {plan.ComposedFlightNumber} {plan.DepartureAirport} -> {plan.ArrivalAirport} attached to flight");
+
+                if (string.IsNullOrWhiteSpace(Context.ActiveFlight.Aircraft?.Airline)
+                    && !string.IsNullOrWhiteSpace(plan.AirlineIcao))
+                {
+                    var airline = AirlineResolver.Instance.GetAirlineNameByIcao(plan.AirlineIcao) ?? plan.AirlineIcao;
+                    Context.ActiveFlight.Aircraft.Airline = airline;
+                    Log.Information($"SimBrief: backfilled blank aircraft airline with {airline}");
+                }
+            }
+            catch (Exception ex)
+            {
+                Log.Error(ex, "SimBrief: failed to attach flight plan - saving flight without it");
+            }
         }
     }
 }

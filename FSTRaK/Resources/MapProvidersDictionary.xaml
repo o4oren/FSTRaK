@@ -115,6 +115,33 @@
         UpdateWhileViewportChanging="true"
         x:Shared="false"/>
 
+    <utils:StadiaMapsMapTileLayer
+        x:Key="Stamen Terrain"
+        TileSource="https://tiles.stadiamaps.com/tiles/stamen_terrain/{z}/{x}/{y}.png?api_key={ApiKey}"
+        SourceName="StamenTerrain"
+        Description="© [Stadia Maps](https://stadiamaps.com/) © [Stamen Design](https://stamen.com/) © [OpenMapTiles](https://openmaptiles.org/) © [OpenStreetMap contributors](http://www.openstreetmap.org/copyright)"
+        MaxZoomLevel="18"
+        UpdateWhileViewportChanging="true"
+        x:Shared="false"/>
+
+    <utils:StadiaMapsMapTileLayer
+        x:Key="Stamen Watercolor"
+        TileSource="https://tiles.stadiamaps.com/tiles/stamen_watercolor/{z}/{x}/{y}.jpg?api_key={ApiKey}"
+        SourceName="StamenWatercolor"
+        Description="© [Stadia Maps](https://stadiamaps.com/) © [Stamen Design](https://stamen.com/) © [OpenMapTiles](https://openmaptiles.org/) © [OpenStreetMap contributors](http://www.openstreetmap.org/copyright)"
+        MaxZoomLevel="16"
+        UpdateWhileViewportChanging="true"
+        x:Shared="false"/>
+
+    <utils:StadiaMapsMapTileLayer
+        x:Key="Stamen Toner"
+        TileSource="https://tiles.stadiamaps.com/tiles/stamen_toner/{z}/{x}/{y}.png?api_key={ApiKey}"
+        SourceName="StamenToner"
+        Description="© [Stadia Maps](https://stadiamaps.com/) © [Stamen Design](https://stamen.com/) © [OpenMapTiles](https://openmaptiles.org/) © [OpenStreetMap contributors](http://www.openstreetmap.org/copyright)"
+        MaxZoomLevel="20"
+        UpdateWhileViewportChanging="true"
+        x:Shared="false"/>
+
     <utils:MapTilerMapTileLayer
         x:Key="MapTiler Dataviz"
         TileSource="https://api.maptiler.com/maps/dataviz/{z}/{x}/{y}.png?key={ApiKey}"

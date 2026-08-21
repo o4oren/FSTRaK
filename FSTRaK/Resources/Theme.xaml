@@ -100,6 +100,7 @@
     <SolidColorBrush x:Key="CardBorderBrush" Color="{DynamicResource PrimaryMid}"/>
 
     <SolidColorBrush x:Key="FlightPathColorBrush" Color="Red"/>
+    <SolidColorBrush x:Key="PlannedPathColorBrush" Color="#7B68EE"/>
     <SolidColorBrush x:Key="FlightPathStrokeBrush" Color="DarkRed"/>
     <SolidColorBrush x:Key="MapPinStrokeBrush" Color="Wheat"/>
     <SolidColorBrush x:Key="SelectedItemForegroundBrush" Color="OrangeRed"/>

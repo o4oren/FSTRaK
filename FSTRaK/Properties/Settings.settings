@@ -44,6 +44,9 @@
     <Setting Name="VatsimId" Type="System.String" Scope="User">
       <Value Profile="(Default)" />
     </Setting>
+    <Setting Name="SimbriefUser" Type="System.String" Scope="User">
+      <Value Profile="(Default)" />
+    </Setting>
     <Setting Name="IvaoId" Type="System.String" Scope="User">
       <Value Profile="(Default)" />
     </Setting>
@@ -54,6 +57,9 @@
       <Value Profile="(Default)" />
     </Setting>
     <Setting Name="MapTilerApiKey" Type="System.String" Scope="User">
+      <Value Profile="(Default)" />
+    </Setting>
+    <Setting Name="StadiaApiKey" Type="System.String" Scope="User">
       <Value Profile="(Default)" />
     </Setting>
     <Setting Name="Theme" Type="System.String" Scope="User">

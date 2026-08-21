@@ -24,6 +24,8 @@ namespace FSTRaK.ViewModels
         private readonly FlightManager _flightManager = FlightManager.Instance;
         private readonly VatsimService _vatsimService = VatsimService.Instance;
         private readonly IvaoService _ivaoService = IvaoService.Instance;
+        private readonly BusinessLogic.SimBriefService.SimBriefService _simBriefService =
+            BusinessLogic.SimBriefService.SimBriefService.Instance;
 
         internal record TrackPoint(double Latitude, double Longitude, int Altitude, DateTime Timestamp);
 
@@ -410,6 +412,33 @@ namespace FSTRaK.ViewModels
 
         public ObservableCollection<Location> FlightPath { get; set; } = new();
 
+        public ObservableCollection<Location> PlannedRouteLocations { get; } = new();
+        public ObservableCollection<PlannedWaypoint> PlannedWaypoints { get; } = new();
+
+        public bool IsFlightPlanAvailable => _simBriefService.MatchedFlightPlan != null;
+
+        private bool _isShowFlightPlan;
+        public bool IsShowFlightPlan
+        {
+            get => _isShowFlightPlan;
+            set
+            {
+                if (_isShowFlightPlan == value) return;
+                _isShowFlightPlan = value;
+                OnPropertyChanged();
+                OnPropertyChanged(nameof(IsShowFlightPlanOverlay));
+            }
+        }
+
+        public bool IsShowFlightPlanOverlay => IsFlightPlanAvailable && IsShowFlightPlan;
+
+        internal class PlannedWaypoint
+        {
+            public Location Location { get; set; }
+            public string Ident { get; set; }
+            public string Tooltip { get; set; }
+        }
+
         private SelectedClientViewModel _selectedClient;
         private System.ComponentModel.PropertyChangedEventHandler _selectedClientChangedHandler;
         public SelectedClientViewModel SelectedClient
@@ -501,6 +530,7 @@ namespace FSTRaK.ViewModels
             _flightManager.PropertyChanged += FlightManagerOnPropertyChanged;
             _vatsimService.PropertyChanged += VatsimServiceOnPropertyChanged;
             _ivaoService.PropertyChanged += IvaoServiceOnPropertyChanged;
+            _simBriefService.PropertyChanged += SimBriefServiceOnPropertyChanged;
 
             CenterOnAirplaneCommand = new RelayCommand(o => IsCenterOnAirplane = true);
             StopCenterOnAirplaneCommand = new RelayCommand(o => IsCenterOnAirplane = false);
@@ -1083,6 +1113,37 @@ namespace FSTRaK.ViewModels
                 default:
                     break;
             }
+        }
+
+        private void SimBriefServiceOnPropertyChanged(object sender, PropertyChangedEventArgs e)
+        {
+            if (e.PropertyName != nameof(BusinessLogic.SimBriefService.SimBriefService.MatchedFlightPlan)) return;
+            // The service raises from background fetch tasks — marshal to the UI thread.
+            System.Windows.Application.Current.Dispatcher.Invoke(UpdatePlannedRoute);
+        }
+
+        private void UpdatePlannedRoute()
+        {
+            PlannedRouteLocations.Clear();
+            PlannedWaypoints.Clear();
+            var plan = _simBriefService.MatchedFlightPlan;
+            if (plan != null)
+            {
+                foreach (var point in plan.Points.OrderBy(p => p.Sequence))
+                {
+                    var location = new Location(point.Latitude, point.Longitude);
+                    PlannedRouteLocations.Add(location);
+                    PlannedWaypoints.Add(new PlannedWaypoint
+                    {
+                        Location = location,
+                        Ident = point.Ident,
+                        Tooltip = point.TooltipText
+                    });
+                }
+                IsShowFlightPlan = true; // a freshly matched plan starts visible
+            }
+            OnPropertyChanged(nameof(IsFlightPlanAvailable));
+            OnPropertyChanged(nameof(IsShowFlightPlanOverlay));
         }
 
         private void IvaoServiceOnPropertyChanged(object sender, PropertyChangedEventArgs e)

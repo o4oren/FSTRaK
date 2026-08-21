@@ -142,6 +142,9 @@
     <Compile Include="BusinessLogic\VatsimService\VatsimModel\VatsimStaticData.cs" />
     <Compile Include="BusinessLogic\VatsimService\DataFileUpdateService.cs" />
     <Compile Include="BusinessLogic\VatsimService\VatsimService.cs" />
+    <Compile Include="BusinessLogic\SimBriefService\SimBriefModel\SimBriefOfp.cs" />
+    <Compile Include="BusinessLogic\SimBriefService\SimBriefOfpMapper.cs" />
+    <Compile Include="BusinessLogic\SimBriefService\SimBriefService.cs" />
     <Compile Include="BusinessLogic\IvaoService\IvaoModel\IvaoPilot.cs" />
     <Compile Include="BusinessLogic\IvaoService\IvaoModel\IvaoLastTrack.cs" />
     <Compile Include="BusinessLogic\IvaoService\IvaoModel\IvaoFlightPlan.cs" />
@@ -159,8 +162,11 @@
     <Compile Include="DataTypes\NearestAirportRequestType.cs" />
     <Compile Include="DataTypes\Settings.cs" />
     <Compile Include="DataTypes\SimConnectDataTypes.cs" />
+    <Compile Include="Models\AirlineResolver.cs" />
     <Compile Include="Models\AirportResolver.cs" />
     <Compile Include="Models\Entity\Airport.cs" />
+    <Compile Include="Models\Entity\FlightPlan.cs" />
+    <Compile Include="Models\Entity\FlightPlanPoint.cs" />
     <Compile Include="Models\Entity\FlightEvent\StallWarningEvent.cs" />
     <Compile Include="Models\Entity\FlightEvent\OverspeedEvent.cs" />
     <Compile Include="Models\Entity\FlightEvent\GearspeedExceededEvent.cs" />
@@ -202,6 +208,7 @@
     <Compile Include="Utils\EnumToBoolConverter.cs" />
     <Compile Include="Utils\NetworkTypeToVisConverter.cs" />
     <Compile Include="Utils\MapTilerMapTileLayer.cs" />
+    <Compile Include="Utils\StadiaMapsMapTileLayer.cs" />
     <Compile Include="Utils\IOverlayMapTileLayer.cs" />
     <Compile Include="Utils\OverlayMapTileLayer.cs" />
     <Compile Include="Utils\MBTilesMapTileLayer.cs" />
@@ -422,6 +429,9 @@
     <Resource Include="FSTrAk.ico">
       <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
     </Resource>
+    <None Include="Resources\Data\airlines.csv">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </None>
     <None Include="Resources\Data\airports.csv">
       <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
     </None>

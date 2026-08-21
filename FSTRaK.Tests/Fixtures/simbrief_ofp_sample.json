@@ -1,0 +1,1350 @@
+{
+ "fetch": {
+  "userid": "379894",
+  "static_id": {},
+  "status": "Success",
+  "time": "0.0123"
+ },
+ "params": {
+  "request_id": "182723890",
+  "sequence_id": "74379a87ffa6",
+  "static_id": "BAV_OG_545443",
+  "user_id": "379894",
+  "time_generated": "1786793751",
+  "xml_file": "https://www.simbrief.com/ofp/flightplans/xml/EGLLELLX_XML_1786793751.xml",
+  "ofp_layout": "BAW",
+  "airac": "2608",
+  "units": "kgs"
+ },
+ "general": {
+  "release": "1",
+  "icao_airline": "BAW",
+  "flight_number": "0414",
+  "is_etops": "0",
+  "dx_rmk": "NONE",
+  "sys_rmk": {},
+  "is_detailed_profile": "1",
+  "cruise_profile": "CI 20",
+  "climb_profile": "250/300/78",
+  "descent_profile": "78/300/250",
+  "alternate_profile": "CI0",
+  "reserve_profile": "RES",
+  "costindex": "20",
+  "cont_rule": "17 MIN",
+  "initial_altitude": "23000",
+  "stepclimb_string": "EGLL/0230",
+  "avg_temp_dev": "8",
+  "avg_tropopause": "38947",
+  "avg_wind_comp": "20",
+  "avg_wind_dir": "246",
+  "avg_wind_spd": "028",
+  "gc_distance": "277",
+  "route_distance": "302",
+  "air_distance": "284",
+  "total_burn": "2370",
+  "cruise_tas": "400",
+  "cruise_mach": ".65",
+  "passengers": "150",
+  "route": "DCT DET L6 DVR UL9 KONAN UL607 REMBA DCT",
+  "route_ifps": "DCT DET L6 DVR UL9 KONAN UL607 REMBA DCT",
+  "route_navigraph": "DCT DET L6 DVR UL9 KONAN UL607 REMBA DCT",
+  "route_track_replace": {},
+  "route_track_removed": {},
+  "sid_ident": {},
+  "sid_trans": {},
+  "star_ident": {},
+  "star_trans": {}
+ },
+ "origin": {
+  "icao_code": "EGLL",
+  "iata_code": "LHR",
+  "faa_code": {},
+  "icao_region": "EG",
+  "elevation": "83",
+  "pos_lat": "51.477500",
+  "pos_long": "-0.461389",
+  "name": "HEATHROW",
+  "timezone": "1",
+  "plan_rwy": "09R",
+  "trans_alt": "06000",
+  "trans_level": "07000",
+  "metar": "EGLL 151120Z AUTO 01008KT 300V050 9999 FEW038 26/14 Q1017",
+  "metar_time": "2026-08-15T11:20:00Z",
+  "metar_category": "vfr",
+  "metar_visibility": "9650",
+  "metar_ceiling": "9999",
+  "taf": "EGLL 151051Z 1512/1618 02010KT 9999 FEW045\nPROB30 TEMPO 1515/1520 8000 -SHRA\nBECMG 1521/1524 08004KT\nPROB30 TEMPO 1523/1607 9000 -RA BKN012\nBECMG 1609/1612 28010KT\nBECMG 1615/1618 34006KT",
+  "taf_time": "2026-08-15T10:51:00Z",
+  "atis": {
+   "network": "sayintentions",
+   "issued": "2026-08-15T11:20:00Z",
+   "letter": "S",
+   "phonetic": "SIERRA",
+   "type": "DEP/ARR",
+   "message": "LONDON HEATHROW ARPT, INFO SIERRA. 1120Z. ARVG RWY 09L. DPTG RWY 09R. WIND 010 AT 8. VIS 10 KM. FEW AT 3800. TEMP 26, DP 14. QNH 1017. TRL 70. BUR NDB OTS. ADVS ON INITIAL CTC YOU HAVE INFO SIERRA."
+  },
+  "notam": {}
+ },
+ "destination": {
+  "icao_code": "ELLX",
+  "iata_code": "LUX",
+  "faa_code": {},
+  "icao_region": "EL",
+  "elevation": "1234",
+  "pos_lat": "49.623333",
+  "pos_long": "6.204444",
+  "name": "LUXEMBOURG",
+  "timezone": "2",
+  "plan_rwy": "24",
+  "trans_alt": "05000",
+  "trans_level": "06000",
+  "metar": "ELLX 151120Z VRB06KT CAVOK 33/08 Q1015 NOSIG",
+  "metar_time": "2026-08-15T11:20:00Z",
+  "metar_category": "vfr",
+  "metar_visibility": "9650",
+  "metar_ceiling": "9999",
+  "taf": "ELLX 151100Z 1512/1618 32007KT CAVOK\nPROB30 TEMPO 1512/1518 30015G25KT FEW080CB\nPROB40 TEMPO 1520/1604 27015G25KT TSRA SCT050CB\nPROB30 TEMPO 1612/1618 30020G30KT 2500 +TSRAGR BKN040CB",
+  "taf_time": "2026-08-15T11:00:00Z",
+  "atis": {
+   "network": "sayintentions",
+   "issued": "2026-08-15T11:20:00Z",
+   "letter": "X",
+   "phonetic": "X-RAY",
+   "type": "DEP/ARR",
+   "message": "LUXEMBOURG-FINDEL INTL ARPT, INFO X-RAY. 1120Z. ARVG AND DPTG RWY 24. WIND VRB AT 6. CAVOK. TEMP 33, DP 8. QNH 1015. TRL 60. BIRD ACTIVITY IN VCNTY OF ARPT.. ADVS ON INITIAL CTC YOU HAVE INFO X-RAY."
+  },
+  "notam": {}
+ },
+ "alternate": {
+  "icao_code": "EDFH",
+  "iata_code": "HHN",
+  "faa_code": {},
+  "icao_region": "ED",
+  "elevation": "1649",
+  "pos_lat": "49.945819",
+  "pos_long": "7.261078",
+  "name": "FRANKFURT-HAHN",
+  "timezone": "2",
+  "plan_rwy": {},
+  "trans_alt": "05000",
+  "trans_level": "06000",
+  "cruise_altitude": "9000",
+  "distance": "92",
+  "gc_distance": "45",
+  "air_distance": "88",
+  "track_true": "064",
+  "track_mag": "061",
+  "tas": "288",
+  "gs": "296",
+  "avg_wind_comp": "P008",
+  "avg_wind_dir": "245",
+  "avg_wind_spd": "008",
+  "avg_tropopause": "40400",
+  "avg_tdv": "P13",
+  "ete": "1683",
+  "burn": "1009",
+  "route": "DCT",
+  "route_ifps": "DCT",
+  "metar": "EDFH 151120Z COR 31005KT 220V350 CAVOK 33/06 Q1016",
+  "metar_time": "2026-08-15T11:20:00Z",
+  "metar_category": "vfr",
+  "metar_visibility": "9650",
+  "metar_ceiling": "9999",
+  "taf": "EDFH 151100Z 1512/1612 24008KT CAVOK\nBECMG 1514/1516 33007KT\nTEMPO 1514/1518 34015G25KT\nPROB30 TEMPO 1600/1607 35020G35KT TSRA SCT060CB\nPROB40 TEMPO 1611/1612 34020G35KT TSRA SCT035CB",
+  "taf_time": "2026-08-15T11:00:00Z",
+  "atis": [
+   {
+    "network": "vatsim",
+    "issued": "2026-08-15T10:50:00Z",
+    "letter": "D",
+    "phonetic": "DELTA",
+    "type": "DEP/ARR",
+    "message": "ATIS EDFH D METAR 151050\nEXPECT VECTORS FOR ILS APCH\nRWY 21\nWHEN AIRBORNE MONITOR ADVISORY ON FREQ 122.800. EXPECT INTERSECTION E DEPARTURE, ADVISE UNABLE. HEAVY AIRCRAFT ARE TO VACATE VIA B1 OR B2\nTRL 60\n28007KT 240V320 CAVOK T32 DP05 QNH1016"
+   },
+   {
+    "network": "sayintentions",
+    "issued": "2026-08-15T11:20:00Z",
+    "letter": "I",
+    "phonetic": "INDIA",
+    "type": "DEP/ARR",
+    "message": "FRANKFURT-HAHN ARPT, INFO INDIA. 1120Z. ARVG AND DPTG RWY 21. WIND 310 AT 5. CAVOK. TEMP 33, DP 6. QNH 1016. TRL 60. JET BLAST CTN ON THE RAMP; MAINTAIN AWARENESS DURING OPS. ADVS ON INITIAL CTC YOU HAVE INFO INDIA."
+   }
+  ],
+  "notam": {}
+ },
+ "aircraft": {
+  "icaocode": "A320",
+  "iatacode": "320",
+  "base_type": "A320",
+  "list_type": "A320",
+  "icao_code": "A320",
+  "iata_code": "320",
+  "name": "A320-200",
+  "engines": "CFM56-5B4/P",
+  "reg": "G-EUUA",
+  "fin": "205",
+  "selcal": "AMBL",
+  "equip": "M-SDE3FGHIJ1RWXY/S",
+  "equip_category": "M",
+  "equip_navigation": "SDE3FGHIJ1RWXY",
+  "equip_transponder": "S",
+  "fuelfact": "1",
+  "fuelfactor": "1",
+  "max_passengers": "172",
+  "supports_tlr": "2",
+  "internal_id": "A320",
+  "is_custom": "0"
+ },
+ "fuel": {
+  "taxi": "150",
+  "enroute_burn": "2370",
+  "contingency": "775",
+  "alternate_burn": "1009",
+  "reserve": "1112",
+  "etops": "0",
+  "extra": "0",
+  "extra_required": "0",
+  "extra_optional": "0",
+  "min_takeoff": "5266",
+  "plan_takeoff": "5266",
+  "plan_ramp": "5416",
+  "plan_landing": "2896",
+  "avg_fuel_flow": "2734",
+  "max_tanks": "18849"
+ },
+ "times": {
+  "est_time_enroute": "3121",
+  "sched_time_enroute": "3720",
+  "sched_out": "1786796400",
+  "sched_off": "1786797180",
+  "sched_on": "1786800900",
+  "sched_in": "1786801200",
+  "sched_block": "4800",
+  "est_out": "1786796400",
+  "est_off": "1786797180",
+  "est_on": "1786800301",
+  "est_in": "1786800601",
+  "est_block": "4201",
+  "orig_timezone": "1",
+  "dest_timezone": "2",
+  "taxi_out": "780",
+  "taxi_in": "300",
+  "reserve_time": "1800",
+  "endurance": "7624",
+  "contfuel_time": "1020",
+  "etopsfuel_time": "0",
+  "extrafuel_time": "0"
+ },
+ "weights": {
+  "oew": "44029",
+  "pax_count": "150",
+  "bag_count": "150",
+  "pax_count_actual": "150",
+  "bag_count_actual": "150",
+  "pax_weight": "79.379",
+  "bag_weight": "24.948",
+  "freight_added": "100",
+  "cargo": "3842",
+  "payload": "15749",
+  "est_zfw": "59778",
+  "max_zfw": "62500",
+  "est_tow": "65044",
+  "max_tow": "68370",
+  "max_tow_struct": "72600",
+  "tow_limit_code": "L",
+  "est_ldw": "62674",
+  "max_ldw": "66000",
+  "est_ramp": "65194"
+ },
+ "navlog": {
+  "fix": [
+   {
+    "ident": "DET",
+    "name": "DETLING",
+    "type": "vor",
+    "icao_region": "EG",
+    "region_code": {},
+    "frequency": "117.30",
+    "pos_lat": "51.304003",
+    "pos_long": "0.597275",
+    "stage": "CLB",
+    "via_airway": "DCT",
+    "is_sid_star": "0",
+    "distance": "41",
+    "track_true": "104",
+    "track_mag": "103",
+    "heading_true": "106",
+    "heading_mag": "105",
+    "altitude_feet": "18100",
+    "ind_airspeed": "300",
+    "true_airspeed": "404",
+    "mach": "0.64",
+    "mach_thousandths": "0.64",
+    "wind_component": "20",
+    "groundspeed": "424",
+    "time_leg": "488",
+    "time_total": "488",
+    "fuel_flow": "7103",
+    "fuel_leg": "822",
+    "fuel_totalused": "822",
+    "fuel_min_onboard": "3669",
+    "fuel_plan_onboard": "4444",
+    "oat": "-13",
+    "oat_isa_dev": "8",
+    "wind_dir": "247",
+    "wind_spd": "25",
+    "shear": "0",
+    "tropopause_feet": "37800",
+    "ground_height": "48",
+    "fir": "EGTT",
+    "fir_units": "N,F",
+    "fir_valid_levels": "1000,3000,5000,7000,9000,11000,13000,15000,17000,19000,21000,23000,25000,27000,29000,31000,33000,35000,37000,39000,41000,45000,49000,53000,57000,61000,65000,69000",
+    "mora": "2600",
+    "wind_data": {
+     "level": [
+      {
+       "altitude": "0",
+       "wind_dir": "43",
+       "wind_spd": "13",
+       "oat": "24"
+      },
+      {
+       "altitude": "5000",
+       "wind_dir": "358",
+       "wind_spd": "5",
+       "oat": "14"
+      },
+      {
+       "altitude": "10000",
+       "wind_dir": "243",
+       "wind_spd": "17",
+       "oat": "6"
+      },
+      {
+       "altitude": "14000",
+       "wind_dir": "238",
+       "wind_spd": "22",
+       "oat": "-3"
+      },
+      {
+       "altitude": "18000",
+       "wind_dir": "247",
+       "wind_spd": "25",
+       "oat": "-12"
+      },
+      {
+       "altitude": "24000",
+       "wind_dir": "246",
+       "wind_spd": "25",
+       "oat": "-26"
+      },
+      {
+       "altitude": "30000",
+       "wind_dir": "239",
+       "wind_spd": "51",
+       "oat": "-40"
+      },
+      {
+       "altitude": "34000",
+       "wind_dir": "235",
+       "wind_spd": "65",
+       "oat": "-50"
+      },
+      {
+       "altitude": "39000",
+       "wind_dir": "237",
+       "wind_spd": "47",
+       "oat": "-54"
+      },
+      {
+       "altitude": "45000",
+       "wind_dir": "246",
+       "wind_spd": "24",
+       "oat": "-52"
+      }
+     ]
+    },
+    "fir_crossing": {}
+   },
+   {
+    "ident": "TOC",
+    "name": "TOP OF CLIMB",
+    "type": "ltlg",
+    "icao_region": {},
+    "region_code": {},
+    "frequency": {},
+    "pos_lat": "51.205125",
+    "pos_long": "1.133332",
+    "stage": "CLB",
+    "via_airway": "L6",
+    "is_sid_star": "0",
+    "distance": "21",
+    "track_true": "106",
+    "track_mag": "105",
+    "heading_true": "108",
+    "heading_mag": "107",
+    "altitude_feet": "23000",
+    "ind_airspeed": "300",
+    "true_airspeed": "439",
+    "mach": "0.71",
+    "mach_thousandths": "0.71",
+    "wind_component": "19",
+    "groundspeed": "458",
+    "time_leg": "176",
+    "time_total": "664",
+    "fuel_flow": "6963",
+    "fuel_leg": "229",
+    "fuel_totalused": "1051",
+    "fuel_min_onboard": "3440",
+    "fuel_plan_onboard": "4215",
+    "oat": "-24",
+    "oat_isa_dev": "7",
+    "wind_dir": "248",
+    "wind_spd": "24",
+    "shear": "1",
+    "tropopause_feet": "37800",
+    "ground_height": "48",
+    "fir": "EGTT",
+    "fir_units": "N,F",
+    "fir_valid_levels": "1000,3000,5000,7000,9000,11000,13000,15000,17000,19000,21000,23000,25000,27000,29000,31000,33000,35000,37000,39000,41000,45000,49000,53000,57000,61000,65000,69000",
+    "mora": "2600",
+    "wind_data": {
+     "level": [
+      {
+       "altitude": "0",
+       "wind_dir": "43",
+       "wind_spd": "13",
+       "oat": "23"
+      },
+      {
+       "altitude": "5000",
+       "wind_dir": "357",
+       "wind_spd": "5",
+       "oat": "14"
+      },
+      {
+       "altitude": "10000",
+       "wind_dir": "243",
+       "wind_spd": "17",
+       "oat": "6"
+      },
+      {
+       "altitude": "14000",
+       "wind_dir": "238",
+       "wind_spd": "22",
+       "oat": "-3"
+      },
+      {
+       "altitude": "18000",
+       "wind_dir": "247",
+       "wind_spd": "25",
+       "oat": "-12"
+      },
+      {
+       "altitude": "24000",
+       "wind_dir": "246",
+       "wind_spd": "25",
+       "oat": "-26"
+      },
+      {
+       "altitude": "30000",
+       "wind_dir": "239",
+       "wind_spd": "51",
+       "oat": "-40"
+      },
+      {
+       "altitude": "34000",
+       "wind_dir": "235",
+       "wind_spd": "65",
+       "oat": "-50"
+      },
+      {
+       "altitude": "39000",
+       "wind_dir": "237",
+       "wind_spd": "47",
+       "oat": "-54"
+      },
+      {
+       "altitude": "45000",
+       "wind_dir": "247",
+       "wind_spd": "24",
+       "oat": "-52"
+      }
+     ]
+    },
+    "fir_crossing": {}
+   },
+   {
+    "ident": "DVR",
+    "name": "DOVER",
+    "type": "vor",
+    "icao_region": "EG",
+    "region_code": {},
+    "frequency": "114.95",
+    "pos_lat": "51.162622",
+    "pos_long": "1.359086",
+    "stage": "CRZ",
+    "via_airway": "L6",
+    "is_sid_star": "0",
+    "distance": "9",
+    "track_true": "106",
+    "track_mag": "107",
+    "heading_true": "108",
+    "heading_mag": "108",
+    "altitude_feet": "23000",
+    "ind_airspeed": "282",
+    "true_airspeed": "400",
+    "mach": "0.65",
+    "mach_thousandths": "0.65",
+    "wind_component": "19",
+    "groundspeed": "419",
+    "time_leg": "77",
+    "time_total": "741",
+    "fuel_flow": "2463",
+    "fuel_leg": "53",
+    "fuel_totalused": "1104",
+    "fuel_min_onboard": "3387",
+    "fuel_plan_onboard": "4162",
+    "oat": "-24",
+    "oat_isa_dev": "7",
+    "wind_dir": "248",
+    "wind_spd": "24",
+    "shear": "1",
+    "tropopause_feet": "37800",
+    "ground_height": "48",
+    "fir": "EGTT",
+    "fir_units": "N,F",
+    "fir_valid_levels": "25000,27000,29000,31000,33000,35000,37000,39000,41000,45000,49000,53000,57000,61000,65000,69000",
+    "mora": "2600",
+    "wind_data": {
+     "level": [
+      {
+       "altitude": "0",
+       "wind_dir": "43",
+       "wind_spd": "13",
+       "oat": "23"
+      },
+      {
+       "altitude": "5000",
+       "wind_dir": "356",
+       "wind_spd": "5",
+       "oat": "14"
+      },
+      {
+       "altitude": "10000",
+       "wind_dir": "243",
+       "wind_spd": "17",
+       "oat": "6"
+      },
+      {
+       "altitude": "14000",
+       "wind_dir": "238",
+       "wind_spd": "22",
+       "oat": "-3"
+      },
+      {
+       "altitude": "18000",
+       "wind_dir": "247",
+       "wind_spd": "25",
+       "oat": "-12"
+      },
+      {
+       "altitude": "24000",
+       "wind_dir": "246",
+       "wind_spd": "25",
+       "oat": "-26"
+      },
+      {
+       "altitude": "30000",
+       "wind_dir": "239",
+       "wind_spd": "50",
+       "oat": "-40"
+      },
+      {
+       "altitude": "34000",
+       "wind_dir": "235",
+       "wind_spd": "65",
+       "oat": "-50"
+      },
+      {
+       "altitude": "39000",
+       "wind_dir": "237",
+       "wind_spd": "47",
+       "oat": "-54"
+      },
+      {
+       "altitude": "45000",
+       "wind_dir": "247",
+       "wind_spd": "24",
+       "oat": "-52"
+      }
+     ]
+    },
+    "fir_crossing": {}
+   },
+   {
+    "ident": "KONAN",
+    "name": "KONAN",
+    "type": "wpt",
+    "icao_region": "EG",
+    "region_code": "ENRT",
+    "frequency": {},
+    "pos_lat": "51.130764",
+    "pos_long": "2.000000",
+    "stage": "CRZ",
+    "via_airway": "UL9",
+    "is_sid_star": "0",
+    "distance": "24",
+    "track_true": "094",
+    "track_mag": "093",
+    "heading_true": "095",
+    "heading_mag": "093",
+    "altitude_feet": "23000",
+    "ind_airspeed": "281",
+    "true_airspeed": "399",
+    "mach": "0.65",
+    "mach_thousandths": "0.649",
+    "wind_component": "22",
+    "groundspeed": "421",
+    "time_leg": "205",
+    "time_total": "946",
+    "fuel_flow": "2461",
+    "fuel_leg": "140",
+    "fuel_totalused": "1244",
+    "fuel_min_onboard": "3247",
+    "fuel_plan_onboard": "4022",
+    "oat": "-24",
+    "oat_isa_dev": "7",
+    "wind_dir": "249",
+    "wind_spd": "24",
+    "shear": "1",
+    "tropopause_feet": "38500",
+    "ground_height": "13",
+    "fir": "EGTT",
+    "fir_units": "N,F",
+    "fir_valid_levels": "21000,23000,25000,27000,29000,31000,33000,35000,37000,39000,41000,45000,49000,53000,57000,61000,65000,69000",
+    "mora": "2200",
+    "wind_data": {
+     "level": [
+      {
+       "altitude": "0",
+       "wind_dir": "24",
+       "wind_spd": "16",
+       "oat": "20"
+      },
+      {
+       "altitude": "5000",
+       "wind_dir": "336",
+       "wind_spd": "2",
+       "oat": "15"
+      },
+      {
+       "altitude": "10000",
+       "wind_dir": "239",
+       "wind_spd": "18",
+       "oat": "7"
+      },
+      {
+       "altitude": "14000",
+       "wind_dir": "242",
+       "wind_spd": "25",
+       "oat": "-2"
+      },
+      {
+       "altitude": "18000",
+       "wind_dir": "251",
+       "wind_spd": "27",
+       "oat": "-13"
+      },
+      {
+       "altitude": "24000",
+       "wind_dir": "248",
+       "wind_spd": "24",
+       "oat": "-26"
+      },
+      {
+       "altitude": "30000",
+       "wind_dir": "237",
+       "wind_spd": "52",
+       "oat": "-40"
+      },
+      {
+       "altitude": "34000",
+       "wind_dir": "235",
+       "wind_spd": "62",
+       "oat": "-49"
+      },
+      {
+       "altitude": "39000",
+       "wind_dir": "236",
+       "wind_spd": "53",
+       "oat": "-55"
+      },
+      {
+       "altitude": "45000",
+       "wind_dir": "244",
+       "wind_spd": "26",
+       "oat": "-53"
+      }
+     ]
+    },
+    "fir_crossing": {}
+   },
+   {
+    "ident": "KOK",
+    "name": "KOKSY",
+    "type": "vor",
+    "icao_region": "EB",
+    "region_code": {},
+    "frequency": "114.50",
+    "pos_lat": "51.094722",
+    "pos_long": "2.651667",
+    "stage": "CRZ",
+    "via_airway": "UL607",
+    "is_sid_star": "0",
+    "distance": "25",
+    "track_true": "094",
+    "track_mag": "093",
+    "heading_true": "096",
+    "heading_mag": "094",
+    "altitude_feet": "23000",
+    "ind_airspeed": "281",
+    "true_airspeed": "399",
+    "mach": "0.65",
+    "mach_thousandths": "0.648",
+    "wind_component": "26",
+    "groundspeed": "425",
+    "time_leg": "211",
+    "time_total": "1157",
+    "fuel_flow": "2457",
+    "fuel_leg": "144",
+    "fuel_totalused": "1388",
+    "fuel_min_onboard": "3103",
+    "fuel_plan_onboard": "3878",
+    "oat": "-23",
+    "oat_isa_dev": "8",
+    "wind_dir": "250",
+    "wind_spd": "29",
+    "shear": "1",
+    "tropopause_feet": "39200",
+    "ground_height": "52",
+    "fir": "EBUR",
+    "fir_units": "N,F",
+    "fir_valid_levels": "21000,23000,25000,27000,29000,31000,33000,35000,37000,39000,41000,45000,49000,53000,57000,61000,65000,69000",
+    "mora": "2000",
+    "wind_data": {
+     "level": [
+      {
+       "altitude": "0",
+       "wind_dir": "14",
+       "wind_spd": "12",
+       "oat": "25"
+      },
+      {
+       "altitude": "5000",
+       "wind_dir": "279",
+       "wind_spd": "4",
+       "oat": "16"
+      },
+      {
+       "altitude": "10000",
+       "wind_dir": "233",
+       "wind_spd": "18",
+       "oat": "7"
+      },
+      {
+       "altitude": "14000",
+       "wind_dir": "246",
+       "wind_spd": "23",
+       "oat": "-2"
+      },
+      {
+       "altitude": "18000",
+       "wind_dir": "251",
+       "wind_spd": "28",
+       "oat": "-13"
+      },
+      {
+       "altitude": "24000",
+       "wind_dir": "249",
+       "wind_spd": "31",
+       "oat": "-26"
+      },
+      {
+       "altitude": "30000",
+       "wind_dir": "232",
+       "wind_spd": "50",
+       "oat": "-39"
+      },
+      {
+       "altitude": "34000",
+       "wind_dir": "234",
+       "wind_spd": "61",
+       "oat": "-49"
+      },
+      {
+       "altitude": "39000",
+       "wind_dir": "235",
+       "wind_spd": "57",
+       "oat": "-57"
+      },
+      {
+       "altitude": "45000",
+       "wind_dir": "248",
+       "wind_spd": "28",
+       "oat": "-52"
+      }
+     ]
+    },
+    "fir_crossing": {
+     "fir": {
+      "fir_icao": "EBUR",
+      "fir_name": "BRUSSELS UIR",
+      "pos_lat_entry": "51.12951",
+      "pos_long_entry": "2"
+     }
+    }
+   },
+   {
+    "ident": "FERDI",
+    "name": "FERDI",
+    "type": "wpt",
+    "icao_region": "EB",
+    "region_code": "ENRT",
+    "frequency": {},
+    "pos_lat": "50.912639",
+    "pos_long": "3.636972",
+    "stage": "CRZ",
+    "via_airway": "UL607",
+    "is_sid_star": "0",
+    "distance": "39",
+    "track_true": "105",
+    "track_mag": "104",
+    "heading_true": "108",
+    "heading_mag": "106",
+    "altitude_feet": "23000",
+    "ind_airspeed": "281",
+    "true_airspeed": "400",
+    "mach": "0.65",
+    "mach_thousandths": "0.649",
+    "wind_component": "21",
+    "groundspeed": "421",
+    "time_leg": "333",
+    "time_total": "1490",
+    "fuel_flow": "2456",
+    "fuel_leg": "227",
+    "fuel_totalused": "1615",
+    "fuel_min_onboard": "2876",
+    "fuel_plan_onboard": "3651",
+    "oat": "-23",
+    "oat_isa_dev": "8",
+    "wind_dir": "244",
+    "wind_spd": "28",
+    "shear": "2",
+    "tropopause_feet": "39400",
+    "ground_height": "59",
+    "fir": "EBUR",
+    "fir_units": "N,F",
+    "fir_valid_levels": "21000,23000,25000,27000,29000,31000,33000,35000,37000,39000,41000,45000,49000,53000,57000,61000,65000,69000",
+    "mora": "2300",
+    "wind_data": {
+     "level": [
+      {
+       "altitude": "0",
+       "wind_dir": "3",
+       "wind_spd": "10",
+       "oat": "27"
+      },
+      {
+       "altitude": "5000",
+       "wind_dir": "258",
+       "wind_spd": "8",
+       "oat": "16"
+      },
+      {
+       "altitude": "10000",
+       "wind_dir": "231",
+       "wind_spd": "21",
+       "oat": "7"
+      },
+      {
+       "altitude": "14000",
+       "wind_dir": "248",
+       "wind_spd": "22",
+       "oat": "-2"
+      },
+      {
+       "altitude": "18000",
+       "wind_dir": "254",
+       "wind_spd": "23",
+       "oat": "-13"
+      },
+      {
+       "altitude": "24000",
+       "wind_dir": "243",
+       "wind_spd": "30",
+       "oat": "-25"
+      },
+      {
+       "altitude": "30000",
+       "wind_dir": "239",
+       "wind_spd": "48",
+       "oat": "-39"
+      },
+      {
+       "altitude": "34000",
+       "wind_dir": "240",
+       "wind_spd": "60",
+       "oat": "-49"
+      },
+      {
+       "altitude": "39000",
+       "wind_dir": "237",
+       "wind_spd": "58",
+       "oat": "-58"
+      },
+      {
+       "altitude": "45000",
+       "wind_dir": "244",
+       "wind_spd": "28",
+       "oat": "-52"
+      }
+     ]
+    },
+    "fir_crossing": {}
+   },
+   {
+    "ident": "BUPAL",
+    "name": "BUPAL",
+    "type": "wpt",
+    "icao_region": "EB",
+    "region_code": "ENRT",
+    "frequency": {},
+    "pos_lat": "50.723056",
+    "pos_long": "4.601111",
+    "stage": "CRZ",
+    "via_airway": "UL607",
+    "is_sid_star": "0",
+    "distance": "38",
+    "track_true": "106",
+    "track_mag": "105",
+    "heading_true": "109",
+    "heading_mag": "107",
+    "altitude_feet": "23000",
+    "ind_airspeed": "281",
+    "true_airspeed": "400",
+    "mach": "0.65",
+    "mach_thousandths": "0.647",
+    "wind_component": "24",
+    "groundspeed": "424",
+    "time_leg": "322",
+    "time_total": "1812",
+    "fuel_flow": "2457",
+    "fuel_leg": "220",
+    "fuel_totalused": "1835",
+    "fuel_min_onboard": "2656",
+    "fuel_plan_onboard": "3431",
+    "oat": "-22",
+    "oat_isa_dev": "9",
+    "wind_dir": "244",
+    "wind_spd": "33",
+    "shear": "2",
+    "tropopause_feet": "39500",
+    "ground_height": "100",
+    "fir": "EBUR",
+    "fir_units": "N,F",
+    "fir_valid_levels": "21000,23000,25000,27000,29000,31000,33000,35000,37000,39000,41000,45000,49000,53000,57000,61000,65000,69000",
+    "mora": "2500",
+    "wind_data": {
+     "level": [
+      {
+       "altitude": "0",
+       "wind_dir": "348",
+       "wind_spd": "5",
+       "oat": "29"
+      },
+      {
+       "altitude": "5000",
+       "wind_dir": "246",
+       "wind_spd": "11",
+       "oat": "18"
+      },
+      {
+       "altitude": "10000",
+       "wind_dir": "243",
+       "wind_spd": "21",
+       "oat": "7"
+      },
+      {
+       "altitude": "14000",
+       "wind_dir": "261",
+       "wind_spd": "20",
+       "oat": "-3"
+      },
+      {
+       "altitude": "18000",
+       "wind_dir": "261",
+       "wind_spd": "21",
+       "oat": "-12"
+      },
+      {
+       "altitude": "24000",
+       "wind_dir": "243",
+       "wind_spd": "35",
+       "oat": "-25"
+      },
+      {
+       "altitude": "30000",
+       "wind_dir": "240",
+       "wind_spd": "44",
+       "oat": "-38"
+      },
+      {
+       "altitude": "34000",
+       "wind_dir": "247",
+       "wind_spd": "50",
+       "oat": "-49"
+      },
+      {
+       "altitude": "39000",
+       "wind_dir": "240",
+       "wind_spd": "54",
+       "oat": "-58"
+      },
+      {
+       "altitude": "45000",
+       "wind_dir": "249",
+       "wind_spd": "30",
+       "oat": "-53"
+      }
+     ]
+    },
+    "fir_crossing": {}
+   },
+   {
+    "ident": "REMBA",
+    "name": "REMBA",
+    "type": "wpt",
+    "icao_region": "EB",
+    "region_code": "ENRT",
+    "frequency": {},
+    "pos_lat": "50.662222",
+    "pos_long": "4.914028",
+    "stage": "CRZ",
+    "via_airway": "UL607",
+    "is_sid_star": "0",
+    "distance": "12",
+    "track_true": "106",
+    "track_mag": "104",
+    "heading_true": "109",
+    "heading_mag": "106",
+    "altitude_feet": "23000",
+    "ind_airspeed": "280",
+    "true_airspeed": "399",
+    "mach": "0.65",
+    "mach_thousandths": "0.647",
+    "wind_component": "23",
+    "groundspeed": "422",
+    "time_leg": "102",
+    "time_total": "1914",
+    "fuel_flow": "2448",
+    "fuel_leg": "69",
+    "fuel_totalused": "1904",
+    "fuel_min_onboard": "2587",
+    "fuel_plan_onboard": "3362",
+    "oat": "-23",
+    "oat_isa_dev": "8",
+    "wind_dir": "243",
+    "wind_spd": "33",
+    "shear": "2",
+    "tropopause_feet": "39500",
+    "ground_height": "100",
+    "fir": "EBUR",
+    "fir_units": "N,F",
+    "fir_valid_levels": "1000,3000,5000,7000,9000,11000,13000,15000,17000,19000,21000,23000,25000,27000,29000,31000,33000,35000,37000,39000,41000,45000,49000,53000,57000,61000,65000,69000",
+    "mora": "2600",
+    "wind_data": {
+     "level": [
+      {
+       "altitude": "0",
+       "wind_dir": "349",
+       "wind_spd": "5",
+       "oat": "29"
+      },
+      {
+       "altitude": "5000",
+       "wind_dir": "246",
+       "wind_spd": "11",
+       "oat": "18"
+      },
+      {
+       "altitude": "10000",
+       "wind_dir": "243",
+       "wind_spd": "21",
+       "oat": "7"
+      },
+      {
+       "altitude": "14000",
+       "wind_dir": "261",
+       "wind_spd": "20",
+       "oat": "-3"
+      },
+      {
+       "altitude": "18000",
+       "wind_dir": "261",
+       "wind_spd": "21",
+       "oat": "-12"
+      },
+      {
+       "altitude": "24000",
+       "wind_dir": "243",
+       "wind_spd": "35",
+       "oat": "-25"
+      },
+      {
+       "altitude": "30000",
+       "wind_dir": "240",
+       "wind_spd": "44",
+       "oat": "-38"
+      },
+      {
+       "altitude": "34000",
+       "wind_dir": "247",
+       "wind_spd": "50",
+       "oat": "-49"
+      },
+      {
+       "altitude": "39000",
+       "wind_dir": "240",
+       "wind_spd": "54",
+       "oat": "-58"
+      },
+      {
+       "altitude": "45000",
+       "wind_dir": "249",
+       "wind_spd": "30",
+       "oat": "-53"
+      }
+     ]
+    },
+    "fir_crossing": {}
+   },
+   {
+    "ident": "TOD",
+    "name": "TOP OF DESCENT",
+    "type": "ltlg",
+    "icao_region": {},
+    "region_code": {},
+    "frequency": {},
+    "pos_lat": "50.272968",
+    "pos_long": "5.406212",
+    "stage": "CRZ",
+    "via_airway": "DCT",
+    "is_sid_star": "0",
+    "distance": "30",
+    "track_true": "140",
+    "track_mag": "138",
+    "heading_true": "144",
+    "heading_mag": "141",
+    "altitude_feet": "23000",
+    "ind_airspeed": "282",
+    "true_airspeed": "401",
+    "mach": "0.65",
+    "mach_thousandths": "0.65",
+    "wind_component": "9",
+    "groundspeed": "410",
+    "time_leg": "263",
+    "time_total": "2177",
+    "fuel_flow": "2520",
+    "fuel_leg": "184",
+    "fuel_totalused": "2088",
+    "fuel_min_onboard": "2403",
+    "fuel_plan_onboard": "3178",
+    "oat": "-22",
+    "oat_isa_dev": "9",
+    "wind_dir": "251",
+    "wind_spd": "29",
+    "shear": "1",
+    "tropopause_feet": "40300",
+    "ground_height": "1085",
+    "fir": "EBUR",
+    "fir_units": "N,F",
+    "fir_valid_levels": "1000,3000,5000,7000,9000,11000,13000,15000,17000,19000,21000,23000,25000,27000,29000,31000,33000,35000,37000,39000,41000,45000,49000,53000,57000,61000,65000,69000",
+    "mora": "3200",
+    "wind_data": {
+     "level": [
+      {
+       "altitude": "0",
+       "wind_dir": "282",
+       "wind_spd": "4",
+       "oat": "33"
+      },
+      {
+       "altitude": "5000",
+       "wind_dir": "251",
+       "wind_spd": "8",
+       "oat": "20"
+      },
+      {
+       "altitude": "10000",
+       "wind_dir": "233",
+       "wind_spd": "17",
+       "oat": "7"
+      },
+      {
+       "altitude": "14000",
+       "wind_dir": "250",
+       "wind_spd": "16",
+       "oat": "-2"
+      },
+      {
+       "altitude": "18000",
+       "wind_dir": "248",
+       "wind_spd": "22",
+       "oat": "-12"
+      },
+      {
+       "altitude": "24000",
+       "wind_dir": "251",
+       "wind_spd": "30",
+       "oat": "-24"
+      },
+      {
+       "altitude": "30000",
+       "wind_dir": "241",
+       "wind_spd": "33",
+       "oat": "-38"
+      },
+      {
+       "altitude": "34000",
+       "wind_dir": "247",
+       "wind_spd": "35",
+       "oat": "-48"
+      },
+      {
+       "altitude": "39000",
+       "wind_dir": "244",
+       "wind_spd": "43",
+       "oat": "-57"
+      },
+      {
+       "altitude": "45000",
+       "wind_dir": "247",
+       "wind_spd": "27",
+       "oat": "-54"
+      }
+     ]
+    },
+    "fir_crossing": {}
+   },
+   {
+    "ident": "ELLX",
+    "name": "LUXEMBOURG",
+    "type": "apt",
+    "icao_region": "EL",
+    "region_code": {},
+    "frequency": {},
+    "pos_lat": "49.623333",
+    "pos_long": "6.204444",
+    "stage": "DSC",
+    "via_airway": "DCT",
+    "is_sid_star": "0",
+    "distance": "63",
+    "track_true": "141",
+    "track_mag": "140",
+    "heading_true": "142",
+    "heading_mag": "141",
+    "altitude_feet": "3700",
+    "ind_airspeed": "250",
+    "true_airspeed": "273",
+    "mach": "0.4",
+    "mach_thousandths": "0.4",
+    "wind_component": "5",
+    "groundspeed": "278",
+    "time_leg": "944",
+    "time_total": "3121",
+    "fuel_flow": "1575",
+    "fuel_leg": "282",
+    "fuel_totalused": "2370",
+    "fuel_min_onboard": "2121",
+    "fuel_plan_onboard": "2896",
+    "oat": "26",
+    "oat_isa_dev": "18",
+    "wind_dir": "291",
+    "wind_spd": "06",
+    "shear": "1",
+    "tropopause_feet": "40400",
+    "ground_height": "1416",
+    "fir": "EBBU",
+    "fir_units": "N,F",
+    "fir_valid_levels": "1000,3000,5000,7000,9000,11000,13000,15000,17000,19000,21000,23000,25000,27000,29000,31000,33000,35000,37000,39000,41000,45000,49000,53000,57000,61000,65000,69000",
+    "mora": "4000",
+    "wind_data": {
+     "level": [
+      {
+       "altitude": "0",
+       "wind_dir": "305",
+       "wind_spd": "5",
+       "oat": "35"
+      },
+      {
+       "altitude": "5000",
+       "wind_dir": "281",
+       "wind_spd": "7",
+       "oat": "22"
+      },
+      {
+       "altitude": "10000",
+       "wind_dir": "239",
+       "wind_spd": "10",
+       "oat": "7"
+      },
+      {
+       "altitude": "14000",
+       "wind_dir": "237",
+       "wind_spd": "15",
+       "oat": "-3"
+      },
+      {
+       "altitude": "18000",
+       "wind_dir": "249",
+       "wind_spd": "22",
+       "oat": "-12"
+      },
+      {
+       "altitude": "24000",
+       "wind_dir": "245",
+       "wind_spd": "27",
+       "oat": "-24"
+      },
+      {
+       "altitude": "30000",
+       "wind_dir": "245",
+       "wind_spd": "28",
+       "oat": "-38"
+      },
+      {
+       "altitude": "34000",
+       "wind_dir": "253",
+       "wind_spd": "29",
+       "oat": "-48"
+      },
+      {
+       "altitude": "39000",
+       "wind_dir": "243",
+       "wind_spd": "38",
+       "oat": "-57"
+      },
+      {
+       "altitude": "45000",
+       "wind_dir": "250",
+       "wind_spd": "26",
+       "oat": "-54"
+      }
+     ]
+    },
+    "fir_crossing": {}
+   }
+  ]
+ }
+}

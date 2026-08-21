@@ -292,7 +292,8 @@ namespace FSTRaK.ViewModels
                     {
                         IQueryable<Flight> query = logbookContext.Flights
                             .OrderByDescending(f => f.Id)
-                            .Include(f => f.Aircraft);
+                            .Include(f => f.Aircraft)
+                            .Include(f => f.FlightPlan.Points);
 
                         if (!string.IsNullOrEmpty(search))
                         {
