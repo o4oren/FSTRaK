@@ -153,7 +153,7 @@
                             <LineBreak />
                             <Run Text="{Binding Path=Aircraft.Manufacturer}"/> <Run Text="{Binding Path=Aircraft.AircraftType}"/>, <Run Text="{Binding Path=Aircraft.TailNumber}"/>
                             <LineBreak />
-                            <Run Text="{Binding Path=Aircraft.Airline}"/>
+                            <Run Text="{Binding DisplayAirline, Mode=OneWay}"/> <Run Text="{Binding PlanFlightNumber, Mode=OneWay}"/>
                         </TextBlock>
                         </StackPanel>
                     </DataTemplate>
