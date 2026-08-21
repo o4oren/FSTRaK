@@ -175,6 +175,15 @@
                         </StackPanel.ToolTip>
                     </StackPanel>
 
+                    <StackPanel Orientation="Horizontal" Margin="10" Visibility="{Binding IsShowStadiaApiKeyField, Converter={StaticResource BoolToVis}}" ToolTipService.ShowDuration="5000">
+                        <Label  Style="{DynamicResource FSTrAkLabel}" Width="250">Stadia Maps API Key</Label>
+                        <TextBox FontFamily="{DynamicResource CurrentFont}" Foreground="{DynamicResource TextColor}" Background="{DynamicResource ControlBackgroundColorBrush}" FontSize="{DynamicResource ControlFontSize}" Text="{Binding StadiaApiKey}" Width="200" Cursor="Arrow" TextAlignment="Center" Padding="0 6 0 0"/>
+                        <StackPanel.ToolTip>
+                            Stamen map styles are hosted by Stadia Maps and require an API Key (free tier available).
+                            Please see https://docs.stadiamaps.com/authentication/.
+                        </StackPanel.ToolTip>
+                    </StackPanel>
+
                     <StackPanel Orientation="Horizontal" Margin="10">
                         <Label Style="{DynamicResource FSTrAkLabel}" Width="250">Map Overlays</Label>
                     </StackPanel>

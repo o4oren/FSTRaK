@@ -40,6 +40,11 @@ namespace FSTRaK.ViewModels
                     else
                         IsShowMapTilerApiKeyField = false;
 
+                    if (mapProvider is StadiaMapsMapTileLayer)
+                        IsShowStadiaApiKeyField = true;
+                    else
+                        IsShowStadiaApiKeyField = false;
+
                     BusinessLogic.TileServer.TileServer.Instance.ClearTileCache();
                 }
                 OnPropertyChanged();
@@ -68,6 +73,19 @@ namespace FSTRaK.ViewModels
                 _mapTilerApiKey = value;
                 Properties.Settings.Default.MapTilerApiKey = _mapTilerApiKey;
                 MapTilerMapTileLayer.ApiKey = _mapTilerApiKey;
+                OnPropertyChanged();
+            }
+        }
+
+        private string _stadiaApiKey = "";
+        public string StadiaApiKey
+        {
+            get => _stadiaApiKey;
+            set
+            {
+                _stadiaApiKey = value;
+                Properties.Settings.Default.StadiaApiKey = _stadiaApiKey;
+                StadiaMapsMapTileLayer.ApiKey = _stadiaApiKey;
                 OnPropertyChanged();
             }
         }
@@ -102,6 +120,17 @@ namespace FSTRaK.ViewModels
             private set
             {
                 _isShowMapTilerApiKeyField = value;
+                OnPropertyChanged();
+            }
+        }
+
+        private bool _isShowStadiaApiKeyField = false;
+        public bool IsShowStadiaApiKeyField
+        {
+            get => _isShowStadiaApiKeyField;
+            private set
+            {
+                _isShowStadiaApiKeyField = value;
                 OnPropertyChanged();
             }
         }
@@ -480,6 +509,7 @@ namespace FSTRaK.ViewModels
             SelectedMapProvider = Properties.Settings.Default.MapTileProvider;
             BingApiKey = Properties.Settings.Default.BingApiKey;
             MapTilerApiKey = Properties.Settings.Default.MapTilerApiKey;
+            StadiaApiKey = Properties.Settings.Default.StadiaApiKey;
             IsAlwaysOnTop = Properties.Settings.Default.IsAlwaysOnTop;
             IsSaveOnlyCompleteFlights = Properties.Settings.Default.IsSaveOnlyCompleteFlights;
             Units = (Units)Properties.Settings.Default.Units;
