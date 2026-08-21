@@ -210,8 +210,9 @@ namespace FSTRaK.BusinessLogic.FlightManager.State
                 if (string.IsNullOrWhiteSpace(Context.ActiveFlight.Aircraft?.Airline)
                     && !string.IsNullOrWhiteSpace(plan.AirlineIcao))
                 {
-                    Context.ActiveFlight.Aircraft.Airline = plan.AirlineIcao;
-                    Log.Information($"SimBrief: backfilled blank aircraft airline with {plan.AirlineIcao}");
+                    var airline = AirlineResolver.Instance.GetAirlineNameByIcao(plan.AirlineIcao) ?? plan.AirlineIcao;
+                    Context.ActiveFlight.Aircraft.Airline = airline;
+                    Log.Information($"SimBrief: backfilled blank aircraft airline with {airline}");
                 }
             }
             catch (Exception ex)

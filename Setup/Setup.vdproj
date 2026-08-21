@@ -2424,6 +2424,26 @@
             "IsDependency" = "11:TRUE"
             "IsolateTo" = "8:"
             }
+            "{1FB2D0AE-D3B9-43D4-B9DD-F88EC61E35DE}:_4BA98A109EEA47E2B8D4446FBDC45010"
+            {
+            "SourcePath" = "8:..\\FSTRaK\\Resources\\Data\\airlines.csv"
+            "TargetName" = "8:airlines.csv"
+            "Tag" = "8:"
+            "Folder" = "8:_B36C97FD641544D891A60BCF79156393"
+            "Condition" = "8:"
+            "Transitive" = "11:FALSE"
+            "Vital" = "11:TRUE"
+            "ReadOnly" = "11:FALSE"
+            "Hidden" = "11:FALSE"
+            "System" = "11:FALSE"
+            "Permanent" = "11:FALSE"
+            "SharedLegacy" = "11:FALSE"
+            "PackageAs" = "3:1"
+            "Register" = "3:1"
+            "Exclude" = "11:FALSE"
+            "IsDependency" = "11:FALSE"
+            "IsolateTo" = "8:"
+            }
             "{1FB2D0AE-D3B9-43D4-B9DD-F88EC61E35DE}:_5CB95CA1B51B4867BB998DD0AC046820"
             {
             "SourcePath" = "8:..\\FSTRaK\\Resources\\Data\\airports.csv"
