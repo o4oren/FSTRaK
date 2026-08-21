@@ -8,4 +8,4 @@
 - A "Plan" toggle on the live map overlays the planned route with waypoint labels and planned altitude/speed/fuel tooltips.
 - When you land at the planned arrival or a planned alternate, the plan (aircraft, airports, route, fuel, times, weights, passengers/cargo and all navlog points) is saved with the flight.
 - Flight details show the planned route overlay and a planned-vs-actual card (fuel, block time, distance, payload, pax/cargo), including a DIVERTED indicator when you landed at an alternate.
-- The logbook shows the planned flight number (e.g. BAW0414); a blank aircraft airline is backfilled from the plan.
+- The logbook shows the planned flight number (e.g. BAW0414); a blank aircraft airline is backfilled from the plan, with the ICAO code resolved to the airline name (e.g. British Airways) via a bundled airline database.
