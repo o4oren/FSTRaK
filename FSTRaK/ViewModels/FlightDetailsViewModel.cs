@@ -121,7 +121,6 @@ namespace FSTRaK.ViewModels
                 {
                     var location = new Location(point.Latitude, point.Longitude);
                     PlannedRoutePath.Add(location);
-                    if (point.Type == "apt") continue; // airports are already visible on the map
                     PlannedWaypoints.Add(new PlannedWaypointPin
                     {
                         Location = location,

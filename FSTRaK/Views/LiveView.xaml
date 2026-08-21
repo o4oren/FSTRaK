@@ -81,15 +81,19 @@
                 <map:MapItemsControl.ItemContainerStyle>
                     <Style TargetType="map:MapItem">
                         <Setter Property="Location" Value="{Binding Location}"/>
+                        <!-- Left/Center anchoring + the -4px margin on the content puts the 8px dot's center exactly on the route line -->
+                        <Setter Property="HorizontalAlignment" Value="Left"/>
+                        <Setter Property="VerticalAlignment" Value="Center"/>
+                        <Setter Property="Padding" Value="0"/>
                     </Style>
                 </map:MapItemsControl.ItemContainerStyle>
                 <map:MapItemsControl.ItemTemplate>
                     <DataTemplate>
-                        <StackPanel Orientation="Horizontal" ToolTip="{Binding Tooltip}" ToolTipService.ShowDuration="10000">
-                            <Ellipse Width="8" Height="8" Fill="{DynamicResource PlannedPathColorBrush}" Stroke="White" StrokeThickness="1"/>
-                            <TextBlock Text="{Binding Ident}" Margin="4,0,0,0" FontSize="11"
+                        <StackPanel Orientation="Horizontal" Margin="-4,0,0,0" ToolTip="{Binding Tooltip}" ToolTipService.ShowDuration="10000">
+                            <Ellipse Width="8" Height="8" VerticalAlignment="Center" Fill="{DynamicResource PlannedPathColorBrush}" Stroke="White" StrokeThickness="1"/>
+                            <TextBlock Text="{Binding Ident}" Margin="4,0,0,0" FontSize="11" VerticalAlignment="Center"
                                        FontFamily="{DynamicResource CurrentFont}"
-                                       Foreground="{DynamicResource SuperBrightTextColor}"/>
+                                       Foreground="{DynamicResource PlannedPathColorBrush}"/>
                         </StackPanel>
                     </DataTemplate>
                 </map:MapItemsControl.ItemTemplate>
