@@ -44,6 +44,9 @@
     <Setting Name="VatsimId" Type="System.String" Scope="User">
       <Value Profile="(Default)" />
     </Setting>
+    <Setting Name="SimbriefUser" Type="System.String" Scope="User">
+      <Value Profile="(Default)" />
+    </Setting>
     <Setting Name="IvaoId" Type="System.String" Scope="User">
       <Value Profile="(Default)" />
     </Setting>

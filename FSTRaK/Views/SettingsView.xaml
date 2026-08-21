@@ -314,6 +314,18 @@
                         </StackPanel.ToolTip>
                     </StackPanel>
                     <StackPanel Orientation="Horizontal" Margin="10" ToolTipService.ShowDuration="5000">
+                        <Label Style="{DynamicResource FSTrAkLabel}" Width="250">SimBrief username / Pilot ID</Label>
+                        <TextBox FontFamily="{DynamicResource CurrentFont}"
+                                 Foreground="{DynamicResource TextColor}"
+                                 Background="{DynamicResource ControlBackgroundColorBrush}"
+                                 FontSize="{DynamicResource ControlFontSize}"
+                                 Width="200"
+                                 Text="{Binding SimbriefUser}" Cursor="Arrow" TextAlignment="Center" Padding="0 6 0 0"/>
+                        <StackPanel.ToolTip>
+                            Enter your SimBrief username or numeric Pilot ID to fetch your flight plan when a flight starts. Leave empty to disable SimBrief integration.
+                        </StackPanel.ToolTip>
+                    </StackPanel>
+                    <StackPanel Orientation="Horizontal" Margin="10" ToolTipService.ShowDuration="5000">
                         <Label Style="{DynamicResource FSTrAkLabel}" Width="250">StatSim API Key</Label>
                         <TextBox FontFamily="{DynamicResource CurrentFont}"
                                  Foreground="{DynamicResource TextColor}"

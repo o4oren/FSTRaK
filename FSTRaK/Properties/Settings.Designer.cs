@@ -194,6 +194,18 @@ namespace FSTRaK.Properties {
         [global::System.Configuration.UserScopedSettingAttribute()]
         [global::System.Diagnostics.DebuggerNonUserCodeAttribute()]
         [global::System.Configuration.DefaultSettingValueAttribute("")]
+        public string SimbriefUser {
+            get {
+                return ((string)(this["SimbriefUser"]));
+            }
+            set {
+                this["SimbriefUser"] = value;
+            }
+        }
+
+        [global::System.Configuration.UserScopedSettingAttribute()]
+        [global::System.Diagnostics.DebuggerNonUserCodeAttribute()]
+        [global::System.Configuration.DefaultSettingValueAttribute("")]
         public string IvaoId {
             get {
                 return ((string)(this["IvaoId"]));

@@ -368,6 +368,18 @@ namespace FSTRaK.ViewModels
             }
         }
 
+        private string _simbriefUser;
+        public string SimbriefUser
+        {
+            get => _simbriefUser;
+            set
+            {
+                _simbriefUser = value;
+                Properties.Settings.Default.SimbriefUser = _simbriefUser;
+                OnPropertyChanged();
+            }
+        }
+
         private string _ivaoId;
         public string IvaoId
         {
@@ -478,6 +490,7 @@ namespace FSTRaK.ViewModels
             Theme = Properties.Settings.Default.Theme;
 
             VatsimId = Properties.Settings.Default.VatsimId;
+            SimbriefUser = Properties.Settings.Default.SimbriefUser;
             IvaoId = Properties.Settings.Default.IvaoId;
             IvaoApiKey = Properties.Settings.Default.IvaoApiKey;
             StatSimApiKey = Properties.Settings.Default.StatSimApiKey;
