@@ -23,14 +23,33 @@ internal sealed class SimConnectService : INotifyPropertyChanged
     private const int ConnectionInterval = 10000;
     private const int WmUserSimconnect = 0x0402;
     private const int DataInterval = 50;
+
+    /// <summary>
+    /// How long an in-progress flight survives a dropped pipe before it is ended. Long
+    /// enough to ride out a transient blip, short enough that a flight does not sit open
+    /// after the user closes the simulator and walks away.
+    /// </summary>
+    private const int GracePeriodInterval = 60000;
+
     private const string MainMenuFlt = "flights\\other\\MainMenu.FLT";
     public const string MSFS2020 = "MSFS2020";
     public const string MSFS2024 = "MSFS2024";
     private SimConnect _simconnect = null;
 
+    /// <summary>
+    /// Guards every access to <see cref="_simconnect"/>. Three threads reach the handle:
+    /// the UI thread via WndProc, the data timer, and the connection timer. Critical
+    /// sections must stay narrow - never hold this across a property change, because
+    /// those reach the FlightManager state machine, which calls back into this service.
+    /// </summary>
+    private readonly object _simConnectLock = new object();
+
     private HwndSource _gHs;
     private Timer _connectionTimer;
     private Timer _dataTimer;
+    private Timer _gracePeriodTimer;
+
+    private bool _pendingIdentityCheck;
 
     private IntPtr _lHwnd;
 
@@ -44,6 +63,25 @@ internal sealed class SimConnectService : INotifyPropertyChanged
             if (value != _isConnected)
             {
                 _isConnected = value;
+                OnPropertyChanged();
+            }
+        }
+    }
+
+    private bool _isAwaitingReconnect;
+
+    /// <summary>
+    /// True between a pipe failure and either a successful reconnect or the grace period
+    /// expiring. The active flight is held in limbo while this is set.
+    /// </summary>
+    public bool IsAwaitingReconnect
+    {
+        get => _isAwaitingReconnect;
+        private set
+        {
+            if (value != _isAwaitingReconnect)
+            {
+                _isAwaitingReconnect = value;
                 OnPropertyChanged();
             }
         }
@@ -265,13 +303,15 @@ internal sealed class SimConnectService : INotifyPropertyChanged
         _gHs?.AddHook(new HwndSourceHook(WndProc));
         SetDataTimer();
         SetConnectionTimer();
+        SetGracePeriodTimer();
         WaitForSimConnection();
     }
 
     private void WaitForSimConnection()
     {
+        // ConnectToSimulator restarts the connection timer itself when it fails to
+        // produce a handle, so there is nothing left to do here.
         ConnectToSimulator();
-        if (_simconnect == null) _connectionTimer.Start();
     }
 
     private void SetConnectionTimer()
@@ -288,6 +328,48 @@ internal sealed class SimConnectService : INotifyPropertyChanged
         _dataTimer.AutoReset = true;
     }
 
+    private void SetGracePeriodTimer()
+    {
+        _gracePeriodTimer = new Timer(GracePeriodInterval);
+        _gracePeriodTimer.AutoReset = false;
+        _gracePeriodTimer.Elapsed += (sender, e) => OnGracePeriodExpired();
+    }
+
+    private void OnGracePeriodExpired()
+    {
+        Log.Information($"No reconnection within {GracePeriodInterval / 1000}s - ending the flight.");
+        IsAwaitingReconnect = false;
+        IsInFlight = false;
+    }
+
+    /// <summary>
+    /// Tears down a failed connection and starts reconnecting. An active flight is kept
+    /// alive for the grace period so a transient pipe failure does not discard it.
+    /// </summary>
+    private void HandleConnectionLost()
+    {
+        var hadFlight = IsInFlight;
+
+        StopGettingData();
+        Close();
+        IsConnected = false;
+        SimVersion = null;
+
+        if (hadFlight)
+        {
+            IsAwaitingReconnect = true;
+            _gracePeriodTimer.Stop();
+            _gracePeriodTimer.Start();
+            Log.Information($"Connection lost mid-flight; holding the flight for {GracePeriodInterval / 1000}s.");
+        }
+        else
+        {
+            IsInFlight = false;
+        }
+
+        _connectionTimer.Start();
+    }
+
     private void StartGettingData()
     {
         _dataTimer.Start();
@@ -300,16 +382,48 @@ internal sealed class SimConnectService : INotifyPropertyChanged
 
     private void ConnectToSimulator()
     {
+        bool connected;
+
         try
         {
             Log.Debug("Trying to connect to the simulator...");
-            _simconnect = new SimConnect("FSTrAk", _lHwnd, WmUserSimconnect, null, 0);
-            if (_simconnect != null) ConfigureSimconnect();
+
+            lock (_simConnectLock)
+            {
+                _simconnect = new SimConnect("FSTrAk", _lHwnd, WmUserSimconnect, null, 0);
+
+                try
+                {
+                    ConfigureSimconnect();
+                }
+                catch (Exception ex)
+                {
+                    // A half-configured handle would otherwise be retained forever, and
+                    // WaitForSimConnection only restarts the timer when the field is null.
+                    Log.Error(ex, "SimConnect configuration failed; discarding the handle.");
+                    _simconnect.Dispose();
+                    _simconnect = null;
+                    throw;
+                }
+            }
         }
         catch (COMException ex)
         {
             Log.Debug(ex, ex.Message);
-            // Do nothing
+        }
+        catch (Exception ex)
+        {
+            Log.Error(ex, "Unexpected failure while connecting to the simulator.");
+        }
+
+        lock (_simConnectLock)
+        {
+            connected = _simconnect != null;
+        }
+
+        if (!connected && _connectionTimer != null && !_connectionTimer.Enabled)
+        {
+            _connectionTimer.Start();
         }
     }
 
@@ -560,9 +674,14 @@ internal sealed class SimConnectService : INotifyPropertyChanged
     private void simconnect_OnRecvQuit(SimConnect sender, SIMCONNECT_RECV data)
     {
         Log.Information("Connection to the simulator is closed!");
+
+        StopGettingData();
         Close();
         IsConnected = false;
         SimVersion = null;
+        IsAwaitingReconnect = false;
+        _gracePeriodTimer.Stop();
+        IsInFlight = false;   // was missing: a flight in progress was orphaned, never saved
         _connectionTimer.Start();
     }
 
@@ -571,21 +690,31 @@ internal sealed class SimConnectService : INotifyPropertyChanged
         Log.Information("Connected to flight simulator!");
         _connectionTimer.Stop();
         IsConnected = true;
-        _simconnect.RequestFacilitiesList_EX1(SIMCONNECT_FACILITY_LIST_TYPE.AIRPORT, Requests.SimVersionRequest);
+
+        _gracePeriodTimer.Stop();
+
+        if (IsAwaitingReconnect)
+        {
+            // Cancelled by reconnection, not by a completed identity check: the first data
+            // sample may arrive well after the window would have closed, and a flight we
+            // successfully reconnected to must not be lost waiting for it.
+            Log.Information("Reconnected inside the grace window; verifying flight identity.");
+            _pendingIdentityCheck = true;
+            RequestLoadedAircraft();
+        }
+
+        SafeSimConnectCall(
+            sc => sc.RequestFacilitiesList_EX1(SIMCONNECT_FACILITY_LIST_TYPE.AIRPORT, Requests.SimVersionRequest),
+            "RequestFacilitiesList_EX1 (sim version)");
     }
 
     private void simconnect_OnRecvException(SimConnect sender, SIMCONNECT_RECV_EXCEPTION data)
     {
-        Log.Error($"Simconnect exception {data.dwException}");
+        var exception = (SIMCONNECT_EXCEPTION)data.dwException;
 
-        // Due to previous hanging after System.Runtime.InteropServices.COMException (0xC000014B) we will try to set IsConnected to false - and let it try to connect again.
-        if (data.dwException is (uint)0xC000014B)
-        {
-            IsConnected = false;
-            StopGettingData();
-            Close();
-            _connectionTimer.Start();
-        }
+        // Protocol-level errors - a bad SimVar or an unknown request - do not indicate a
+        // failed pipe, so they must not trigger a teardown.
+        Log.Error($"SimConnect exception {exception} on send id {data.dwSendID}, index {data.dwIndex}");
     }
 
     private void Simconnect_OnRecvSimobjectData(SimConnect sender, SIMCONNECT_RECV_SIMOBJECT_DATA data)
@@ -610,17 +739,48 @@ internal sealed class SimConnectService : INotifyPropertyChanged
         }
     }
 
-    public void RequestNearestAirport()
+    /// <summary>
+    /// Runs a SimConnect call under the handle lock, routing any failure through the
+    /// recovery path. NullReference and ObjectDisposed are caught alongside COMException
+    /// because a teardown can still race a caller that captured the handle.
+    ///
+    /// The lock is released before any handler runs: recovery sets properties, which reach
+    /// the FlightManager state machine, which calls back into this service. Holding the
+    /// lock across that path would deadlock, so the catch blocks sit outside the lock
+    /// statement rather than inside it.
+    /// </summary>
+    private void SafeSimConnectCall(Action<SimConnect> call, string description)
     {
-        NearestAirportDistance = double.MaxValue;
         try
         {
-            _simconnect.RequestFacilitiesList_EX1(SIMCONNECT_FACILITY_LIST_TYPE.AIRPORT, Requests.NearbyAirportsRequest);
+            lock (_simConnectLock)
+            {
+                if (_simconnect == null)
+                {
+                    Log.Debug($"Skipping {description} - no SimConnect handle.");
+                    return;
+                }
+
+                call(_simconnect);
+            }
         }
         catch (COMException ex)
         {
             HandleCOMException(ex);
         }
+        catch (Exception ex) when (ex is NullReferenceException || ex is ObjectDisposedException)
+        {
+            Log.Warning(ex, $"SimConnect handle disposed during {description}; reconnecting.");
+            HandleConnectionLost();
+        }
+    }
+
+    public void RequestNearestAirport()
+    {
+        NearestAirportDistance = double.MaxValue;
+        SafeSimConnectCall(
+            sc => sc.RequestFacilitiesList_EX1(SIMCONNECT_FACILITY_LIST_TYPE.AIRPORT, Requests.NearbyAirportsRequest),
+            nameof(RequestNearestAirport));
     }
 
     /// <summary>
@@ -628,17 +788,13 @@ internal sealed class SimConnectService : INotifyPropertyChanged
     /// </summary>
     public void RequestLoadedAircraft()
     {
-        try
+        SafeSimConnectCall(sc =>
         {
-            _simconnect.RequestDataOnSimObject(Requests.AircraftDataRequest, DataDefinitions.AircraftData,
-                SimConnect.SIMCONNECT_OBJECT_ID_USER, SIMCONNECT_PERIOD.ONCE, SIMCONNECT_DATA_REQUEST_FLAG.DEFAULT,
-                0u, 0u, 0u);
-            _simconnect.RequestSystemState(Requests.AircraftLoaded, "AircraftLoaded");
-        }
-        catch (COMException ex)
-        {
-            HandleCOMException(ex);
-        }
+            sc.RequestDataOnSimObject(Requests.AircraftDataRequest, DataDefinitions.AircraftData,
+                SimConnect.SIMCONNECT_OBJECT_ID_USER, SIMCONNECT_PERIOD.ONCE,
+                SIMCONNECT_DATA_REQUEST_FLAG.DEFAULT, 0u, 0u, 0u);
+            sc.RequestSystemState(Requests.AircraftLoaded, "AircraftLoaded");
+        }, nameof(RequestLoadedAircraft));
     }
 
     /// <summary>
@@ -646,16 +802,11 @@ internal sealed class SimConnectService : INotifyPropertyChanged
     /// </summary>
     public void RequestFlightData()
     {
-        try
-        {
-            _simconnect.RequestDataOnSimObject(Requests.FlightDataRequest, DataDefinitions.FlightData,
-                SimConnect.SIMCONNECT_OBJECT_ID_USER, SIMCONNECT_PERIOD.ONCE, SIMCONNECT_DATA_REQUEST_FLAG.CHANGED,
-                0u, 0u, 0u);
-        }
-        catch (COMException ex)
-        {
-            HandleCOMException(ex);
-        }
+        SafeSimConnectCall(sc =>
+            sc.RequestDataOnSimObject(Requests.FlightDataRequest, DataDefinitions.FlightData,
+                SimConnect.SIMCONNECT_OBJECT_ID_USER, SIMCONNECT_PERIOD.ONCE,
+                SIMCONNECT_DATA_REQUEST_FLAG.CHANGED, 0u, 0u, 0u),
+            nameof(RequestFlightData));
     }
 
     private void Simconnect_OnRecvAirportList(SimConnect sender, SIMCONNECT_RECV_AIRPORT_LIST data)
@@ -712,20 +863,12 @@ internal sealed class SimConnectService : INotifyPropertyChanged
         handled = false;
         // If message is coming from simconnect and the connection is not null;
         // Continue and receive message.
-        if (msg == WmUserSimconnect && _simconnect != null)
+        if (msg == WmUserSimconnect)
         {
-            try
-            {
-                _simconnect.ReceiveMessage();
-            }
-            catch (COMException ex)
-            {
-                HandleCOMException(ex);
-            }
-            finally
-            {
-                handled = true;
-            }
+            // The _simconnect != null test now lives inside the helper, where it is read
+            // under the lock instead of racing a concurrent teardown.
+            SafeSimConnectCall(sc => sc.ReceiveMessage(), "ReceiveMessage");
+            handled = true;
         }
 
         return (IntPtr)0;
@@ -733,41 +876,28 @@ internal sealed class SimConnectService : INotifyPropertyChanged
 
     private void HandleCOMException(COMException ex)
     {
-        // Log the error details
-        Log.Error($"COMException: {ex.Message} (HRESULT: {ex.ErrorCode})");
-        // existing handling...
-        switch ((uint)ex.ErrorCode)
+        var hresult = (uint)ex.ErrorCode;
+        Log.Error(ex, $"COMException: {ConnectionRecovery.DescribeFor(hresult)} (HRESULT: 0x{hresult:X8})");
+
+        if (ConnectionRecovery.ActionFor(hresult) == RecoveryAction.Reconnect)
         {
-            case 0xC000014B:
-                Log.Information("Connection to the simulator is closed due to an exception!");
-                Close();
-                IsConnected = false;
-                IsInFlight = false;
-                SimVersion = null;
-                _connectionTimer.Start();
-                break;
-            case 0x80004005: // E_FAIL
-                Log.Error("Unspecified error occurred.");
-                break;
-            case 0x800706BA: // RPC_S_SERVER_UNAVAILABLE
-                Log.Error("The RPC server is unavailable. Please check the SimConnect connection.");
-                break;
-            default:
-                Log.Error("An unknown error occurred.");
-                Log.Error(ex, "COMException thrown. HResult: {HResult:X8}, ErrorCode: {ErrorCode}", ex.HResult, ex.ErrorCode);
-                break;
+            HandleConnectionLost();
         }
     }
 
-        [MethodImpl(MethodImplOptions.Synchronized)]
     public void Close()
     {
-        _dataTimer.Stop();
-        if (_simconnect != null)
+        _dataTimer?.Stop();
+
+        lock (_simConnectLock)
         {
-            _simconnect.Dispose();
-            _simconnect = null;
+            if (_simconnect != null)
+            {
+                _simconnect.Dispose();
+                _simconnect = null;
+            }
         }
+
         Log.Debug("SimConnect Disposed!");
     }
 }
