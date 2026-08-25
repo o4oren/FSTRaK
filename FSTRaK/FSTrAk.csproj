@@ -132,6 +132,7 @@
     <Compile Include="BusinessLogic\TileServer\TileHandler.cs" />
     <Compile Include="BusinessLogic\TileServer\TileProxyService.cs" />
     <Compile Include="BusinessLogic\TileServer\TileServer.cs" />
+    <Compile Include="BusinessLogic\SimconnectService\ConnectionRecovery.cs" />
     <Compile Include="BusinessLogic\SimconnectService\SimConnectService.cs" />
     <Compile Include="BusinessLogic\VatsimService\VatsimModel\Atis.cs" />
     <Compile Include="BusinessLogic\VatsimService\VatsimModel\BoundariesGeoJson.cs" />
