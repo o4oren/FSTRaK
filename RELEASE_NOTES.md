@@ -1,15 +1,31 @@
-# FSTRaK 3.7.0 Release Notes
+# FSTRaK 3.7.5 Release Notes
 
-## New Features
+This is a stability release focused on how FSTRaK handles losing its connection to the simulator.
 
-**SimBrief Integration**
-- New setting: SimBrief username / Pilot ID (Settings → leave empty to disable).
-- When a flight starts, FSTRaK silently fetches your latest SimBrief OFP and matches it against the detected departure airport (re-checked at taxi-out, which takes precedence).
-- A "Plan" toggle on the live map overlays the planned route with waypoint labels and planned altitude/speed/fuel tooltips.
-- When you land at the planned arrival or a planned alternate, the plan (aircraft, airports, route, fuel, times, weights, passengers/cargo and all navlog points) is saved with the flight.
-- Flight details show the planned route overlay and a planned-vs-actual card (fuel, block time, distance, payload, pax/cargo), including a DIVERTED indicator when you landed at an alternate.
-- The logbook shows the planned flight number (e.g. BAW0414); a blank aircraft airline is backfilled from the plan, with the ICAO code resolved to the airline name (e.g. British Airways) via a bundled airline database.
+## Fixes
 
-**Stamen Map Styles**
-- Three new map styles: Stamen Terrain, Stamen Watercolor and Stamen Toner (hosted by Stadia Maps).
-- New setting: Stadia Maps API Key — required for the Stamen styles (free tier available at stadiamaps.com).
+**Connection loss no longer leaves FSTRaK in a broken state**
+- A SimConnect pipe error previously left FSTRaK polling a dead connection indefinitely, appearing connected while receiving nothing. All connection errors now tear down cleanly and reconnect.
+- A dropped connection mid-flight now holds the flight for 60 seconds instead of abandoning it. If the simulator comes back within that window with the same aircraft near your last known position, the flight simply continues — a brief connection blip no longer costs you a long flight.
+- If the reconnected session is a different flight (different aircraft, or a jump to another airport), the original flight is ended rather than silently continued.
+- Closing MSFS mid-flight previously left the flight hanging indefinitely, with FSTRaK still showing it as active. The flight now ends cleanly.
+
+  Note: a flight ended this way is still not written to the logbook — only flights that reach a parking spot are saved. Recovering an interrupted flight into the logbook is a separate change, not part of this release.
+
+**Leaving a flight while paused is now detected reliably**
+- Camera state — which is how FSTRaK detects a flight starting and ending — is now polled independently of flight data, so pausing or opening a menu no longer blinds the detection.
+- Pausing immediately after landing and then quitting now finalises the landing correctly, including its touchdown G force. Previously the landing could be dropped.
+
+**Other**
+- Fixed a connection-setup failure that could leave FSTRaK permanently unable to reconnect until restarted.
+- Fixed aircraft records created immediately after a reconnect being saved with incorrect livery handling on MSFS 2020.
+
+## Changes
+
+- Flight data now arrives on a SimConnect subscription tied to the simulator's physics loop, instead of being polled 20 times a second. This reduces inter-process traffic and samples aircraft state more accurately, which slightly improves the precision of landing scores.
+- Because samples now follow the simulator's physics loop, pausing within about two seconds of touchdown will end G-force sampling for that landing. The frozen simulation has nothing further to measure, so the resulting score reflects the actual touchdown.
+
+## Under the hood
+
+- All SimConnect calls are now synchronised, removing a race between the UI thread and the background polling timers.
+- Flight-state detection and the reconnect identity check are now covered by unit tests.

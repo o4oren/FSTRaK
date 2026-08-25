@@ -22,15 +22,39 @@ internal sealed class SimConnectService : INotifyPropertyChanged
 {
     private const int ConnectionInterval = 10000;
     private const int WmUserSimconnect = 0x0402;
-    private const int DataInterval = 50;
-    private const string MainMenuFlt = "flights\\other\\MainMenu.FLT";
+    /// <summary>
+    /// Camera state is polled on a wall clock rather than delivered with the flight data
+    /// subscription, because it must keep arriving while the simulator is paused or in a
+    /// menu. A quarter second is well inside human reaction time for a menu transition and
+    /// costs a fraction of the former 50ms full-struct poll.
+    /// </summary>
+    private const int CameraPollInterval = 250;
+
+    /// <summary>
+    /// How long an in-progress flight survives a dropped pipe before it is ended. Long
+    /// enough to ride out a transient blip, short enough that a flight does not sit open
+    /// after the user closes the simulator and walks away.
+    /// </summary>
+    private const int GracePeriodInterval = 60000;
+
     public const string MSFS2020 = "MSFS2020";
     public const string MSFS2024 = "MSFS2024";
     private SimConnect _simconnect = null;
 
+    /// <summary>
+    /// Guards every access to <see cref="_simconnect"/>. Three threads reach the handle:
+    /// the UI thread via WndProc, the camera timer, and the connection timer. Critical
+    /// sections must stay narrow - never hold this across a property change, because
+    /// those reach the FlightManager state machine, which calls back into this service.
+    /// </summary>
+    private readonly object _simConnectLock = new object();
+
     private HwndSource _gHs;
     private Timer _connectionTimer;
-    private Timer _dataTimer;
+    private Timer _cameraTimer;
+    private Timer _gracePeriodTimer;
+
+    private bool _pendingIdentityCheck;
 
     private IntPtr _lHwnd;
 
@@ -44,6 +68,25 @@ internal sealed class SimConnectService : INotifyPropertyChanged
             if (value != _isConnected)
             {
                 _isConnected = value;
+                OnPropertyChanged();
+            }
+        }
+    }
+
+    private bool _isAwaitingReconnect;
+
+    /// <summary>
+    /// True between a pipe failure and either a successful reconnect or the grace period
+    /// expiring. The active flight is held in limbo while this is set.
+    /// </summary>
+    public bool IsAwaitingReconnect
+    {
+        get => _isAwaitingReconnect;
+        private set
+        {
+            if (value != _isAwaitingReconnect)
+            {
+                _isAwaitingReconnect = value;
                 OnPropertyChanged();
             }
         }
@@ -263,15 +306,17 @@ internal sealed class SimConnectService : INotifyPropertyChanged
 
         _gHs = HwndSource.FromHwnd(_lHwnd);
         _gHs?.AddHook(new HwndSourceHook(WndProc));
-        SetDataTimer();
+        SetCameraTimer();
         SetConnectionTimer();
+        SetGracePeriodTimer();
         WaitForSimConnection();
     }
 
     private void WaitForSimConnection()
     {
+        // ConnectToSimulator restarts the connection timer itself when it fails to
+        // produce a handle, so there is nothing left to do here.
         ConnectToSimulator();
-        if (_simconnect == null) _connectionTimer.Start();
     }
 
     private void SetConnectionTimer()
@@ -281,35 +326,191 @@ internal sealed class SimConnectService : INotifyPropertyChanged
         _connectionTimer.AutoReset = true;
     }
 
-    private void SetDataTimer()
+    private void SetCameraTimer()
     {
-        _dataTimer = new Timer(DataInterval);
-        _dataTimer.Elapsed += (sender, e) => RequestFlightData();
-        _dataTimer.AutoReset = true;
+        _cameraTimer = new Timer(CameraPollInterval);
+        _cameraTimer.Elapsed += (sender, e) => RequestCameraData();
+        _cameraTimer.AutoReset = true;
     }
 
+    private void SetGracePeriodTimer()
+    {
+        _gracePeriodTimer = new Timer(GracePeriodInterval);
+        _gracePeriodTimer.AutoReset = false;
+        _gracePeriodTimer.Elapsed += (sender, e) => OnGracePeriodExpired();
+    }
+
+    private void OnGracePeriodExpired()
+    {
+        // A normal flight end, a clean quit, or a completed identity check all supersede
+        // the grace period. Stop() cannot cancel an already-queued callback, so re-check.
+        if (!IsAwaitingReconnect)
+        {
+            return;
+        }
+
+        // Two different expiries share this timer. If the identity check is still pending
+        // the pipe did come back, but no data sample followed it within a second window -
+        // the sim is hung, or sitting in a menu with nothing changing. Either way the
+        // limbo state must not outlive the window, and with no sample there is nothing to
+        // identify the flight by, so it ends.
+        if (_pendingIdentityCheck)
+        {
+            _pendingIdentityCheck = false;
+            Log.Information($"Reconnected, but no flight data arrived within {GracePeriodInterval / 1000}s - ending the flight.");
+        }
+        else
+        {
+            Log.Information($"No reconnection within {GracePeriodInterval / 1000}s - ending the flight.");
+        }
+
+        IsAwaitingReconnect = false;
+        IsInFlight = false;
+    }
+
+    /// <summary>
+    /// Decides whether the reconnected session is the same flight. Runs on the first data
+    /// sample after a reconnect, because aircraft data and position are not available at
+    /// the moment the connection opens.
+    ///
+    /// <paramref name="before"/> is captured by the caller ahead of assigning
+    /// <see cref="FlightData"/>, since that assignment refreshes the very snapshot this
+    /// compares against.
+    /// </summary>
+    private void VerifyFlightIdentity(FlightIdentitySnapshot? before, FlightData data)
+    {
+        // The fallback expiry may have already ended the flight and cleared the flag; in
+        // that case this sample is the first of whatever comes next, not a resumption.
+        if (!IsAwaitingReconnect)
+        {
+            Log.Debug("Identity check skipped - the flight was already resolved.");
+            return;
+        }
+
+        _gracePeriodTimer.Stop();
+
+        var after = new FlightIdentitySnapshot
+        {
+            Title = AircraftData.title,
+            LiveryName = AircraftData.liveryName,
+            Latitude = data.Latitude,
+            Longitude = data.Longitude,
+            OnGround = Convert.ToBoolean(data.SimOnGround)
+        };
+
+        // No snapshot means no flight was ever sampled in the air, so there is nothing to
+        // resume - treated as a mismatch rather than compared against a default at 0,0.
+        var canResume = before.HasValue
+                        && FlightIdentity.CanResume(before.Value, after, IsInFlight, SimVersion == MSFS2024);
+
+        IsAwaitingReconnect = false;
+
+        if (canResume)
+        {
+            Log.Information($"Resuming the flight after reconnection - {after.Title} near the last known position.");
+        }
+        else
+        {
+            Log.Information($"Not the same flight after reconnection (was {before?.Title}, now {after.Title}); ending it.");
+            IsInFlight = false;
+        }
+    }
+
+    /// <summary>
+    /// Tears down a failed connection and starts reconnecting. An active flight is kept
+    /// alive for the grace period so a transient pipe failure does not discard it.
+    /// </summary>
+    private void HandleConnectionLost()
+    {
+        var hadFlight = IsInFlight;
+
+        StopGettingData();
+        Close();
+        IsConnected = false;
+
+        // SimVersion is deliberately NOT cleared here. The simulator cannot change version
+        // without restarting, which arrives as OnRecvQuit (where it IS cleared). Clearing it
+        // on a pipe drop would race the post-reconnect facilities reply and silently disable
+        // the livery half of the identity check on MSFS 2024.
+
+        // Any check still pending belongs to the connection that just died; the next
+        // OnRecvOpen arms a new one if there is still a flight to verify.
+        _pendingIdentityCheck = false;
+
+        if (hadFlight)
+        {
+            IsAwaitingReconnect = true;
+            _gracePeriodTimer.Stop();
+            _gracePeriodTimer.Start();
+            Log.Information($"Connection lost mid-flight; holding the flight for {GracePeriodInterval / 1000}s.");
+        }
+        else
+        {
+            IsInFlight = false;
+        }
+
+        _connectionTimer.Start();
+    }
+
+    /// <summary>
+    /// Starts the camera poll. Flight data itself arrives on a standing SIM_FRAME
+    /// subscription that dies with the connection, so there is nothing else to start.
+    /// The name is kept because the connection-recovery paths call it.
+    /// </summary>
     private void StartGettingData()
     {
-        _dataTimer.Start();
+        _cameraTimer?.Start();
     }
 
     private void StopGettingData()
     {
-        _dataTimer.Stop();
+        _cameraTimer?.Stop();
     }
 
     private void ConnectToSimulator()
     {
+        bool connected;
+
         try
         {
             Log.Debug("Trying to connect to the simulator...");
-            _simconnect = new SimConnect("FSTrAk", _lHwnd, WmUserSimconnect, null, 0);
-            if (_simconnect != null) ConfigureSimconnect();
+
+            lock (_simConnectLock)
+            {
+                _simconnect = new SimConnect("FSTrAk", _lHwnd, WmUserSimconnect, null, 0);
+
+                try
+                {
+                    ConfigureSimconnect();
+                }
+                catch (Exception ex)
+                {
+                    // A half-configured handle would otherwise be retained forever, and
+                    // WaitForSimConnection only restarts the timer when the field is null.
+                    Log.Error(ex, "SimConnect configuration failed; discarding the handle.");
+                    _simconnect.Dispose();
+                    _simconnect = null;
+                    throw;
+                }
+            }
         }
         catch (COMException ex)
         {
             Log.Debug(ex, ex.Message);
-            // Do nothing
+        }
+        catch (Exception ex)
+        {
+            Log.Error(ex, "Unexpected failure while connecting to the simulator.");
+        }
+
+        lock (_simConnectLock)
+        {
+            connected = _simconnect != null;
+        }
+
+        if (!connected && _connectionTimer != null && !_connectionTimer.Enabled)
+        {
+            _connectionTimer.Start();
         }
     }
 
@@ -384,9 +585,6 @@ internal sealed class SimConnectService : INotifyPropertyChanged
             SIMCONNECT_DATATYPE.FLOAT64, 0.0f, SimConnect.SIMCONNECT_UNUSED);
         _simconnect.AddToDataDefinition(DataDefinitions.FlightData, "Vertical Speed", "ft/min",
             SIMCONNECT_DATATYPE.FLOAT64, 0.0f, SimConnect.SIMCONNECT_UNUSED);
-        _simconnect.AddToDataDefinition(DataDefinitions.FlightData, "Camera State", null, SIMCONNECT_DATATYPE.INT32,
-            0.0f, SimConnect.SIMCONNECT_UNUSED);
-
         _simconnect.AddToDataDefinition(DataDefinitions.FlightData, "Flap Speed Exceeded", null,
             SIMCONNECT_DATATYPE.INT32, 0.0f, SimConnect.SIMCONNECT_UNUSED);
         _simconnect.AddToDataDefinition(DataDefinitions.FlightData, "Gear Speed Exceeded", null,
@@ -430,8 +628,14 @@ internal sealed class SimConnectService : INotifyPropertyChanged
         _simconnect.AddToDataDefinition(DataDefinitions.FlightData, "PLANE BANK DEGREES", "degrees",
             SIMCONNECT_DATATYPE.FLOAT64, 0.0f, SimConnect.SIMCONNECT_UNUSED);
 
+        // CAMERA - deliberately its own definition, polled on a wall clock rather than
+        // carried with the flight data, so it keeps arriving while the sim is paused.
+        _simconnect.AddToDataDefinition(DataDefinitions.CameraData, "Camera State", null,
+            SIMCONNECT_DATATYPE.INT32, 0.0f, SimConnect.SIMCONNECT_UNUSED);
+
         _simconnect.RegisterDataDefineStruct<AircraftData>(DataDefinitions.AircraftData);
         _simconnect.RegisterDataDefineStruct<FlightData>(DataDefinitions.FlightData);
+        _simconnect.RegisterDataDefineStruct<CameraData>(DataDefinitions.CameraData);
 
         // Subscribe to System events
         _simconnect.SubscribeToSystemEvent(Events.FlightLoaded, "FlightLoaded");
@@ -449,6 +653,14 @@ internal sealed class SimConnectService : INotifyPropertyChanged
         _simconnect.OnRecvEvent += new SimConnect.RecvEventEventHandler(Simconnect_OnRecvEvent);
         _simconnect.OnRecvEventFilename += new SimConnect.RecvEventFilenameEventHandler(Simconnect_OnRecvFilename);
         _simconnect.OnRecvSystemState += new SimConnect.RecvSystemStateEventHandler(Simconnect_OnRecvSystemState);
+
+        // One standing subscription replaces the former 50ms request loop. SIM_FRAME is
+        // tied to the physics loop rather than the render loop, so it does not fluctuate
+        // with GPU load - and it stops while the simulator is paused, which is why camera
+        // state is polled separately.
+        _simconnect.RequestDataOnSimObject(Requests.FlightDataRequest, DataDefinitions.FlightData,
+            SimConnect.SIMCONNECT_OBJECT_ID_USER, SIMCONNECT_PERIOD.SIM_FRAME,
+            SIMCONNECT_DATA_REQUEST_FLAG.CHANGED, 0u, 0u, 0u);
 
         StartGettingData();
     }
@@ -503,66 +715,42 @@ internal sealed class SimConnectService : INotifyPropertyChanged
 
     private void UpdateInFlightState()
     {
-        Log.Information($"Flight state updated : Pause state: {PauseState}, SimStared: {SimStarted}, Is in flight: {IsInFlight}, CameraState: {CameraState}");
-        if(IsInFlight && !IsConnected)
+        var inputs = new FlightStateInputs
         {
-            IsInFlight = false;
-        }
-        else if (IsInFlight 
-            && (PauseState == 1 || PauseState == 8 || PauseState == 0)
-            && (CameraState == CameraState.InFlightMenu2024 || CameraState == CameraState.InFlightMenu2024_2 || CameraState == CameraState.InFlightMenu2024_3))
-        {
-            // Do nothing. This is to prevent enabling VR mid flight from ending the flight.
-            // Do nothing. PasueState 8 occurs with active pause. In 2024, it occurs after 9 when ending a flight.
-            // Do nothing when these happen in flight.
+            Camera = CameraState,
+            PreviousCamera = PreviousCameraState,
+            PauseState = PauseState,
+            LoadedFlight = LoadedFlight,
+            IsConnected = IsConnected,
+            WasInFlight = IsInFlight
+        };
 
-        }
-        else if (CameraState == CameraState.Cockpit 
-            || CameraState == CameraState.External 
-            || CameraState == CameraState.Drone 
-            || CameraState == CameraState.Fixed 
-            || CameraState == CameraState.Environment 
-            || CameraState == CameraState.SixDof
-            || CameraState == CameraState.FollowTrafficAircraft)
+        var isInFlight = FlightStateEvaluator.IsInFlight(inputs);
+
+        Log.Debug($"Flight state: pause {PauseState}, sim started {SimStarted}, camera {CameraState} -> in flight {isInFlight}");
+
+        // While awaiting reconnection the flight is held; the grace timer or the identity
+        // check decides its fate, not the stale camera state left behind by the drop.
+        if (IsAwaitingReconnect && !isInFlight)
         {
-            IsInFlight = true; // MSFS 2024 start flight condition
+            return;
         }
-        else if (CameraState == CameraState.LoadingFlight3D2024 || CameraState == CameraState.SomethingInLoadingProcess2024)
-        {
-            IsInFlight = false; // MSFS 2024 exit flight condition
-        }
-        else if (CameraState == CameraState.MainMenu2024) 
-        {
-            if(PreviousCameraState != CameraState.InFlightMenu2024_3) { 
-                IsInFlight = false; 
-            }
-        }
-        else if (IsInFlight && PauseState == 9)
-        {
-            IsInFlight = false; // MSFS 2024 exit flight condition
-        }
-        else if (
-            !string.IsNullOrEmpty(LoadedFlight)
-            && !LoadedFlight.Equals(MainMenuFlt)
-            && PauseState != 1
-            && PauseState != 8
-            && PauseState != 9)
-        {
-            IsInFlight = true;
-        }
-        else
-        {
-            IsInFlight = false;
-        }
-        Log.Information($"IsInFlight: {IsInFlight}");
+
+        IsInFlight = isInFlight;
     }
 
     private void simconnect_OnRecvQuit(SimConnect sender, SIMCONNECT_RECV data)
     {
         Log.Information("Connection to the simulator is closed!");
+
+        StopGettingData();
         Close();
         IsConnected = false;
         SimVersion = null;
+        IsAwaitingReconnect = false;
+        _pendingIdentityCheck = false;
+        _gracePeriodTimer.Stop();
+        IsInFlight = false;   // was missing: a flight in progress was orphaned, never saved
         _connectionTimer.Start();
     }
 
@@ -571,21 +759,37 @@ internal sealed class SimConnectService : INotifyPropertyChanged
         Log.Information("Connected to flight simulator!");
         _connectionTimer.Stop();
         IsConnected = true;
-        _simconnect.RequestFacilitiesList_EX1(SIMCONNECT_FACILITY_LIST_TYPE.AIRPORT, Requests.SimVersionRequest);
+
+        _gracePeriodTimer.Stop();
+
+        if (IsAwaitingReconnect)
+        {
+            // The original window is cancelled by reconnection rather than by a completed
+            // identity check: the first data sample may arrive well after it would have
+            // closed, and a flight we successfully reconnected to must not be lost waiting
+            // for it. A fresh single-shot window is armed in its place so that the held
+            // flight cannot sit in limbo forever if that sample never comes at all - the
+            // data subscription only reports changed values, so a hung or parked sim can
+            // stay silent indefinitely.
+            Log.Information("Reconnected inside the grace window; verifying flight identity.");
+            _pendingIdentityCheck = true;
+            _gracePeriodTimer.Start();
+            RequestLoadedAircraft();
+        }
+
+        SafeSimConnectCall(
+            sc => sc.RequestFacilitiesList_EX1(SIMCONNECT_FACILITY_LIST_TYPE.AIRPORT, Requests.SimVersionRequest),
+            "RequestFacilitiesList_EX1 (sim version)");
     }
 
     private void simconnect_OnRecvException(SimConnect sender, SIMCONNECT_RECV_EXCEPTION data)
     {
-        Log.Error($"Simconnect exception {data.dwException}");
+        var exception = (SIMCONNECT_EXCEPTION)data.dwException;
 
-        // Due to previous hanging after System.Runtime.InteropServices.COMException (0xC000014B) we will try to set IsConnected to false - and let it try to connect again.
-        if (data.dwException is (uint)0xC000014B)
-        {
-            IsConnected = false;
-            StopGettingData();
-            Close();
-            _connectionTimer.Start();
-        }
+        // SIMCONNECT_RECV_EXCEPTION is a protocol-level report - a bad SimVar or an unknown
+        // request - not a pipe failure. Unlike a COMException, which always reconnects, it
+        // must not trigger a teardown.
+        Log.Error($"SimConnect exception {exception} on send id {data.dwSendID}, index {data.dwIndex}");
     }
 
     private void Simconnect_OnRecvSimobjectData(SimConnect sender, SIMCONNECT_RECV_SIMOBJECT_DATA data)
@@ -594,10 +798,31 @@ internal sealed class SimConnectService : INotifyPropertyChanged
         {
             if (data.dwRequestID == (int)Requests.FlightDataRequest)
             {
+                // The snapshot has to be read before FlightData is assigned: that assignment
+                // raises a property change the FlightManager answers by overwriting
+                // LastKnownSnapshot with this very sample, which would make the comparison
+                // below trivially true.
+                var runIdentityCheck = _pendingIdentityCheck;
+                FlightIdentitySnapshot? before = runIdentityCheck
+                    ? FlightManager.FlightManager.Instance.LastKnownSnapshot
+                    : null;
+
                 FlightData = (FlightData)data.dwData[0];
-                // OnPropertyChanged(nameof(FlightData));
-                // Update CameraState to determine if is in flight
-                CameraState = FlightData.CameraState;
+
+                if (runIdentityCheck)
+                {
+                    _pendingIdentityCheck = false;
+                    VerifyFlightIdentity(before, FlightData);
+                }
+            }
+            else if (data.dwRequestID == (int)Requests.CameraDataRequest)
+            {
+                var cameraData = (CameraData)data.dwData[0];
+
+                // Assigned before the tick so that a camera change has already been folded
+                // into IsInFlight by the time the state machine is asked to act on it.
+                CameraState = cameraData.CameraState;
+                FlightManager.FlightManager.Instance.HandleCameraTick();
             }
             else if (data.dwRequestID == (int)Requests.AircraftDataRequest)
             {
@@ -610,17 +835,48 @@ internal sealed class SimConnectService : INotifyPropertyChanged
         }
     }
 
-    public void RequestNearestAirport()
+    /// <summary>
+    /// Runs a SimConnect call under the handle lock, routing any failure through the
+    /// recovery path. NullReference and ObjectDisposed are caught alongside COMException
+    /// because a teardown can still race a caller that captured the handle.
+    ///
+    /// The lock is released before any handler runs: recovery sets properties, which reach
+    /// the FlightManager state machine, which calls back into this service. Holding the
+    /// lock across that path would deadlock, so the catch blocks sit outside the lock
+    /// statement rather than inside it.
+    /// </summary>
+    private void SafeSimConnectCall(Action<SimConnect> call, string description)
     {
-        NearestAirportDistance = double.MaxValue;
         try
         {
-            _simconnect.RequestFacilitiesList_EX1(SIMCONNECT_FACILITY_LIST_TYPE.AIRPORT, Requests.NearbyAirportsRequest);
+            lock (_simConnectLock)
+            {
+                if (_simconnect == null)
+                {
+                    Log.Debug($"Skipping {description} - no SimConnect handle.");
+                    return;
+                }
+
+                call(_simconnect);
+            }
         }
         catch (COMException ex)
         {
             HandleCOMException(ex);
         }
+        catch (Exception ex) when (ex is NullReferenceException || ex is ObjectDisposedException)
+        {
+            Log.Warning(ex, $"SimConnect handle disposed during {description}; reconnecting.");
+            HandleConnectionLost();
+        }
+    }
+
+    public void RequestNearestAirport()
+    {
+        NearestAirportDistance = double.MaxValue;
+        SafeSimConnectCall(
+            sc => sc.RequestFacilitiesList_EX1(SIMCONNECT_FACILITY_LIST_TYPE.AIRPORT, Requests.NearbyAirportsRequest),
+            nameof(RequestNearestAirport));
     }
 
     /// <summary>
@@ -628,34 +884,26 @@ internal sealed class SimConnectService : INotifyPropertyChanged
     /// </summary>
     public void RequestLoadedAircraft()
     {
-        try
+        SafeSimConnectCall(sc =>
         {
-            _simconnect.RequestDataOnSimObject(Requests.AircraftDataRequest, DataDefinitions.AircraftData,
-                SimConnect.SIMCONNECT_OBJECT_ID_USER, SIMCONNECT_PERIOD.ONCE, SIMCONNECT_DATA_REQUEST_FLAG.DEFAULT,
-                0u, 0u, 0u);
-            _simconnect.RequestSystemState(Requests.AircraftLoaded, "AircraftLoaded");
-        }
-        catch (COMException ex)
-        {
-            HandleCOMException(ex);
-        }
+            sc.RequestDataOnSimObject(Requests.AircraftDataRequest, DataDefinitions.AircraftData,
+                SimConnect.SIMCONNECT_OBJECT_ID_USER, SIMCONNECT_PERIOD.ONCE,
+                SIMCONNECT_DATA_REQUEST_FLAG.DEFAULT, 0u, 0u, 0u);
+            sc.RequestSystemState(Requests.AircraftLoaded, "AircraftLoaded");
+        }, nameof(RequestLoadedAircraft));
     }
 
     /// <summary>
-    /// Gets flight data from simconnect once
+    /// Polls camera state on a wall clock. Deliberately not part of the FlightData
+    /// subscription: this must keep arriving while the simulator is paused or in a menu.
     /// </summary>
-    public void RequestFlightData()
+    public void RequestCameraData()
     {
-        try
-        {
-            _simconnect.RequestDataOnSimObject(Requests.FlightDataRequest, DataDefinitions.FlightData,
-                SimConnect.SIMCONNECT_OBJECT_ID_USER, SIMCONNECT_PERIOD.ONCE, SIMCONNECT_DATA_REQUEST_FLAG.CHANGED,
-                0u, 0u, 0u);
-        }
-        catch (COMException ex)
-        {
-            HandleCOMException(ex);
-        }
+        SafeSimConnectCall(sc =>
+            sc.RequestDataOnSimObject(Requests.CameraDataRequest, DataDefinitions.CameraData,
+                SimConnect.SIMCONNECT_OBJECT_ID_USER, SIMCONNECT_PERIOD.ONCE,
+                SIMCONNECT_DATA_REQUEST_FLAG.DEFAULT, 0u, 0u, 0u),
+            nameof(RequestCameraData));
     }
 
     private void Simconnect_OnRecvAirportList(SimConnect sender, SIMCONNECT_RECV_AIRPORT_LIST data)
@@ -712,20 +960,12 @@ internal sealed class SimConnectService : INotifyPropertyChanged
         handled = false;
         // If message is coming from simconnect and the connection is not null;
         // Continue and receive message.
-        if (msg == WmUserSimconnect && _simconnect != null)
+        if (msg == WmUserSimconnect)
         {
-            try
-            {
-                _simconnect.ReceiveMessage();
-            }
-            catch (COMException ex)
-            {
-                HandleCOMException(ex);
-            }
-            finally
-            {
-                handled = true;
-            }
+            // The _simconnect != null test now lives inside the helper, where it is read
+            // under the lock instead of racing a concurrent teardown.
+            SafeSimConnectCall(sc => sc.ReceiveMessage(), "ReceiveMessage");
+            handled = true;
         }
 
         return (IntPtr)0;
@@ -733,41 +973,35 @@ internal sealed class SimConnectService : INotifyPropertyChanged
 
     private void HandleCOMException(COMException ex)
     {
-        // Log the error details
-        Log.Error($"COMException: {ex.Message} (HRESULT: {ex.ErrorCode})");
-        // existing handling...
-        switch ((uint)ex.ErrorCode)
+        var hresult = (uint)ex.ErrorCode;
+        Log.Error(ex, $"COMException: {ConnectionRecovery.DescribeFor(hresult)} (HRESULT: 0x{hresult:X8})");
+
+        if (ConnectionRecovery.ActionFor(hresult) == RecoveryAction.Reconnect)
         {
-            case 0xC000014B:
-                Log.Information("Connection to the simulator is closed due to an exception!");
-                Close();
-                IsConnected = false;
-                IsInFlight = false;
-                SimVersion = null;
-                _connectionTimer.Start();
-                break;
-            case 0x80004005: // E_FAIL
-                Log.Error("Unspecified error occurred.");
-                break;
-            case 0x800706BA: // RPC_S_SERVER_UNAVAILABLE
-                Log.Error("The RPC server is unavailable. Please check the SimConnect connection.");
-                break;
-            default:
-                Log.Error("An unknown error occurred.");
-                Log.Error(ex, "COMException thrown. HResult: {HResult:X8}, ErrorCode: {ErrorCode}", ex.HResult, ex.ErrorCode);
-                break;
+            HandleConnectionLost();
         }
     }
 
-        [MethodImpl(MethodImplOptions.Synchronized)]
     public void Close()
     {
-        _dataTimer.Stop();
-        if (_simconnect != null)
+        _cameraTimer?.Stop();
+        _gracePeriodTimer?.Stop();
+
+        // Stopped here so that closing the app during a reconnect cycle does not leave a
+        // 10s timer calling ConnectToSimulator against a window handle being torn down.
+        // The two in-service callers (HandleConnectionLost, simconnect_OnRecvQuit) both
+        // restart it immediately after this returns, so their retry loop is unaffected.
+        _connectionTimer?.Stop();
+
+        lock (_simConnectLock)
         {
-            _simconnect.Dispose();
-            _simconnect = null;
+            if (_simconnect != null)
+            {
+                _simconnect.Dispose();
+                _simconnect = null;
+            }
         }
+
         Log.Debug("SimConnect Disposed!");
     }
 }

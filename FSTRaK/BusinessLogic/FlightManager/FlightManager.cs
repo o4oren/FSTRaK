@@ -40,6 +40,19 @@ namespace FSTRaK.BusinessLogic.FlightManager
             _simConnectService = SimConnectService.Instance;
             _simConnectService.Initialize();
             _simConnectService.PropertyChanged += SimconnectService_OnPropertyChange;
+
+            // Seed the mirrors from the live service values. Both this side's setters and
+            // the service's de-duplicate, so a value that never changes after we subscribe
+            // would otherwise never reach us - leaving CameraState at default(CameraState),
+            // which is not even a valid member (the enum starts at Cockpit = 2).
+            // The backing fields are assigned directly on purpose: going through the
+            // properties would raise property changes before State is assigned below, and
+            // the change handlers reach State.
+            _cameraState = _simConnectService.CameraState;
+            _simConnectInFlight = _simConnectService.IsInFlight;
+            _simConnectIsConnected = _simConnectService.IsConnected;
+            _simVersion = _simConnectService.SimVersion;
+
             State = new SimNotInFlightState(this);
         }
 
@@ -68,6 +81,13 @@ namespace FSTRaK.BusinessLogic.FlightManager
                 OnPropertyChanged();
             }
         }
+
+        /// <summary>
+        /// Aircraft and position from the most recent in-flight sample, used to decide
+        /// whether a flight survived a connection gap. Null until a flight has been
+        /// sampled, which the identity check reads as "nothing to resume".
+        /// </summary>
+        public FlightIdentitySnapshot? LastKnownSnapshot { get; private set; }
 
         private IFlightManagerState _state;
         public IFlightManagerState State { 
@@ -99,6 +119,23 @@ namespace FSTRaK.BusinessLogic.FlightManager
             {
                 if (_simConnectIsConnected == value) return;
                 _simConnectIsConnected = value;
+                OnPropertyChanged();
+            }
+        }
+
+        /// <summary>
+        /// Mirrors the simulator's camera state. States read it from here rather than from
+        /// a FlightData sample: camera state now travels on its own poll, so it is current
+        /// even while the SIM_FRAME flight data subscription is silent.
+        /// </summary>
+        private CameraState _cameraState;
+        public CameraState CameraState
+        {
+            get => _cameraState;
+            set
+            {
+                if (_cameraState == value) return;
+                _cameraState = value;
                 OnPropertyChanged();
             }
         }
@@ -143,7 +180,6 @@ namespace FSTRaK.BusinessLogic.FlightManager
                 case nameof(SimConnectService.FlightData):
                     var data = _simConnectService.FlightData;
                     State.ProcessFlightData(data);
-                    State.HandleFlightExitEvent();
 
                     // Updating the map in realtime if not in non-flight states
                     if (State is not SimNotInFlightState)
@@ -160,6 +196,15 @@ namespace FSTRaK.BusinessLogic.FlightManager
                             Altitude = data.Altitude
                         };
                         CurrentFlightParams = fp;
+
+                        LastKnownSnapshot = new FlightIdentitySnapshot
+                        {
+                            Title = ActiveFlight?.Aircraft?.Title,
+                            LiveryName = ActiveFlight?.Aircraft?.LiveryName,
+                            Latitude = data.Latitude,
+                            Longitude = data.Longitude,
+                            OnGround = Convert.ToBoolean(data.SimOnGround)
+                        };
                     }
 
                     OnPropertyChanged(nameof(ActiveFlight));
@@ -208,9 +253,24 @@ namespace FSTRaK.BusinessLogic.FlightManager
                     SimVersion = _simConnectService.SimVersion;
                     break;
 
+                case nameof(_simConnectService.CameraState):
+                    CameraState = _simConnectService.CameraState;
+                    break;
+
                 default:
                     break;
             }
+        }
+
+        /// <summary>
+        /// Driven by the camera poll rather than the flight-data stream, so that leaving a
+        /// flight is still detected while the simulator is paused - which is exactly when
+        /// the SIM_FRAME subscription stops delivering. This also closes a case where
+        /// pausing after landing and then quitting left a pending touchdown unfinalized.
+        /// </summary>
+        public void HandleCameraTick()
+        {
+            State.HandleFlightExitEvent();
         }
 
         public string GetLoadedAircraftFileName()
