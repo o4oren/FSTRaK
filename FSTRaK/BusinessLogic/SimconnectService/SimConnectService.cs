@@ -337,6 +337,13 @@ internal sealed class SimConnectService : INotifyPropertyChanged
 
     private void OnGracePeriodExpired()
     {
+        // A normal flight end, a clean quit, or a successful reconnect all supersede the
+        // grace period. Stop() cannot cancel an already-queued callback, so re-check here.
+        if (!IsAwaitingReconnect)
+        {
+            return;
+        }
+
         Log.Information($"No reconnection within {GracePeriodInterval / 1000}s - ending the flight.");
         IsAwaitingReconnect = false;
         IsInFlight = false;
@@ -712,8 +719,9 @@ internal sealed class SimConnectService : INotifyPropertyChanged
     {
         var exception = (SIMCONNECT_EXCEPTION)data.dwException;
 
-        // Protocol-level errors - a bad SimVar or an unknown request - do not indicate a
-        // failed pipe, so they must not trigger a teardown.
+        // SIMCONNECT_RECV_EXCEPTION is a protocol-level report - a bad SimVar or an unknown
+        // request - not a pipe failure. Unlike a COMException, which always reconnects, it
+        // must not trigger a teardown.
         Log.Error($"SimConnect exception {exception} on send id {data.dwSendID}, index {data.dwIndex}");
     }
 
@@ -888,6 +896,7 @@ internal sealed class SimConnectService : INotifyPropertyChanged
     public void Close()
     {
         _dataTimer?.Stop();
+        _gracePeriodTimer?.Stop();
 
         lock (_simConnectLock)
         {
