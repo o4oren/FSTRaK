@@ -72,6 +72,19 @@ namespace FSTRaK.Tests
             Assert.True(FlightStateEvaluator.IsInFlight(inputs));
         }
 
+        [Fact]
+        public void MainMenu2024_FromInFlightMenu_DoesNotStartAFlight()
+        {
+            // The transient main-menu camera must not begin a flight that was not already
+            // under way - backing out of a previous session's in-flight menu is not a start.
+            var inputs = Inputs(
+                camera: CameraState.MainMenu2024,
+                previousCamera: CameraState.InFlightMenu2024_3,
+                wasInFlight: false);
+
+            Assert.False(FlightStateEvaluator.IsInFlight(inputs));
+        }
+
         [Theory]
         [InlineData(CameraState.InFlightMenu2024, 1u)]
         [InlineData(CameraState.InFlightMenu2024_2, 8u)]

@@ -67,8 +67,11 @@ namespace FSTRaK.BusinessLogic.SimconnectService
             if (inputs.Camera == CameraState.MainMenu2024)
             {
                 // 2024 shows the main-menu camera transiently on the way out of the
-                // in-flight menu; that is not a flight ending.
-                return inputs.PreviousCamera == CameraState.InFlightMenu2024_3;
+                // in-flight menu. That is not a flight ending - but it is not a flight
+                // starting either: the original mutated IsInFlight only when leaving the
+                // menu by another route, so a flight that was not already under way stays
+                // ended.
+                return inputs.PreviousCamera == CameraState.InFlightMenu2024_3 && inputs.WasInFlight;
             }
 
             if (inputs.WasInFlight && inputs.PauseState == 9)
