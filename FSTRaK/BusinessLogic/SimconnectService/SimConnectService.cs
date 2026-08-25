@@ -459,7 +459,7 @@ internal sealed class SimConnectService : INotifyPropertyChanged
     /// </summary>
     private void StartGettingData()
     {
-        _cameraTimer.Start();
+        _cameraTimer?.Start();
     }
 
     private void StopGettingData()
