@@ -421,7 +421,11 @@ internal sealed class SimConnectService : INotifyPropertyChanged
         StopGettingData();
         Close();
         IsConnected = false;
-        SimVersion = null;
+
+        // SimVersion is deliberately NOT cleared here. The simulator cannot change version
+        // without restarting, which arrives as OnRecvQuit (where it IS cleared). Clearing it
+        // on a pipe drop would race the post-reconnect facilities reply and silently disable
+        // the livery half of the identity check on MSFS 2024.
 
         // Any check still pending belongs to the connection that just died; the next
         // OnRecvOpen arms a new one if there is still a flight to verify.
@@ -778,7 +782,7 @@ internal sealed class SimConnectService : INotifyPropertyChanged
                 // below trivially true.
                 var runIdentityCheck = _pendingIdentityCheck;
                 FlightIdentitySnapshot? before = runIdentityCheck
-                    ? FSTRaK.BusinessLogic.FlightManager.FlightManager.Instance.LastKnownSnapshot
+                    ? FlightManager.FlightManager.Instance.LastKnownSnapshot
                     : null;
 
                 FlightData = (FlightData)data.dwData[0];
