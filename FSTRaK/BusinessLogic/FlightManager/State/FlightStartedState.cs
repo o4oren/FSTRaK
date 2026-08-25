@@ -28,9 +28,13 @@ namespace FSTRaK.BusinessLogic.FlightManager.State
 
         public override void ProcessFlightData(FlightData data)
         {
+            // Camera state no longer rides along with the flight data sample - it is polled
+            // separately - so it is read from the context, which holds the latest poll.
+            var cameraState = Context.CameraState;
+
             // Only once in actual plane and not paused
             // This should only happen once per flight
-            if (!IsStarted && (IsCameraLive(data.CameraState) || data.CameraState == CameraState.InGameRtc))
+            if (!IsStarted && (IsCameraLive(cameraState) || cameraState == CameraState.InGameRtc))
             {
                 using var logbookContext = new LogbookContext();
                 var flight = logbookContext.Flights.Create();
@@ -42,7 +46,7 @@ namespace FSTRaK.BusinessLogic.FlightManager.State
                 Log.Information("Flight started!");
             }
             
-            if (IsCameraLive(data.CameraState) && Context.ActiveFlight.FlightEvents.Count == 0)
+            if (IsCameraLive(cameraState) && Context.ActiveFlight.FlightEvents.Count == 0)
             {
                 _prevFuelQuantity = data.FuelWeightLbs;
                 _fuelingStopwatch.Start();
@@ -63,7 +67,7 @@ namespace FSTRaK.BusinessLogic.FlightManager.State
             }
 
             // Compare the location to determine movement ONLY after out of the "ready to fly" screen
-            if ( IsCameraLive(data.CameraState) &&
+            if ( IsCameraLive(cameraState) &&
                 (Math.Abs(data.Latitude - Context.CurrentFlightParams.Latitude) > 0.0000001 || Math.Abs(data.Longitude - Context.CurrentFlightParams.Longitude) > 0.0000001) && data.GroundVelocity > 1)
             {
                 var to = new TaxiOutEvent();

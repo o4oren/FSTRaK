@@ -22,7 +22,13 @@ internal sealed class SimConnectService : INotifyPropertyChanged
 {
     private const int ConnectionInterval = 10000;
     private const int WmUserSimconnect = 0x0402;
-    private const int DataInterval = 50;
+    /// <summary>
+    /// Camera state is polled on a wall clock rather than delivered with the flight data
+    /// subscription, because it must keep arriving while the simulator is paused or in a
+    /// menu. A quarter second is well inside human reaction time for a menu transition and
+    /// costs a fraction of the former 50ms full-struct poll.
+    /// </summary>
+    private const int CameraPollInterval = 250;
 
     /// <summary>
     /// How long an in-progress flight survives a dropped pipe before it is ended. Long
@@ -37,7 +43,7 @@ internal sealed class SimConnectService : INotifyPropertyChanged
 
     /// <summary>
     /// Guards every access to <see cref="_simconnect"/>. Three threads reach the handle:
-    /// the UI thread via WndProc, the data timer, and the connection timer. Critical
+    /// the UI thread via WndProc, the camera timer, and the connection timer. Critical
     /// sections must stay narrow - never hold this across a property change, because
     /// those reach the FlightManager state machine, which calls back into this service.
     /// </summary>
@@ -45,7 +51,7 @@ internal sealed class SimConnectService : INotifyPropertyChanged
 
     private HwndSource _gHs;
     private Timer _connectionTimer;
-    private Timer _dataTimer;
+    private Timer _cameraTimer;
     private Timer _gracePeriodTimer;
 
     private bool _pendingIdentityCheck;
@@ -300,7 +306,7 @@ internal sealed class SimConnectService : INotifyPropertyChanged
 
         _gHs = HwndSource.FromHwnd(_lHwnd);
         _gHs?.AddHook(new HwndSourceHook(WndProc));
-        SetDataTimer();
+        SetCameraTimer();
         SetConnectionTimer();
         SetGracePeriodTimer();
         WaitForSimConnection();
@@ -320,11 +326,11 @@ internal sealed class SimConnectService : INotifyPropertyChanged
         _connectionTimer.AutoReset = true;
     }
 
-    private void SetDataTimer()
+    private void SetCameraTimer()
     {
-        _dataTimer = new Timer(DataInterval);
-        _dataTimer.Elapsed += (sender, e) => RequestFlightData();
-        _dataTimer.AutoReset = true;
+        _cameraTimer = new Timer(CameraPollInterval);
+        _cameraTimer.Elapsed += (sender, e) => RequestCameraData();
+        _cameraTimer.AutoReset = true;
     }
 
     private void SetGracePeriodTimer()
@@ -446,14 +452,19 @@ internal sealed class SimConnectService : INotifyPropertyChanged
         _connectionTimer.Start();
     }
 
+    /// <summary>
+    /// Starts the camera poll. Flight data itself arrives on a standing SIM_FRAME
+    /// subscription that dies with the connection, so there is nothing else to start.
+    /// The name is kept because the connection-recovery paths call it.
+    /// </summary>
     private void StartGettingData()
     {
-        _dataTimer.Start();
+        _cameraTimer.Start();
     }
 
     private void StopGettingData()
     {
-        _dataTimer.Stop();
+        _cameraTimer?.Stop();
     }
 
     private void ConnectToSimulator()
@@ -574,9 +585,6 @@ internal sealed class SimConnectService : INotifyPropertyChanged
             SIMCONNECT_DATATYPE.FLOAT64, 0.0f, SimConnect.SIMCONNECT_UNUSED);
         _simconnect.AddToDataDefinition(DataDefinitions.FlightData, "Vertical Speed", "ft/min",
             SIMCONNECT_DATATYPE.FLOAT64, 0.0f, SimConnect.SIMCONNECT_UNUSED);
-        _simconnect.AddToDataDefinition(DataDefinitions.FlightData, "Camera State", null, SIMCONNECT_DATATYPE.INT32,
-            0.0f, SimConnect.SIMCONNECT_UNUSED);
-
         _simconnect.AddToDataDefinition(DataDefinitions.FlightData, "Flap Speed Exceeded", null,
             SIMCONNECT_DATATYPE.INT32, 0.0f, SimConnect.SIMCONNECT_UNUSED);
         _simconnect.AddToDataDefinition(DataDefinitions.FlightData, "Gear Speed Exceeded", null,
@@ -620,8 +628,14 @@ internal sealed class SimConnectService : INotifyPropertyChanged
         _simconnect.AddToDataDefinition(DataDefinitions.FlightData, "PLANE BANK DEGREES", "degrees",
             SIMCONNECT_DATATYPE.FLOAT64, 0.0f, SimConnect.SIMCONNECT_UNUSED);
 
+        // CAMERA - deliberately its own definition, polled on a wall clock rather than
+        // carried with the flight data, so it keeps arriving while the sim is paused.
+        _simconnect.AddToDataDefinition(DataDefinitions.CameraData, "Camera State", null,
+            SIMCONNECT_DATATYPE.INT32, 0.0f, SimConnect.SIMCONNECT_UNUSED);
+
         _simconnect.RegisterDataDefineStruct<AircraftData>(DataDefinitions.AircraftData);
         _simconnect.RegisterDataDefineStruct<FlightData>(DataDefinitions.FlightData);
+        _simconnect.RegisterDataDefineStruct<CameraData>(DataDefinitions.CameraData);
 
         // Subscribe to System events
         _simconnect.SubscribeToSystemEvent(Events.FlightLoaded, "FlightLoaded");
@@ -639,6 +653,14 @@ internal sealed class SimConnectService : INotifyPropertyChanged
         _simconnect.OnRecvEvent += new SimConnect.RecvEventEventHandler(Simconnect_OnRecvEvent);
         _simconnect.OnRecvEventFilename += new SimConnect.RecvEventFilenameEventHandler(Simconnect_OnRecvFilename);
         _simconnect.OnRecvSystemState += new SimConnect.RecvSystemStateEventHandler(Simconnect_OnRecvSystemState);
+
+        // One standing subscription replaces the former 50ms request loop. SIM_FRAME is
+        // tied to the physics loop rather than the render loop, so it does not fluctuate
+        // with GPU load - and it stops while the simulator is paused, which is why camera
+        // state is polled separately.
+        _simconnect.RequestDataOnSimObject(Requests.FlightDataRequest, DataDefinitions.FlightData,
+            SimConnect.SIMCONNECT_OBJECT_ID_USER, SIMCONNECT_PERIOD.SIM_FRAME,
+            SIMCONNECT_DATA_REQUEST_FLAG.CHANGED, 0u, 0u, 0u);
 
         StartGettingData();
     }
@@ -786,15 +808,21 @@ internal sealed class SimConnectService : INotifyPropertyChanged
                     : null;
 
                 FlightData = (FlightData)data.dwData[0];
-                // OnPropertyChanged(nameof(FlightData));
-                // Update CameraState to determine if is in flight
-                CameraState = FlightData.CameraState;
 
                 if (runIdentityCheck)
                 {
                     _pendingIdentityCheck = false;
                     VerifyFlightIdentity(before, FlightData);
                 }
+            }
+            else if (data.dwRequestID == (int)Requests.CameraDataRequest)
+            {
+                var cameraData = (CameraData)data.dwData[0];
+
+                // Assigned before the tick so that a camera change has already been folded
+                // into IsInFlight by the time the state machine is asked to act on it.
+                CameraState = cameraData.CameraState;
+                FlightManager.FlightManager.Instance.HandleCameraTick();
             }
             else if (data.dwRequestID == (int)Requests.AircraftDataRequest)
             {
@@ -866,15 +894,16 @@ internal sealed class SimConnectService : INotifyPropertyChanged
     }
 
     /// <summary>
-    /// Gets flight data from simconnect once
+    /// Polls camera state on a wall clock. Deliberately not part of the FlightData
+    /// subscription: this must keep arriving while the simulator is paused or in a menu.
     /// </summary>
-    public void RequestFlightData()
+    public void RequestCameraData()
     {
         SafeSimConnectCall(sc =>
-            sc.RequestDataOnSimObject(Requests.FlightDataRequest, DataDefinitions.FlightData,
+            sc.RequestDataOnSimObject(Requests.CameraDataRequest, DataDefinitions.CameraData,
                 SimConnect.SIMCONNECT_OBJECT_ID_USER, SIMCONNECT_PERIOD.ONCE,
-                SIMCONNECT_DATA_REQUEST_FLAG.CHANGED, 0u, 0u, 0u),
-            nameof(RequestFlightData));
+                SIMCONNECT_DATA_REQUEST_FLAG.DEFAULT, 0u, 0u, 0u),
+            nameof(RequestCameraData));
     }
 
     private void Simconnect_OnRecvAirportList(SimConnect sender, SIMCONNECT_RECV_AIRPORT_LIST data)
@@ -955,7 +984,7 @@ internal sealed class SimConnectService : INotifyPropertyChanged
 
     public void Close()
     {
-        _dataTimer?.Stop();
+        _cameraTimer?.Stop();
         _gracePeriodTimer?.Stop();
 
         lock (_simConnectLock)

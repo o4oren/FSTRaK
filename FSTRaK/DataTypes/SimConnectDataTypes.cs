@@ -71,13 +71,15 @@ namespace FSTRaK.DataTypes
         FlightLoaded,
         AircraftLoaded,
         AircraftDataRequest,
-        SimVersionRequest
+        SimVersionRequest,
+        CameraDataRequest
     }
 
     public enum DataDefinitions
     {
         AircraftData,
-        FlightData
+        FlightData,
+        CameraData
     }
 
     public enum Events
@@ -114,6 +116,17 @@ namespace FSTRaK.DataTypes
         public string liveryName;
     }
 
+    /// <summary>
+    /// Camera state on its own definition so it can be polled on a wall clock. It is the
+    /// primary flight start and exit signal, and must stay observable while the simulator
+    /// is paused, in a menu, or loading - exactly when a SIM_FRAME subscription is silent.
+    /// </summary>
+    [StructLayout(LayoutKind.Sequential, CharSet = CharSet.Ansi, Pack = 1)]
+    public struct CameraData
+    {
+        public CameraState CameraState;
+    }
+
     [StructLayout(LayoutKind.Sequential, CharSet = CharSet.Ansi, Pack = 1)]
     public struct FlightData
     {
@@ -134,7 +147,6 @@ namespace FSTRaK.DataTypes
         public double PlaneAltAboveGround;
         public double PlaneAltAboveGroundMinusCg;
         public double VerticalSpeed;
-        public CameraState CameraState;
         public int FlapSpeedExceeded;
         public int GearSpeedExceeded;
         public int OverSpeed;

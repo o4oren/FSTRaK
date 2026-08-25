@@ -110,6 +110,23 @@ namespace FSTRaK.BusinessLogic.FlightManager
             }
         }
 
+        /// <summary>
+        /// Mirrors the simulator's camera state. States read it from here rather than from
+        /// a FlightData sample: camera state now travels on its own poll, so it is current
+        /// even while the SIM_FRAME flight data subscription is silent.
+        /// </summary>
+        private CameraState _cameraState;
+        public CameraState CameraState
+        {
+            get => _cameraState;
+            set
+            {
+                if (_cameraState == value) return;
+                _cameraState = value;
+                OnPropertyChanged();
+            }
+        }
+
         private string _simVersion;
         public string SimVersion
         {
@@ -150,7 +167,6 @@ namespace FSTRaK.BusinessLogic.FlightManager
                 case nameof(SimConnectService.FlightData):
                     var data = _simConnectService.FlightData;
                     State.ProcessFlightData(data);
-                    State.HandleFlightExitEvent();
 
                     // Updating the map in realtime if not in non-flight states
                     if (State is not SimNotInFlightState)
@@ -224,9 +240,24 @@ namespace FSTRaK.BusinessLogic.FlightManager
                     SimVersion = _simConnectService.SimVersion;
                     break;
 
+                case nameof(_simConnectService.CameraState):
+                    CameraState = _simConnectService.CameraState;
+                    break;
+
                 default:
                     break;
             }
+        }
+
+        /// <summary>
+        /// Driven by the camera poll rather than the flight-data stream, so that leaving a
+        /// flight is still detected while the simulator is paused - which is exactly when
+        /// the SIM_FRAME subscription stops delivering. This also closes a case where
+        /// pausing after landing and then quitting left a pending touchdown unfinalized.
+        /// </summary>
+        public void HandleCameraTick()
+        {
+            State.HandleFlightExitEvent();
         }
 
         public string GetLoadedAircraftFileName()
