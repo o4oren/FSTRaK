@@ -236,6 +236,25 @@ Manual verification on Windows (cannot be automated; requires MSFS):
 6. Teleport via the world map within 60 s — the flight ends.
 7. Confirm the observed `SIM_FRAME` delivery rate and UI responsiveness.
 
+## Version bump
+
+This work ships as **3.7.5**, up from 3.7.0. Following the pattern established by
+commit `23fdab7` (the 3.7.0 release):
+
+- `FSTRaK/Properties/AssemblyInfo.cs` — `AssemblyVersion` and
+  `AssemblyFileVersion` to `3.7.5.0`.
+- `Setup/Setup.vdproj` — `ProductVersion` to `3.7.5`, and **new GUIDs for both
+  `ProductCode` and `PackageCode`**. `UpgradeCode` must remain unchanged: a
+  changed `ProductVersion` without a fresh `ProductCode` breaks the Windows
+  Installer major-upgrade path, so an existing install would not be replaced
+  cleanly.
+- `RELEASE_NOTES.md` — an entry describing the connection-resilience fixes.
+- `README.md`, `docs/index.html`, `docs/project-overview.md` — version references,
+  as in the 3.7.0 commit.
+
+The version bump is the final step of implementation, after the code changes are
+complete and verified, so the release notes describe what actually shipped.
+
 ## Risks
 
 - **`SIM_FRAME` delivery rate is unverified.** Estimated at 30–60 Hz from general
