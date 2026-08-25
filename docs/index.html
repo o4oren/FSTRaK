@@ -437,7 +437,7 @@
       <span class="release-date">August 2026</span>
     </div>
     <ul>
-      <li>Closing MSFS mid-flight no longer orphans the flight &mdash; it is ended and saved according to your "save only complete flights" setting</li>
+      <li>Closing MSFS mid-flight no longer leaves the flight hanging indefinitely &mdash; it now ends cleanly (interrupted flights are still not written to the logbook; only flights that reach a parking spot are saved)</li>
       <li>A dropped connection now holds the flight for 60 seconds and resumes it if the same aircraft reconnects near your last known position, so a brief blip no longer costs a long flight</li>
       <li>If the reconnected session is a different flight (different aircraft, or a jump to another airport), the original flight is ended rather than silently continued</li>
       <li>SimConnect pipe errors no longer leave FSTRaK polling a dead connection while appearing connected</li>

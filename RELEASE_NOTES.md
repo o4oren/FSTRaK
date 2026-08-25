@@ -4,11 +4,13 @@ This is a stability release focused on how FSTRaK handles losing its connection 
 
 ## Fixes
 
-**Flights are no longer lost when the connection drops**
-- Closing MSFS mid-flight previously left the flight orphaned — never ended, never saved. It now ends properly, and is saved according to your "save only complete flights" setting.
+**Connection loss no longer leaves FSTRaK in a broken state**
 - A SimConnect pipe error previously left FSTRaK polling a dead connection indefinitely, appearing connected while receiving nothing. All connection errors now tear down cleanly and reconnect.
-- A dropped connection mid-flight now holds the flight for 60 seconds instead of discarding it. If the simulator comes back within that window with the same aircraft near your last known position, the flight simply continues — a brief connection blip no longer costs you a long flight.
+- A dropped connection mid-flight now holds the flight for 60 seconds instead of abandoning it. If the simulator comes back within that window with the same aircraft near your last known position, the flight simply continues — a brief connection blip no longer costs you a long flight.
 - If the reconnected session is a different flight (different aircraft, or a jump to another airport), the original flight is ended rather than silently continued.
+- Closing MSFS mid-flight previously left the flight hanging indefinitely, with FSTRaK still showing it as active. The flight now ends cleanly.
+
+  Note: a flight ended this way is still not written to the logbook — only flights that reach a parking spot are saved. Recovering an interrupted flight into the logbook is a separate change, not part of this release.
 
 **Leaving a flight while paused is now detected reliably**
 - Camera state — which is how FSTRaK detects a flight starting and ending — is now polled independently of flight data, so pausing or opening a menu no longer blinds the detection.

@@ -987,6 +987,12 @@ internal sealed class SimConnectService : INotifyPropertyChanged
         _cameraTimer?.Stop();
         _gracePeriodTimer?.Stop();
 
+        // Stopped here so that closing the app during a reconnect cycle does not leave a
+        // 10s timer calling ConnectToSimulator against a window handle being torn down.
+        // The two in-service callers (HandleConnectionLost, simconnect_OnRecvQuit) both
+        // restart it immediately after this returns, so their retry loop is unaffected.
+        _connectionTimer?.Stop();
+
         lock (_simConnectLock)
         {
             if (_simconnect != null)
