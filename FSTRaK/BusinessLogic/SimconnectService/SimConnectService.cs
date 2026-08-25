@@ -31,7 +31,6 @@ internal sealed class SimConnectService : INotifyPropertyChanged
     /// </summary>
     private const int GracePeriodInterval = 60000;
 
-    private const string MainMenuFlt = "flights\\other\\MainMenu.FLT";
     public const string MSFS2020 = "MSFS2020";
     public const string MSFS2024 = "MSFS2024";
     private SimConnect _simconnect = null;
@@ -337,16 +336,78 @@ internal sealed class SimConnectService : INotifyPropertyChanged
 
     private void OnGracePeriodExpired()
     {
-        // A normal flight end, a clean quit, or a successful reconnect all supersede the
-        // grace period. Stop() cannot cancel an already-queued callback, so re-check here.
+        // A normal flight end, a clean quit, or a completed identity check all supersede
+        // the grace period. Stop() cannot cancel an already-queued callback, so re-check.
         if (!IsAwaitingReconnect)
         {
             return;
         }
 
-        Log.Information($"No reconnection within {GracePeriodInterval / 1000}s - ending the flight.");
+        // Two different expiries share this timer. If the identity check is still pending
+        // the pipe did come back, but no data sample followed it within a second window -
+        // the sim is hung, or sitting in a menu with nothing changing. Either way the
+        // limbo state must not outlive the window, and with no sample there is nothing to
+        // identify the flight by, so it ends.
+        if (_pendingIdentityCheck)
+        {
+            _pendingIdentityCheck = false;
+            Log.Information($"Reconnected, but no flight data arrived within {GracePeriodInterval / 1000}s - ending the flight.");
+        }
+        else
+        {
+            Log.Information($"No reconnection within {GracePeriodInterval / 1000}s - ending the flight.");
+        }
+
         IsAwaitingReconnect = false;
         IsInFlight = false;
+    }
+
+    /// <summary>
+    /// Decides whether the reconnected session is the same flight. Runs on the first data
+    /// sample after a reconnect, because aircraft data and position are not available at
+    /// the moment the connection opens.
+    ///
+    /// <paramref name="before"/> is captured by the caller ahead of assigning
+    /// <see cref="FlightData"/>, since that assignment refreshes the very snapshot this
+    /// compares against.
+    /// </summary>
+    private void VerifyFlightIdentity(FlightIdentitySnapshot? before, FlightData data)
+    {
+        // The fallback expiry may have already ended the flight and cleared the flag; in
+        // that case this sample is the first of whatever comes next, not a resumption.
+        if (!IsAwaitingReconnect)
+        {
+            Log.Debug("Identity check skipped - the flight was already resolved.");
+            return;
+        }
+
+        _gracePeriodTimer.Stop();
+
+        var after = new FlightIdentitySnapshot
+        {
+            Title = AircraftData.title,
+            LiveryName = AircraftData.liveryName,
+            Latitude = data.Latitude,
+            Longitude = data.Longitude,
+            OnGround = Convert.ToBoolean(data.SimOnGround)
+        };
+
+        // No snapshot means no flight was ever sampled in the air, so there is nothing to
+        // resume - treated as a mismatch rather than compared against a default at 0,0.
+        var canResume = before.HasValue
+                        && FlightIdentity.CanResume(before.Value, after, IsInFlight, SimVersion == MSFS2024);
+
+        IsAwaitingReconnect = false;
+
+        if (canResume)
+        {
+            Log.Information($"Resuming the flight after reconnection - {after.Title} near the last known position.");
+        }
+        else
+        {
+            Log.Information($"Not the same flight after reconnection (was {before?.Title}, now {after.Title}); ending it.");
+            IsInFlight = false;
+        }
     }
 
     /// <summary>
@@ -361,6 +422,10 @@ internal sealed class SimConnectService : INotifyPropertyChanged
         Close();
         IsConnected = false;
         SimVersion = null;
+
+        // Any check still pending belongs to the connection that just died; the next
+        // OnRecvOpen arms a new one if there is still a flight to verify.
+        _pendingIdentityCheck = false;
 
         if (hadFlight)
         {
@@ -624,58 +689,28 @@ internal sealed class SimConnectService : INotifyPropertyChanged
 
     private void UpdateInFlightState()
     {
-        Log.Information($"Flight state updated : Pause state: {PauseState}, SimStared: {SimStarted}, Is in flight: {IsInFlight}, CameraState: {CameraState}");
-        if(IsInFlight && !IsConnected)
+        var inputs = new FlightStateInputs
         {
-            IsInFlight = false;
-        }
-        else if (IsInFlight 
-            && (PauseState == 1 || PauseState == 8 || PauseState == 0)
-            && (CameraState == CameraState.InFlightMenu2024 || CameraState == CameraState.InFlightMenu2024_2 || CameraState == CameraState.InFlightMenu2024_3))
-        {
-            // Do nothing. This is to prevent enabling VR mid flight from ending the flight.
-            // Do nothing. PasueState 8 occurs with active pause. In 2024, it occurs after 9 when ending a flight.
-            // Do nothing when these happen in flight.
+            Camera = CameraState,
+            PreviousCamera = PreviousCameraState,
+            PauseState = PauseState,
+            LoadedFlight = LoadedFlight,
+            IsConnected = IsConnected,
+            WasInFlight = IsInFlight
+        };
 
-        }
-        else if (CameraState == CameraState.Cockpit 
-            || CameraState == CameraState.External 
-            || CameraState == CameraState.Drone 
-            || CameraState == CameraState.Fixed 
-            || CameraState == CameraState.Environment 
-            || CameraState == CameraState.SixDof
-            || CameraState == CameraState.FollowTrafficAircraft)
+        var isInFlight = FlightStateEvaluator.IsInFlight(inputs);
+
+        Log.Debug($"Flight state: pause {PauseState}, sim started {SimStarted}, camera {CameraState} -> in flight {isInFlight}");
+
+        // While awaiting reconnection the flight is held; the grace timer or the identity
+        // check decides its fate, not the stale camera state left behind by the drop.
+        if (IsAwaitingReconnect && !isInFlight)
         {
-            IsInFlight = true; // MSFS 2024 start flight condition
+            return;
         }
-        else if (CameraState == CameraState.LoadingFlight3D2024 || CameraState == CameraState.SomethingInLoadingProcess2024)
-        {
-            IsInFlight = false; // MSFS 2024 exit flight condition
-        }
-        else if (CameraState == CameraState.MainMenu2024) 
-        {
-            if(PreviousCameraState != CameraState.InFlightMenu2024_3) { 
-                IsInFlight = false; 
-            }
-        }
-        else if (IsInFlight && PauseState == 9)
-        {
-            IsInFlight = false; // MSFS 2024 exit flight condition
-        }
-        else if (
-            !string.IsNullOrEmpty(LoadedFlight)
-            && !LoadedFlight.Equals(MainMenuFlt)
-            && PauseState != 1
-            && PauseState != 8
-            && PauseState != 9)
-        {
-            IsInFlight = true;
-        }
-        else
-        {
-            IsInFlight = false;
-        }
-        Log.Information($"IsInFlight: {IsInFlight}");
+
+        IsInFlight = isInFlight;
     }
 
     private void simconnect_OnRecvQuit(SimConnect sender, SIMCONNECT_RECV data)
@@ -687,6 +722,7 @@ internal sealed class SimConnectService : INotifyPropertyChanged
         IsConnected = false;
         SimVersion = null;
         IsAwaitingReconnect = false;
+        _pendingIdentityCheck = false;
         _gracePeriodTimer.Stop();
         IsInFlight = false;   // was missing: a flight in progress was orphaned, never saved
         _connectionTimer.Start();
@@ -702,11 +738,16 @@ internal sealed class SimConnectService : INotifyPropertyChanged
 
         if (IsAwaitingReconnect)
         {
-            // Cancelled by reconnection, not by a completed identity check: the first data
-            // sample may arrive well after the window would have closed, and a flight we
-            // successfully reconnected to must not be lost waiting for it.
+            // The original window is cancelled by reconnection rather than by a completed
+            // identity check: the first data sample may arrive well after it would have
+            // closed, and a flight we successfully reconnected to must not be lost waiting
+            // for it. A fresh single-shot window is armed in its place so that the held
+            // flight cannot sit in limbo forever if that sample never comes at all - the
+            // data subscription only reports changed values, so a hung or parked sim can
+            // stay silent indefinitely.
             Log.Information("Reconnected inside the grace window; verifying flight identity.");
             _pendingIdentityCheck = true;
+            _gracePeriodTimer.Start();
             RequestLoadedAircraft();
         }
 
@@ -731,10 +772,25 @@ internal sealed class SimConnectService : INotifyPropertyChanged
         {
             if (data.dwRequestID == (int)Requests.FlightDataRequest)
             {
+                // The snapshot has to be read before FlightData is assigned: that assignment
+                // raises a property change the FlightManager answers by overwriting
+                // LastKnownSnapshot with this very sample, which would make the comparison
+                // below trivially true.
+                var runIdentityCheck = _pendingIdentityCheck;
+                FlightIdentitySnapshot? before = runIdentityCheck
+                    ? FSTRaK.BusinessLogic.FlightManager.FlightManager.Instance.LastKnownSnapshot
+                    : null;
+
                 FlightData = (FlightData)data.dwData[0];
                 // OnPropertyChanged(nameof(FlightData));
                 // Update CameraState to determine if is in flight
                 CameraState = FlightData.CameraState;
+
+                if (runIdentityCheck)
+                {
+                    _pendingIdentityCheck = false;
+                    VerifyFlightIdentity(before, FlightData);
+                }
             }
             else if (data.dwRequestID == (int)Requests.AircraftDataRequest)
             {

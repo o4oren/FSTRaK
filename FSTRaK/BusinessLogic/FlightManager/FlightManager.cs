@@ -69,6 +69,13 @@ namespace FSTRaK.BusinessLogic.FlightManager
             }
         }
 
+        /// <summary>
+        /// Aircraft and position from the most recent in-flight sample, used to decide
+        /// whether a flight survived a connection gap. Null until a flight has been
+        /// sampled, which the identity check reads as "nothing to resume".
+        /// </summary>
+        public FlightIdentitySnapshot? LastKnownSnapshot { get; private set; }
+
         private IFlightManagerState _state;
         public IFlightManagerState State { 
             get => _state;
@@ -160,6 +167,15 @@ namespace FSTRaK.BusinessLogic.FlightManager
                             Altitude = data.Altitude
                         };
                         CurrentFlightParams = fp;
+
+                        LastKnownSnapshot = new FlightIdentitySnapshot
+                        {
+                            Title = ActiveFlight?.Aircraft?.Title,
+                            LiveryName = ActiveFlight?.Aircraft?.LiveryName,
+                            Latitude = data.Latitude,
+                            Longitude = data.Longitude,
+                            OnGround = Convert.ToBoolean(data.SimOnGround)
+                        };
                     }
 
                     OnPropertyChanged(nameof(ActiveFlight));
