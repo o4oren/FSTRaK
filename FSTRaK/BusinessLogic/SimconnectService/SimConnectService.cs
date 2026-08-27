@@ -46,6 +46,8 @@ internal sealed class SimConnectService : INotifyPropertyChanged
     /// the UI thread via WndProc, the camera timer, and the connection timer. Critical
     /// sections must stay narrow - never hold this across a property change, because
     /// those reach the FlightManager state machine, which calls back into this service.
+    /// The WndProc path therefore uses <see cref="ReceiveSimConnectMessage"/>, which
+    /// takes this only to read the handle and pumps messages outside it.
     /// </summary>
     private readonly object _simConnectLock = new object();
 
@@ -55,6 +57,13 @@ internal sealed class SimConnectService : INotifyPropertyChanged
     private Timer _gracePeriodTimer;
 
     private bool _pendingIdentityCheck;
+
+    /// <summary>
+    /// Throttles UI notification for flight data to 20Hz - the rate that shipped before
+    /// the SIM_FRAME subscription replaced the 50ms poll. The state machine is driven
+    /// separately and still sees every frame.
+    /// </summary>
+    private readonly NotificationGate _flightDataNotificationGate = new NotificationGate(50);
 
     private IntPtr _lHwnd;
 
@@ -237,14 +246,16 @@ internal sealed class SimConnectService : INotifyPropertyChanged
 
     private FlightData _flightData;
 
+    /// <summary>
+    /// Assigning does NOT raise a property change - the setter is deliberately silent.
+    /// Flight data arrives at simulator frame rate, and notifying at that rate is what
+    /// makes the UI unresponsive. Simconnect_OnRecvSimobjectData raises the change
+    /// through the notification gate instead.
+    /// </summary>
     public FlightData FlightData
     {
         get => _flightData;
-        private set
-        {
-            _flightData = value;
-            OnPropertyChanged();
-        }
+        private set => _flightData = value;
     }
 
     private AircraftData _aircraftData;
@@ -658,6 +669,12 @@ internal sealed class SimConnectService : INotifyPropertyChanged
         // tied to the physics loop rather than the render loop, so it does not fluctuate
         // with GPU load - and it stops while the simulator is paused, which is why camera
         // state is polled separately.
+        //
+        // interval 0 delivers every frame, deliberately. The state machine needs full
+        // resolution: TouchdownTracker's peak G detection and the airborne SimOnGround
+        // transition both degrade if frames are dropped. UI notification is throttled
+        // separately, by the NotificationGate on the receive side, rather than by
+        // reducing delivery here.
         _simconnect.RequestDataOnSimObject(Requests.FlightDataRequest, DataDefinitions.FlightData,
             SimConnect.SIMCONNECT_OBJECT_ID_USER, SIMCONNECT_PERIOD.SIM_FRAME,
             SIMCONNECT_DATA_REQUEST_FLAG.CHANGED, 0u, 0u, 0u);
@@ -798,16 +815,27 @@ internal sealed class SimConnectService : INotifyPropertyChanged
         {
             if (data.dwRequestID == (int)Requests.FlightDataRequest)
             {
-                // The snapshot has to be read before FlightData is assigned: that assignment
-                // raises a property change the FlightManager answers by overwriting
-                // LastKnownSnapshot with this very sample, which would make the comparison
-                // below trivially true.
+                // The snapshot has to be read before the notification below: that
+                // notification is what makes the FlightManager overwrite LastKnownSnapshot
+                // with this very sample, which would make the comparison trivially true.
                 var runIdentityCheck = _pendingIdentityCheck;
                 FlightIdentitySnapshot? before = runIdentityCheck
                     ? FlightManager.FlightManager.Instance.LastKnownSnapshot
                     : null;
 
                 FlightData = (FlightData)data.dwData[0];
+
+                // Every frame reaches the state machine. Touchdown G sampling and the
+                // airborne transition both need per-frame resolution.
+                FlightManager.FlightManager.Instance.HandleFlightData(_flightData);
+
+                // The UI, which does not, is notified at 20Hz. Forced when an identity
+                // check is pending, because that path depends on the notification having
+                // refreshed LastKnownSnapshot.
+                if (_flightDataNotificationGate.ShouldNotify(runIdentityCheck))
+                {
+                    OnPropertyChanged(nameof(FlightData));
+                }
 
                 if (runIdentityCheck)
                 {
@@ -867,6 +895,48 @@ internal sealed class SimConnectService : INotifyPropertyChanged
         catch (Exception ex) when (ex is NullReferenceException || ex is ObjectDisposedException)
         {
             Log.Warning(ex, $"SimConnect handle disposed during {description}; reconnecting.");
+            HandleConnectionLost();
+        }
+    }
+
+    /// <summary>
+    /// Pumps SimConnect messages while holding the lock only long enough to read the
+    /// handle.
+    ///
+    /// Deliberately does not use SafeSimConnectCall: ReceiveMessage dispatches its
+    /// callbacks synchronously, so calling it inside the lock would hold the lock across
+    /// the property change and the FlightManager state machine - exactly what the comment
+    /// on _simConnectLock forbids, and enough to stall the camera and connection timers
+    /// behind a lock taken at frame rate.
+    ///
+    /// Racing a concurrent Close is already handled: disposing the handle surfaces as an
+    /// ObjectDisposedException or NullReferenceException, caught below, which reconnects.
+    /// </summary>
+    private void ReceiveSimConnectMessage()
+    {
+        SimConnect handle;
+        lock (_simConnectLock)
+        {
+            handle = _simconnect;
+        }
+
+        if (handle == null)
+        {
+            Log.Debug("Skipping ReceiveMessage - no SimConnect handle.");
+            return;
+        }
+
+        try
+        {
+            handle.ReceiveMessage();
+        }
+        catch (COMException ex)
+        {
+            HandleCOMException(ex);
+        }
+        catch (Exception ex) when (ex is NullReferenceException || ex is ObjectDisposedException)
+        {
+            Log.Warning(ex, "SimConnect handle disposed during ReceiveMessage; reconnecting.");
             HandleConnectionLost();
         }
     }
@@ -964,7 +1034,7 @@ internal sealed class SimConnectService : INotifyPropertyChanged
         {
             // The _simconnect != null test now lives inside the helper, where it is read
             // under the lock instead of racing a concurrent teardown.
-            SafeSimConnectCall(sc => sc.ReceiveMessage(), "ReceiveMessage");
+            ReceiveSimConnectMessage();
             handled = true;
         }
 
