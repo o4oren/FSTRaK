@@ -442,7 +442,7 @@
       <li>If the reconnected session is a different flight (different aircraft, or a jump to another airport), the original flight is ended rather than silently continued</li>
       <li>SimConnect pipe errors no longer leave FSTRaK polling a dead connection while appearing connected</li>
       <li>Leaving a flight while paused or in a menu is now detected reliably, and pausing straight after landing no longer drops the landing or its touchdown G force</li>
-      <li>Flight data now arrives on a subscription tied to the simulator's physics loop instead of 20&times;-per-second polling, slightly improving landing score precision</li>
+      <li>Flight data now arrives on a subscription tied to the simulator's physics loop, letting landing detection sample every frame for improved precision; display refresh remains at 20&times; per second</li>
     </ul>
   </div>
 

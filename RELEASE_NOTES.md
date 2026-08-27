@@ -22,7 +22,7 @@ This is a stability release focused on how FSTRaK handles losing its connection 
 
 ## Changes
 
-- Flight data now arrives on a SimConnect subscription tied to the simulator's physics loop, instead of being polled 20 times a second. This reduces inter-process traffic and samples aircraft state more accurately, which slightly improves the precision of landing scores.
+- Flight data now arrives on a SimConnect subscription tied to the simulator's physics loop, instead of being polled 20 times a second. Landing detection sees every sample, which slightly improves the precision of landing scores. The displayed flight data and live map continue to refresh 20 times a second, which is what they did before and is well past the point of visible difference.
 - Because samples now follow the simulator's physics loop, pausing within about two seconds of touchdown will end G-force sampling for that landing. The frozen simulation has nothing further to measure, so the resulting score reflects the actual touchdown.
 
 ## Under the hood
