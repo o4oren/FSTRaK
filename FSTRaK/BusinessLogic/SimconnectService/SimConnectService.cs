@@ -46,6 +46,8 @@ internal sealed class SimConnectService : INotifyPropertyChanged
     /// the UI thread via WndProc, the camera timer, and the connection timer. Critical
     /// sections must stay narrow - never hold this across a property change, because
     /// those reach the FlightManager state machine, which calls back into this service.
+    /// The WndProc path therefore uses <see cref="ReceiveSimConnectMessage"/>, which
+    /// takes this only to read the handle and pumps messages outside it.
     /// </summary>
     private readonly object _simConnectLock = new object();
 
@@ -895,6 +897,48 @@ internal sealed class SimConnectService : INotifyPropertyChanged
         }
     }
 
+    /// <summary>
+    /// Pumps SimConnect messages while holding the lock only long enough to read the
+    /// handle.
+    ///
+    /// Deliberately does not use SafeSimConnectCall: ReceiveMessage dispatches its
+    /// callbacks synchronously, so calling it inside the lock would hold the lock across
+    /// the property change and the FlightManager state machine - exactly what the comment
+    /// on _simConnectLock forbids, and enough to stall the camera and connection timers
+    /// behind a lock taken at frame rate.
+    ///
+    /// Racing a concurrent Close is already handled: disposing the handle surfaces as an
+    /// ObjectDisposedException or NullReferenceException, caught below, which reconnects.
+    /// </summary>
+    private void ReceiveSimConnectMessage()
+    {
+        SimConnect handle;
+        lock (_simConnectLock)
+        {
+            handle = _simconnect;
+        }
+
+        if (handle == null)
+        {
+            Log.Debug("Skipping ReceiveMessage - no SimConnect handle.");
+            return;
+        }
+
+        try
+        {
+            handle.ReceiveMessage();
+        }
+        catch (COMException ex)
+        {
+            HandleCOMException(ex);
+        }
+        catch (Exception ex) when (ex is NullReferenceException || ex is ObjectDisposedException)
+        {
+            Log.Warning(ex, "SimConnect handle disposed during ReceiveMessage; reconnecting.");
+            HandleConnectionLost();
+        }
+    }
+
     public void RequestNearestAirport()
     {
         NearestAirportDistance = double.MaxValue;
@@ -988,7 +1032,7 @@ internal sealed class SimConnectService : INotifyPropertyChanged
         {
             // The _simconnect != null test now lives inside the helper, where it is read
             // under the lock instead of racing a concurrent teardown.
-            SafeSimConnectCall(sc => sc.ReceiveMessage(), "ReceiveMessage");
+            ReceiveSimConnectMessage();
             handled = true;
         }
 
