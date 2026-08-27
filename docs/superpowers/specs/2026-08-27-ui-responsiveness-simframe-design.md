@@ -5,9 +5,13 @@ Status: Design approved, pending implementation plan
 
 ## Problem
 
-Since 3.7.5 the UI processes user input sluggishly during flight. The window does not
-freeze — it keeps painting and eventually answers clicks — but input latency rises to the
-point of being unusable while airborne.
+On the unreleased 3.7.5 the UI processes user input sluggishly during flight. The window
+does not freeze — it keeps painting and eventually answers clicks — but input latency rises
+to the point of being unusable while airborne.
+
+3.7.5 has not shipped, so the regression never reached users. This is a fix to unreleased
+work, not a hotfix: no version bump, and the 3.7.5 notes are corrected rather than
+supplemented.
 
 ## Root cause
 
@@ -57,8 +61,8 @@ Database work is not a contributor. `LogbookContext` access in `FlightManager.cs
 
 ## Constraints
 
-- 20 Hz is sufficient for the UI. This is the rate that shipped before `02b36c6` and was
-  never reported as insufficient.
+- 20 Hz is sufficient for the UI. This is the rate 3.7.4 shipped with, across every
+  released version before `02b36c6`, and was never reported as insufficient.
 - The benefits of `02b36c6` are kept: the separate camera poll (so camera state keeps
   arriving while the sim is paused) and the standing subscription (no GPU-load jitter, no
   request-loop overhead).
