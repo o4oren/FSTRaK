@@ -14,7 +14,7 @@
 
 - **Cannot build or test on this machine.** The developer machine is macOS; MSBuild and the SimConnect native dependency are Windows-only. Every "run the tests" step below is a step the *user* runs on Windows. Do not claim a test passed that you did not see pass.
 - **Both csproj files must be updated for any new file.** `FSTRaK/FSTrAk.csproj` is the real project; `FSTRaK/FSTRaK.csproj` is a tracked case-alias. A plain `git add` fails on the alias — stage it with `git update-index --add --cacheinfo` or `git add -f`, and verify with `git status` before committing.
-- **Target framework is .NET Framework 4.7.2 / C# 7.3.** No nullable reference types, no target-typed `new`, no records, no switch expressions. Use `var x = new Foo()`, not `Foo x = new()`.
+- **Target framework is .NET Framework 4.7.2, with `<LangVersion>latest</LangVersion>`** in both `FSTRaK/FSTrAk.csproj` and `FSTRaK.Tests/FSTRaK.Tests.csproj`. Modern C# syntax compiles — the existing code uses `is not` patterns and nullable annotations (`FlightIdentitySnapshot?`). Match the surrounding file's style rather than writing to an older language level; do not "modernize" code you are only moving.
 - **New extracted logic goes in `FSTRaK.BusinessLogic.SimconnectService`** as an `internal` type with a doc-comment explaining *why* it exists, following `ConnectionRecovery.cs` and `FlightStateEvaluator.cs`.
 - **`InternalsVisibleTo("FSTRaK.Tests")` is already set** in `FSTRaK/Properties/AssemblyInfo.cs:8`, so `internal` types are directly testable.
 - **Test project uses SDK-style globbing** — new test files need no csproj entry.
