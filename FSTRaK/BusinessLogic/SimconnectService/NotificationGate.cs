@@ -16,6 +16,9 @@ namespace FSTRaK.BusinessLogic.SimconnectService
     /// SimOnGround transition both degrade if frames are dropped: a firm touchdown's G
     /// peak lasts only tens of milliseconds and a bounce can fall entirely between two
     /// gate windows.
+    ///
+    /// Not thread-safe: the unsynchronized fields below are safe only because this type
+    /// is called exclusively from the SimConnect receive path on the WPF UI thread.
     /// </summary>
     internal sealed class NotificationGate
     {

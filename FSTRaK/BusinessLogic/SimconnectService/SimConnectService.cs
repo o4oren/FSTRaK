@@ -670,12 +670,14 @@ internal sealed class SimConnectService : INotifyPropertyChanged
         // with GPU load - and it stops while the simulator is paused, which is why camera
         // state is polled separately.
         //
-        // interval 2 delivers every second frame, halving marshalling. It cannot pin a
-        // rate on its own because frame rate varies, so UI notification is additionally
-        // gated at 20Hz on the receive side; this only reduces waste upstream.
+        // interval 0 delivers every frame, deliberately. The state machine needs full
+        // resolution: TouchdownTracker's peak G detection and the airborne SimOnGround
+        // transition both degrade if frames are dropped. UI notification is throttled
+        // separately, by the NotificationGate on the receive side, rather than by
+        // reducing delivery here.
         _simconnect.RequestDataOnSimObject(Requests.FlightDataRequest, DataDefinitions.FlightData,
             SimConnect.SIMCONNECT_OBJECT_ID_USER, SIMCONNECT_PERIOD.SIM_FRAME,
-            SIMCONNECT_DATA_REQUEST_FLAG.CHANGED, 0u, 2u, 0u);
+            SIMCONNECT_DATA_REQUEST_FLAG.CHANGED, 0u, 0u, 0u);
 
         StartGettingData();
     }
