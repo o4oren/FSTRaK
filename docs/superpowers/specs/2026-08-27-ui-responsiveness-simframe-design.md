@@ -134,19 +134,31 @@ gate, and the gate's timestamp reset. This runs once per reconnect, so it costs 
 The existing ordering requirement documented at `SimConnectService.cs:797` still holds:
 read the snapshot before the assignment.
 
-### Upstream throttle
+### Upstream throttle — considered and rejected
 
-Set the subscription's `interval` parameter from `0` to `2`
-(`SimConnectService.cs:661`) — the 7th argument of `RequestDataOnSimObject`, measured in
-frames under `SIM_FRAME`. This halves wire traffic and marshalling.
+An earlier revision of this spec set the subscription's `interval` parameter (the 7th
+argument of `RequestDataOnSimObject`, measured in frames under `SIM_FRAME`) from `0` to
+`2`, halving wire traffic and marshalling. It was implemented, then reverted during the
+final whole-branch review. The interval stays at `0`: every frame is delivered.
 
-It deliberately does not replace the receive-side gate: frame rate varies, so a fixed
-interval cannot pin a rate. At 30fps `interval: 2` yields 15 Hz; at 144fps it yields 72 Hz.
-The gate provides the guarantee; the interval reduces waste.
+Two reasons, and the first is the one that matters:
 
-Note the interaction: at low frame rates `interval: 2` can deliver below 20 Hz, which also
-reduces the sample density feeding `TouchdownTracker`. This is accepted — at 30fps the
-pre-`02b36c6` 50ms poll was already coarser than every-other-frame.
+**It traded landing accuracy for an unmeasured optimization.** Delivering every other frame
+halves the sample density feeding `TouchdownTracker`'s G-force peak detector and
+`FlightState`'s `SimOnGround` bounce transition. A bounce is detected from a single
+observation of `SimOnGround == 1`; halving the observations halves the chances of catching
+a brief gear kiss. Landing scoring is this application's headline feature, and the gate —
+not the interval — is what actually resolves the UI defect. Spending accuracy on a
+marshalling saving nobody had measured was the wrong trade.
+
+**At low frame rates it delivered fewer samples than the poll it replaced.** At 30fps,
+`interval: 2` yields 15 Hz — below the 20 Hz of the pre-`02b36c6` loop this change is
+restoring parity with. The earlier revision of this section claimed the opposite by
+comparing against the poll's period rather than its rate.
+
+It also made the release note in the task below false: that note states landing detection
+sees every sample, which is true at `interval: 0` and false at `interval: 2`. Reverting
+keeps code and documentation in agreement without rewording either.
 
 ### Narrowing the lock
 
