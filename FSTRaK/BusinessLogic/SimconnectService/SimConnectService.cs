@@ -56,6 +56,13 @@ internal sealed class SimConnectService : INotifyPropertyChanged
 
     private bool _pendingIdentityCheck;
 
+    /// <summary>
+    /// Throttles UI notification for flight data to 20Hz - the rate that shipped before
+    /// the SIM_FRAME subscription replaced the 50ms poll. The state machine is driven
+    /// separately and still sees every frame.
+    /// </summary>
+    private readonly NotificationGate _flightDataNotificationGate = new NotificationGate(50);
+
     private IntPtr _lHwnd;
 
     private bool _isConnected = false;
@@ -237,14 +244,16 @@ internal sealed class SimConnectService : INotifyPropertyChanged
 
     private FlightData _flightData;
 
+    /// <summary>
+    /// Assigning does NOT raise a property change - the setter is deliberately silent.
+    /// Flight data arrives at simulator frame rate, and notifying at that rate is what
+    /// makes the UI unresponsive. Simconnect_OnRecvSimobjectData raises the change
+    /// through the notification gate instead.
+    /// </summary>
     public FlightData FlightData
     {
         get => _flightData;
-        private set
-        {
-            _flightData = value;
-            OnPropertyChanged();
-        }
+        private set => _flightData = value;
     }
 
     private AircraftData _aircraftData;
@@ -658,9 +667,13 @@ internal sealed class SimConnectService : INotifyPropertyChanged
         // tied to the physics loop rather than the render loop, so it does not fluctuate
         // with GPU load - and it stops while the simulator is paused, which is why camera
         // state is polled separately.
+        //
+        // interval 2 delivers every second frame, halving marshalling. It cannot pin a
+        // rate on its own because frame rate varies, so UI notification is additionally
+        // gated at 20Hz on the receive side; this only reduces waste upstream.
         _simconnect.RequestDataOnSimObject(Requests.FlightDataRequest, DataDefinitions.FlightData,
             SimConnect.SIMCONNECT_OBJECT_ID_USER, SIMCONNECT_PERIOD.SIM_FRAME,
-            SIMCONNECT_DATA_REQUEST_FLAG.CHANGED, 0u, 0u, 0u);
+            SIMCONNECT_DATA_REQUEST_FLAG.CHANGED, 0u, 2u, 0u);
 
         StartGettingData();
     }
@@ -798,16 +811,27 @@ internal sealed class SimConnectService : INotifyPropertyChanged
         {
             if (data.dwRequestID == (int)Requests.FlightDataRequest)
             {
-                // The snapshot has to be read before FlightData is assigned: that assignment
-                // raises a property change the FlightManager answers by overwriting
-                // LastKnownSnapshot with this very sample, which would make the comparison
-                // below trivially true.
+                // The snapshot has to be read before the notification below: that
+                // notification is what makes the FlightManager overwrite LastKnownSnapshot
+                // with this very sample, which would make the comparison trivially true.
                 var runIdentityCheck = _pendingIdentityCheck;
                 FlightIdentitySnapshot? before = runIdentityCheck
                     ? FlightManager.FlightManager.Instance.LastKnownSnapshot
                     : null;
 
                 FlightData = (FlightData)data.dwData[0];
+
+                // Every frame reaches the state machine. Touchdown G sampling and the
+                // airborne transition both need per-frame resolution.
+                FlightManager.FlightManager.Instance.HandleFlightData(_flightData);
+
+                // The UI, which does not, is notified at 20Hz. Forced when an identity
+                // check is pending, because that path depends on the notification having
+                // refreshed LastKnownSnapshot.
+                if (_flightDataNotificationGate.ShouldNotify(runIdentityCheck))
+                {
+                    OnPropertyChanged(nameof(FlightData));
+                }
 
                 if (runIdentityCheck)
                 {

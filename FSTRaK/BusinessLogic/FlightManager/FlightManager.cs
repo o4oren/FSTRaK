@@ -179,7 +179,9 @@ namespace FSTRaK.BusinessLogic.FlightManager
 
                 case nameof(SimConnectService.FlightData):
                     var data = _simConnectService.FlightData;
-                    State.ProcessFlightData(data);
+
+                    // State.ProcessFlightData is NOT called here - it runs on every frame
+                    // via HandleFlightData. This path is the throttled UI half.
 
                     // Updating the map in realtime if not in non-flight states
                     if (State is not SimNotInFlightState)
@@ -260,6 +262,18 @@ namespace FSTRaK.BusinessLogic.FlightManager
                 default:
                     break;
             }
+        }
+
+        /// <summary>
+        /// Driven directly by the flight data subscription rather than by a property
+        /// change, so the state machine sees every frame while UI notification stays
+        /// throttled. TouchdownTracker samples the peak G of a touchdown and FlightState
+        /// watches for the aircraft leaving the ground; both lose accuracy if frames are
+        /// dropped.
+        /// </summary>
+        public void HandleFlightData(FlightData data)
+        {
+            State.ProcessFlightData(data);
         }
 
         /// <summary>
