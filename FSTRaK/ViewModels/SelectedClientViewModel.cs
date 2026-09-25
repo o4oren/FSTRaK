@@ -49,6 +49,17 @@ namespace FSTRaK.ViewModels
         public bool IsVatsim => Network == NetworkType.Vatsim;
         public bool IsIvao   => Network == NetworkType.Ivao;
 
+        public bool IsSimTraffic { get; private set; }
+
+        /// <summary>
+        /// The pilot panel is for network clients. Sim traffic reuses ClientType.Pilot for
+        /// its identity but renders through its own, much smaller panel - SimConnect exposes
+        /// no flight plan, route, or progress for AI objects.
+        /// </summary>
+        public bool IsNetworkPilot => IsPilot && !IsSimTraffic;
+
+        public string OnGroundDisplay { get; private set; }
+
         // ── Pilot display properties
         public bool IsPilot => ClientKind == ClientType.Pilot;
         public string TrackStrokeColor => Network == NetworkType.Ivao ? "#FFFF8C00" : "#FF38bdf8";
@@ -57,6 +68,8 @@ namespace FSTRaK.ViewModels
         public string CidDisplay => CidInt?.ToString() ?? "";
         public string FlightRules { get; private set; }
         public string AircraftType { get; private set; }
+        public string Airline { get; private set; }
+        public string Manufacturer { get; private set; }
         public string Departure { get; }
         public string Arrival { get; }
         public int Altitude { get; private set; }
@@ -87,6 +100,7 @@ namespace FSTRaK.ViewModels
         public IvaoAircraft IvaoPilotItem { get; private set; }
         public VatsimControlledAirport VatsimAirportItem { get; private set; }
         public IvaoAtcItem IvaoAtcItemRef { get; private set; }
+        public SimTrafficAircraft SimTrafficItem { get; private set; }
 
         // ── VATSIM pilot constructor
         public SelectedClientViewModel(VatsimAicraft item, bool isOwn, bool isOwnInFlight, List<TrackPoint> tracks)
@@ -138,6 +152,34 @@ namespace FSTRaK.ViewModels
             Remarks = "";
             OnlineTime = "";
             _trackPoints = tracks;
+        }
+
+        // ── Simulator traffic constructor
+        public SelectedClientViewModel(SimTrafficAircraft item)
+        {
+            Network = NetworkType.None;
+            ClientKind = ClientType.Pilot;
+            IsSimTraffic = true;
+            SimTrafficItem = item;
+            IsOwnAircraft = false;
+            IsOwnAircraftInFlight = false;
+            Callsign = item.Callsign;
+            PilotName = "";
+            AircraftType = item.AircraftType;
+            Manufacturer = item.Manufacturer;
+            Airline = item.Airline;
+            Altitude = item.Altitude;
+            Groundspeed = item.Groundspeed;
+            Heading = (int)Math.Round(item.Heading);
+            OnGroundDisplay = item.IsOnGround ? "ON GROUND" : "AIRBORNE";
+            Departure = "";
+            Arrival = "";
+            FlightRules = "";
+            Squawk = "";
+            CruiseAlt = "";
+            RouteString = "";
+            Remarks = "";
+            OnlineTime = "";
         }
 
         // ── VATSIM airport ATC constructor

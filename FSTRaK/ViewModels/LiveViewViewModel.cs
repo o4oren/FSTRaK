@@ -27,6 +27,24 @@ namespace FSTRaK.ViewModels
         private readonly BusinessLogic.SimBriefService.SimBriefService _simBriefService =
             BusinessLogic.SimBriefService.SimBriefService.Instance;
 
+        /// <summary>
+        /// The simulator traffic layer. Independent of the VATSIM/IVAO network selector -
+        /// both can be shown at once.
+        /// </summary>
+        public SimTrafficViewModel SimTraffic { get; } = new SimTrafficViewModel();
+
+        private bool _isSimConnected;
+
+        /// <summary>
+        /// Drives the visibility of the traffic toggle: traffic only exists while attached to
+        /// a running simulator.
+        /// </summary>
+        public bool IsSimConnected
+        {
+            get => _isSimConnected;
+            private set { _isSimConnected = value; OnPropertyChanged(); }
+        }
+
         internal record TrackPoint(double Latitude, double Longitude, int Altitude, DateTime Timestamp);
 
 
@@ -729,6 +747,13 @@ namespace FSTRaK.ViewModels
                     var _atc = FetchIvaoAtcDetailsAsync(primaryId);
                 }
             }
+            else if (parameter is SimTrafficAircraft sta)
+            {
+                // No track history and no airport coordinates: SimConnect exposes neither for
+                // AI objects, so the panel opens with what the snapshot carries and nothing
+                // is fetched.
+                SelectedClient = new SelectedClientViewModel(sta);
+            }
 
         }
 
@@ -1129,16 +1154,24 @@ namespace FSTRaK.ViewModels
             var plan = _simBriefService.MatchedFlightPlan;
             if (plan != null)
             {
+                var waypoints = new List<Location>();
                 foreach (var point in plan.Points.OrderBy(p => p.Sequence))
                 {
                     var location = new Location(point.Latitude, point.Longitude);
-                    PlannedRouteLocations.Add(location);
+                    waypoints.Add(location);
                     PlannedWaypoints.Add(new PlannedWaypoint
                     {
                         Location = location,
                         Ident = point.Ident,
                         Tooltip = point.TooltipText
                     });
+                }
+
+                // Great-circle rather than straight Mercator segments, then unwrapped so a
+                // trans-dateline plan draws across the Pacific instead of back across the map.
+                foreach (var location in MapUtils.WrapPolyline(GeodesicUtil.ExpandPath(waypoints)))
+                {
+                    PlannedRouteLocations.Add(location);
                 }
                 IsShowFlightPlan = true; // a freshly matched plan starts visible
             }
@@ -1595,6 +1628,7 @@ namespace FSTRaK.ViewModels
                 case nameof(_flightManager.SimVersion):
                 case nameof(_flightManager.SimConnectIsConnected):
                     ConnectionText = $"{(_flightManager.SimConnectIsConnected ? "Connected to " : "Not connected to sim")} {(_flightManager.SimVersion != null ? _flightManager.SimVersion : "")}";
+                    IsSimConnected = _flightManager.SimConnectIsConnected;
                     break;
 
                 default:

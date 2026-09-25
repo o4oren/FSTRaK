@@ -72,14 +72,17 @@ namespace FSTRaK.DataTypes
         AircraftLoaded,
         AircraftDataRequest,
         SimVersionRequest,
-        CameraDataRequest
+        CameraDataRequest,
+        SimTrafficAircraftRequest,
+        SimTrafficHelicopterRequest
     }
 
     public enum DataDefinitions
     {
         AircraftData,
         FlightData,
-        CameraData
+        CameraData,
+        SimTrafficData
     }
 
     public enum Events
@@ -192,6 +195,50 @@ namespace FSTRaK.DataTypes
             return throttlePositionArray.GetRange(0, numberOfEngines).Min();
         }
 
+    }
+
+    /// <summary>
+    /// One traffic object as reported by RequestDataOnSimObjectType. Deliberately small:
+    /// this definition is marshalled once per object per poll, and a busy airport can
+    /// return hundreds of them.
+    /// </summary>
+    [StructLayout(LayoutKind.Sequential, CharSet = CharSet.Ansi, Pack = 1)]
+    public struct SimTrafficData
+    {
+        [MarshalAs(UnmanagedType.ByValTStr, SizeConst = 256)]
+        public string Title;
+        [MarshalAs(UnmanagedType.ByValTStr, SizeConst = 32)]
+        public string AtcId;
+        [MarshalAs(UnmanagedType.ByValTStr, SizeConst = 256)]
+        public string AtcType;
+        [MarshalAs(UnmanagedType.ByValTStr, SizeConst = 256)]
+        public string Airline;
+        [MarshalAs(UnmanagedType.ByValTStr, SizeConst = 32)]
+        public string FlightNumber;
+        [MarshalAs(UnmanagedType.ByValTStr, SizeConst = 128)]
+        public string Category;
+
+        public double Latitude;
+        public double Longitude;
+        public double Altitude;
+        public double TrueHeading;
+        public double GroundVelocity;
+        public int SimOnGround;
+
+        public EngineType EngineType;
+        public int NumberOfEngines;
+
+        /// <summary>
+        /// ATC Model carries the ICAO-ish type code (B738, A320); ATC Type above carries the
+        /// manufacturer. Icon resolution matches on this one, not on the manufacturer.
+        ///
+        /// 128 rather than the 32 AircraftData uses for the same SimVar: AI objects report a
+        /// localisation key rather than a bare code, and those run long - 40 characters for
+        /// a Cessna Citation, 48 for a Beechcraft King Air. At 32 the key arrives cut mid
+        /// word, which no amount of unwrapping can repair.
+        /// </summary>
+        [MarshalAs(UnmanagedType.ByValTStr, SizeConst = 128)]
+        public string AtcModel;
     }
 
     public interface IAirportData

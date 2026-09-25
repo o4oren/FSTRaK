@@ -302,6 +302,35 @@
                 </map:MapItemsControl.ItemTemplate>
             </map:MapItemsControl>
 
+            <!-- Simulator traffic (below the network layers) -->
+            <map:MapItemsControl ItemsSource="{Binding SimTraffic.Aircraft}"
+                                 Visibility="{Binding SimTraffic.IsShowSimTraffic, Converter={StaticResource BoolToVis}}">
+                <map:MapItemsControl.ItemContainerStyle>
+                    <Style TargetType="map:MapItem">
+                        <Setter Property="Location" Value="{Binding Location}"/>
+                        <Setter Property="Margin" Value="-12 -12 0 0"/>
+                        <EventSetter Event="MouseLeftButtonUp" Handler="OnMapItemClicked"/>
+                    </Style>
+                </map:MapItemsControl.ItemContainerStyle>
+                <map:MapItemsControl.ItemTemplate>
+                    <DataTemplate>
+                        <Path Fill="{DynamicResource SimTrafficAircraftColorBrush}"
+                              Data="{Binding IconResource, Converter={StaticResource ResourceNameToGeometryConverter}}">
+                            <Path.RenderTransform>
+                                <TransformGroup>
+                                    <ScaleTransform CenterX="16" CenterY="16"
+                                                    ScaleX="{Binding ScaleFactor}" ScaleY="{Binding ScaleFactor}"/>
+                                    <RotateTransform CenterX="16" CenterY="16" Angle="{Binding Heading}"/>
+                                </TransformGroup>
+                            </Path.RenderTransform>
+                            <Path.ToolTip>
+                                <ToolTip Content="{Binding TooltipText}"/>
+                            </Path.ToolTip>
+                        </Path>
+                    </DataTemplate>
+                </map:MapItemsControl.ItemTemplate>
+            </map:MapItemsControl>
+
             <!-- IVAO Aircraft -->
             <map:MapItemsControl ItemsSource="{Binding IvaoAircraftList}" Visibility="{Binding IsShowIvaoPilots, Converter={StaticResource BoolToVis}}">
                 <map:MapItemsControl.ItemContainerStyle>
@@ -410,6 +439,7 @@
         <StackPanel Margin="10" HorizontalAlignment="Right">
             <ToggleButton Style="{DynamicResource MapToggleButton}" 
                           IsChecked="{Binding IsCenterOnAirplane}" 
+                          ToolTip="Keep the map centred on your aircraft"
                           Content="{DynamicResource CenterMap}">
                 <b:Interaction.Triggers>
                     <b:EventTrigger EventName="Checked">
@@ -422,7 +452,8 @@
             </ToggleButton>
             <!-- Network selector: VATSIM -->
             <ToggleButton Style="{DynamicResource MapToggleButton}"
-                          IsChecked="{Binding IsVatsimActive, Mode=OneWay}">
+                          IsChecked="{Binding IsVatsimActive, Mode=OneWay}"
+                          ToolTip="Show VATSIM traffic and ATC">
                 <b:Interaction.Triggers>
                     <b:EventTrigger EventName="Click">
                         <b:InvokeCommandAction Command="{Binding SelectNetworkCommand}"
@@ -434,7 +465,8 @@
 
             <!-- Network selector: IVAO -->
             <ToggleButton Style="{DynamicResource MapToggleButton}"
-                          IsChecked="{Binding IsIvaoActive, Mode=OneWay}">
+                          IsChecked="{Binding IsIvaoActive, Mode=OneWay}"
+                          ToolTip="Show IVAO traffic and ATC">
                 <b:Interaction.Triggers>
                     <b:EventTrigger EventName="Click">
                         <b:InvokeCommandAction Command="{Binding SelectNetworkCommand}"
@@ -447,6 +479,7 @@
             <!-- Pilots toggle -->
             <ToggleButton Style="{DynamicResource MapToggleButton}"
                           IsChecked="{Binding IsShowPilots}"
+                          ToolTip="Show pilots on the selected network"
                           Visibility="{Binding IsAnyNetworkActive, Converter={StaticResource BoolToVis}}">
                 <b:Interaction.Triggers>
                     <b:EventTrigger EventName="Checked">
@@ -462,6 +495,7 @@
             <!-- ATC toggle -->
             <ToggleButton Style="{DynamicResource MapToggleButton}"
                           IsChecked="{Binding IsShowAtc}"
+                          ToolTip="Show ATC coverage on the selected network"
                           Visibility="{Binding IsAnyNetworkActive, Converter={StaticResource BoolToVis}}">
                 <b:Interaction.Triggers>
                     <b:EventTrigger EventName="Checked">
@@ -472,6 +506,14 @@
                     </b:EventTrigger>
                 </b:Interaction.Triggers>
                 <TextBlock Foreground="{DynamicResource SuperBrightTextColor}">ATC</TextBlock>
+            </ToggleButton>
+
+            <!-- Simulator traffic toggle - independent of the network selector -->
+            <ToggleButton Style="{DynamicResource MapToggleButton}"
+                          IsChecked="{Binding SimTraffic.IsShowSimTraffic}"
+                          Visibility="{Binding IsSimConnected, Converter={StaticResource BoolToVis}}"
+                          ToolTip="Show aircraft and helicopters in the simulator">
+                <TextBlock Foreground="{DynamicResource SuperBrightTextColor}">Traffic</TextBlock>
             </ToggleButton>
 
             <!-- SimBrief plan overlay toggle - only exists when a matching plan was fetched -->

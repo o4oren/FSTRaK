@@ -136,6 +136,8 @@
     <Compile Include="BusinessLogic\SimconnectService\FlightIdentity.cs" />
     <Compile Include="BusinessLogic\SimconnectService\FlightStateEvaluator.cs" />
     <Compile Include="BusinessLogic\SimconnectService\NotificationGate.cs" />
+    <Compile Include="BusinessLogic\SimconnectService\SimTrafficEntry.cs" />
+    <Compile Include="BusinessLogic\SimconnectService\SimTrafficTracker.cs" />
     <Compile Include="BusinessLogic\SimconnectService\SimConnectService.cs" />
     <Compile Include="BusinessLogic\VatsimService\VatsimModel\Atis.cs" />
     <Compile Include="BusinessLogic\VatsimService\VatsimModel\BoundariesGeoJson.cs" />
@@ -218,6 +220,7 @@
     <Compile Include="Utils\MBTilesMapTileLayer.cs" />
     <Compile Include="Utils\MBTilesTileSource.cs" />
     <Compile Include="Utils\StatisticsCalculations.cs" />
+    <Compile Include="Utils\SimVarText.cs" />
     <Compile Include="Utils\StringUtil.cs" />
     <Compile Include="Utils\TimeUtils.cs" />
     <Compile Include="Utils\UnitsUtil.cs" />
@@ -225,6 +228,7 @@
     <Compile Include="ViewModels\EditAircraftViewModel.cs" />
     <Compile Include="ViewModels\EditFlightViewModel.cs" />
     <Compile Include="ViewModels\FlightDetailsParamsViewModel.cs" />
+    <Compile Include="ViewModels\FlightRouteLine.cs" />
     <Compile Include="ViewModels\FlightDetailsViewModel.cs" />
     <Compile Include="ViewModels\LogbookViewModel.cs" />
     <Compile Include="ViewModels\SettingsViewModel.cs" />
@@ -246,6 +250,8 @@
     </Compile>
     <Compile Include="ViewModels\LiveViewViewModel.cs" />
     <Compile Include="ViewModels\SelectedClientViewModel.cs" />
+    <Compile Include="ViewModels\SimTrafficAircraft.cs" />
+    <Compile Include="ViewModels\SimTrafficViewModel.cs" />
     <Compile Include="ViewModels\BaseViewModel.cs" />
     <Compile Include="ViewModels\MainWindowViewModel.cs" />
     <Compile Include="Views\FlightDetailsView.xaml.cs">

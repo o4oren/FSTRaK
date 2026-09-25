@@ -42,8 +42,9 @@ internal sealed class SimConnectService : INotifyPropertyChanged
     private SimConnect _simconnect = null;
 
     /// <summary>
-    /// Guards every access to <see cref="_simconnect"/>. Three threads reach the handle:
-    /// the UI thread via WndProc, the camera timer, and the connection timer. Critical
+    /// Guards every access to <see cref="_simconnect"/>. Four threads reach the handle:
+    /// the UI thread via WndProc, the camera timer, the connection timer, and the traffic
+    /// poll timer via <see cref="RequestSimTraffic"/>. Critical
     /// sections must stay narrow - never hold this across a property change, because
     /// those reach the FlightManager state machine, which calls back into this service.
     /// The WndProc path therefore uses <see cref="ReceiveSimConnectMessage"/>, which
@@ -65,6 +66,15 @@ internal sealed class SimConnectService : INotifyPropertyChanged
     /// </summary>
     private readonly NotificationGate _flightDataNotificationGate = new NotificationGate(50);
 
+    /// <summary>
+    /// Traffic polling is independent of the flight data subscription by design: a slow or
+    /// failed traffic request must never perturb the SIM_FRAME path that drives the state
+    /// machine.
+    /// </summary>
+    private SimTrafficTracker _simTrafficTracker;
+
+    private bool _simTrafficEnabled;
+
     private IntPtr _lHwnd;
 
     private bool _isConnected = false;
@@ -78,6 +88,7 @@ internal sealed class SimConnectService : INotifyPropertyChanged
             {
                 _isConnected = value;
                 OnPropertyChanged();
+                UpdateSimTrafficRunState();
             }
         }
     }
@@ -239,6 +250,7 @@ internal sealed class SimConnectService : INotifyPropertyChanged
             {
                 _simStarted = value;
                 OnPropertyChanged();
+                UpdateSimTrafficRunState();
             }
         }
     }
@@ -285,6 +297,12 @@ internal sealed class SimConnectService : INotifyPropertyChanged
 
     public event PropertyChangedEventHandler PropertyChanged;
 
+    /// <summary>
+    /// Raised with the current set of traffic objects each time a poll cycle completes, and
+    /// with an empty list when traffic is switched off or the connection drops.
+    /// </summary>
+    public event Action<IReadOnlyList<SimTrafficEntry>> SimTrafficUpdated;
+
     private SimConnectService()
     {
     }
@@ -317,6 +335,7 @@ internal sealed class SimConnectService : INotifyPropertyChanged
 
         _gHs = HwndSource.FromHwnd(_lHwnd);
         _gHs?.AddHook(new HwndSourceHook(WndProc));
+        SetSimTrafficTracker();
         SetCameraTimer();
         SetConnectionTimer();
         SetGracePeriodTimer();
@@ -342,6 +361,12 @@ internal sealed class SimConnectService : INotifyPropertyChanged
         _cameraTimer = new Timer(CameraPollInterval);
         _cameraTimer.Elapsed += (sender, e) => RequestCameraData();
         _cameraTimer.AutoReset = true;
+    }
+
+    private void SetSimTrafficTracker()
+    {
+        _simTrafficTracker = new SimTrafficTracker(RequestSimTraffic);
+        _simTrafficTracker.TrafficUpdated += snapshot => SimTrafficUpdated?.Invoke(snapshot);
     }
 
     private void SetGracePeriodTimer()
@@ -436,6 +461,8 @@ internal sealed class SimConnectService : INotifyPropertyChanged
         var hadFlight = IsInFlight;
 
         StopGettingData();
+        _simTrafficTracker?.UpdateRunState(false, false, false);
+        _simTrafficTracker?.ClearUserObjectId();
         Close();
         IsConnected = false;
 
@@ -644,9 +671,54 @@ internal sealed class SimConnectService : INotifyPropertyChanged
         _simconnect.AddToDataDefinition(DataDefinitions.CameraData, "Camera State", null,
             SIMCONNECT_DATATYPE.INT32, 0.0f, SimConnect.SIMCONNECT_UNUSED);
 
+        // TRAFFIC - one definition reused for both the aircraft and helicopter by-type
+        // requests. Field order must match SimTrafficData exactly.
+        _simconnect.AddToDataDefinition(DataDefinitions.SimTrafficData, "Title", null,
+            SIMCONNECT_DATATYPE.STRING256, 0.0f, SimConnect.SIMCONNECT_UNUSED);
+        _simconnect.AddToDataDefinition(DataDefinitions.SimTrafficData, "ATC ID", null,
+            SIMCONNECT_DATATYPE.STRING32, 0.0f, SimConnect.SIMCONNECT_UNUSED);
+        _simconnect.AddToDataDefinition(DataDefinitions.SimTrafficData, "ATC Type", null,
+            SIMCONNECT_DATATYPE.STRING256, 0.0f, SimConnect.SIMCONNECT_UNUSED);
+        _simconnect.AddToDataDefinition(DataDefinitions.SimTrafficData, "ATC Airline", null,
+            SIMCONNECT_DATATYPE.STRING256, 0.0f, SimConnect.SIMCONNECT_UNUSED);
+        _simconnect.AddToDataDefinition(DataDefinitions.SimTrafficData, "ATC Flight Number", null,
+            SIMCONNECT_DATATYPE.STRING32, 0.0f, SimConnect.SIMCONNECT_UNUSED);
+        _simconnect.AddToDataDefinition(DataDefinitions.SimTrafficData, "Category", null,
+            SIMCONNECT_DATATYPE.STRING128, 0.0f, SimConnect.SIMCONNECT_UNUSED);
+        _simconnect.AddToDataDefinition(DataDefinitions.SimTrafficData, "Plane Latitude", "degrees",
+            SIMCONNECT_DATATYPE.FLOAT64, 0.0f, SimConnect.SIMCONNECT_UNUSED);
+        _simconnect.AddToDataDefinition(DataDefinitions.SimTrafficData, "Plane Longitude", "degrees",
+            SIMCONNECT_DATATYPE.FLOAT64, 0.0f, SimConnect.SIMCONNECT_UNUSED);
+        _simconnect.AddToDataDefinition(DataDefinitions.SimTrafficData, "Plane Altitude", "feet",
+            SIMCONNECT_DATATYPE.FLOAT64, 0.0f, SimConnect.SIMCONNECT_UNUSED);
+        _simconnect.AddToDataDefinition(DataDefinitions.SimTrafficData, "Plane Heading Degrees True", "degrees",
+            SIMCONNECT_DATATYPE.FLOAT64, 0.0f, SimConnect.SIMCONNECT_UNUSED);
+        _simconnect.AddToDataDefinition(DataDefinitions.SimTrafficData, "Ground Velocity", "knots",
+            SIMCONNECT_DATATYPE.FLOAT64, 0.0f, SimConnect.SIMCONNECT_UNUSED);
+        _simconnect.AddToDataDefinition(DataDefinitions.SimTrafficData, "Sim On Ground", "Bool",
+            SIMCONNECT_DATATYPE.INT32, 0.0f, SimConnect.SIMCONNECT_UNUSED);
+        _simconnect.AddToDataDefinition(DataDefinitions.SimTrafficData, "ENGINE TYPE", "number",
+            SIMCONNECT_DATATYPE.INT32, 0.0f, SimConnect.SIMCONNECT_UNUSED);
+        _simconnect.AddToDataDefinition(DataDefinitions.SimTrafficData, "NUMBER OF ENGINES", "number",
+            SIMCONNECT_DATATYPE.INT32, 0.0f, SimConnect.SIMCONNECT_UNUSED);
+        _simconnect.AddToDataDefinition(DataDefinitions.SimTrafficData, "ATC Model", null,
+            SIMCONNECT_DATATYPE.STRING128, 0.0f, SimConnect.SIMCONNECT_UNUSED);
+
         _simconnect.RegisterDataDefineStruct<AircraftData>(DataDefinitions.AircraftData);
         _simconnect.RegisterDataDefineStruct<FlightData>(DataDefinitions.FlightData);
         _simconnect.RegisterDataDefineStruct<CameraData>(DataDefinitions.CameraData);
+        _simconnect.RegisterDataDefineStruct<SimTrafficData>(DataDefinitions.SimTrafficData);
+
+        // A managed struct larger than the data the simulator actually returns makes
+        // PtrToStructure read past the buffer, which surfaces as a FatalExecutionEngineError
+        // rather than a catchable exception. SimConnect silently drops a field it rejects,
+        // so these sizes are worth having in the log next to any SIMCONNECT exception.
+        Log.Information("Registered struct sizes (bytes) - AircraftData: {Aircraft}, FlightData: {Flight}, " +
+                        "CameraData: {Camera}, SimTrafficData: {Traffic}",
+            Marshal.SizeOf(typeof(AircraftData)),
+            Marshal.SizeOf(typeof(FlightData)),
+            Marshal.SizeOf(typeof(CameraData)),
+            Marshal.SizeOf(typeof(SimTrafficData)));
 
         // Subscribe to System events
         _simconnect.SubscribeToSystemEvent(Events.FlightLoaded, "FlightLoaded");
@@ -660,6 +732,7 @@ internal sealed class SimConnectService : INotifyPropertyChanged
 
         // Register listeners on simconnect events
         _simconnect.OnRecvSimobjectData += new SimConnect.RecvSimobjectDataEventHandler(Simconnect_OnRecvSimobjectData);
+        _simconnect.OnRecvSimobjectDataBytype += new SimConnect.RecvSimobjectDataBytypeEventHandler(Simconnect_OnRecvSimobjectDataBytype);
         _simconnect.OnRecvAirportList += new SimConnect.RecvAirportListEventHandler(Simconnect_OnRecvAirportList);
         _simconnect.OnRecvEvent += new SimConnect.RecvEventEventHandler(Simconnect_OnRecvEvent);
         _simconnect.OnRecvEventFilename += new SimConnect.RecvEventFilenameEventHandler(Simconnect_OnRecvFilename);
@@ -761,6 +834,8 @@ internal sealed class SimConnectService : INotifyPropertyChanged
         Log.Information("Connection to the simulator is closed!");
 
         StopGettingData();
+        _simTrafficTracker?.UpdateRunState(false, false, false);
+        _simTrafficTracker?.ClearUserObjectId();
         Close();
         IsConnected = false;
         SimVersion = null;
@@ -825,6 +900,10 @@ internal sealed class SimConnectService : INotifyPropertyChanged
 
                 FlightData = (FlightData)data.dwData[0];
 
+                // The simulator's own object ID for the user aircraft. By-type traffic
+                // results include the user, and this is what the tracker excludes.
+                _simTrafficTracker?.SetUserObjectId(data.dwObjectID);
+
                 // Every frame reaches the state machine. Touchdown G sampling and the
                 // airborne transition both need per-frame resolution.
                 FlightManager.FlightManager.Instance.HandleFlightData(_flightData);
@@ -856,6 +935,33 @@ internal sealed class SimConnectService : INotifyPropertyChanged
             {
                 AircraftData = (AircraftData)data.dwData[0];
             }
+        }
+        catch (COMException ex)
+        {
+            HandleCOMException(ex);
+        }
+    }
+
+    /// <summary>
+    /// By-type replies arrive one message per object. The tracker assembles them; this only
+    /// unpacks and forwards.
+    /// </summary>
+    private void Simconnect_OnRecvSimobjectDataBytype(SimConnect sender, SIMCONNECT_RECV_SIMOBJECT_DATA_BYTYPE data)
+    {
+        try
+        {
+            if (data.dwRequestID != (uint)Requests.SimTrafficAircraftRequest &&
+                data.dwRequestID != (uint)Requests.SimTrafficHelicopterRequest)
+            {
+                return;
+            }
+
+            _simTrafficTracker?.Accept(
+                data.dwRequestID,
+                data.dwObjectID,
+                data.dwentrynumber,
+                data.dwoutof,
+                (SimTrafficData)data.dwData[0]);
         }
         catch (COMException ex)
         {
@@ -974,6 +1080,64 @@ internal sealed class SimConnectService : INotifyPropertyChanged
                 SimConnect.SIMCONNECT_OBJECT_ID_USER, SIMCONNECT_PERIOD.ONCE,
                 SIMCONNECT_DATA_REQUEST_FLAG.DEFAULT, 0u, 0u, 0u),
             nameof(RequestCameraData));
+    }
+
+    /// <summary>
+    /// Turns the traffic layer on or off. Polling additionally requires a live connection
+    /// and a running simulator, so this only expresses the user's intent.
+    /// </summary>
+    public void SetSimTrafficEnabled(bool enabled)
+    {
+        _simTrafficEnabled = enabled;
+        UpdateSimTrafficRunState();
+    }
+
+    private void UpdateSimTrafficRunState()
+    {
+        _simTrafficTracker?.UpdateRunState(_simTrafficEnabled, IsConnected, SimStarted);
+    }
+
+    /// <summary>
+    /// Two one-shot by-type requests per cycle. RequestDataOnSimObjectType has no PERIOD, so
+    /// currency comes from the tracker's timer. Both go through SafeSimConnectCall, so a
+    /// COMException here takes the same recovery path as any other SimConnect call - a
+    /// teardown and reconnect - rather than a traffic-specific one.
+    /// </summary>
+    private void RequestSimTraffic()
+    {
+        // Issued on the UI thread deliberately - see OnUiThread.
+        OnUiThread(() => SafeSimConnectCall(sc =>
+        {
+            sc.RequestDataOnSimObjectType(Requests.SimTrafficAircraftRequest, DataDefinitions.SimTrafficData,
+                SimTrafficTracker.RadiusMeters, SIMCONNECT_SIMOBJECT_TYPE.AIRCRAFT);
+            sc.RequestDataOnSimObjectType(Requests.SimTrafficHelicopterRequest, DataDefinitions.SimTrafficData,
+                SimTrafficTracker.RadiusMeters, SIMCONNECT_SIMOBJECT_TYPE.HELICOPTER);
+        }, nameof(RequestSimTraffic)));
+    }
+
+    /// <summary>
+    /// Runs a SimConnect call on the UI thread - the same thread WndProc pumps
+    /// ReceiveMessage on.
+    ///
+    /// The managed SimConnect wrapper keeps receive state that is not safe against a
+    /// request issued from another thread while a message is being marshalled, and
+    /// _simConnectLock cannot protect it: ReceiveSimConnectMessage deliberately pumps
+    /// OUTSIDE that lock, so the lock serialises requests against each other but never
+    /// against the pump. Traffic polling made that window matter - two requests every two
+    /// seconds, each answered by hundreds of messages - where the camera poll's single
+    /// small request had made it vanishingly rare.
+    /// </summary>
+    private void OnUiThread(Action action)
+    {
+        var dispatcher = System.Windows.Application.Current?.Dispatcher;
+
+        if (dispatcher == null || dispatcher.CheckAccess())
+        {
+            action();
+            return;
+        }
+
+        dispatcher.BeginInvoke(action);
     }
 
     private void Simconnect_OnRecvAirportList(SimConnect sender, SIMCONNECT_RECV_AIRPORT_LIST data)

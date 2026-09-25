@@ -334,10 +334,17 @@ namespace FSTRaK.BusinessLogic.FlightManager
                             aircraft = logbookContext.Aircraft.Create();
                             aircraft.Title = aircraftData.title.Trim();
                             aircraft.LiveryName = _simConnectService.SimVersion == SimConnectService.MSFS2024 ? aircraftData.liveryName.Trim() : null;
-                            aircraft.Manufacturer = aircraftData.atcType.Trim();
-                            aircraft.Model = aircraftData.model.Trim();
-                            aircraft.AircraftType = aircraftData.model.Trim();
-                            aircraft.Airline = aircraftData.airline.Trim();
+                            // ATC Type/Model/Airline arrive as localisation keys on some
+                            // aircraft. Unwrapped here so the mapping tables in
+                            // ResolveManufacturerAndModel match on clean input, and so an
+                            // unmapped aircraft still reads as a name rather than a key.
+                            // Title is deliberately NOT unwrapped - it is the lookup key
+                            // above, and rewriting it would miss every existing record and
+                            // create a duplicate on every flight.
+                            aircraft.Manufacturer = SimVarText.Humanize(aircraftData.atcType.Trim());
+                            aircraft.Model = SimVarText.Humanize(aircraftData.model.Trim());
+                            aircraft.AircraftType = SimVarText.Humanize(aircraftData.model.Trim());
+                            aircraft.Airline = SimVarText.Humanize(aircraftData.airline.Trim());
                             aircraft.TailNumber = aircraftData.AtcId.Trim();
                             aircraft.NumberOfEngines = aircraftData.NumberOfEngines;
                             aircraft.EngineType = aircraftData.EngineType;

@@ -1,3 +1,23 @@
+# FSTRaK 3.8.0 Release Notes
+
+This release adds simulator traffic to the live map.
+
+## Features
+
+**See the traffic around you**
+- A new Traffic toggle on the live map draws the aircraft and helicopters the simulator knows about within 80 nautical miles of your position, oriented to their heading and refreshed every two seconds. This includes AI traffic and real-world live traffic.
+- Hover any of them for callsign, type, altitude, ground speed and heading; click for the same detail panel the online-network layers use.
+- The layer is independent of the VATSIM and IVAO selectors, so you can show simulator traffic alongside an online network, or on its own.
+- It is off by default, and while it is off FSTRaK asks the simulator for nothing at all — there is no cost to leaving it alone.
+- Traffic aircraft are matched to an icon the same way your own logged aircraft are: by category and engine configuration as well as ICAO type. AI helicopters now show as helicopters, and unfamiliar light aircraft as light aircraft, instead of everything unrecognised showing as an airliner.
+- Every button on the live map and the flight details map now has a tooltip explaining what it does.
+- The Statistics route map has an Expand button that grows it to fill the page, and hovering a route now shows that flight's airports, aircraft, airline and date.
+- SimBrief plan routes are drawn as great-circle lines on both the live map and the flight details map, so they follow the track you actually fly rather than cutting straight across the projection.
+
+  Note: other human players in multiplayer sessions are only partially visible to FSTRaK. The simulator limits what it reports about them, so some may not appear, and some may show a generic aircraft name.
+
+  Note: the simulator only creates AI traffic in a bubble around your own aircraft, so the map shows the traffic near you rather than the whole world. Aircraft appear as you approach an area and disappear again once you are well past it, however wide the search radius is.
+
 # FSTRaK 3.7.5 Release Notes
 
 This is a stability release focused on how FSTRaK handles losing its connection to the simulator.

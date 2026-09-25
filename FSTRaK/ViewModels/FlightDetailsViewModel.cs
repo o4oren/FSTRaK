@@ -117,16 +117,24 @@ namespace FSTRaK.ViewModels
             PlannedWaypoints.Clear();
             if (_flight.FlightPlan != null)
             {
+                var waypoints = new List<Location>();
                 foreach (var point in _flight.FlightPlan.Points.OrderBy(p => p.Sequence))
                 {
                     var location = new Location(point.Latitude, point.Longitude);
-                    PlannedRoutePath.Add(location);
+                    waypoints.Add(location);
                     PlannedWaypoints.Add(new PlannedWaypointPin
                     {
                         Location = location,
                         Ident = point.Ident,
                         Tooltip = point.TooltipText
                     });
+                }
+
+                // Great-circle rather than straight Mercator segments, then unwrapped so a
+                // trans-dateline plan draws across the Pacific instead of back across the map.
+                foreach (var location in MapUtils.WrapPolyline(GeodesicUtil.ExpandPath(waypoints)))
+                {
+                    PlannedRoutePath.Add(location);
                 }
             }
             OnPropertyChanged(nameof(HasFlightPlan));
