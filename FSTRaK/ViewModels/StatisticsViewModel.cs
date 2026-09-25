@@ -172,11 +172,24 @@ namespace FSTRaK.ViewModels
 
         // ── Route map data ───────────────────────────────────────────────────
 
-        private List<(Location dep, Location arr)> _flightRoutes;
-        public List<(Location dep, Location arr)> FlightRoutes
+        private List<FlightRouteLine> _flightRoutes;
+        public List<FlightRouteLine> FlightRoutes
         {
             get => _flightRoutes;
             set { _flightRoutes = value; OnPropertyChanged(); }
+        }
+
+        private bool _isMapExpanded;
+
+        /// <summary>
+        /// Expands the route map to fill the page, collapsing the filter bar and the charts
+        /// around it. Not persisted - the page opens with the map at its normal size, which
+        /// is how the other map toggles behave.
+        /// </summary>
+        public bool IsMapExpanded
+        {
+            get => _isMapExpanded;
+            set { _isMapExpanded = value; OnPropertyChanged(); }
         }
 
         // ── LiveCharts2 series properties ────────────────────────────────────
@@ -517,7 +530,7 @@ namespace FSTRaK.ViewModels
                             TotalPayload = "";
                             AvgLandingFpm = "";
                             FlightsPerDay = new Dictionary<DateTime, double>();
-                            FlightRoutes = new List<(Location, Location)>();
+                            FlightRoutes = new List<FlightRouteLine>();
                             FlightsPerPeriodSeries = Array.Empty<ISeries>();
                             FlightsPerPeriodXAxes = Array.Empty<Axis>();
                             DepAirportsSeries = Array.Empty<ISeries>();
@@ -688,9 +701,9 @@ namespace FSTRaK.ViewModels
             return dist;
         }
 
-        private static List<(Location dep, Location arr)> CalculateFlightRoutes(List<Flight> flights)
+        private static List<FlightRouteLine> CalculateFlightRoutes(List<Flight> flights)
         {
-            var routes = new List<(Location, Location)>();
+            var routes = new List<FlightRouteLine>();
             foreach (var f in flights)
             {
                 var dep = f.DepartureAirportDetails;
@@ -698,12 +711,44 @@ namespace FSTRaK.ViewModels
                 if (dep == null || arr == null) continue;
                 if (dep.latitude_deg == 0 && dep.longitude_deg == 0) continue;
                 if (arr.latitude_deg == 0 && arr.longitude_deg == 0) continue;
-                routes.Add((
+                routes.Add(new FlightRouteLine(
                     new Location(dep.latitude_deg, dep.longitude_deg),
-                    new Location(arr.latitude_deg, arr.longitude_deg)
-                ));
+                    new Location(arr.latitude_deg, arr.longitude_deg),
+                    BuildRouteTooltip(f)));
             }
             return routes;
+        }
+
+        /// <summary>
+        /// Built here, while the flight and its eagerly-loaded aircraft are still in scope.
+        /// Blank parts are dropped rather than left as empty lines, because older records
+        /// often carry no airline.
+        /// </summary>
+        private static string BuildRouteTooltip(Flight f)
+        {
+            var route = $"{f.DepartureAirport} → {f.ArrivalAirport}";
+
+            var aircraft = f.Aircraft;
+            var aircraftName = aircraft == null
+                ? string.Empty
+                : string.Join(" ", new[] { aircraft.Manufacturer, aircraft.Model }
+                    .Where(part => !string.IsNullOrWhiteSpace(part))
+                    .Select(part => part.Trim()));
+
+            if (string.IsNullOrWhiteSpace(aircraftName))
+            {
+                aircraftName = aircraft?.AircraftType?.Trim() ?? string.Empty;
+            }
+
+            var airline = aircraft?.Airline?.Trim() ?? string.Empty;
+
+            var aircraftLine = string.Join(" · ", new[] { aircraftName, airline }
+                .Where(part => !string.IsNullOrWhiteSpace(part)));
+
+            var lines = new[] { route, aircraftLine, f.StartTime.ToString("d MMM yyyy") }
+                .Where(line => !string.IsNullOrWhiteSpace(line));
+
+            return string.Join("\n", lines);
         }
 
         // ── LiveCharts2 series builders ───────────────────────────────────────

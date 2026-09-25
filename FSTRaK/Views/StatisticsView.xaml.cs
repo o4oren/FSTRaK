@@ -66,10 +66,10 @@ namespace FSTRaK.Views
             var stroke = (Brush)TryFindResource("FlightPathColorBrush")
                          ?? Brushes.OrangeRed;
 
-            foreach (var (dep, arr) in vm.FlightRoutes)
+            foreach (var route in vm.FlightRoutes)
             {
                 var locations = new LocationCollection();
-                foreach (var pt in GetGeodesicPoints(dep, arr))
+                foreach (var pt in GetGeodesicPoints(route.Departure, route.Arrival))
                     locations.Add(pt);
 
                 RouteMap.Children.Add(new MapPolyline
@@ -77,7 +77,20 @@ namespace FSTRaK.Views
                     Locations = locations,
                     Stroke = stroke,
                     StrokeThickness = 1,
-                    Opacity = 0.5
+                    Opacity = 0.5,
+                    ToolTip = route.TooltipText
+                });
+
+                // A one-pixel line at half opacity is not something anyone can hover, so the
+                // route carries a transparent companion purely as a hit target. Transparent
+                // is deliberate - a null brush is not hit-testable in WPF, so it would give
+                // back nothing.
+                RouteMap.Children.Add(new MapPolyline
+                {
+                    Locations = locations,
+                    Stroke = Brushes.Transparent,
+                    StrokeThickness = 10,
+                    ToolTip = route.TooltipText
                 });
             }
         }

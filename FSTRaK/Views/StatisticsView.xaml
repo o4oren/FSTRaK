@@ -19,6 +19,7 @@
             <ResourceDictionary.MergedDictionaries>
                 <ResourceDictionary Source="../Resources/MapProvidersDictionary.xaml"/>
             </ResourceDictionary.MergedDictionaries>
+            <utils:InvertedBoolToVisibilityConverter x:Key="InvBoolToVis"/>
             <ObjectDataProvider x:Key="dataFromEnum" MethodName="GetValues" ObjectType="{x:Type System:Enum}">
                 <ObjectDataProvider.MethodParameters>
                     <x:Type TypeName="dataTypes:TimePeriod"/>
@@ -27,11 +28,11 @@
         </ResourceDictionary>
     </UserControl.Resources>
 
-    <ScrollViewer VerticalScrollBarVisibility="Auto" HorizontalScrollBarVisibility="Disabled" PreviewMouseWheel="OnScrollViewerPreviewMouseWheel">
+    <ScrollViewer x:Name="StatsScroll" VerticalScrollBarVisibility="Auto" HorizontalScrollBarVisibility="Disabled" PreviewMouseWheel="OnScrollViewerPreviewMouseWheel">
         <StackPanel Margin="10">
 
             <!-- Filter bar -->
-            <WrapPanel Orientation="Horizontal" Margin="0,0,0,10">
+            <WrapPanel Orientation="Horizontal" Margin="0,0,0,10" Visibility="{Binding IsMapExpanded, Converter={StaticResource InvBoolToVis}}">
                 <StackPanel Orientation="Horizontal" Margin="0,0,16,4" VerticalAlignment="Center">
                     <Label Style="{StaticResource FSTrAkLabel}">Airline</Label>
                     <ComboBox IsEditable="True"
@@ -71,7 +72,7 @@
             </WrapPanel>
 
             <!-- Stat cards -->
-            <WrapPanel Orientation="Horizontal" Margin="0,0,0,10">
+            <WrapPanel Orientation="Horizontal" Margin="0,0,0,10" Visibility="{Binding IsMapExpanded, Converter={StaticResource InvBoolToVis}}">
                 <Border Style="{StaticResource StatCard}" Margin="0,0,8,8">
                     <StackPanel>
                         <TextBlock Style="{StaticResource StatCardLabel}" Text="TOTAL FLIGHTS"/>
@@ -119,7 +120,7 @@
             </WrapPanel>
 
             <!-- Flights over time bar chart (full width) -->
-            <Border Style="{StaticResource ChartCard}" Margin="0,0,0,10">
+            <Border Style="{StaticResource ChartCard}" Margin="0,0,0,10" Visibility="{Binding IsMapExpanded, Converter={StaticResource InvBoolToVis}}">
                 <StackPanel>
                     <StackPanel Orientation="Horizontal" Margin="0,0,0,6">
                         <Label Style="{StaticResource FSTrAkLabel}">Flights per</Label>
@@ -142,12 +143,35 @@
             <!-- Route map (full width) -->
             <Border Style="{StaticResource ChartCard}" Margin="0,0,0,10">
                 <StackPanel>
-                    <Label Style="{StaticResource FSTrAkLabel}">Route Map</Label>
+                    <DockPanel>
+                        <ToggleButton DockPanel.Dock="Right"
+                                      Style="{DynamicResource MapToggleButton}"
+                                      IsChecked="{Binding IsMapExpanded, Mode=TwoWay}"
+                                      Margin="0,0,4,0"
+                                      ToolTip="Expand the map to fill the page">
+                            <TextBlock Foreground="{DynamicResource SuperBrightTextColor}">Expand</TextBlock>
+                        </ToggleButton>
+                        <Label Style="{StaticResource FSTrAkLabel}">Route Map</Label>
+                    </DockPanel>
                     <map:Map x:Name="RouteMap"
                              ZoomLevel="2"
                              Center="30,10"
-                             MapProjection="{DynamicResource WebMercatorProjection}"
-                             MinHeight="300">
+                             MapProjection="{DynamicResource WebMercatorProjection}">
+                        <map:Map.Style>
+                            <Style TargetType="map:Map">
+                                <!-- Normal: a strip in the scrolling page. -->
+                                <Setter Property="MinHeight" Value="300"/>
+                                <Style.Triggers>
+                                    <!-- Expanded: every sibling is collapsed, so the viewport
+                                         height is the map's height exactly - no arithmetic and
+                                         no leftover scrollbar. -->
+                                    <DataTrigger Binding="{Binding IsMapExpanded}" Value="True">
+                                        <Setter Property="Height"
+                                                Value="{Binding ActualHeight, ElementName=StatsScroll}"/>
+                                    </DataTrigger>
+                                </Style.Triggers>
+                            </Style>
+                        </map:Map.Style>
                         <map:MapScale Opacity="0.5" HorizontalAlignment="Center" VerticalAlignment="Bottom" Margin="5"/>
                         <StackPanel Orientation="Horizontal" HorizontalAlignment="Right" VerticalAlignment="Bottom" Margin="5">
                             <TextBlock FontSize="12" Style="{DynamicResource MapAttribution}"
@@ -158,7 +182,7 @@
             </Border>
 
             <!-- Row 1: Top Departure Airports | Top Arrival Airports -->
-            <Grid Margin="0,0,0,10">
+            <Grid Margin="0,0,0,10" Visibility="{Binding IsMapExpanded, Converter={StaticResource InvBoolToVis}}">
                 <Grid.ColumnDefinitions>
                     <ColumnDefinition Width="*"/>
                     <ColumnDefinition Width="8"/>
@@ -185,7 +209,7 @@
             </Grid>
 
             <!-- Row 2: Top Aircraft Types | Top Airlines -->
-            <Grid Margin="0,0,0,10">
+            <Grid Margin="0,0,0,10" Visibility="{Binding IsMapExpanded, Converter={StaticResource InvBoolToVis}}">
                 <Grid.ColumnDefinitions>
                     <ColumnDefinition Width="*"/>
                     <ColumnDefinition Width="8"/>
@@ -212,7 +236,7 @@
             </Grid>
 
             <!-- Row 3: Landing Rate Distribution | Top Countries -->
-            <Grid Margin="0,0,0,10">
+            <Grid Margin="0,0,0,10" Visibility="{Binding IsMapExpanded, Converter={StaticResource InvBoolToVis}}">
                 <Grid.ColumnDefinitions>
                     <ColumnDefinition Width="*"/>
                     <ColumnDefinition Width="8"/>
