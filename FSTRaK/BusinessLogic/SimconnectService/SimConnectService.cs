@@ -709,6 +709,17 @@ internal sealed class SimConnectService : INotifyPropertyChanged
         _simconnect.RegisterDataDefineStruct<CameraData>(DataDefinitions.CameraData);
         _simconnect.RegisterDataDefineStruct<SimTrafficData>(DataDefinitions.SimTrafficData);
 
+        // A managed struct larger than the data the simulator actually returns makes
+        // PtrToStructure read past the buffer, which surfaces as a FatalExecutionEngineError
+        // rather than a catchable exception. SimConnect silently drops a field it rejects,
+        // so these sizes are worth having in the log next to any SIMCONNECT exception.
+        Log.Information("Registered struct sizes (bytes) - AircraftData: {Aircraft}, FlightData: {Flight}, " +
+                        "CameraData: {Camera}, SimTrafficData: {Traffic}",
+            Marshal.SizeOf(typeof(AircraftData)),
+            Marshal.SizeOf(typeof(FlightData)),
+            Marshal.SizeOf(typeof(CameraData)),
+            Marshal.SizeOf(typeof(SimTrafficData)));
+
         // Subscribe to System events
         _simconnect.SubscribeToSystemEvent(Events.FlightLoaded, "FlightLoaded");
         _simconnect.SubscribeToSystemEvent(Events.Pause, "Pause_EX1");
@@ -1094,13 +1105,39 @@ internal sealed class SimConnectService : INotifyPropertyChanged
     /// </summary>
     private void RequestSimTraffic()
     {
-        SafeSimConnectCall(sc =>
+        // Issued on the UI thread deliberately - see OnUiThread.
+        OnUiThread(() => SafeSimConnectCall(sc =>
         {
             sc.RequestDataOnSimObjectType(Requests.SimTrafficAircraftRequest, DataDefinitions.SimTrafficData,
                 SimTrafficTracker.RadiusMeters, SIMCONNECT_SIMOBJECT_TYPE.AIRCRAFT);
             sc.RequestDataOnSimObjectType(Requests.SimTrafficHelicopterRequest, DataDefinitions.SimTrafficData,
                 SimTrafficTracker.RadiusMeters, SIMCONNECT_SIMOBJECT_TYPE.HELICOPTER);
-        }, nameof(RequestSimTraffic));
+        }, nameof(RequestSimTraffic)));
+    }
+
+    /// <summary>
+    /// Runs a SimConnect call on the UI thread - the same thread WndProc pumps
+    /// ReceiveMessage on.
+    ///
+    /// The managed SimConnect wrapper keeps receive state that is not safe against a
+    /// request issued from another thread while a message is being marshalled, and
+    /// _simConnectLock cannot protect it: ReceiveSimConnectMessage deliberately pumps
+    /// OUTSIDE that lock, so the lock serialises requests against each other but never
+    /// against the pump. Traffic polling made that window matter - two requests every two
+    /// seconds, each answered by hundreds of messages - where the camera poll's single
+    /// small request had made it vanishingly rare.
+    /// </summary>
+    private void OnUiThread(Action action)
+    {
+        var dispatcher = System.Windows.Application.Current?.Dispatcher;
+
+        if (dispatcher == null || dispatcher.CheckAccess())
+        {
+            action();
+            return;
+        }
+
+        dispatcher.BeginInvoke(action);
     }
 
     private void Simconnect_OnRecvAirportList(SimConnect sender, SIMCONNECT_RECV_AIRPORT_LIST data)
