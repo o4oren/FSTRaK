@@ -228,7 +228,10 @@
                 <StackPanel Margin="0,0,0,8">
                     <TextBlock Text="{Binding Airline}" Style="{StaticResource DimText}"
                                Visibility="{Binding Airline, Converter={StaticResource NullToVis}}"/>
-                    <TextBlock Text="{Binding AircraftType}" Style="{StaticResource DimText}"/>
+                    <TextBlock Style="{StaticResource DimText}">
+                        <Run Text="{Binding Manufacturer, Mode=OneWay}"/>
+                        <Run Text="{Binding AircraftType, Mode=OneWay}"/>
+                    </TextBlock>
                     <TextBlock Text="Simulator traffic" Style="{StaticResource DimText}" Opacity="0.5"/>
                 </StackPanel>
 

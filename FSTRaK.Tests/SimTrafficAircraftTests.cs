@@ -13,7 +13,8 @@ namespace FSTRaK.Tests
             {
                 Title = title,
                 AtcId = atcId,
-                AtcType = "B738",
+                AtcType = "BOEING",
+                AtcModel = "B738",
                 Airline = "Ryanair",
                 FlightNumber = flightNumber,
                 Category = "Airplane",
@@ -28,13 +29,14 @@ namespace FSTRaK.Tests
             return new SimTrafficAircraft(new SimTrafficEntry(42, data));
         }
 
-        private static SimTrafficAircraft BuildWithType(string atcType)
+        private static SimTrafficAircraft BuildWithModel(string atcModel)
         {
             var data = new SimTrafficData
             {
                 Title = "Aircraft",
                 AtcId = "TEST",
-                AtcType = atcType,
+                AtcType = "TESTMAKER",
+                AtcModel = atcModel,
                 Airline = "TestAirline",
                 FlightNumber = "TST001",
                 Category = "Airplane",
@@ -49,13 +51,14 @@ namespace FSTRaK.Tests
             return new SimTrafficAircraft(new SimTrafficEntry(42, data));
         }
 
-        private static SimTrafficAircraft BuildWithCategoryAndType(string category, string atcType)
+        private static SimTrafficAircraft BuildWithCategoryAndModel(string category, string atcModel)
         {
             var data = new SimTrafficData
             {
                 Title = "Aircraft",
                 AtcId = "TEST",
-                AtcType = atcType,
+                AtcType = "TESTMAKER",
+                AtcModel = atcModel,
                 Airline = "TestAirline",
                 FlightNumber = "TST001",
                 Category = category,
@@ -76,7 +79,8 @@ namespace FSTRaK.Tests
             {
                 Title = "Aircraft",
                 AtcId = "TEST",
-                AtcType = "ZZZZ",
+                AtcType = "ZZZZMAKER",
+                AtcModel = "ZZZZ",
                 Airline = "TestAirline",
                 FlightNumber = "TST001",
                 Category = "Airplane",
@@ -130,11 +134,59 @@ namespace FSTRaK.Tests
         }
 
         [Fact]
-        public void IconResource_IsResolvedFromTheAtcType()
+        public void Manufacturer_ComesFromAtcType_NotFromTheModel()
+        {
+            // ATC Type is the manufacturer despite its name; ATC Model carries the code.
+            var aircraft = Build("EIDYH", "RYR123", "Boeing 737-800");
+
+            Assert.Equal("BOEING", aircraft.Manufacturer);
+            Assert.Equal("B738", aircraft.AircraftType);
+        }
+
+        [Fact]
+        public void LocalisationKeys_AreUnwrappedIntoReadableLabels()
+        {
+            // What the simulator actually hands back for AI objects.
+            var data = new SimTrafficData
+            {
+                Title = "TT:ATCCOM.AC_MODEL_B738.0.text",
+                AtcId = "EIDYH",
+                AtcType = "ATCCOM.ATC_NAME BOEING.0.TEXT",
+                AtcModel = "TT:ATCCOM.AC_MODEL_B738.0.text",
+                Airline = "ATCCOM_ATC_NAME_RYANAIR",
+                FlightNumber = "RYR123",
+                Category = "Airplane",
+                Latitude = 51.5,
+                Longitude = -0.45,
+                Altitude = 10000,
+                TrueHeading = 90,
+                GroundVelocity = 300,
+                SimOnGround = 0
+            };
+
+            var aircraft = new SimTrafficAircraft(new SimTrafficEntry(42, data));
+
+            Assert.Equal("B738", aircraft.AircraftType);
+            Assert.Equal("BOEING", aircraft.Manufacturer);
+            Assert.Equal("RYANAIR", aircraft.Airline);
+        }
+
+        [Fact]
+        public void LocalisationKeyInTheModel_StillResolvesTheIcon()
+        {
+            // The unwrapped code is what AircraftResolver matches on, so a wrapped key must
+            // not push an otherwise-known type into the catch-all.
+            var aircraft = BuildWithModel("TT:ATCCOM.AC_MODEL_A320.0.text");
+
+            Assert.Equal("A320", aircraft.IconResource);
+        }
+
+        [Fact]
+        public void IconResource_IsResolvedFromTheAtcModel()
         {
             // A320 has its own icon, and the resolver's catch-all is B737 - so a wrong
             // argument or the wrong overload would surface here as the fallback instead.
-            var aircraft = BuildWithType("A320");
+            var aircraft = BuildWithModel("A320");
 
             Assert.Equal("A320", aircraft.IconResource);
         }
@@ -144,24 +196,24 @@ namespace FSTRaK.Tests
         {
             // A helicopter is the one case with a distinctive scale (0.6), which catches a
             // swapped or dropped half of the resolver's (icon, scale) tuple.
-            var helicopter = BuildWithType("H135");
+            var helicopter = BuildWithModel("H135");
 
             Assert.Equal("Helicopter", helicopter.IconResource);
             Assert.Equal(0.6, helicopter.ScaleFactor);
         }
 
         [Fact]
-        public void IconResource_UsesCategoryWhenTheTypeIsUnrecognised()
+        public void IconResource_UsesCategoryWhenTheModelIsUnrecognised()
         {
             // Proves the model actually forwards Category (and not just AircraftType) to the
             // resolver - an unrecognised ATC type would otherwise fall back to the B737 icon.
-            var aircraft = BuildWithCategoryAndType("Helicopter", "ZZZZ");
+            var aircraft = BuildWithCategoryAndModel("Helicopter", "ZZZZ");
 
             Assert.Equal("Helicopter", aircraft.IconResource);
         }
 
         [Fact]
-        public void IconResource_FallsBackToEngineConfiguration_WhenTypeAndCategoryAreUnrecognised()
+        public void IconResource_FallsBackToEngineConfiguration_WhenModelAndCategoryAreUnrecognised()
         {
             // "ZZZZ" matches none of the resolver's candidate lists and Category is
             // "Airplane" (not "Helicopter"), so this can only resolve via the engine

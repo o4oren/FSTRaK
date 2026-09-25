@@ -1,4 +1,5 @@
 using System;
+using System.Linq;
 using FSTRaK.BusinessLogic.SimconnectService;
 using FSTRaK.Utils;
 using MapControl;
@@ -13,7 +14,12 @@ namespace FSTRaK.ViewModels
     {
         public uint ObjectId { get; }
         public string Callsign { get; }
+
+        /// <summary>The ICAO-ish type code, from ATC Model - this is what resolves the icon.</summary>
         public string AircraftType { get; }
+
+        /// <summary>From ATC Type, which despite its name is the manufacturer.</summary>
+        public string Manufacturer { get; }
         public string Category { get; }
         public string Airline { get; }
         public Location Location { get; }
@@ -29,9 +35,12 @@ namespace FSTRaK.ViewModels
             var data = entry.Data;
 
             ObjectId = entry.ObjectId;
-            AircraftType = (data.AtcType ?? string.Empty).Trim();
+
+            // AI objects report these as localisation keys rather than resolved text.
+            AircraftType = SimVarText.Humanize((data.AtcModel ?? string.Empty).Trim());
+            Manufacturer = SimVarText.Humanize((data.AtcType ?? string.Empty).Trim());
+            Airline = SimVarText.Humanize((data.Airline ?? string.Empty).Trim());
             Category = (data.Category ?? string.Empty).Trim();
-            Airline = (data.Airline ?? string.Empty).Trim();
             Callsign = ResolveCallsign(data.AtcId, data.FlightNumber, data.Title);
             Location = new Location(data.Latitude, data.Longitude);
             Heading = data.TrueHeading;
@@ -63,7 +72,7 @@ namespace FSTRaK.ViewModels
                 return number;
             }
 
-            return (title ?? string.Empty).Trim();
+            return SimVarText.Humanize((title ?? string.Empty).Trim());
         }
 
         public string TooltipText => CreateTooltipText();
@@ -71,8 +80,10 @@ namespace FSTRaK.ViewModels
         private string CreateTooltipText()
         {
             var airline = string.IsNullOrEmpty(Airline) ? "" : $"{Airline}\n";
+            var aircraft = string.Join(" ", new[] { Manufacturer, AircraftType }
+                .Where(part => !string.IsNullOrEmpty(part)));
             var state = IsOnGround ? "ON GROUND" : $"ALT: {Altitude:N0}";
-            return $"{Callsign}\n{airline}{AircraftType}\n{state}  GS: {Groundspeed}  HDG: {Heading:F0}";
+            return $"{Callsign}\n{airline}{aircraft}\n{state}  GS: {Groundspeed}  HDG: {Heading:F0}";
         }
     }
 }

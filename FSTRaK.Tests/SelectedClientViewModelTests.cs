@@ -18,7 +18,8 @@ namespace FSTRaK.Tests
             {
                 Title = "Aircraft",
                 AtcId = "TEST123",
-                AtcType = "B738",
+                AtcType = "BOEING",
+                AtcModel = "B738",
                 Airline = "TestAir",
                 FlightNumber = "TST001",
                 Category = "Airplane",
@@ -114,6 +115,7 @@ namespace FSTRaK.Tests
             Assert.Equal(aircraft.Callsign, vm.Callsign);
             Assert.Equal(aircraft.Airline, vm.Airline);
             Assert.Equal(aircraft.AircraftType, vm.AircraftType);
+            Assert.Equal(aircraft.Manufacturer, vm.Manufacturer);
             Assert.Equal(aircraft.Altitude, vm.Altitude);
             Assert.Equal(aircraft.Groundspeed, vm.Groundspeed);
             // The model's Heading is a double; the view model's is an int - verify the

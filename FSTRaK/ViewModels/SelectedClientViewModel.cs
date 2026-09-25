@@ -69,6 +69,7 @@ namespace FSTRaK.ViewModels
         public string FlightRules { get; private set; }
         public string AircraftType { get; private set; }
         public string Airline { get; private set; }
+        public string Manufacturer { get; private set; }
         public string Departure { get; }
         public string Arrival { get; }
         public int Altitude { get; private set; }
@@ -165,6 +166,7 @@ namespace FSTRaK.ViewModels
             Callsign = item.Callsign;
             PilotName = "";
             AircraftType = item.AircraftType;
+            Manufacturer = item.Manufacturer;
             Airline = item.Airline;
             Altitude = item.Altitude;
             Groundspeed = item.Groundspeed;

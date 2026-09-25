@@ -1,9 +1,11 @@
+using System;
 using System.Collections.Generic;
 using System.ComponentModel;
 using System.Linq;
 using System.Windows;
 using FSTRaK.BusinessLogic.SimconnectService;
 using FSTRaK.Utils;
+using Serilog;
 
 namespace FSTRaK.ViewModels
 {
@@ -40,6 +42,8 @@ namespace FSTRaK.ViewModels
             }
         }
 
+        private readonly HashSet<string> _reportedUnresolvedLabels = new HashSet<string>();
+
         public SimTrafficViewModel()
         {
             _simConnectService.SimTrafficUpdated += OnTrafficUpdated;
@@ -66,7 +70,38 @@ namespace FSTRaK.ViewModels
                 return;
             }
 
-            dispatcher.BeginInvoke(new System.Action(() => Aircraft.ReplaceContent(items)));
+            dispatcher.BeginInvoke(new System.Action(() =>
+            {
+                Aircraft.ReplaceContent(items);
+                LogUnresolvedLabels(items);
+            }));
+        }
+
+        /// <summary>
+        /// Any label still carrying a localisation marker is a key shape SimVarText does not
+        /// yet recognise. Logged once per distinct value so the log stays readable while
+        /// still capturing the exact text needed to extend the parser.
+        ///
+        /// Runs on the dispatcher, so the set below needs no synchronisation.
+        /// </summary>
+        private void LogUnresolvedLabels(IReadOnlyList<SimTrafficAircraft> items)
+        {
+            foreach (var aircraft in items)
+            {
+                foreach (var label in new[] { aircraft.AircraftType, aircraft.Manufacturer, aircraft.Airline })
+                {
+                    if (string.IsNullOrEmpty(label) ||
+                        label.IndexOf("ATCCOM", StringComparison.OrdinalIgnoreCase) < 0)
+                    {
+                        continue;
+                    }
+
+                    if (_reportedUnresolvedLabels.Add(label))
+                    {
+                        Log.Debug($"Sim traffic label not recognised as a localisation key: '{label}'");
+                    }
+                }
+            }
         }
     }
 }

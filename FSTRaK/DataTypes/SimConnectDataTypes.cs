@@ -227,6 +227,13 @@ namespace FSTRaK.DataTypes
 
         public EngineType EngineType;
         public int NumberOfEngines;
+
+        /// <summary>
+        /// ATC Model carries the ICAO-ish type code (B738, A320); ATC Type above carries the
+        /// manufacturer. Icon resolution matches on this one, not on the manufacturer.
+        /// </summary>
+        [MarshalAs(UnmanagedType.ByValTStr, SizeConst = 32)]
+        public string AtcModel;
     }
 
     public interface IAirportData
