@@ -1,3 +1,17 @@
+# FSTRaK 3.8.0 Release Notes
+
+This release adds simulator traffic to the live map.
+
+## Features
+
+**See the traffic around you**
+- A new Traffic toggle on the live map draws the aircraft and helicopters the simulator knows about within 80 nautical miles of your position, oriented to their heading and refreshed every two seconds. This includes AI traffic and real-world live traffic.
+- Hover any of them for callsign, type, altitude, ground speed and heading; click for the same detail panel the online-network layers use.
+- The layer is independent of the VATSIM and IVAO selectors, so you can show simulator traffic alongside an online network, or on its own.
+- It is off by default, and while it is off FSTRaK asks the simulator for nothing at all — there is no cost to leaving it alone.
+
+  Note: other human players in multiplayer sessions are only partially visible to FSTRaK. The simulator limits what it reports about them, so some may not appear, and some may show a generic aircraft name.
+
 # FSTRaK 3.7.5 Release Notes
 
 This is a stability release focused on how FSTRaK handles losing its connection to the simulator.
