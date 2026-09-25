@@ -101,7 +101,24 @@ namespace FSTRaK.BusinessLogic.SimconnectService
         /// </summary>
         public void SetUserObjectId(uint objectId)
         {
-            _userObjectId = objectId;
+            lock (_stateLock)
+            {
+                _userObjectId = objectId;
+            }
+        }
+
+        /// <summary>
+        /// Clears the previously observed user object ID. SimConnect object IDs are
+        /// per-session: called on disconnect so a traffic poll completing before the first
+        /// flight-data frame of a new session cannot filter on a stale ID from the last one,
+        /// which could otherwise draw the user's own aircraft as traffic.
+        /// </summary>
+        public void ClearUserObjectId()
+        {
+            lock (_stateLock)
+            {
+                _userObjectId = null;
+            }
         }
 
         /// <summary>
@@ -131,8 +148,12 @@ namespace FSTRaK.BusinessLogic.SimconnectService
                 else
                 {
                     _pollTimer.Stop();
-                    needsReset = true;
                 }
+
+                // Reset on both transitions: a batch already in flight when the layer was
+                // switched off can land after the stop and repopulate _portions, so a stale
+                // batch could otherwise sit there and be drawn again once the layer restarts.
+                needsReset = true;
             }
 
             // Reset takes the lock itself; it is called after this one is released so that

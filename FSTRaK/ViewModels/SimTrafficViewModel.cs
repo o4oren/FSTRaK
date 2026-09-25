@@ -46,17 +46,22 @@ namespace FSTRaK.ViewModels
         }
 
         /// <summary>
-        /// Snapshots arrive on the SimConnect receive path, which is the UI thread - but the
-        /// tracker's poll timer can also publish an empty snapshot from a timer thread when a
-        /// cycle goes silent, so the marshalling below is not optional.
+        /// Snapshots arrive on the SimConnect receive path, which runs inside the native
+        /// WndProc -> ReceiveMessage() pump - so this always marshals via BeginInvoke rather
+        /// than taking a same-thread shortcut. A full MapItemsControl container regeneration
+        /// for potentially hundreds of aircraft must never run inside that pump, and any
+        /// exception it throws must never escape across the native boundary. The tracker's
+        /// poll timer can also publish an empty snapshot from a timer thread when a cycle
+        /// goes silent, so marshalling is required on that path too.
         /// </summary>
         private void OnTrafficUpdated(IReadOnlyList<SimTrafficEntry> snapshot)
         {
             var items = snapshot.Select(entry => new SimTrafficAircraft(entry)).ToList();
 
             var dispatcher = Application.Current?.Dispatcher;
-            if (dispatcher == null || dispatcher.CheckAccess())
+            if (dispatcher == null)
             {
+                // Design-time and test hosts have no Application.Current.
                 Aircraft.ReplaceContent(items);
                 return;
             }

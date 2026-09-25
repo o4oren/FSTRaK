@@ -208,9 +208,10 @@ polling only if the toggle is still on.
 
 ## Failure behaviour
 
-- SimConnect calls go through `SafeSimConnectCall`. An exception on a traffic
-  request is logged and swallowed; the traffic layer degrades on its own rather
-  than tearing down the connection.
+- SimConnect calls go through `SafeSimConnectCall`. A `COMException` on a
+  traffic request is routed to `HandleConnectionLost`, which tears down and
+  reconnects - the same recovery path any other SimConnect call goes through,
+  including the camera timer's.
 - An incomplete batch is discarded, never merged into the next cycle.
 - With no user object ID observed yet, nothing is published.
 - Two silent cycles clear the map rather than leaving stale aircraft frozen in

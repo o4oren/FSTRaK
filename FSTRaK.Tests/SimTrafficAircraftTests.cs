@@ -70,6 +70,29 @@ namespace FSTRaK.Tests
             return new SimTrafficAircraft(new SimTrafficEntry(42, data));
         }
 
+        private static SimTrafficAircraft BuildWithEngines(int numberOfEngines, EngineType engineType)
+        {
+            var data = new SimTrafficData
+            {
+                Title = "Aircraft",
+                AtcId = "TEST",
+                AtcType = "ZZZZ",
+                Airline = "TestAirline",
+                FlightNumber = "TST001",
+                Category = "Airplane",
+                Latitude = 51.5,
+                Longitude = -0.45,
+                Altitude = 12345.6,
+                TrueHeading = 271.4,
+                GroundVelocity = 289.7,
+                SimOnGround = 0,
+                NumberOfEngines = numberOfEngines,
+                EngineType = engineType
+            };
+
+            return new SimTrafficAircraft(new SimTrafficEntry(42, data));
+        }
+
         [Fact]
         public void Callsign_PrefersAtcId()
         {
@@ -135,6 +158,20 @@ namespace FSTRaK.Tests
             var aircraft = BuildWithCategoryAndType("Helicopter", "ZZZZ");
 
             Assert.Equal("Helicopter", aircraft.IconResource);
+        }
+
+        [Fact]
+        public void IconResource_FallsBackToEngineConfiguration_WhenTypeAndCategoryAreUnrecognised()
+        {
+            // "ZZZZ" matches none of the resolver's candidate lists and Category is
+            // "Airplane" (not "Helicopter"), so this can only resolve via the engine
+            // fallback - proving NumberOfEngines and EngineType are actually forwarded
+            // from SimTrafficData rather than passed as literals or left at their zero
+            // defaults. If the call site dropped these arguments, this would silently
+            // resolve to the "B737" catch-all instead.
+            var aircraft = BuildWithEngines(4, EngineType.Jet);
+
+            Assert.Equal("A340", aircraft.IconResource);
         }
 
         [Fact]

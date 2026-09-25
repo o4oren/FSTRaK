@@ -42,8 +42,9 @@ internal sealed class SimConnectService : INotifyPropertyChanged
     private SimConnect _simconnect = null;
 
     /// <summary>
-    /// Guards every access to <see cref="_simconnect"/>. Three threads reach the handle:
-    /// the UI thread via WndProc, the camera timer, and the connection timer. Critical
+    /// Guards every access to <see cref="_simconnect"/>. Four threads reach the handle:
+    /// the UI thread via WndProc, the camera timer, the connection timer, and the traffic
+    /// poll timer via <see cref="RequestSimTraffic"/>. Critical
     /// sections must stay narrow - never hold this across a property change, because
     /// those reach the FlightManager state machine, which calls back into this service.
     /// The WndProc path therefore uses <see cref="ReceiveSimConnectMessage"/>, which
@@ -461,6 +462,7 @@ internal sealed class SimConnectService : INotifyPropertyChanged
 
         StopGettingData();
         _simTrafficTracker?.UpdateRunState(false, false, false);
+        _simTrafficTracker?.ClearUserObjectId();
         Close();
         IsConnected = false;
 
@@ -820,6 +822,7 @@ internal sealed class SimConnectService : INotifyPropertyChanged
 
         StopGettingData();
         _simTrafficTracker?.UpdateRunState(false, false, false);
+        _simTrafficTracker?.ClearUserObjectId();
         Close();
         IsConnected = false;
         SimVersion = null;
