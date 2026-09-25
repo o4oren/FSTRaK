@@ -18,8 +18,12 @@ namespace FSTRaK.BusinessLogic.SimconnectService
     /// in as onPoll, which is what makes this class testable in isolation - the same shape as
     /// <see cref="NotificationGate"/>.
     ///
-    /// Not thread-safe. Like the rest of the SimConnect receive path it is called only from
-    /// the WPF UI thread, except for the timer's Elapsed, which is marshalled by the caller.
+    /// Thread-safe by its own lock. The timer's Elapsed callback and Accept - called from the
+    /// SimConnect receive path on the UI thread - mutate the same batching state from
+    /// different threads, so every state-mutating method takes a private lock. As with
+    /// <see cref="SimConnectService"/>'s handle lock, the lock is never held across a
+    /// callback that can re-enter this class: each method computes its result while holding
+    /// the lock, then raises onPoll or TrafficUpdated only after releasing it.
     /// </summary>
     internal sealed class SimTrafficTracker
     {
@@ -47,6 +51,13 @@ namespace FSTRaK.BusinessLogic.SimconnectService
 
         private readonly Action _onPoll;
         private readonly Timer _pollTimer;
+
+        /// <summary>
+        /// Guards every field below. Taken by Poll (timer thread), Accept (UI thread), and
+        /// UpdateRunState/Reset (UI thread) - never held across _onPoll or TrafficUpdated,
+        /// both of which can re-enter this class.
+        /// </summary>
+        private readonly object _stateLock = new object();
 
         // Committed objects per request type, replaced wholesale when a batch completes.
         private readonly Dictionary<uint, List<SimTrafficEntry>> _portions =
@@ -100,22 +111,34 @@ namespace FSTRaK.BusinessLogic.SimconnectService
         /// </summary>
         public void UpdateRunState(bool layerEnabled, bool connected, bool simStarted)
         {
-            var shouldRun = layerEnabled && connected && simStarted;
+            var needsReset = false;
 
-            if (shouldRun == IsRunning)
+            lock (_stateLock)
             {
-                return;
+                var shouldRun = layerEnabled && connected && simStarted;
+
+                if (shouldRun == IsRunning)
+                {
+                    return;
+                }
+
+                IsRunning = shouldRun;
+
+                if (shouldRun)
+                {
+                    _pollTimer.Start();
+                }
+                else
+                {
+                    _pollTimer.Stop();
+                    needsReset = true;
+                }
             }
 
-            IsRunning = shouldRun;
-
-            if (shouldRun)
+            // Reset takes the lock itself; it is called after this one is released so that
+            // the TrafficUpdated it raises never runs with _stateLock held.
+            if (needsReset)
             {
-                _pollTimer.Start();
-            }
-            else
-            {
-                _pollTimer.Stop();
                 Reset();
             }
         }
@@ -126,26 +149,38 @@ namespace FSTRaK.BusinessLogic.SimconnectService
         /// </summary>
         public void Poll()
         {
-            var changed = false;
+            bool changed;
+            List<SimTrafficEntry> snapshot = null;
 
-            foreach (var requestId in TrackedRequests)
+            lock (_stateLock)
             {
-                // A batch still pending when the next cycle opens lost messages somewhere.
-                // Discard it - a snapshot must never mix two cycles.
-                _pending.Remove(requestId);
+                changed = false;
 
-                _silentCycles[requestId] = _silentCycles[requestId] + 1;
-
-                if (_silentCycles[requestId] >= SilentCyclesBeforeClearing && _portions[requestId].Count > 0)
+                foreach (var requestId in TrackedRequests)
                 {
-                    _portions[requestId] = new List<SimTrafficEntry>();
-                    changed = true;
+                    // A batch still pending when the next cycle opens lost messages
+                    // somewhere. Discard it - a snapshot must never mix two cycles.
+                    _pending.Remove(requestId);
+
+                    _silentCycles[requestId] = _silentCycles[requestId] + 1;
+
+                    if (_silentCycles[requestId] >= SilentCyclesBeforeClearing && _portions[requestId].Count > 0)
+                    {
+                        _portions[requestId] = new List<SimTrafficEntry>();
+                        changed = true;
+                    }
+                }
+
+                if (changed)
+                {
+                    snapshot = BuildSnapshot();
                 }
             }
 
+            // Both callbacks below can re-enter this class, so neither runs under the lock.
             if (changed)
             {
-                Publish();
+                TrafficUpdated?.Invoke(snapshot);
             }
 
             _onPoll?.Invoke();
@@ -157,40 +192,50 @@ namespace FSTRaK.BusinessLogic.SimconnectService
         /// </summary>
         public void Accept(uint requestId, uint objectId, uint entryNumber, uint outOf, SimTrafficData data)
         {
-            if (!_portions.ContainsKey(requestId) || outOf == 0)
+            List<SimTrafficEntry> snapshot = null;
+
+            lock (_stateLock)
             {
-                return;
+                if (!_portions.ContainsKey(requestId) || outOf == 0)
+                {
+                    return;
+                }
+
+                // Until the user's own object ID is known, any snapshot risks drawing a
+                // duplicate of the user's aircraft. Publishing nothing is the safer failure.
+                if (_userObjectId == null)
+                {
+                    return;
+                }
+
+                if (entryNumber == 1)
+                {
+                    _pending[requestId] = new List<SimTrafficEntry>();
+                }
+
+                if (!_pending.TryGetValue(requestId, out var batch))
+                {
+                    // Mid-batch arrival with no start - the head of this batch was lost.
+                    return;
+                }
+
+                if (objectId != _userObjectId.Value)
+                {
+                    batch.Add(new SimTrafficEntry(objectId, data));
+                }
+
+                if (entryNumber >= outOf)
+                {
+                    _portions[requestId] = batch;
+                    _pending.Remove(requestId);
+                    _silentCycles[requestId] = 0;
+                    snapshot = BuildSnapshot();
+                }
             }
 
-            // Until the user's own object ID is known, any snapshot risks drawing a duplicate
-            // of the user's aircraft. Publishing nothing is the safer failure.
-            if (_userObjectId == null)
+            if (snapshot != null)
             {
-                return;
-            }
-
-            if (entryNumber == 1)
-            {
-                _pending[requestId] = new List<SimTrafficEntry>();
-            }
-
-            if (!_pending.TryGetValue(requestId, out var batch))
-            {
-                // Mid-batch arrival with no start - the head of this batch was lost.
-                return;
-            }
-
-            if (objectId != _userObjectId.Value)
-            {
-                batch.Add(new SimTrafficEntry(objectId, data));
-            }
-
-            if (entryNumber >= outOf)
-            {
-                _portions[requestId] = batch;
-                _pending.Remove(requestId);
-                _silentCycles[requestId] = 0;
-                Publish();
+                TrafficUpdated?.Invoke(snapshot);
             }
         }
 
@@ -200,24 +245,33 @@ namespace FSTRaK.BusinessLogic.SimconnectService
         /// </summary>
         public void Reset()
         {
-            _pending.Clear();
+            List<SimTrafficEntry> snapshot;
 
-            foreach (var requestId in TrackedRequests)
+            lock (_stateLock)
             {
-                _portions[requestId] = new List<SimTrafficEntry>();
-                _silentCycles[requestId] = 0;
+                _pending.Clear();
+
+                foreach (var requestId in TrackedRequests)
+                {
+                    _portions[requestId] = new List<SimTrafficEntry>();
+                    _silentCycles[requestId] = 0;
+                }
+
+                snapshot = BuildSnapshot();
             }
 
-            Publish();
+            TrafficUpdated?.Invoke(snapshot);
         }
 
-        private void Publish()
+        /// <summary>
+        /// Merges the committed portions into one snapshot. Callers must hold
+        /// <see cref="_stateLock"/> - this only reads shared state, it does not publish it.
+        /// </summary>
+        private List<SimTrafficEntry> BuildSnapshot()
         {
-            var merged = TrackedRequests
+            return TrackedRequests
                 .SelectMany(requestId => _portions[requestId])
                 .ToList();
-
-            TrafficUpdated?.Invoke(merged);
         }
     }
 }
