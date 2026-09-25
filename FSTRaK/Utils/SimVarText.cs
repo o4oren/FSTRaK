@@ -31,8 +31,11 @@ namespace FSTRaK.Utils
             "TT", "ATCCOM", "AC", "MODEL", "ATC", "NAME", "AIRLINE"
         };
 
-        /// <summary>The key's trailing marker, e.g. the "text" of ".0.text".</summary>
-        private static readonly string[] TrailingMarkers = { "TEXT", "TXT" };
+        /// <summary>
+        /// The key's trailing marker, e.g. the "text" of ".0.text". "tts" is the
+        /// text-to-speech variant and is just as common in practice.
+        /// </summary>
+        private static readonly string[] TrailingMarkers = { "TEXT", "TXT", "TTS" };
 
         /// <summary>
         /// Returns the readable part of a localisation key, or the input unchanged when it

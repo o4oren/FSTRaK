@@ -18,6 +18,15 @@ namespace FSTRaK.Tests
         }
 
         [Fact]
+        public void Humanize_TtsMarker_IsStrippedWithItsIndex()
+        {
+            // Observed in MSFS: the text-to-speech variant of the trailing marker. Leaving
+            // it in produced labels like "BOEING 0 tts".
+            Assert.Equal("BOEING", SimVarText.Humanize("TT:ATCCOM.ATC_NAME BOEING.0.tts"));
+            Assert.Equal("B737", SimVarText.Humanize("TT:ATCCOM.AC_MODEL B737.0.tts"));
+        }
+
+        [Fact]
         public void Humanize_AirlineKeyInUpperCase_YieldsTheName()
         {
             Assert.Equal("AIRBUS", SimVarText.Humanize("ATCCOM.ATC_NAME AIRBUS.0.TEXT"));
