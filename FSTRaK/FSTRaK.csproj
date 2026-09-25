@@ -249,6 +249,7 @@
     <Compile Include="ViewModels\LiveViewViewModel.cs" />
     <Compile Include="ViewModels\SelectedClientViewModel.cs" />
     <Compile Include="ViewModels\SimTrafficAircraft.cs" />
+    <Compile Include="ViewModels\SimTrafficViewModel.cs" />
     <Compile Include="ViewModels\BaseViewModel.cs" />
     <Compile Include="ViewModels\MainWindowViewModel.cs" />
     <Compile Include="Views\FlightDetailsView.xaml.cs">
