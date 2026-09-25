@@ -695,6 +695,10 @@ internal sealed class SimConnectService : INotifyPropertyChanged
             SIMCONNECT_DATATYPE.FLOAT64, 0.0f, SimConnect.SIMCONNECT_UNUSED);
         _simconnect.AddToDataDefinition(DataDefinitions.SimTrafficData, "Sim On Ground", "Bool",
             SIMCONNECT_DATATYPE.INT32, 0.0f, SimConnect.SIMCONNECT_UNUSED);
+        _simconnect.AddToDataDefinition(DataDefinitions.SimTrafficData, "ENGINE TYPE", "number",
+            SIMCONNECT_DATATYPE.INT32, 0.0f, SimConnect.SIMCONNECT_UNUSED);
+        _simconnect.AddToDataDefinition(DataDefinitions.SimTrafficData, "NUMBER OF ENGINES", "number",
+            SIMCONNECT_DATATYPE.INT32, 0.0f, SimConnect.SIMCONNECT_UNUSED);
 
         _simconnect.RegisterDataDefineStruct<AircraftData>(DataDefinitions.AircraftData);
         _simconnect.RegisterDataDefineStruct<FlightData>(DataDefinitions.FlightData);

@@ -241,31 +241,39 @@ namespace FSTRaK.Utils
             }
         }
 
+        /// <summary>
+        /// Resolves an icon when more than the ICAO type is known. Category and engine
+        /// configuration rescue the cases the type table misses - without them an unlisted
+        /// helicopter draws as an airliner, which at a GA field is most of what is on screen.
+        ///
+        /// Shared by logged aircraft and by simulator traffic so both get the same treatment
+        /// from one implementation.
+        /// </summary>
+        public static (string, double) GetAircraftIcon(string category, string aircraftType, int numberOfEngines, EngineType engineType)
+        {
+            if (string.Equals(category?.Trim(), "Helicopter", StringComparison.OrdinalIgnoreCase))
+                return ("Helicopter", 0.6);
+
+            var (icon, scaleFactor) = GetAircraftIcon(aircraftType ?? string.Empty, true);
+            if (icon != null)
+                return (icon, scaleFactor);
+
+            // Not in the type table - fall back on the engine configuration.
+            if (numberOfEngines == 1 && engineType == EngineType.Piston)
+                return ("C172", 0.6);
+
+            if (numberOfEngines == 2 && engineType == EngineType.Piston)
+                return ("B200", 0.75);
+
+            if (numberOfEngines == 4 && engineType == EngineType.Jet)
+                return ("A340", 0.9);
+
+            return ("B737", 0.75);
+        }
+
         public static (string, double) GetAircraftIcon(Aircraft aircraft)
         {
-            if (aircraft.Category.Equals("Helicopter"))
-                return ("Helicopter", 0.6);
-            (var aicraftIcon, var scaleFactor) = GetAircraftIcon(aircraft.AircraftType, true);
-            if (aicraftIcon == null)
-            {
-                // If not matched on the type, try other heuristics
-                if (aircraft.NumberOfEngines == 1 && aircraft.EngineType == EngineType.Piston)
-                {
-                    return ("C172", 0.6);
-                }
-
-                if (aircraft.NumberOfEngines == 2 && aircraft.EngineType == EngineType.Piston)
-                {
-                    return ("B200", 0.75);
-                }
-
-                if (aircraft.NumberOfEngines == 4 && aircraft.EngineType == EngineType.Jet)
-                {
-                    return ("A340", 0.9);
-                }
-                return ("B737", 0.75);
-            }
-            return (aicraftIcon, scaleFactor);
+            return GetAircraftIcon(aircraft.Category, aircraft.AircraftType, aircraft.NumberOfEngines, aircraft.EngineType);
         }
 
         public static (string, double) GetAircraftIcon(string aircraftType)

@@ -14,6 +14,7 @@ namespace FSTRaK.ViewModels
         public uint ObjectId { get; }
         public string Callsign { get; }
         public string AircraftType { get; }
+        public string Category { get; }
         public string Airline { get; }
         public Location Location { get; }
         public double Heading { get; }
@@ -29,6 +30,7 @@ namespace FSTRaK.ViewModels
 
             ObjectId = entry.ObjectId;
             AircraftType = (data.AtcType ?? string.Empty).Trim();
+            Category = (data.Category ?? string.Empty).Trim();
             Airline = (data.Airline ?? string.Empty).Trim();
             Callsign = ResolveCallsign(data.AtcId, data.FlightNumber, data.Title);
             Location = new Location(data.Latitude, data.Longitude);
@@ -37,7 +39,7 @@ namespace FSTRaK.ViewModels
             Groundspeed = (int)Math.Round(data.GroundVelocity);
             IsOnGround = data.SimOnGround != 0;
 
-            var (icon, scale) = AircraftResolver.GetAircraftIcon(AircraftType);
+            var (icon, scale) = AircraftResolver.GetAircraftIcon(Category, AircraftType, data.NumberOfEngines, data.EngineType);
             IconResource = icon;
             ScaleFactor = scale;
         }

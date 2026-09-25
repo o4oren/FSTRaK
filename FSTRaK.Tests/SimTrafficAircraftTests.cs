@@ -49,6 +49,27 @@ namespace FSTRaK.Tests
             return new SimTrafficAircraft(new SimTrafficEntry(42, data));
         }
 
+        private static SimTrafficAircraft BuildWithCategoryAndType(string category, string atcType)
+        {
+            var data = new SimTrafficData
+            {
+                Title = "Aircraft",
+                AtcId = "TEST",
+                AtcType = atcType,
+                Airline = "TestAirline",
+                FlightNumber = "TST001",
+                Category = category,
+                Latitude = 51.5,
+                Longitude = -0.45,
+                Altitude = 12345.6,
+                TrueHeading = 271.4,
+                GroundVelocity = 289.7,
+                SimOnGround = 0
+            };
+
+            return new SimTrafficAircraft(new SimTrafficEntry(42, data));
+        }
+
         [Fact]
         public void Callsign_PrefersAtcId()
         {
@@ -104,6 +125,16 @@ namespace FSTRaK.Tests
 
             Assert.Equal("Helicopter", helicopter.IconResource);
             Assert.Equal(0.6, helicopter.ScaleFactor);
+        }
+
+        [Fact]
+        public void IconResource_UsesCategoryWhenTheTypeIsUnrecognised()
+        {
+            // Proves the model actually forwards Category (and not just AircraftType) to the
+            // resolver - an unrecognised ATC type would otherwise fall back to the B737 icon.
+            var aircraft = BuildWithCategoryAndType("Helicopter", "ZZZZ");
+
+            Assert.Equal("Helicopter", aircraft.IconResource);
         }
 
         [Fact]

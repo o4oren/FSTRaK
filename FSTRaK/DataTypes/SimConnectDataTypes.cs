@@ -224,6 +224,9 @@ namespace FSTRaK.DataTypes
         public double TrueHeading;
         public double GroundVelocity;
         public int SimOnGround;
+
+        public EngineType EngineType;
+        public int NumberOfEngines;
     }
 
     public interface IAirportData
