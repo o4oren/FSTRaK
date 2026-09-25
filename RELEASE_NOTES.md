@@ -16,6 +16,8 @@ This release adds simulator traffic to the live map.
 
   Note: other human players in multiplayer sessions are only partially visible to FSTRaK. The simulator limits what it reports about them, so some may not appear, and some may show a generic aircraft name.
 
+  Note: the simulator only creates AI traffic in a bubble around your own aircraft, so the map shows the traffic near you rather than the whole world. Aircraft appear as you approach an area and disappear again once you are well past it, however wide the search radius is.
+
 # FSTRaK 3.7.5 Release Notes
 
 This is a stability release focused on how FSTRaK handles losing its connection to the simulator.
