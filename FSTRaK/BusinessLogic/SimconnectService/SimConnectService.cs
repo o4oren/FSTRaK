@@ -702,7 +702,7 @@ internal sealed class SimConnectService : INotifyPropertyChanged
         _simconnect.AddToDataDefinition(DataDefinitions.SimTrafficData, "NUMBER OF ENGINES", "number",
             SIMCONNECT_DATATYPE.INT32, 0.0f, SimConnect.SIMCONNECT_UNUSED);
         _simconnect.AddToDataDefinition(DataDefinitions.SimTrafficData, "ATC Model", null,
-            SIMCONNECT_DATATYPE.STRING32, 0.0f, SimConnect.SIMCONNECT_UNUSED);
+            SIMCONNECT_DATATYPE.STRING128, 0.0f, SimConnect.SIMCONNECT_UNUSED);
 
         _simconnect.RegisterDataDefineStruct<AircraftData>(DataDefinitions.AircraftData);
         _simconnect.RegisterDataDefineStruct<FlightData>(DataDefinitions.FlightData);

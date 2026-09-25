@@ -231,8 +231,13 @@ namespace FSTRaK.DataTypes
         /// <summary>
         /// ATC Model carries the ICAO-ish type code (B738, A320); ATC Type above carries the
         /// manufacturer. Icon resolution matches on this one, not on the manufacturer.
+        ///
+        /// 128 rather than the 32 AircraftData uses for the same SimVar: AI objects report a
+        /// localisation key rather than a bare code, and those run long - 40 characters for
+        /// a Cessna Citation, 48 for a Beechcraft King Air. At 32 the key arrives cut mid
+        /// word, which no amount of unwrapping can repair.
         /// </summary>
-        [MarshalAs(UnmanagedType.ByValTStr, SizeConst = 32)]
+        [MarshalAs(UnmanagedType.ByValTStr, SizeConst = 128)]
         public string AtcModel;
     }
 
