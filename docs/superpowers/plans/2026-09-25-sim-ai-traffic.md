@@ -317,13 +317,15 @@ namespace FSTRaK.Tests
         {
             var tracker = CreateTracker(out var published);
             tracker.Accept(AircraftRequest, 10, 1, 1, Data("AAL1"));
+            tracker.Poll();
 
-            tracker.Poll();
+            // The second completed batch resets the counter, so the poll that follows is the
+            // FIRST silent cycle, not the second, and must not clear the map.
             tracker.Accept(AircraftRequest, 10, 1, 1, Data("AAL1"));
-            tracker.Poll();
             published.Clear();
 
-            // Only one silent cycle has elapsed since the last completed batch.
+            tracker.Poll();
+
             Assert.Empty(published);
         }
 
