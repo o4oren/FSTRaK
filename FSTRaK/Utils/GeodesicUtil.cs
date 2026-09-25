@@ -53,6 +53,46 @@ namespace FSTRaK.Utils
             return points;
         }
 
+        /// <summary>
+        /// Expands a list of waypoints into a great-circle path, interpolating each leg.
+        ///
+        /// A flight plan's points are joined by straight lines on a Mercator projection
+        /// otherwise, which diverges from the flown track on long legs - most visibly on
+        /// oceanic crossings and direct routings.
+        /// </summary>
+        public static List<Location> ExpandPath(IReadOnlyList<Location> waypoints, double stepNm = 50.0)
+        {
+            var path = new List<Location>();
+
+            if (waypoints == null || waypoints.Count == 0)
+            {
+                return path;
+            }
+
+            if (waypoints.Count == 1)
+            {
+                path.Add(waypoints[0]);
+                return path;
+            }
+
+            for (var i = 0; i < waypoints.Count - 1; i++)
+            {
+                var from = waypoints[i];
+                var to = waypoints[i + 1];
+                var leg = Interpolate(from.Latitude, from.Longitude, to.Latitude, to.Longitude, stepNm);
+
+                // Interpolate returns both ends, so every leg after the first drops its
+                // starting point - it is the previous leg's final one.
+                var first = i == 0 ? 0 : 1;
+                for (var j = first; j < leg.Count; j++)
+                {
+                    path.Add(leg[j]);
+                }
+            }
+
+            return path;
+        }
+
         /// <summary>Distance in nautical miles between two lat/lon points.</summary>
         public static double DistanceNm(double lat1, double lon1, double lat2, double lon2)
         {

@@ -1154,16 +1154,24 @@ namespace FSTRaK.ViewModels
             var plan = _simBriefService.MatchedFlightPlan;
             if (plan != null)
             {
+                var waypoints = new List<Location>();
                 foreach (var point in plan.Points.OrderBy(p => p.Sequence))
                 {
                     var location = new Location(point.Latitude, point.Longitude);
-                    PlannedRouteLocations.Add(location);
+                    waypoints.Add(location);
                     PlannedWaypoints.Add(new PlannedWaypoint
                     {
                         Location = location,
                         Ident = point.Ident,
                         Tooltip = point.TooltipText
                     });
+                }
+
+                // Great-circle rather than straight Mercator segments, then unwrapped so a
+                // trans-dateline plan draws across the Pacific instead of back across the map.
+                foreach (var location in MapUtils.WrapPolyline(GeodesicUtil.ExpandPath(waypoints)))
+                {
+                    PlannedRouteLocations.Add(location);
                 }
                 IsShowFlightPlan = true; // a freshly matched plan starts visible
             }

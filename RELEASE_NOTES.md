@@ -12,6 +12,7 @@ This release adds simulator traffic to the live map.
 - Traffic aircraft are matched to an icon the same way your own logged aircraft are: by category and engine configuration as well as ICAO type. AI helicopters now show as helicopters, and unfamiliar light aircraft as light aircraft, instead of everything unrecognised showing as an airliner.
 - Every button on the live map and the flight details map now has a tooltip explaining what it does.
 - The Statistics route map has an Expand button that grows it to fill the page, and hovering a route now shows that flight's airports, aircraft, airline and date.
+- SimBrief plan routes are drawn as great-circle lines on both the live map and the flight details map, so they follow the track you actually fly rather than cutting straight across the projection.
 
   Note: other human players in multiplayer sessions are only partially visible to FSTRaK. The simulator limits what it reports about them, so some may not appear, and some may show a generic aircraft name.
 
