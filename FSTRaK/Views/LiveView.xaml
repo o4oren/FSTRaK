@@ -439,6 +439,7 @@
         <StackPanel Margin="10" HorizontalAlignment="Right">
             <ToggleButton Style="{DynamicResource MapToggleButton}" 
                           IsChecked="{Binding IsCenterOnAirplane}" 
+                          ToolTip="Keep the map centred on your aircraft"
                           Content="{DynamicResource CenterMap}">
                 <b:Interaction.Triggers>
                     <b:EventTrigger EventName="Checked">
@@ -451,7 +452,8 @@
             </ToggleButton>
             <!-- Network selector: VATSIM -->
             <ToggleButton Style="{DynamicResource MapToggleButton}"
-                          IsChecked="{Binding IsVatsimActive, Mode=OneWay}">
+                          IsChecked="{Binding IsVatsimActive, Mode=OneWay}"
+                          ToolTip="Show VATSIM traffic and ATC">
                 <b:Interaction.Triggers>
                     <b:EventTrigger EventName="Click">
                         <b:InvokeCommandAction Command="{Binding SelectNetworkCommand}"
@@ -463,7 +465,8 @@
 
             <!-- Network selector: IVAO -->
             <ToggleButton Style="{DynamicResource MapToggleButton}"
-                          IsChecked="{Binding IsIvaoActive, Mode=OneWay}">
+                          IsChecked="{Binding IsIvaoActive, Mode=OneWay}"
+                          ToolTip="Show IVAO traffic and ATC">
                 <b:Interaction.Triggers>
                     <b:EventTrigger EventName="Click">
                         <b:InvokeCommandAction Command="{Binding SelectNetworkCommand}"
@@ -476,6 +479,7 @@
             <!-- Pilots toggle -->
             <ToggleButton Style="{DynamicResource MapToggleButton}"
                           IsChecked="{Binding IsShowPilots}"
+                          ToolTip="Show pilots on the selected network"
                           Visibility="{Binding IsAnyNetworkActive, Converter={StaticResource BoolToVis}}">
                 <b:Interaction.Triggers>
                     <b:EventTrigger EventName="Checked">
@@ -491,6 +495,7 @@
             <!-- ATC toggle -->
             <ToggleButton Style="{DynamicResource MapToggleButton}"
                           IsChecked="{Binding IsShowAtc}"
+                          ToolTip="Show ATC coverage on the selected network"
                           Visibility="{Binding IsAnyNetworkActive, Converter={StaticResource BoolToVis}}">
                 <b:Interaction.Triggers>
                     <b:EventTrigger EventName="Checked">

@@ -113,6 +113,7 @@
                 <StackPanel Margin="10" HorizontalAlignment="Right">
                     <ToggleButton Style="{DynamicResource MapToggleButton}"
                               IsChecked="{Binding IsShowPath, Mode=TwoWay}"
+                              ToolTip="Show the flown flight path"
                               Content="{DynamicResource PathButton}"/>
                 <ToggleButton Style="{DynamicResource MapToggleButton}"
                               IsChecked="{Binding IsShowPlan, Mode=TwoWay}"
@@ -121,12 +122,15 @@
                               ToolTip="Show SimBrief flight plan"/>
                 <ToggleButton Style="{DynamicResource MapToggleButton}"
                               IsChecked="{Binding IsShowFlightDetails, Mode=TwoWay}" 
+                              ToolTip="Show flight details"
                               Content="{DynamicResource detailsButton}"/>
                 <ToggleButton Style="{DynamicResource MapToggleButton}" 
                                   IsChecked="{Binding IsShowScoreboard, Mode=TwoWay}" 
+                                  ToolTip="Show the landing scoreboard"
                                   Content="{DynamicResource Scoreboard}"/>
                 <ToggleButton Style="{DynamicResource MapToggleButton}" 
                               IsChecked="{Binding IsShowAltSpeedCharts, Mode=TwoWay}" 
+                              ToolTip="Show altitude and speed charts"
                               Content="{DynamicResource chartsButton}"/>
             </StackPanel>
             <Grid Margin="10 10 10 10" HorizontalAlignment="Center" VerticalAlignment="Bottom" Visibility="{Binding IsShowAltSpeedCharts, Converter={StaticResource BoolToVis}}">

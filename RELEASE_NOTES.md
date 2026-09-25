@@ -10,6 +10,7 @@ This release adds simulator traffic to the live map.
 - The layer is independent of the VATSIM and IVAO selectors, so you can show simulator traffic alongside an online network, or on its own.
 - It is off by default, and while it is off FSTRaK asks the simulator for nothing at all — there is no cost to leaving it alone.
 - Traffic aircraft are matched to an icon the same way your own logged aircraft are: by category and engine configuration as well as ICAO type. AI helicopters now show as helicopters, and unfamiliar light aircraft as light aircraft, instead of everything unrecognised showing as an airliner.
+- Every button on the live map and the flight details map now has a tooltip explaining what it does.
 
   Note: other human players in multiplayer sessions are only partially visible to FSTRaK. The simulator limits what it reports about them, so some may not appear, and some may show a generic aircraft name.
 
