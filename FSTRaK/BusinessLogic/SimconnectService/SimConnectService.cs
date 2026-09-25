@@ -1086,8 +1086,9 @@ internal sealed class SimConnectService : INotifyPropertyChanged
 
     /// <summary>
     /// Two one-shot by-type requests per cycle. RequestDataOnSimObjectType has no PERIOD, so
-    /// currency comes from the tracker's timer. Both go through SafeSimConnectCall: a failed
-    /// traffic request degrades the layer, never the connection.
+    /// currency comes from the tracker's timer. Both go through SafeSimConnectCall, so a
+    /// COMException here takes the same recovery path as any other SimConnect call - a
+    /// teardown and reconnect - rather than a traffic-specific one.
     /// </summary>
     private void RequestSimTraffic()
     {
