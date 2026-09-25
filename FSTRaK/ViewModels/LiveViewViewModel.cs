@@ -27,6 +27,24 @@ namespace FSTRaK.ViewModels
         private readonly BusinessLogic.SimBriefService.SimBriefService _simBriefService =
             BusinessLogic.SimBriefService.SimBriefService.Instance;
 
+        /// <summary>
+        /// The simulator traffic layer. Independent of the VATSIM/IVAO network selector -
+        /// both can be shown at once.
+        /// </summary>
+        public SimTrafficViewModel SimTraffic { get; } = new SimTrafficViewModel();
+
+        private bool _isSimConnected;
+
+        /// <summary>
+        /// Drives the visibility of the traffic toggle: traffic only exists while attached to
+        /// a running simulator.
+        /// </summary>
+        public bool IsSimConnected
+        {
+            get => _isSimConnected;
+            private set { _isSimConnected = value; OnPropertyChanged(); }
+        }
+
         internal record TrackPoint(double Latitude, double Longitude, int Altitude, DateTime Timestamp);
 
 
@@ -1595,6 +1613,7 @@ namespace FSTRaK.ViewModels
                 case nameof(_flightManager.SimVersion):
                 case nameof(_flightManager.SimConnectIsConnected):
                     ConnectionText = $"{(_flightManager.SimConnectIsConnected ? "Connected to " : "Not connected to sim")} {(_flightManager.SimVersion != null ? _flightManager.SimVersion : "")}";
+                    IsSimConnected = _flightManager.SimConnectIsConnected;
                     break;
 
                 default:
