@@ -747,6 +747,13 @@ namespace FSTRaK.ViewModels
                     var _atc = FetchIvaoAtcDetailsAsync(primaryId);
                 }
             }
+            else if (parameter is SimTrafficAircraft sta)
+            {
+                // No track history and no airport coordinates: SimConnect exposes neither for
+                // AI objects, so the panel opens with what the snapshot carries and nothing
+                // is fetched.
+                SelectedClient = new SelectedClientViewModel(sta);
+            }
 
         }
 
