@@ -1,3 +1,14 @@
+# FSTRaK 3.8.1 Release Notes
+
+This release improves the Statistics route map.
+
+## Features
+
+**Filter the route map by airport**
+- A new Airport filter on the Statistics page narrows everything shown, including the route map, to flights that departed from or arrived at a chosen ICAO. It combines with the existing Airline, Aircraft Type and Tail Number filters, and its own options narrow to match whatever else is selected.
+- Every airport that appears on the route map now has a small dot; hover it for the airport's ICAO, name, city and country.
+- Routes flown both ways between the same two airports (A→B and B→A) are now drawn as a single line. Hovering it lists every flight that used it, with its date, airline and aircraft, instead of showing only one flight at a time.
+
 # FSTRaK 3.8.0 Release Notes
 
 This release adds simulator traffic to the live map.

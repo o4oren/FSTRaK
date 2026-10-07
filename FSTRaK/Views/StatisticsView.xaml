@@ -58,7 +58,7 @@
                               ItemsSource="{Binding FilteredAircraftTypes}"
                               Text="{Binding AircraftTypeFilter, UpdateSourceTrigger=PropertyChanged}"/>
                 </StackPanel>
-                <StackPanel Orientation="Horizontal" Margin="0,0,0,4" VerticalAlignment="Center">
+                <StackPanel Orientation="Horizontal" Margin="0,0,16,4" VerticalAlignment="Center">
                     <Label Style="{StaticResource FSTrAkLabel}">Tail Number</Label>
                     <ComboBox IsEditable="True"
                               IsTextSearchEnabled="True"
@@ -69,6 +69,18 @@
                               Width="180"
                               ItemsSource="{Binding FilteredTailNumbers}"
                               Text="{Binding TailNumberFilter, UpdateSourceTrigger=PropertyChanged}"/>
+                </StackPanel>
+                <StackPanel Orientation="Horizontal" Margin="0,0,0,4" VerticalAlignment="Center">
+                    <Label Style="{StaticResource FSTrAkLabel}">Airport</Label>
+                    <ComboBox IsEditable="True"
+                              IsTextSearchEnabled="True"
+                              StaysOpenOnEdit="True"
+                              FontFamily="{DynamicResource CurrentFont}"
+                              Foreground="{DynamicResource TextColor}"
+                              FontSize="{DynamicResource ControlFontSize}"
+                              Width="140"
+                              ItemsSource="{Binding FilteredAirports}"
+                              Text="{Binding AirportFilter, UpdateSourceTrigger=PropertyChanged}"/>
                 </StackPanel>
             </WrapPanel>
 
@@ -191,6 +203,34 @@
                             <TextBlock FontSize="12" Style="{DynamicResource MapAttribution}"
                                        utils:HyperlinkText.InlinesSource="{Binding MapAttributionText}" />
                         </StackPanel>
+
+                        <!-- Airport endpoint dots -->
+                        <map:MapItemsControl ItemsSource="{Binding AirportMarkers}">
+                            <map:MapItemsControl.ItemContainerStyle>
+                                <Style TargetType="map:MapItem">
+                                    <Setter Property="Location" Value="{Binding Position}"/>
+                                    <Setter Property="VerticalAlignment" Value="Center"/>
+                                    <Setter Property="HorizontalAlignment" Value="Center"/>
+                                </Style>
+                            </map:MapItemsControl.ItemContainerStyle>
+                            <map:MapItemsControl.ItemTemplate>
+                                <DataTemplate>
+                                    <Ellipse Width="7" Height="7"
+                                             Fill="{DynamicResource SuperBrightTextColor}"
+                                             Stroke="Black" StrokeThickness="0.5">
+                                        <Ellipse.ToolTip>
+                                            <StackPanel>
+                                                <TextBlock Text="{Binding Icao}" FontWeight="Bold"/>
+                                                <TextBlock Text="{Binding Name}"/>
+                                                <TextBlock>
+                                                    <Run Text="{Binding City, Mode=OneWay}"/><Run Text=", "/><Run Text="{Binding Country, Mode=OneWay}"/>
+                                                </TextBlock>
+                                            </StackPanel>
+                                        </Ellipse.ToolTip>
+                                    </Ellipse>
+                                </DataTemplate>
+                            </map:MapItemsControl.ItemTemplate>
+                        </map:MapItemsControl>
                     </map:Map>
                 </StackPanel>
             </Border>

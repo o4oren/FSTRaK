@@ -49,6 +49,13 @@ namespace FSTRaK.ViewModels
             set { _filteredTailNumbers = value; OnPropertyChanged(); }
         }
 
+        private ObservableCollection<string> _filteredAirports = new ObservableCollection<string>();
+        public ObservableCollection<string> FilteredAirports
+        {
+            get => _filteredAirports;
+            set { _filteredAirports = value; OnPropertyChanged(); }
+        }
+
         // ── Active filter values ─────────────────────────────────────────────
 
         private string _airlineFilter;
@@ -82,6 +89,18 @@ namespace FSTRaK.ViewModels
             set
             {
                 _tailNumberFilter = value;
+                DebounceUpdateStatistics();
+                OnPropertyChanged();
+            }
+        }
+
+        private string _airportFilter;
+        public string AirportFilter
+        {
+            get => _airportFilter;
+            set
+            {
+                _airportFilter = value;
                 DebounceUpdateStatistics();
                 OnPropertyChanged();
             }
@@ -177,6 +196,13 @@ namespace FSTRaK.ViewModels
         {
             get => _flightRoutes;
             set { _flightRoutes = value; OnPropertyChanged(); }
+        }
+
+        private List<AirportMarker> _airportMarkers;
+        public List<AirportMarker> AirportMarkers
+        {
+            get => _airportMarkers;
+            set { _airportMarkers = value; OnPropertyChanged(); }
         }
 
         private bool _isMapExpanded;
@@ -304,15 +330,15 @@ namespace FSTRaK.ViewModels
 
         // ── Cache helpers ─────────────────────────────────────────────────────
 
-        private (List<string> airlines, List<string> types, List<string> tailNumbers)? TryReadFiltersCache()
+        private (List<string> airlines, List<string> types, List<string> tailNumbers, List<string> airports)? TryReadFiltersCache()
         {
             try
             {
                 if (!File.Exists(_filtersCachePath)) return null;
                 var json = File.ReadAllText(_filtersCachePath);
                 var dto = JsonConvert.DeserializeObject<FiltersCacheDto>(json);
-                if (dto?.Airlines == null || dto?.AircraftTypes == null || dto?.TailNumbers == null) return null;
-                return (dto.Airlines, dto.AircraftTypes, dto.TailNumbers);
+                if (dto?.Airlines == null || dto?.AircraftTypes == null || dto?.TailNumbers == null || dto?.Airports == null) return null;
+                return (dto.Airlines, dto.AircraftTypes, dto.TailNumbers, dto.Airports);
             }
             catch (Exception ex)
             {
@@ -321,11 +347,11 @@ namespace FSTRaK.ViewModels
             }
         }
 
-        private void WriteFiltersCache(List<string> airlines, List<string> types, List<string> tailNumbers)
+        private void WriteFiltersCache(List<string> airlines, List<string> types, List<string> tailNumbers, List<string> airports)
         {
             try
             {
-                var dto = new FiltersCacheDto { Airlines = airlines, AircraftTypes = types, TailNumbers = tailNumbers, Generated = DateTime.UtcNow };
+                var dto = new FiltersCacheDto { Airlines = airlines, AircraftTypes = types, TailNumbers = tailNumbers, Airports = airports, Generated = DateTime.UtcNow };
                 var json = JsonConvert.SerializeObject(dto);
                 var dir = Path.GetDirectoryName(_filtersCachePath);
                 if (!string.IsNullOrEmpty(dir) && !Directory.Exists(dir)) Directory.CreateDirectory(dir);
@@ -342,6 +368,7 @@ namespace FSTRaK.ViewModels
             public List<string> Airlines { get; set; }
             public List<string> AircraftTypes { get; set; }
             public List<string> TailNumbers { get; set; }
+            public List<string> Airports { get; set; }
             public DateTime Generated { get; set; }
         }
 
@@ -353,7 +380,8 @@ namespace FSTRaK.ViewModels
             {
                 bool hasActiveFilter = !string.IsNullOrEmpty(AirlineFilter)
                     || !string.IsNullOrEmpty(AircraftTypeFilter)
-                    || !string.IsNullOrEmpty(TailNumberFilter);
+                    || !string.IsNullOrEmpty(TailNumberFilter)
+                    || !string.IsNullOrEmpty(AirportFilter);
 
                 // Only use cache on initial load — when filters are active always query fresh
                 // so interdependent options update correctly.
@@ -367,6 +395,7 @@ namespace FSTRaK.ViewModels
                             FilteredAirlines = new ObservableCollection<string>(cached.Value.airlines);
                             FilteredAircraftTypes = new ObservableCollection<string>(cached.Value.types);
                             FilteredTailNumbers = new ObservableCollection<string>(cached.Value.tailNumbers);
+                            FilteredAirports = new ObservableCollection<string>(cached.Value.airports);
                         });
 
                         _ = Task.Run(async () =>
@@ -374,12 +403,13 @@ namespace FSTRaK.ViewModels
                             try
                             {
                                 var fresh = await QueryFiltersFromDbAsync().ConfigureAwait(false);
-                                WriteFiltersCache(fresh.airlines, fresh.types, fresh.tailNumbers);
+                                WriteFiltersCache(fresh.airlines, fresh.types, fresh.tailNumbers, fresh.airports);
                                 App.Current.Dispatcher.Invoke(() =>
                                 {
                                     FilteredAirlines = new ObservableCollection<string>(fresh.airlines);
                                     FilteredAircraftTypes = new ObservableCollection<string>(fresh.types);
                                     FilteredTailNumbers = new ObservableCollection<string>(fresh.tailNumbers);
+                                    FilteredAirports = new ObservableCollection<string>(fresh.airports);
                                 });
                             }
                             catch (Exception ex)
@@ -394,12 +424,13 @@ namespace FSTRaK.ViewModels
 
                 var result = await QueryFiltersFromDbAsync().ConfigureAwait(false);
                 if (!hasActiveFilter)
-                    WriteFiltersCache(result.airlines, result.types, result.tailNumbers);
+                    WriteFiltersCache(result.airlines, result.types, result.tailNumbers, result.airports);
                 App.Current.Dispatcher.Invoke(() =>
                 {
                     FilteredAirlines = new ObservableCollection<string>(result.airlines);
                     FilteredAircraftTypes = new ObservableCollection<string>(result.types);
                     FilteredTailNumbers = new ObservableCollection<string>(result.tailNumbers);
+                    FilteredAirports = new ObservableCollection<string>(result.airports);
                 });
             }
             catch (Exception ex)
@@ -412,7 +443,7 @@ namespace FSTRaK.ViewModels
         /// Query distinct filter options. Each filter's options are computed without that
         /// filter's own constraint, so selecting one filter doesn't lock the others.
         /// </summary>
-        private async Task<(List<string> airlines, List<string> types, List<string> tailNumbers)> QueryFiltersFromDbAsync()
+        private async Task<(List<string> airlines, List<string> types, List<string> tailNumbers, List<string> airports)> QueryFiltersFromDbAsync()
         {
             using (var logbookContext = new LogbookContext())
             {
@@ -437,6 +468,16 @@ namespace FSTRaK.ViewModels
                 if (!string.IsNullOrEmpty(AircraftTypeFilter))
                     tailsQuery = tailsQuery.Where(a => a.AircraftType == AircraftTypeFilter);
 
+                // Airports: filtered by airline + type + tail, drawn from both departure and
+                // arrival of every matching flight (NOT constrained by AirportFilter itself).
+                IQueryable<Flight> airportsQuery = logbookContext.Flights.AsNoTracking();
+                if (!string.IsNullOrEmpty(AirlineFilter))
+                    airportsQuery = airportsQuery.Where(f => f.Aircraft.Airline == AirlineFilter);
+                if (!string.IsNullOrEmpty(AircraftTypeFilter))
+                    airportsQuery = airportsQuery.Where(f => f.Aircraft.AircraftType == AircraftTypeFilter);
+                if (!string.IsNullOrEmpty(TailNumberFilter))
+                    airportsQuery = airportsQuery.Where(f => f.Aircraft.TailNumber == TailNumberFilter);
+
                 var airlinesTask = airlinesQuery
                     .Where(a => a.Airline != null && a.Airline.Trim() != "")
                     .Select(a => a.Airline).Distinct().OrderBy(a => a).ToListAsync();
@@ -449,7 +490,15 @@ namespace FSTRaK.ViewModels
                     .Where(a => a.TailNumber != null && a.TailNumber.Trim() != "")
                     .Select(a => a.TailNumber).Distinct().OrderBy(t => t).ToListAsync();
 
-                await Task.WhenAll(airlinesTask, typesTask, tailsTask).ConfigureAwait(false);
+                var depAirportsTask = airportsQuery
+                    .Where(f => f.DepartureAirport != null && f.DepartureAirport.Trim() != "")
+                    .Select(f => f.DepartureAirport).Distinct().ToListAsync();
+
+                var arrAirportsTask = airportsQuery
+                    .Where(f => f.ArrivalAirport != null && f.ArrivalAirport.Trim() != "")
+                    .Select(f => f.ArrivalAirport).Distinct().ToListAsync();
+
+                await Task.WhenAll(airlinesTask, typesTask, tailsTask, depAirportsTask, arrAirportsTask).ConfigureAwait(false);
 
                 var airlines = airlinesTask.Result;
                 if (!airlines.Contains(string.Empty)) airlines.Insert(0, string.Empty);
@@ -460,7 +509,14 @@ namespace FSTRaK.ViewModels
                 var tails = tailsTask.Result;
                 if (!tails.Contains(string.Empty)) tails.Insert(0, string.Empty);
 
-                return (airlines, types, tails);
+                var airports = depAirportsTask.Result
+                    .Concat(arrAirportsTask.Result)
+                    .Distinct()
+                    .OrderBy(a => a)
+                    .ToList();
+                airports.Insert(0, string.Empty);
+
+                return (airlines, types, tails, airports);
             }
         }
 
@@ -514,6 +570,8 @@ namespace FSTRaK.ViewModels
                         query = query.Where(f => f.Aircraft.AircraftType == AircraftTypeFilter);
                     if (!string.IsNullOrEmpty(TailNumberFilter))
                         query = query.Where(f => f.Aircraft.TailNumber == TailNumberFilter);
+                    if (!string.IsNullOrEmpty(AirportFilter))
+                        query = query.Where(f => f.DepartureAirport == AirportFilter || f.ArrivalAirport == AirportFilter);
 
                     var flights = await query.OrderByDescending(f => f.Id).ToListAsync().ConfigureAwait(false);
 
@@ -531,6 +589,7 @@ namespace FSTRaK.ViewModels
                             AvgLandingFpm = "";
                             FlightsPerDay = new Dictionary<DateTime, double>();
                             FlightRoutes = new List<FlightRouteLine>();
+                            AirportMarkers = new List<AirportMarker>();
                             FlightsPerPeriodSeries = Array.Empty<ISeries>();
                             FlightsPerPeriodXAxes = Array.Empty<Axis>();
                             DepAirportsSeries = Array.Empty<ISeries>();
@@ -563,6 +622,7 @@ namespace FSTRaK.ViewModels
                     var landingDist = StatisticsCalculations.CalculateLandingRateDistribution(flights);
                     var countryDist = CalculateCountryDistribution(flights);
                     var flightRoutes = CalculateFlightRoutes(flights);
+                    var airportMarkers = CalculateAirportMarkers(flights);
 
                     App.Current.Dispatcher.Invoke(() =>
                     {
@@ -581,6 +641,7 @@ namespace FSTRaK.ViewModels
 
                         FlightsPerDay = flightsPerDay;
                         FlightRoutes = flightRoutes;
+                        AirportMarkers = airportMarkers;
 
                         FlightsPerPeriodSeries = fpSeries;
                         FlightsPerPeriodXAxes = fpXAxes;
@@ -701,54 +762,93 @@ namespace FSTRaK.ViewModels
             return dist;
         }
 
+        /// <summary>
+        /// Groups flights by unordered airport pair, so A→B and B→A share one line (they fly
+        /// the same physical track) and a popular route's hover lists every flight on it.
+        /// </summary>
         private static List<FlightRouteLine> CalculateFlightRoutes(List<Flight> flights)
         {
             var routes = new List<FlightRouteLine>();
-            foreach (var f in flights)
+            var groups = flights
+                .Where(f =>
+                {
+                    var dep = f.DepartureAirportDetails;
+                    var arr = f.ArrivalAirportDetails;
+                    if (dep == null || arr == null) return false;
+                    if (dep.latitude_deg == 0 && dep.longitude_deg == 0) return false;
+                    if (arr.latitude_deg == 0 && arr.longitude_deg == 0) return false;
+                    return true;
+                })
+                .GroupBy(f => string.CompareOrdinal(f.DepartureAirport, f.ArrivalAirport) <= 0
+                    ? (f.DepartureAirport, f.ArrivalAirport)
+                    : (f.ArrivalAirport, f.DepartureAirport));
+
+            foreach (var group in groups)
             {
-                var dep = f.DepartureAirportDetails;
-                var arr = f.ArrivalAirportDetails;
-                if (dep == null || arr == null) continue;
-                if (dep.latitude_deg == 0 && dep.longitude_deg == 0) continue;
-                if (arr.latitude_deg == 0 && arr.longitude_deg == 0) continue;
+                var first = group.First();
+                var dep = first.DepartureAirportDetails;
+                var arr = first.ArrivalAirportDetails;
+
+                var legend = group
+                    .OrderByDescending(f => f.StartTime)
+                    .Select(f => new FlightRouteLegend(
+                        f.StartTime.ToString("d MMM yyyy"),
+                        f.Aircraft?.Airline?.Trim() ?? string.Empty,
+                        BuildAircraftName(f.Aircraft),
+                        $"{f.DepartureAirport} → {f.ArrivalAirport}"))
+                    .ToList();
+
                 routes.Add(new FlightRouteLine(
                     new Location(dep.latitude_deg, dep.longitude_deg),
                     new Location(arr.latitude_deg, arr.longitude_deg),
-                    BuildRouteTooltip(f)));
+                    legend));
             }
+
             return routes;
         }
 
-        /// <summary>
-        /// Built here, while the flight and its eagerly-loaded aircraft are still in scope.
-        /// Blank parts are dropped rather than left as empty lines, because older records
-        /// often carry no airline.
-        /// </summary>
-        private static string BuildRouteTooltip(Flight f)
+        private static string BuildAircraftName(Aircraft aircraft)
         {
-            var route = $"{f.DepartureAirport} → {f.ArrivalAirport}";
-
-            var aircraft = f.Aircraft;
-            var aircraftName = aircraft == null
+            var name = aircraft == null
                 ? string.Empty
                 : string.Join(" ", new[] { aircraft.Manufacturer, aircraft.Model }
                     .Where(part => !string.IsNullOrWhiteSpace(part))
                     .Select(part => part.Trim()));
 
-            if (string.IsNullOrWhiteSpace(aircraftName))
+            return string.IsNullOrWhiteSpace(name)
+                ? aircraft?.AircraftType?.Trim() ?? string.Empty
+                : name;
+        }
+
+        /// <summary>
+        /// One marker per distinct airport among the currently-rendered routes, resolved via
+        /// the same AirportResolver-backed lookup the routes already use.
+        /// </summary>
+        private static List<AirportMarker> CalculateAirportMarkers(List<Flight> flights)
+        {
+            var markers = new Dictionary<string, AirportMarker>();
+
+            void AddMarker(string icao, Airport details)
             {
-                aircraftName = aircraft?.AircraftType?.Trim() ?? string.Empty;
+                if (string.IsNullOrEmpty(icao) || markers.ContainsKey(icao)) return;
+                if (details == null) return;
+                if (details.latitude_deg == 0 && details.longitude_deg == 0) return;
+
+                markers[icao] = new AirportMarker(
+                    icao,
+                    new Location(details.latitude_deg, details.longitude_deg),
+                    details.name,
+                    details.municipality,
+                    details.CountryName);
             }
 
-            var airline = aircraft?.Airline?.Trim() ?? string.Empty;
+            foreach (var f in flights)
+            {
+                AddMarker(f.DepartureAirport, f.DepartureAirportDetails);
+                AddMarker(f.ArrivalAirport, f.ArrivalAirportDetails);
+            }
 
-            var aircraftLine = string.Join(" · ", new[] { aircraftName, airline }
-                .Where(part => !string.IsNullOrWhiteSpace(part)));
-
-            var lines = new[] { route, aircraftLine, f.StartTime.ToString("d MMM yyyy") }
-                .Where(line => !string.IsNullOrWhiteSpace(line));
-
-            return string.Join("\n", lines);
+            return markers.Values.ToList();
         }
 
         // ── LiveCharts2 series builders ───────────────────────────────────────

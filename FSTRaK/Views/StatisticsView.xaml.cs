@@ -90,21 +90,45 @@ namespace FSTRaK.Views
                     Stroke = stroke,
                     StrokeThickness = 1,
                     Opacity = 0.5,
-                    ToolTip = route.TooltipText
+                    ToolTip = BuildRouteTooltip(route)
                 });
 
                 // A one-pixel line at half opacity is not something anyone can hover, so the
                 // route carries a transparent companion purely as a hit target. Transparent
                 // is deliberate - a null brush is not hit-testable in WPF, so it would give
-                // back nothing.
+                // back nothing. A second, separate tooltip panel is built here because a
+                // FrameworkElement can only have one visual parent - the same instance can't
+                // be reused as both polylines' ToolTip.
                 RouteMap.Children.Add(new MapPolyline
                 {
                     Locations = locations,
                     Stroke = Brushes.Transparent,
                     StrokeThickness = 10,
-                    ToolTip = route.TooltipText
+                    ToolTip = BuildRouteTooltip(route)
                 });
             }
+        }
+
+        /// <summary>
+        /// A route may carry several flights (both directions between the same two airports
+        /// are merged into one line), so the tooltip lists each one rather than showing a
+        /// single flight's detail.
+        /// </summary>
+        private static FrameworkElement BuildRouteTooltip(FlightRouteLine route)
+        {
+            var panel = new StackPanel();
+            foreach (var f in route.Flights)
+            {
+                var line = new StackPanel { Margin = new Thickness(0, 0, 0, 2) };
+                line.Children.Add(new TextBlock { Text = f.Direction, FontWeight = FontWeights.Bold });
+
+                var detailParts = new[] { f.Date, f.Airline, f.Aircraft }
+                    .Where(part => !string.IsNullOrWhiteSpace(part));
+                line.Children.Add(new TextBlock { Text = string.Join(" · ", detailParts) });
+
+                panel.Children.Add(line);
+            }
+            return panel;
         }
     }
 }
