@@ -204,6 +204,11 @@
                                        utils:HyperlinkText.InlinesSource="{Binding MapAttributionText}" />
                         </StackPanel>
 
+                        <!-- Route lines layer: a dedicated MapPanel so the lines, rebuilt
+                             imperatively in code-behind, always stay below the airport dots
+                             declared after it - no z-order bookkeeping needed. -->
+                        <map:MapPanel x:Name="RouteLinesLayer"/>
+
                         <!-- Airport endpoint dots -->
                         <map:MapItemsControl ItemsSource="{Binding AirportMarkers}">
                             <map:MapItemsControl.ItemContainerStyle>

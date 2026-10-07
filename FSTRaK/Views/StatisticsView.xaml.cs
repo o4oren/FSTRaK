@@ -64,18 +64,10 @@ namespace FSTRaK.Views
             var vm = (StatisticsViewModel)DataContext;
             if (vm?.FlightRoutes == null) return;
 
-            var toRemove = RouteMap.Children.OfType<MapPolyline>().ToList();
-            foreach (var line in toRemove)
-                RouteMap.Children.Remove(line);
+            RouteLinesLayer.Children.Clear();
 
             var stroke = (Brush)TryFindResource("FlightPathColorBrush")
                          ?? Brushes.OrangeRed;
-
-            // Inserted at the front rather than appended: Children order is z-order in
-            // MapControl.WPF, and the airport dots (declared once in XAML, further along in
-            // Children) need to stay above the lines so their tooltip can still be hovered
-            // where a route passes directly under a dot.
-            var insertAt = 0;
 
             foreach (var route in vm.FlightRoutes)
             {
@@ -90,7 +82,7 @@ namespace FSTRaK.Views
                 foreach (var pt in MapUtils.WrapPolyline(greatCircle))
                     locations.Add(pt);
 
-                RouteMap.Children.Insert(insertAt++, new MapPolyline
+                RouteLinesLayer.Children.Add(new MapPolyline
                 {
                     Locations = locations,
                     Stroke = stroke,
@@ -105,7 +97,7 @@ namespace FSTRaK.Views
                 // back nothing. A second, separate tooltip panel is built here because a
                 // FrameworkElement can only have one visual parent - the same instance can't
                 // be reused as both polylines' ToolTip.
-                RouteMap.Children.Insert(insertAt++, new MapPolyline
+                RouteLinesLayer.Children.Add(new MapPolyline
                 {
                     Locations = locations,
                     Stroke = Brushes.Transparent,
