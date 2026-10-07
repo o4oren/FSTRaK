@@ -107,6 +107,7 @@
     <SolidColorBrush x:Key="SubtleTextBrush" Color="#8899AA"/>
 
     <SolidColorBrush x:Key="FlightPathColorBrush" Color="#FF6B6B"/>
+    <SolidColorBrush x:Key="AirportMarkerColorBrush" Color="#FF9494"/>
     <SolidColorBrush x:Key="PlannedPathColorBrush" Color="#7B68EE"/>
     <SolidColorBrush x:Key="FlightPathStrokeBrush" Color="#CC4444"/>
     <SolidColorBrush x:Key="MapPinStrokeBrush" Color="#FFD580"/>
@@ -940,7 +941,18 @@
                             BorderBrush="{StaticResource SilverGradient}"
                             Background="{StaticResource PrimaryDarkBrush}"
                             >
-                        <TextBlock Text="{TemplateBinding Content}" TextWrapping="Wrap" Padding="10"/>
+                        <!-- ContentPresenter rather than a TextBlock bound to Content: a
+                             plain string still renders as text (WPF's default string template
+                             wraps it in a TextBlock), but a ToolTip whose Content is a
+                             FrameworkElement (e.g. a multi-line panel) renders correctly too -
+                             TextBlock.Text can't bind to a non-string object. -->
+                        <ContentPresenter Content="{TemplateBinding Content}" Margin="10">
+                            <ContentPresenter.Resources>
+                                <Style TargetType="TextBlock">
+                                    <Setter Property="TextWrapping" Value="Wrap"/>
+                                </Style>
+                            </ContentPresenter.Resources>
+                        </ContentPresenter>
                     </Border>
                 </ControlTemplate>
             </Setter.Value>
