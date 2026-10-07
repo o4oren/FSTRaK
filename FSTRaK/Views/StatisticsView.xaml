@@ -216,7 +216,7 @@
                             <map:MapItemsControl.ItemTemplate>
                                 <DataTemplate>
                                     <Ellipse Width="7" Height="7"
-                                             Fill="{DynamicResource SuperBrightTextColor}"
+                                             Fill="{DynamicResource AirportMarkerColorBrush}"
                                              Stroke="Black" StrokeThickness="0.5">
                                         <Ellipse.ToolTip>
                                             <StackPanel>
