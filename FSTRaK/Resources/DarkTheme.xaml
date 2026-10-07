@@ -942,11 +942,17 @@
                             Background="{StaticResource PrimaryDarkBrush}"
                             >
                         <!-- ContentPresenter rather than a TextBlock bound to Content: a
-                             plain string still renders as text (TextBlock.TextWrapping applies
-                             to the TextBlock WPF generates for a string), but a ToolTip whose
-                             Content is a FrameworkElement (e.g. a multi-line panel) renders
-                             correctly too - TextBlock.Text can't bind to a non-string object. -->
-                        <ContentPresenter Content="{TemplateBinding Content}" TextBlock.TextWrapping="Wrap" Margin="10"/>
+                             plain string still renders as text (WPF's default string template
+                             wraps it in a TextBlock), but a ToolTip whose Content is a
+                             FrameworkElement (e.g. a multi-line panel) renders correctly too -
+                             TextBlock.Text can't bind to a non-string object. -->
+                        <ContentPresenter Content="{TemplateBinding Content}" Margin="10">
+                            <ContentPresenter.Resources>
+                                <Style TargetType="TextBlock">
+                                    <Setter Property="TextWrapping" Value="Wrap"/>
+                                </Style>
+                            </ContentPresenter.Resources>
+                        </ContentPresenter>
                     </Border>
                 </ControlTemplate>
             </Setter.Value>
